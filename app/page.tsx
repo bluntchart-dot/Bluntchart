@@ -291,9 +291,12 @@ function ReadingApp() {
 // ─── PAGE ──────────────────────────────────────────────────────────────────────
 
 export default function HomePage() {
-  const [email, setEmail] = useState("");
-  const [submitted, setSubmitted] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
+  const [name, setName] = useState("");
+const [email, setEmail] = useState("");
+const [reason, setReason] = useState("Love");
+const [submitted, setSubmitted] = useState(false);
+const [loading, setLoading] = useState(false);
+const [scrolled, setScrolled] = useState(false);
 
   useEffect(()=>{
     const fn=()=>setScrolled(window.scrollY>40);
@@ -301,7 +304,41 @@ export default function HomePage() {
     return ()=>window.removeEventListener("scroll",fn);
   },[]);
 
-  const handleWaitlist=(e: React.FormEvent)=>{ e.preventDefault(); if(!email.trim()) return; setSubmitted(true); /* TODO: wire Beehiiv */ };
+  const handleWaitlist = async (e: React.FormEvent) => {
+  e.preventDefault();
+
+  if (!name || !email || !reason) return;
+
+  setLoading(true);
+
+  try {
+    await fetch(
+      "https://script.google.com/macros/s/AKfycbwgxIPG-QmNI89GEMqeV6GA83STXCncvc77fsqH6bAK3AatSO3pfi96TzGNSB6ZvxGIMA/exec",
+      {
+        method: "POST",
+        mode: "no-cors",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name,
+          email,
+          reason,
+          source: "Website Waitlist",
+        }),
+      }
+    );
+
+    setSubmitted(true);
+    setName("");
+    setEmail("");
+    setReason("Love");
+  } catch (error) {
+    alert("Something went wrong.");
+  }
+
+  setLoading(false);
+};
 
   return (
     <>
@@ -596,25 +633,84 @@ export default function HomePage() {
       </section>
 
       {/* WAITLIST */}
-      <section className="sec dk ws" id="waitlist">
-        <div className="wbg"/>
-        <div className="c wi">
-          <div className="cp"><span className="cd"/>&nbsp;Collecting early access signups</div>
-          <h2>Get brutally honest.<br /><em>Get in early.</em></h2>
-          <p className="sub" style={{margin:"0 auto 32px",textAlign:"center"}}>BluntChart launches soon. Join the list for early access and a launch discount. No spam — just the launch announcement and occasional Mercury retrograde survival notes.</p>
-          {!submitted?(
-            <>
-              <form className="ef" onSubmit={handleWaitlist}>
-                <input className="ei" type="email" placeholder="your@email.com" value={email} onChange={e=>setEmail(e.target.value)} required/>
-                <button className="bp" type="submit" style={{whiteSpace:"nowrap",flexShrink:0}}>Join Waitlist</button>
-              </form>
-              <p className="fn">No spam. Unsubscribe anytime.</p>
-            </>
-          ):(
-            <div className="fs">✓ You&apos;re on the list — we&apos;ll email you when we launch.</div>
-          )}
-        </div>
-      </section>
+      <div className="wbg" />
+<div className="c wi">
+
+<div className="cp">
+<span className="cd" /> Collecting early access signups
+</div>
+
+<h2>
+Join the waitlist for<br />
+<em>first access + 70% off.</em>
+</h2>
+
+<p className="sub" style={{ margin: "0 auto 32px", textAlign: "center" }}>
+Be first to try BluntChart at launch pricing.
+</p>
+
+{!submitted ? (
+
+<form
+onSubmit={handleWaitlist}
+style={{
+maxWidth: "460px",
+margin: "0 auto",
+display: "grid",
+gap: "12px"
+}}
+>
+
+<input
+className="ei"
+placeholder="First name"
+value={name}
+onChange={(e) => setName(e.target.value)}
+required
+/>
+
+<input
+className="ei"
+type="email"
+placeholder="Email address"
+value={email}
+onChange={(e) => setEmail(e.target.value)}
+required
+/>
+
+<select
+className="ei"
+style={{
+background:"#12121e",
+color:"#ffffff",
+appearance:"none"
+}}
+value={reason}
+onChange={(e)=>setReason(e.target.value)}
+>
+<option value="Love">Love</option>
+<option value="Career">Career</option>
+<option value="Money">Money</option>
+<option value="Purpose">Purpose</option>
+</select>
+
+<button className="bp" type="submit">
+{loading ? "Joining..." : "Join Waitlist + 70% Off"}
+</button>
+
+<p className="fn">No spam. Unsubscribe anytime.</p>
+
+</form>
+
+) : (
+
+<div className="fs">
+✓ You're in. Watch your inbox for launch access + 70% off code.
+</div>
+
+)}
+
+</div>
 
       {/* FOOTER */}
       <footer className="footer">
