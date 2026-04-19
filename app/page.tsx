@@ -16,12 +16,12 @@ interface ReadingData { planets: PlanetMap; sunDates?: string; preview: Insight[
 // ─── DATA ──────────────────────────────────────────────────────────────────────
 
 const REVIEWS = [
-  { text: "I've used Co-Star, The Pattern, Sanctuary — none said anything I didn't already know. This one said things I hadn't told anyone. It was uncomfortable. I loved it.", name: "Maya R.", meta: "Scorpio Sun, Cancer Moon", init: "M" },
-  { text: "I was ready to roll my eyes. Three paragraphs in I had to put my phone down. It just — described me. Not my sign. Me.", name: "Priya T.", meta: "Virgo Rising, Libra Sun", init: "P" },
+  { text: "I've used Co-Star, The Pattern, Sanctuary... none said anything I didn't already know. This one said things I hadn't told anyone. It was uncomfortable. I loved it.", name: "Michelle R.", meta: "Scorpio Sun, Cancer Moon", init: "M" },
+  { text: "I was ready to roll my eyes. Three paragraphs in I had to put my phone down. It just... described me. Not my sign. Me.", name: "Rachel T.", meta: "Virgo Rising, Libra Sun", init: "P" },
   { text: "Way more accurate than Co-Star ever was. And it didn't sugarcoat the parts I wasn't ready to hear, which is the whole point.", name: "Sophie K.", meta: "Aries Sun, Pisces Moon", init: "S" },
   { text: "I felt attacked. In a good way. My therapist has been saying the same thing for six months. My birth chart said it better in one paragraph.", name: "Dani L.", meta: "Capricorn Sun, Gemini Moon", init: "D" },
   { text: "Finally astrology that doesn't sound like it was written for everyone and no one at the same time. Sent it to three friends immediately.", name: "Zara O.", meta: "Leo Sun, Scorpio Rising", init: "Z" },
-  { text: "Twelve dollars. I spent two hours talking about it with my best friend. That's insane value.", name: "Chloe M.", meta: "Sagittarius Sun, Aquarius Moon", init: "C" },
+  { text: "Twelve dollars. I spent two hours talking about it with my best friend. That's insane!", name: "Chloe M.", meta: "Sagittarius Sun, Aquarius Moon", init: "C" },
 ];
 
 const REVEALS = [
@@ -34,10 +34,18 @@ const REVEALS = [
 ];
 
 const OFFERINGS = [
-  { badge: "Most Popular", title: "Full Birth Chart Reading", desc: "12 brutal insights across all your planets, houses, and key life areas. Sun, Moon, Rising, Venus, Mars, Saturn, 12th house shadow — all of it. ~1,500 words, specific to your exact chart.", price: "$12", featured: true },
+  { badge: "Most Popular", title: "Full Birth Chart Reading", desc: "12 brutal insights across all your planets, houses, and key life areas. Sun, Moon, Rising, Venus, Mars, Saturn, 12th house shadow — all of it. ~1,500 words, specific to your exact chart.", price: "$15", featured: true },
   { badge: "Add-on", title: "Compatibility Reading", desc: "You + a partner, friend, or situationship. Brutally honest about the real tension points and why you keep having the same fight.", price: "$9", featured: false },
   { badge: "Seasonal", title: "Year Ahead Reading", desc: "What your chart says about the next 12 months — love, money, career, major turning points. High demand around January and your solar return.", price: "$18", featured: false },
-  { badge: "Gift", title: "Gift a Reading", desc: "Buy for someone else — birthday, bachelorette, just because. Delivered to their email with a gift message. The gift that always lands.", price: "$12", featured: false },
+  { badge: "Gift", title: "Gift a Reading", desc: "Buy for someone else — birthday, bachelorette, just because. Delivered to their email with a gift message. The gift that always lands.", price: "$15", featured: false },
+];
+
+// Proof points in question form — layman language
+const PROOF_POINTS = [
+  { q: "Why do I always end up with the same type of person?", tag: "Free preview" },
+  { q: "Why do I self-sabotage right when things are going well?", tag: "Free preview" },
+  { q: "Why do people always misread who I actually am?", tag: "Free preview" },
+  { q: "What's the one thing my chart is trying to tell me right now?", tag: "Unlocked ($15)" },
 ];
 
 const SIGN_SYMBOLS: Record<string, string> = {
@@ -245,7 +253,7 @@ function ReadingApp() {
             <div style={{fontSize:12,color:"#6b6585",lineHeight:1.55,marginBottom:16}}>Venus retrograde truth. Your self-sabotage pattern named. The 12th house shadow. All of it — one payment, yours forever.</div>
             <button onClick={()=>{setUnlocked(true);setTimeout(()=>document.getElementById("unlock-sec")?.scrollIntoView({behavior:"smooth"}),100);}}
               style={{display:"block",width:"100%",background:"linear-gradient(135deg,#f0b84a,#e8854a)",color:"#1a0a00",border:"none",borderRadius:12,padding:14,fontSize:15,fontWeight:700,fontFamily:"inherit",cursor:"pointer",letterSpacing:"0.3px"}}>
-              Unlock full reading — $12 ✦
+              Unlock full reading — $15 ✦
             </button>
             <div style={{fontSize:11,color:"#2e2c3e",marginTop:9}}>One-time · No subscription · Delivered instantly + by email</div>
           </div>
@@ -292,11 +300,11 @@ function ReadingApp() {
 
 export default function HomePage() {
   const [name, setName] = useState("");
-const [email, setEmail] = useState("");
-const [reason, setReason] = useState("Love");
-const [submitted, setSubmitted] = useState(false);
-const [loading, setLoading] = useState(false);
-const [scrolled, setScrolled] = useState(false);
+  const [email, setEmail] = useState("");
+  const [reason, setReason] = useState("Love");
+  const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
   useEffect(()=>{
     const fn=()=>setScrolled(window.scrollY>40);
@@ -305,40 +313,26 @@ const [scrolled, setScrolled] = useState(false);
   },[]);
 
   const handleWaitlist = async (e: React.FormEvent) => {
-  e.preventDefault();
-
-  if (!name || !email || !reason) return;
-
-  setLoading(true);
-
-  try {
-    await fetch(
-      "https://script.google.com/macros/s/AKfycbwgxIPG-QmNI89GEMqeV6GA83STXCncvc77fsqH6bAK3AatSO3pfi96TzGNSB6ZvxGIMA/exec",
-      {
-        method: "POST",
-        mode: "no-cors",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name,
-          email,
-          reason,
-          source: "Website Waitlist",
-        }),
-      }
-    );
-
-    setSubmitted(true);
-    setName("");
-    setEmail("");
-    setReason("Love");
-  } catch (error) {
-    alert("Something went wrong.");
-  }
-
-  setLoading(false);
-};
+    e.preventDefault();
+    if (!name || !email || !reason) return;
+    setLoading(true);
+    try {
+      await fetch(
+        "https://script.google.com/macros/s/AKfycbwgxIPG-QmNI89GEMqeV6GA83STXCncvc77fsqH6bAK3AatSO3pfi96TzGNSB6ZvxGIMA/exec",
+        {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, email, reason, source: "Website Waitlist" }),
+        }
+      );
+      setSubmitted(true);
+      setName(""); setEmail(""); setReason("Love");
+    } catch {
+      alert("Something went wrong.");
+    }
+    setLoading(false);
+  };
 
   return (
     <>
@@ -407,6 +401,34 @@ const [scrolled, setScrolled] = useState(false);
         h2 em{font-style:italic;background:linear-gradient(135deg,#f0b84a,#d4537e);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
         .sub{font-size:1rem;color:var(--dim);max-width:500px;line-height:1.72}
 
+        /* WAITLIST SECTION */
+        .waitlist-sec{padding:96px 0;position:relative;overflow:hidden;background:#0d0d18;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+        .wbg{position:absolute;inset:0;background:radial-gradient(ellipse 70% 70% at 50% 50%,rgba(107,47,212,.05) 0%,transparent 70%);pointer-events:none}
+        .wi{position:relative;z-index:1;max-width:540px;margin:0 auto;text-align:center}
+        .cp{display:inline-flex;align-items:center;gap:6px;font-size:.8rem;color:var(--dim);padding:6px 14px;background:var(--faint);border-radius:100px;margin-bottom:24px}
+        .cd{width:6px;height:6px;border-radius:50%;background:var(--teal);animation:blink 2s ease-in-out infinite}
+        .ei{width:100%;background:var(--faint);border:0.5px solid var(--border);border-radius:10px;padding:13px 16px;color:var(--white);font-family:inherit;font-size:.88rem;outline:none;transition:border-color .2s}
+        .ei:focus{border-color:rgba(107,47,212,.5)}
+        .ei::placeholder{color:rgba(232,228,240,.25)}
+        .fn{font-size:.76rem;color:rgba(232,228,240,.28)}
+        .fs{padding:14px 22px;background:rgba(93,202,165,.1);border:0.5px solid rgba(93,202,165,.3);border-radius:10px;color:var(--teal);font-size:.88rem;font-weight:500;max-width:420px;margin:0 auto}
+
+        /* SPLIT LAYOUT — Reading App section */
+        .try-split{padding:96px 0}
+        .try-grid{display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:start}
+        .try-left{position:sticky;top:120px}
+        .proof-list{list-style:none;margin-top:32px;display:flex;flex-direction:column;gap:12px}
+        .proof-item{display:flex;align-items:flex-start;gap:14px;padding:16px 18px;background:var(--card);border:0.5px solid var(--border);border-radius:14px;transition:border-color .2s}
+        .proof-item:hover{border-color:rgba(107,47,212,.3)}
+        .proof-q{font-size:.93rem;color:var(--white);line-height:1.55;flex:1}
+        .proof-tag-free{font-size:.68rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#5dcaa5;background:rgba(93,202,165,.12);padding:3px 9px;border-radius:100px;white-space:nowrap;flex-shrink:0;margin-top:2px}
+        .proof-tag-paid{font-size:.68rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#f0b84a;background:rgba(240,184,74,.12);padding:3px 9px;border-radius:100px;white-space:nowrap;flex-shrink:0;margin-top:2px}
+        .proof-icon{font-size:16px;flex-shrink:0;margin-top:1px}
+        .trust-bar{display:flex;align-items:center;gap:18px;margin-top:28px;flex-wrap:wrap}
+        .trust-item{font-size:.78rem;color:rgba(232,228,240,.38);display:flex;align-items:center;gap:6px}
+        .trust-item::before{content:'✓';color:#5dcaa5;font-weight:700}
+        .try-right{}
+
         /* REVEAL GRID */
         .rg{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-top:48px}
         .ri{background:var(--card);padding:30px;transition:background .2s}
@@ -436,26 +458,6 @@ const [scrolled, setScrolled] = useState(false);
         .od{font-size:.83rem;color:var(--dim);line-height:1.68;flex:1;margin-bottom:22px}
         .op{font-family:var(--font-display);font-size:1.9rem;font-weight:900;color:var(--gold)}
 
-        /* APP SECTION */
-        .as{padding:96px 0}
-        .aw{max-width:480px;margin:0 auto;padding:0 16px}
-        .al{text-align:center;padding:0 0 32px}
-        .alt{font-family:var(--font-display);font-size:28px;font-weight:700;background:linear-gradient(135deg,#f0b84a,#d4537e,#6b2fd4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-        .als{font-size:11px;color:#4a4560;letter-spacing:2.5px;text-transform:uppercase;margin-top:4px}
-
-        /* WAITLIST */
-        .ws{text-align:center;position:relative;overflow:hidden}
-        .wbg{position:absolute;inset:0;background:radial-gradient(ellipse 70% 70% at 50% 50%,rgba(107,47,212,.05) 0%,transparent 70%);pointer-events:none}
-        .wi{position:relative;z-index:1;max-width:540px;margin:0 auto}
-        .cp{display:inline-flex;align-items:center;gap:6px;font-size:.8rem;color:var(--dim);padding:6px 14px;background:var(--faint);border-radius:100px;margin-bottom:24px}
-        .cd{width:6px;height:6px;border-radius:50%;background:var(--teal);animation:blink 2s ease-in-out infinite}
-        .ef{display:flex;gap:10px;max-width:420px;margin:0 auto 12px}
-        .ei{flex:1;background:var(--faint);border:0.5px solid var(--border);border-radius:10px;padding:13px 16px;color:var(--white);font-family:inherit;font-size:.88rem;outline:none;transition:border-color .2s}
-        .ei:focus{border-color:rgba(107,47,212,.5)}
-        .ei::placeholder{color:rgba(232,228,240,.25)}
-        .fn{font-size:.76rem;color:rgba(232,228,240,.28)}
-        .fs{padding:14px 22px;background:rgba(93,202,165,.1);border:0.5px solid rgba(93,202,165,.3);border-radius:10px;color:var(--teal);font-size:.88rem;font-weight:500;max-width:420px;margin:0 auto}
-
         /* FOOTER */
         .footer{border-top:1px solid var(--border);padding:48px 0 30px;position:relative;z-index:1}
         .fi{display:flex;align-items:flex-start;justify-content:space-between;gap:36px;flex-wrap:wrap;margin-bottom:36px}
@@ -471,6 +473,10 @@ const [scrolled, setScrolled] = useState(false);
         .disc{font-size:.73rem;color:rgba(232,228,240,.25);max-width:520px;line-height:1.55}
         .copy{font-size:.73rem;color:rgba(232,228,240,.2)}
 
+        @media(max-width:900px){
+          .try-grid{grid-template-columns:1fr;gap:48px}
+          .try-left{position:static}
+        }
         @media(max-width:768px){
           .nl{display:none}
           .hero{padding-top:90px;padding-bottom:64px}
@@ -479,13 +485,12 @@ const [scrolled, setScrolled] = useState(false);
           .bp,.bs{width:100%;max-width:300px;justify-content:center}
           .htr{flex-direction:column;gap:10px}
           .rg{grid-template-columns:1fr}
-          .ef{flex-direction:column}
           .fi{flex-direction:column;gap:28px}
           .fb2{flex-direction:column;align-items:flex-start}
           .og,.revg{grid-template-columns:1fr}
         }
         @media(max-width:480px){
-          .sec,.as{padding:72px 0}
+          .sec,.try-split,.waitlist-sec{padding:72px 0}
           .c{padding:0 16px}
         }
       `}</style>
@@ -494,15 +499,9 @@ const [scrolled, setScrolled] = useState(false);
       <nav className={`nav${scrolled?" on":""}`}>
         <div className="c nav-i">
           <a className="logo" href="#" style={{display:"flex",alignItems:"center",gap:"10px"}}>
-  <Image
-    src="/mascot.png"
-    alt="BluntChart mascot"
-    width={34}
-    height={34}
-    style={{borderRadius:"50%"}}
-  />
-  <span className="g">BluntChart</span>
-</a>
+            <Image src="/mascot.png" alt="BluntChart mascot" width={34} height={34} style={{borderRadius:"50%"}}/>
+            <span className="g">BluntChart</span>
+          </a>
           <ul className="nl">
             <li><a href="#reveals">What We Reveal</a></li>
             <li><a href="#reviews">Reviews</a></li>
@@ -513,35 +512,26 @@ const [scrolled, setScrolled] = useState(false);
         </div>
       </nav>
 
-      {/* HERO */}
+      {/* 1 — HERO */}
       <section className="hero">
         <div className="hbg"/>
         <div className="horb"/>
         <div className="c">
           <div className="hi">
             <div style={{marginBottom:"24px"}}>
-  <Image
-    src="/mascot.png"
-    alt="BluntChart cosmic cat mascot"
-    width={130}
-    height={130}
-    priority
-    style={{
-      margin:"0 auto",
-      filter:"drop-shadow(0 0 30px rgba(107,47,212,.35))"
-    }}
-  />
-</div>
+              <Image src="/mascot.png" alt="BluntChart cosmic cat mascot" width={130} height={130} priority
+                style={{margin:"0 auto",filter:"drop-shadow(0 0 30px rgba(107,47,212,.35))"}}/>
+            </div>
             <div className="ey">✦ Brutally honest birth chart readings</div>
             <h1>Your chart already knows<br /><em>why you&apos;re like this.</em></h1>
             <p className="hsh">It&apos;s time you did too.</p>
-            <p className="hb">BluntChart takes your birth date, time, and place — calculates your real natal chart — and delivers a reading that tells you the truth. Not wellness-speak. Not vague generalities. The uncomfortable, specific, uncannily accurate truth.</p>
+            <p className="hb">BluntChart takes your birth date, time, and place. Calculates your real natal chart and delivers a reading that tells you the truth.</p>
             <div className="hctas">
               <a className="bp" href="#try-it">Get Free Preview ✨</a>
               <a className="bs" href="#reveals">See What We Reveal ↓</a>
             </div>
             <div className="htr">
-              <span><strong>$12</strong>&nbsp;one-time — no subscription</span>
+              <span><strong>$15</strong>&nbsp;one-time — no subscription</span>
               <span className="dot"/>
               <span>Real Swiss Ephemeris calculations</span>
               <span className="dot"/>
@@ -551,7 +541,95 @@ const [scrolled, setScrolled] = useState(false);
         </div>
       </section>
 
-      {/* WHAT WE REVEAL */}
+      {/* 2 — WAITLIST */}
+      <section className="waitlist-sec" id="waitlist">
+        <div className="wbg"/>
+        <div className="c">
+          <div className="wi">
+            <div className="cp">
+              <span className="cd"/> Collecting early access signups
+            </div>
+            <h2>Join the waitlist for<br/><em>first access + 70% off.</em></h2>
+            <p className="sub" style={{margin:"0 auto 32px",textAlign:"center"}}>
+              Be first to try BluntChart at launch pricing.
+            </p>
+            {!submitted ? (
+              <form onSubmit={handleWaitlist} style={{maxWidth:"460px",margin:"0 auto",display:"grid",gap:"12px"}}>
+                <input className="ei" placeholder="First name" value={name} onChange={e=>setName(e.target.value)} required/>
+                <input className="ei" type="email" placeholder="Email address" value={email} onChange={e=>setEmail(e.target.value)} required/>
+                <select className="ei" style={{background:"#12121e",color:"#ffffff",appearance:"none"}} value={reason} onChange={e=>setReason(e.target.value)}>
+                  <option value="Love">Love</option>
+                  <option value="Career">Career</option>
+                  <option value="Money">Money</option>
+                  <option value="Purpose">Purpose</option>
+                </select>
+                <button className="bp" type="submit" style={{width:"100%",justifyContent:"center"}}>
+                  {loading ? "Joining..." : "Join Waitlist + 70% Off"}
+                </button>
+                <p className="fn" style={{textAlign:"center"}}>No spam. Unsubscribe anytime.</p>
+              </form>
+            ) : (
+              <div className="fs">✓ You&apos;re in. Watch your inbox for launch access + 70% off code.</div>
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* 3 — READING APP — SPLIT LAYOUT */}
+      <section className="try-split" id="try-it">
+        <div className="c">
+          <div className="try-grid">
+
+            {/* LEFT — editorial sell column */}
+            <div className="try-left">
+              <div className="sl"><span>Try it now — free preview</span></div>
+              <h2>Three answers,<br/><em>completely free.</em></h2>
+              <p className="sub">No account. No payment. Just enter your birth details and we&apos;ll show you what your chart actually says.</p>
+
+              <ul className="proof-list">
+                {PROOF_POINTS.map((p, i) => (
+                  <li className="proof-item" key={i}>
+                    <span className="proof-icon">{i < 3 ? "🔍" : "🔒"}</span>
+                    <span className="proof-q">{p.q}</span>
+                    <span className={i < 3 ? "proof-tag-free" : "proof-tag-paid"}>
+                      {p.tag}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+
+              <div className="trust-bar">
+                <span className="trust-item">No account needed</span>
+                <span className="trust-item">Real chart calculation</span>
+                <span className="trust-item">Instant result</span>
+              </div>
+
+              {/* Pull quote */}
+              <div style={{marginTop:32,padding:"18px 20px",background:"var(--card)",border:"0.5px solid rgba(107,47,212,.25)",borderRadius:14,borderLeft:"3px solid #6b2fd4"}}>
+                <p style={{fontFamily:"var(--font-display)",fontSize:"1rem",fontStyle:"italic",color:"var(--white)",lineHeight:1.65,marginBottom:10}}>
+                  &ldquo;It just — described me. Not my sign. Me.&rdquo;
+                </p>
+                <div style={{fontSize:".75rem",color:"rgba(232,228,240,.4)",letterSpacing:".04em"}}>
+                  Rachel T. · Virgo Rising, Libra Sun
+                </div>
+              </div>
+            </div>
+
+            {/* RIGHT — the app widget */}
+            <div className="try-right">
+              <div style={{textAlign:"center",marginBottom:24}}>
+                <Image src="/mascot.png" alt="BluntChart mascot" width={60} height={60} style={{margin:"0 auto 8px"}}/>
+                <div style={{fontFamily:"var(--font-display)",fontSize:20,background:"linear-gradient(135deg,#f0b84a,#d4537e,#6b2fd4)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",backgroundClip:"text"}}>BluntChart</div>
+                <div style={{fontSize:11,color:"#4a4560",letterSpacing:"2.5px",textTransform:"uppercase",marginTop:2}}>Your chart. Unfiltered.</div>
+              </div>
+              <ReadingApp/>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      {/* 4 — WHAT WE REVEAL */}
       <section className="sec dk" id="reveals">
         <div className="c">
           <div className="sl"><span>What we actually say</span></div>
@@ -569,8 +647,27 @@ const [scrolled, setScrolled] = useState(false);
         </div>
       </section>
 
-      {/* REVIEWS */}
-      <section className="sec" id="reviews">
+      {/* 5 — PRICING */}
+      <section className="sec" id="readings">
+        <div className="c">
+          <div className="sl"><span>Readings</span></div>
+          <h2>One-time. No subscription.<br /><em>No trap.</em></h2>
+          <p className="sub">Pay once, get the reading. Delivered to your email in minutes, not days.</p>
+          <div className="og">
+            {OFFERINGS.map(o=>(
+              <div className={`oc${o.featured?" ft":""}`} key={o.title}>
+                <div className="obg">{o.badge}</div>
+                <div className="otl">{o.title}</div>
+                <p className="od">{o.desc}</p>
+                <div className="op">{o.price}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 6 — REVIEWS */}
+      <section className="sec dk" id="reviews">
         <div className="c">
           <div className="sl"><span>Beta reader reactions</span></div>
           <h2>People keep sending it<br /><em>to their friends.</em></h2>
@@ -590,129 +687,7 @@ const [scrolled, setScrolled] = useState(false);
         </div>
       </section>
 
-      {/* OFFERINGS */}
-      <section className="sec dk" id="readings">
-        <div className="c">
-          <div className="sl"><span>Readings</span></div>
-          <h2>One-time. No subscription.<br /><em>No trap.</em></h2>
-          <p className="sub">Pay once, get the reading. Delivered to your email in minutes, not days.</p>
-          <div className="og">
-            {OFFERINGS.map(o=>(
-              <div className={`oc${o.featured?" ft":""}`} key={o.title}>
-                <div className="obg">{o.badge}</div>
-                <div className="otl">{o.title}</div>
-                <p className="od">{o.desc}</p>
-                <div className="op">{o.price}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* READING APP */}
-      <section className="as" id="try-it">
-        <div className="c" style={{marginBottom:40,textAlign:"center"}}>
-          <div className="sl" style={{justifyContent:"center"}}><span>Try it now — free preview</span></div>
-          <h2 style={{maxWidth:640,margin:"0 auto 12px"}}>Enter your details.<br /><em>Get 3 insights free.</em></h2>
-          <p className="sub" style={{margin:"0 auto"}}>No account. No payment until you decide the full reading is worth it. (It will be.)</p>
-        </div>
-        <div className="aw">
-          <div className="al">
-            <Image
-  src="/mascot.png"
-  alt="BluntChart mascot"
-  width={72}
-  height={72}
-  style={{margin:"0 auto 8px"}}
-/>
-            <div className="alt">BluntChart</div>
-            <div className="als">Your chart. Unfiltered.</div>
-          </div>
-          <ReadingApp/>
-        </div>
-      </section>
-
-      {/* WAITLIST */}
-      <div className="wbg" />
-<div className="c wi">
-
-<div className="cp">
-<span className="cd" /> Collecting early access signups
-</div>
-
-<h2>
-Join the waitlist for<br />
-<em>first access + 70% off.</em>
-</h2>
-
-<p className="sub" style={{ margin: "0 auto 32px", textAlign: "center" }}>
-Be first to try BluntChart at launch pricing.
-</p>
-
-{!submitted ? (
-
-<form
-onSubmit={handleWaitlist}
-style={{
-maxWidth: "460px",
-margin: "0 auto",
-display: "grid",
-gap: "12px"
-}}
->
-
-<input
-className="ei"
-placeholder="First name"
-value={name}
-onChange={(e) => setName(e.target.value)}
-required
-/>
-
-<input
-className="ei"
-type="email"
-placeholder="Email address"
-value={email}
-onChange={(e) => setEmail(e.target.value)}
-required
-/>
-
-<select
-className="ei"
-style={{
-background:"#12121e",
-color:"#ffffff",
-appearance:"none"
-}}
-value={reason}
-onChange={(e)=>setReason(e.target.value)}
->
-<option value="Love">Love</option>
-<option value="Career">Career</option>
-<option value="Money">Money</option>
-<option value="Purpose">Purpose</option>
-</select>
-
-<button className="bp" type="submit">
-{loading ? "Joining..." : "Join Waitlist + 70% Off"}
-</button>
-
-<p className="fn">No spam. Unsubscribe anytime.</p>
-
-</form>
-
-) : (
-
-<div className="fs">
-✓ You're in. Watch your inbox for launch access + 70% off code.
-</div>
-
-)}
-
-</div>
-
-      {/* FOOTER */}
+      {/* 7 — FOOTER */}
       <footer className="footer">
         <div className="c">
           <div className="fi">
@@ -728,7 +703,7 @@ onChange={(e)=>setReason(e.target.value)}
             <div className="fl">
               <h4>Readings</h4>
               <ul>
-                <li><a href="#readings">Birth Chart — $12</a></li>
+                <li><a href="#readings">Birth Chart — $15</a></li>
                 <li><a href="#readings">Compatibility — $9</a></li>
                 <li><a href="#readings">Year Ahead — $18</a></li>
                 <li><a href="#readings">Gift a Reading</a></li>
