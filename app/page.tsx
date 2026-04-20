@@ -372,8 +372,8 @@ export default function HomePage() {
 
         /* HERO */
         .hero{min-height:100vh;display:flex;align-items:center;padding-top:96px;padding-bottom:80px;overflow:hidden}
-        .hbg{position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% -10%,rgba(107,47,212,.1) 0%,transparent 70%),radial-gradient(ellipse 40% 40% at 85% 60%,rgba(212,83,126,.06) 0%,transparent 60%);pointer-events:none}
-        .horb{position:absolute;top:50%;left:50%;transform:translate(-50%,-55%);width:560px;height:560px;border-radius:50%;border:1px solid rgba(107,47,212,.08);background:radial-gradient(circle,rgba(107,47,212,.04) 0%,transparent 70%);animation:pulse 8s ease-in-out infinite;pointer-events:none}
+        .hbg{position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% -10%,rgba(107,47,212,.1) 0%,transparent 50%),radial-gradient(ellipse 40% 40% at 85% 60%,rgba(212,83,126,.06) 0%,transparent 60%);pointer-events:none}
+        .horb{position:absolute;top:50%;left:50%;transform:translate(-50%,-55%);width:560px;height:560px;border-radius:50%;border:1px solid rgba(107,47,212,.08);background:radial-gradient(circle,rgba(107,47,212,.04) 0%,transparent 50%);animation:pulse 8s ease-in-out infinite;pointer-events:none}
         .hi{position:relative;z-index:1;text-align:center;max-width:860px;margin:0 auto}
         .ey{display:inline-flex;align-items:center;gap:8px;font-size:.73rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:28px;padding:5px 14px;border:1px solid var(--gold-dim);border-radius:100px;background:rgba(240,184,74,.06);animation:fadeUp .6s ease both}
         h1{font-family:var(--font-display);font-size:clamp(2.8rem,7vw,5.2rem);font-weight:900;line-height:1.06;letter-spacing:-.02em;animation:fadeUp .6s .1s ease both}
@@ -403,7 +403,7 @@ export default function HomePage() {
 
         /* WAITLIST SECTION */
         .waitlist-sec{padding:96px 0;position:relative;overflow:hidden;background:#0d0d18;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
-        .wbg{position:absolute;inset:0;background:radial-gradient(ellipse 70% 70% at 50% 50%,rgba(107,47,212,.05) 0%,transparent 70%);pointer-events:none}
+        .wbg{position:absolute;inset:0;background:radial-gradient(ellipse 50% 50% at 50% 50%,rgba(107,47,212,.05) 0%,transparent 50%);pointer-events:none}
         .wi{position:relative;z-index:1;max-width:540px;margin:0 auto;text-align:center}
         .cp{display:inline-flex;align-items:center;gap:6px;font-size:.8rem;color:var(--dim);padding:6px 14px;background:var(--faint);border-radius:100px;margin-bottom:24px}
         .cd{width:6px;height:6px;border-radius:50%;background:var(--teal);animation:blink 2s ease-in-out infinite}
@@ -549,7 +549,7 @@ export default function HomePage() {
             <div className="cp">
               <span className="cd"/> Collecting early access signups
             </div>
-            <h2>Join the waitlist for<br/><em>first access + 70% off.</em></h2>
+            <h2>Join the waitlist for<br/><em>first access + 50% off.</em></h2>
             <p className="sub" style={{margin:"0 auto 32px",textAlign:"center"}}>
               Be first to try BluntChart at launch pricing.
             </p>
@@ -564,12 +564,12 @@ export default function HomePage() {
                   <option value="Purpose">Purpose</option>
                 </select>
                 <button className="bp" type="submit" style={{width:"100%",justifyContent:"center"}}>
-                  {loading ? "Joining..." : "Join Waitlist + 70% Off"}
+                  {loading ? "Joining..." : "Join Waitlist + 50% Off"}
                 </button>
                 <p className="fn" style={{textAlign:"center"}}>No spam. Unsubscribe anytime.</p>
               </form>
             ) : (
-              <div className="fs">✓ You&apos;re in. Watch your inbox for launch access + 70% off code.</div>
+              <div className="fs">✓ You&apos;re in. Watch your inbox for launch access + 50% off code.</div>
             )}
           </div>
         </div>
