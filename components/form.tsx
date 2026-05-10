@@ -32,7 +32,7 @@ export default function Form() {
       console.log(data)
 
       if (data.success) {
-        alert("Saved successfully!")
+        window.location.href ="https://bluntchart.gumroad.com/l/bluntchart-reading"
       } else {
         alert("Something went wrong")
       }

@@ -26,6 +26,7 @@ interface ReadingData {
   planets: PlanetMap;
   sunDates?: string;
   preview: Insight[];
+  paidInsights: Insight[];
   locked: string[];
   shareCard: ShareCard;
 }
@@ -156,26 +157,13 @@ Example B:
 You are hard to love badly.
 There is a difference. And you deserve someone who knows it."
 
-Example C:
-"You forgive people privately.
-You never actually forget.
-Both things can be true. That does not make you cold."
-
-Example D:
-"You need to be seen.
-You hate how much you need it.
-That tension is not a flaw. It is the most human thing about you."
-
-Example E:
-"You give people everything they need to stay.
-Then wonder why leaving feels so easy for them.
-You were never the problem."
-
 The keyword must be 2 to 4 words in ALL CAPS. It should be the identity label they did not know they needed. Something they will use as a caption. Slightly uncomfortable because it is too accurate. Examples of the energy: SOFT BUT SELECTIVE, QUIETLY UNMOVABLE, SELECTIVE HEART, LOVES TOO HONESTLY, EVERYONE'S SAFE PLACE, THE ONE WHO STAYS.
 
 The quote at the bottom is the emotional payoff. Under 20 words. The sentence that makes them feel like someone finally understood them. Warm, specific, never generic. The kind of line they screenshot and keep even if they never share the card.
 
 Return ONLY valid JSON. No markdown. No code blocks. No backticks. Nothing before or after the JSON.
+
+The JSON must have this exact structure:
 
 {
   "planets": {
@@ -203,13 +191,64 @@ Return ONLY valid JSON. No markdown. No code blocks. No backticks. Nothing befor
       "truth": "You present yourself as low maintenance and adaptable but ${name} you are neither of those things and the people closest to you absolutely know it. You have built an entire identity around not needing much because needing things felt unsafe at some point. So now you have a long list of unmet needs and a reputation for being chill that makes it impossible for anyone to actually show up for you.",
       "explain": "In simple words: You are more sensitive than you let on. You have learned to hide it because showing need felt like showing weakness. But the version of you that says you are fine when you are not is costing you actual intimacy. Your Moon in Taurus is not asking you to be needy. It is asking you to be honest about what you actually require.",
       "action": "Tell one person close to you something specific you need this week. Not a hint. Not a suggestion. Say it out loud with actual words."
-    },
+    }
+  ],
+  "paidInsights": [
     {
       "planet": "Saturn in Taurus",
       "colorKey": "saturn",
       "truth": "${name} you work harder than almost everyone around you and you still feel behind. The bar keeps moving the moment you reach it. You hit a goal and instead of sitting in it for even five minutes you immediately spot everything that still needs to be fixed. This is not ambition. This is Saturn sitting directly on your self worth telling you that you have not earned the right to feel good yet. It is lying.",
       "explain": "In simple words: The thing driving you is not passion. It is the fear that you are not enough yet. Saturn in Taurus puts that fear specifically around security and self worth and it makes you work constantly but feel satisfied almost never. The lesson is not to work less. It is to learn that the finish line was never going to give you the feeling you are chasing.",
       "action": "Write down one thing you did in the last year that you are genuinely proud of. Read it without following it with a but or a however."
+    },
+    {
+      "planet": "Venus in Aries (retrograde)",
+      "colorKey": "venus",
+      "truth": "${name} you chase people with the full force of your personality and the moment they finally choose you back something in you goes quiet. The interest cools. You find reasons to pull away. You have done this more than once and told yourself each time it just was not the right person. But the pattern is the same every time. That is not bad luck. That is a pattern.",
+      "explain": "In simple words: Venus retrograde in Aries means your relationship with desire is complicated. You want what you cannot have and when you get it you do not quite know what to do with it. This is not about the other person. It is about learning to stay once the chase is over. The intensity you feel at the start is real. Learning to convert it into something that lasts is the actual work.",
+      "action": "Think about the last person you pulled away from once they got close. Write down the actual reason, not the story you told yourself."
+    },
+    {
+      "planet": "Mars in Sagittarius",
+      "colorKey": "mars",
+      "truth": "You have the energy to start ten projects, the enthusiasm to pitch them all, and the follow through of someone who just remembered they had a flight to catch. ${name} your Mars wants freedom so badly that it treats commitment like a trap. This applies to more than work. It applies to people, to decisions, to anything that requires you to close a door.",
+      "explain": "In simple words: Mars in Sagittarius is a fire that burns in every direction at once. The ambition is real. The vision is genuine. But the moment a thing requires grinding rather than discovering, your energy moves on. The fix is not forcing yourself to be someone you are not. It is learning to structure your life around sprints instead of pretending you are built for marathons.",
+      "action": "Name one commitment you have been half-in on for months. Decide today: go all in or let it go. The middle is the most exhausting place to live."
+    },
+    {
+      "planet": "Rising in Taurus",
+      "colorKey": "rising",
+      "truth": "The first impression you give is calm, grounded, reliable. People meet you and immediately feel like you have your life together. ${name} this is both your greatest asset and a cage you did not entirely choose. People bring you their problems because you seem sturdy. They underestimate your chaos because you seem stable. They stay because you feel safe. Not all of them deserve that access.",
+      "explain": "In simple words: Your Rising sign is the face you wear in the world before you say a word. Taurus rising reads as someone who is solid and unshakeable. That reputation draws people in. It also means your own unrest gets invisible. You have to work twice as hard to let people know when you are not okay because nothing about your exterior signals it.",
+      "action": "The next time something genuinely bothers you, say it out loud before you have time to smooth it over. Let someone see the rough edge."
+    },
+    {
+      "planet": "Jupiter in Gemini",
+      "colorKey": "jupiter",
+      "truth": "${name} your luck lives in your words. In conversations. In the connection between ideas that no one else sees. Every time you have talked your way into or out of something, every time a random conversation opened a door you did not expect, that was Jupiter doing exactly what it was built to do. The problem is you keep looking for your luck in the wrong places.",
+      "explain": "In simple words: Jupiter in Gemini expands through communication, curiosity, and connection. You are luckiest when you are talking, writing, pitching, exploring ideas, and meeting people who think differently. The mistake most people with this placement make is assuming luck looks like a stable plan. For you it looks like following an interesting conversation and seeing where it leads.",
+      "action": "Have one conversation this week purely out of curiosity with no agenda. No networking, no goal. Just see what opens up."
+    },
+    {
+      "planet": "Mercury in Pisces",
+      "colorKey": "mercury",
+      "truth": "You think in feelings before you think in words. ${name} you often know the answer before you can explain how you got there. This makes you intuitive in ways that impress people and infuriating in meetings when you cannot show your work. You have lost arguments you were right about because you could not articulate the knowing fast enough. That is Mercury in Pisces. Brilliant and slippery at the same time.",
+      "explain": "In simple words: Your mind processes through imagery, emotion, and association rather than logic and sequence. You are not a bad communicator. You are a different kind of communicator. The gap between what you feel and what you can express is real and it shows up most under pressure. The fix is giving yourself more time before you have to speak, and learning to trust that the words will catch up.",
+      "action": "Before your next important conversation or message, write out what you want to say first. Not to send, just to let the feeling find its shape."
+    },
+    {
+      "planet": "Your self-sabotage pattern",
+      "colorKey": "saturn",
+      "truth": "${name} your specific pattern is this. You get close to something real, something that could actually work, and then you introduce chaos. You pick a fight that did not need to happen. You disappear for no clear reason. You find a flaw that lets you leave before the leaving happens to you. It is so consistent across different areas of your life that it cannot be coincidence. Your chart calls this a Saturn and Venus wound that reads abandonment as inevitable so you exit first.",
+      "explain": "In simple words: Self-sabotage in your chart is not random self-destruction. It is a protective reflex. Something early taught you that good things do not stay. So before they leave, you create the exit. Knowing the pattern does not make it stop immediately. But it does mean that next time you feel the urge to blow something up that is actually working, you will at least recognize what is happening.",
+      "action": "Think of one thing in the last two years that fell apart and ask honestly: did I create the ending before the ending could find me?"
+    },
+    {
+      "planet": "The 12th house shadow",
+      "colorKey": "rising",
+      "truth": "There is a version of you that almost nobody gets to see. ${name} the 12th house in your chart holds what you hide not because it is shameful but because it feels too undefended to show. The longing you do not talk about. The version of you that wants to be chosen without having to perform. The fear that if people saw the soft centre under all that competence they would use it against you. They probably would not. But the fear is real.",
+      "explain": "In simple words: The 12th house is the hidden room in your chart. It contains what you keep private, what you process alone, and what you cannot quite put into words even to yourself. For you this shows up as a gap between who you present and who you actually are in the quiet. This is not a problem to fix. It is an invitation to let at least one person close enough to see the room.",
+      "action": "Tell one person something true about yourself this week that you have never said out loud. Not a confession. Just a true thing."
     }
   ],
   "locked": [
@@ -220,8 +259,7 @@ Return ONLY valid JSON. No markdown. No code blocks. No backticks. Nothing befor
     "Mercury in Pisces: why your brain works in feelings not logic and how that tanks your communication",
     "Your specific self sabotage pattern: named and explained from your exact chart",
     "The 12th house shadow: the thing you hide from everyone including yourself",
-    "Your work and money truth: what your chart says you are actually here to do",
-    "The pattern your chart has been trying to show you for years that you keep ignoring"
+    "Your work and money truth: what your chart says you are actually here to do"
   ],
   "shareCard": {
     "sign": "Aries",
@@ -233,34 +271,35 @@ Return ONLY valid JSON. No markdown. No code blocks. No backticks. Nothing befor
     ],
     "quote": "You are not too much. You just have not found someone who knows what to do with all of you yet."
   }
-}`;
+}
+
+IMPORTANT: Generate the paidInsights array with EXACTLY 8 full insight objects based on the actual birth chart of ${name}. Each must have planet, colorKey, truth, explain, and action fields. Make the truth field at least 4 sentences, deeply personal, and specific to the actual sign. The paidInsights must cover: Venus placement, Mars placement, Rising sign, Jupiter, Mercury, self-sabotage pattern, 12th house shadow, and one more synthesized insight about their core wound or life pattern.`;
+
+// ─── SIGN SYMBOLS ─────────────────────────────────────────────────────────────
+void SIGN_SYMBOLS;
 
 // ─── BIRTH CHART WHEEL — real positions + colored aspects ─────────────────────
 
-// Maps each zodiac sign to its ecliptic start degree (Aries = 0°)
 const SIGN_BASE_DEG: Record<string, number> = {
   Aries:0, Taurus:30, Gemini:60, Cancer:90, Leo:120, Virgo:150,
   Libra:180, Scorpio:210, Sagittarius:240, Capricorn:270, Aquarius:300, Pisces:330,
 };
 
-// Parse the AI sign string like "Aries", "Taurus (retrograde)", "Aries (retrograde)" → degree
 function signToDeg(signStr: string): number {
   const name = signStr.trim().split(/\s+/)[0];
   const base = SIGN_BASE_DEG[name] ?? 0;
-  // Place planet at 15° into the sign (midpoint) so it sits cleanly in the sector
   return base + 15;
 }
 
-// Aspect detection — returns aspect type and color
 function getAspect(deg1: number, deg2: number): { type: string; color: string } | null {
   let diff = Math.abs(deg1 - deg2) % 360;
   if (diff > 180) diff = 360 - diff;
   const orb = 8;
-  if (diff <= orb)              return { type: "conjunction",  color: "#f0d87a" }; // gold
-  if (Math.abs(diff - 60) <= orb)  return { type: "sextile",     color: "#a8e6cf" }; // mint
-  if (Math.abs(diff - 90) <= orb)  return { type: "square",      color: "#ffb3c1" }; // rose
-  if (Math.abs(diff - 120) <= orb) return { type: "trine",       color: "#c3b1e1" }; // lavender
-  if (Math.abs(diff - 180) <= orb) return { type: "opposition",  color: "#a8d8ea" }; // sky blue
+  if (diff <= orb)              return { type: "conjunction",  color: "#f0d87a" };
+  if (Math.abs(diff - 60) <= orb)  return { type: "sextile",     color: "#a8e6cf" };
+  if (Math.abs(diff - 90) <= orb)  return { type: "square",      color: "#ffb3c1" };
+  if (Math.abs(diff - 120) <= orb) return { type: "trine",       color: "#c3b1e1" };
+  if (Math.abs(diff - 180) <= orb) return { type: "opposition",  color: "#a8d8ea" };
   return null;
 }
 
@@ -288,17 +327,14 @@ function BirthChartWheel({ planets, name }: { planets: PlanetMap; name: string }
     mercury:"☿", saturn:"♄", jupiter:"♃"
   };
 
-  // Get actual ecliptic degree for each planet from its sign string
   const getPlanetDeg = (key: string): number => {
     const signStr = planets[key as keyof PlanetMap] || "";
     return signToDeg(signStr);
   };
 
-  // Position a planet dot in the band between houseR and zodiacInner
   const getPlanetPos = (key: string) => {
     const deg = getPlanetDeg(key);
     const angle = toRad(deg);
-    // Nudge planets radially so overlapping signs don't stack exactly
     const r = (houseR + zodiacInner) / 2;
     return { x: cx + r * Math.cos(angle), y: cy + r * Math.sin(angle), deg };
   };
@@ -317,7 +353,6 @@ function BirthChartWheel({ planets, name }: { planets: PlanetMap; name: string }
         </radialGradient>
       </defs>
 
-      {/* ── 1. Outer degree ring with tick marks ── */}
       <circle cx={cx} cy={cy} r={outerR} fill="none" stroke="rgba(155,111,232,0.55)" strokeWidth="1"/>
       <circle cx={cx} cy={cy} r={outerR - 8} fill="none" stroke="rgba(155,111,232,0.12)" strokeWidth="0.5"/>
       {Array.from({length:72}).map((_,i) => {
@@ -333,7 +368,6 @@ function BirthChartWheel({ planets, name }: { planets: PlanetMap; name: string }
           strokeWidth={isMajor ? "1.2" : "0.5"}/>;
       })}
 
-      {/* ── 2. Zodiac band with colored sign glyphs ── */}
       <circle cx={cx} cy={cy} r={zodiacR} fill="none" stroke="rgba(107,47,212,0.5)" strokeWidth="1"/>
       <circle cx={cx} cy={cy} r={zodiacInner} fill="none" stroke="rgba(107,47,212,0.4)" strokeWidth="0.8"/>
       {Array.from({length:12}).map((_,i) => {
@@ -355,7 +389,6 @@ function BirthChartWheel({ planets, name }: { planets: PlanetMap; name: string }
         );
       })}
 
-      {/* ── 3. House ring ── */}
       <circle cx={cx} cy={cy} r={houseR} fill="none" stroke="rgba(107,47,212,0.28)" strokeWidth="0.7"/>
       {Array.from({length:12}).map((_,i) => {
         const a = toRad(i * 30 + 5);
@@ -377,11 +410,9 @@ function BirthChartWheel({ planets, name }: { planets: PlanetMap; name: string }
         );
       })}
 
-      {/* ── 4. Inner circle (aspect field) ── */}
       <circle cx={cx} cy={cy} r={innerR} fill="url(#innerGrad)" stroke="rgba(107,47,212,0.5)" strokeWidth="0.8"/>
       <circle cx={cx} cy={cy} r={innerR - 4} fill="url(#centerGlow)" stroke="none"/>
 
-      {/* ── 5. Aspect lines — colored by type, drawn inside innerR ── */}
       {activePlanets.map((key, idx) => {
         const deg1 = getPlanetDeg(key);
         const ix1 = cx + (innerR - 2) * Math.cos(toRad(deg1));
@@ -391,7 +422,6 @@ function BirthChartWheel({ planets, name }: { planets: PlanetMap; name: string }
           const ix2 = cx + (innerR - 2) * Math.cos(toRad(deg2));
           const iy2 = cy + (innerR - 2) * Math.sin(toRad(deg2));
           const aspect = getAspect(deg1, deg2);
-          // Draw ALL lines but named aspects get bright colors; others get dim default
           const stroke = aspect ? aspect.color : "rgba(155,111,232,0.12)";
           const opacity = aspect ? 0.55 : 0.2;
           const sw = aspect ? "0.8" : "0.35";
@@ -403,7 +433,6 @@ function BirthChartWheel({ planets, name }: { planets: PlanetMap; name: string }
         });
       })}
 
-      {/* ── 6. Planet connector lines (inner circle rim → planet dot) ── */}
       {activePlanets.map((key) => {
         const pos = getPlanetPos(key);
         const color = DOT_COLORS[key] || "#6B2FD4";
@@ -416,7 +445,6 @@ function BirthChartWheel({ planets, name }: { planets: PlanetMap; name: string }
         );
       })}
 
-      {/* ── 7. Planet dots + symbols — positioned at real sign degree ── */}
       {activePlanets.map((key) => {
         const pos = getPlanetPos(key);
         const color = DOT_COLORS[key] || "#6B2FD4";
@@ -426,18 +454,14 @@ function BirthChartWheel({ planets, name }: { planets: PlanetMap; name: string }
         const isRetro = signRaw.toLowerCase().includes("retro");
         return (
           <g key={`pl-${key}`}>
-            {/* Soft glow halo */}
             <circle cx={pos.x} cy={pos.y} r={10} fill={color} opacity="0.1"/>
             <circle cx={pos.x} cy={pos.y} r={6}  fill={color} opacity="0.15"/>
-            {/* Planet dot */}
             <circle cx={pos.x} cy={pos.y} r={4.5} fill={color} opacity="0.95"/>
-            {/* Planet symbol above dot */}
             <text x={pos.x} y={pos.y - 8} textAnchor="middle"
               fill={color} fontSize={isAC ? "5.5" : "8"} fontWeight="700"
               fontFamily="serif" opacity="1">
               {sym}
             </text>
-            {/* Retrograde marker */}
             {isRetro && (
               <text x={pos.x + 6} y={pos.y - 6} textAnchor="middle"
                 fill={color} fontSize="5.5" fontFamily="sans-serif" opacity="0.8">
@@ -448,7 +472,6 @@ function BirthChartWheel({ planets, name }: { planets: PlanetMap; name: string }
         );
       })}
 
-      {/* ── 8. Center label ── */}
       <text x={cx} y={cy - 7} textAnchor="middle"
         fill="rgba(232,228,240,0.18)" fontSize="6" fontWeight="700"
         letterSpacing="1.8" fontFamily="sans-serif">
@@ -457,7 +480,6 @@ function BirthChartWheel({ planets, name }: { planets: PlanetMap; name: string }
       <text x={cx} y={cy + 7} textAnchor="middle"
         fill="rgba(155,111,232,0.7)" fontSize="12" fontFamily="serif">✦</text>
 
-      {/* ── 9. Aspect legend (bottom strip) ── */}
       {[
         { label:"△", color:"#c3b1e1", x: cx - 42 },
         { label:"□", color:"#ffb3c1", x: cx - 14 },
@@ -473,40 +495,119 @@ function BirthChartWheel({ planets, name }: { planets: PlanetMap; name: string }
   );
 }
 
+// ─── INSIGHT CARD ─────────────────────────────────────────────────────────────
+
+function InsightCard({ ins, badge, badgeColor }: {
+  ins: Insight;
+  badge: string;
+  badgeColor: string;
+}) {
+  const col = DOT_COLORS[ins.colorKey] || "#6B2FD4";
+  const parts = ins.explain.split("In simple words:");
+  return (
+    <div style={{
+      background: "rgba(255,255,255,0.02)",
+      border: "0.5px solid rgba(255,255,255,0.06)",
+      borderRadius: 20,
+      overflow: "hidden",
+      marginBottom: 28,
+    }}>
+      <div style={{
+        padding: "16px 28px 14px",
+        borderBottom: "0.5px solid rgba(255,255,255,0.04)",
+        display: "flex",
+        alignItems: "center",
+        gap: 10,
+      }}>
+        <div style={{
+          width: 9, height: 9, borderRadius: "50%",
+          background: col, flexShrink: 0,
+          boxShadow: `0 0 10px ${col}70`,
+        }}/>
+        <div style={{
+          fontSize: 11, fontWeight: 700, letterSpacing: "1.2px",
+          textTransform: "uppercase" as const,
+          color: "rgba(232,228,240,0.4)", flex: 1,
+        }}>
+          {ins.planet}
+        </div>
+        <div style={{
+          fontSize: 10,
+          background: badgeColor === "gold"
+            ? "rgba(240,184,74,0.1)"
+            : "rgba(29,158,117,0.1)",
+          color: badgeColor === "gold" ? "#f0b84a" : "#5dcaa5",
+          padding: "3px 12px",
+          borderRadius: 20,
+          fontWeight: 600,
+          letterSpacing: "0.5px",
+        }}>
+          {badge}
+        </div>
+      </div>
+      <div style={{ padding: "28px 28px 24px" }}>
+        <p style={{
+          fontSize: 17, lineHeight: 1.85, color: "#e8e4f0", marginBottom: 20,
+          fontFamily: "var(--font-display)", fontStyle: "italic", fontWeight: 400,
+          letterSpacing: "0.01em",
+        }}>
+          {ins.truth}
+        </p>
+        <div style={{
+          background: "rgba(107,47,212,0.05)",
+          borderLeft: "2px solid rgba(107,47,212,0.35)",
+          borderRadius: "0 12px 12px 0",
+          padding: "16px 20px",
+          fontSize: 14,
+          color: "rgba(184,176,212,0.85)",
+          lineHeight: 1.85,
+          marginBottom: ins.action ? 14 : 0,
+        }}>
+          {parts.length > 1
+            ? <><span style={{ color: "#c4a8ff", fontWeight: 600 }}>In simple words: </span>
+                <span>{parts[1].trim()}</span></>
+            : ins.explain}
+        </div>
+        {ins.action && (
+          <div style={{
+            background: "rgba(240,184,74,0.04)",
+            borderLeft: "2px solid rgba(240,184,74,0.3)",
+            borderRadius: "0 12px 12px 0",
+            padding: "14px 20px",
+            fontSize: 14,
+            color: "rgba(212,168,58,0.9)",
+            lineHeight: 1.8,
+          }}>
+            <strong style={{ color: "#f0b84a" }}>This week: </strong>{ins.action}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 // ─── VIRAL SHARE CARD (9:16) ───────────────────────────────────────────────────
 
-function ViralShareCard({
-  fname, shareCard,
-}: {
-  fname: string;
-  shareCard: ShareCard;
-}) {
+function ViralShareCard({ fname, shareCard }: { fname: string; shareCard: ShareCard }) {
   return (
-    <div
-      style={{
-        width: 360,
-        minHeight: 640,
-        margin: "0 auto",
-        background: "linear-gradient(170deg,#07070d 0%,#0b0820 40%,#0e0628 70%,#07070d 100%)",
-        borderRadius: 20,
-        overflow: "hidden",
-        fontFamily: "'DM Sans', system-ui, sans-serif",
-        position: "relative",
-        boxShadow: "0 0 0 1px rgba(107,47,212,0.3), 0 32px 80px rgba(0,0,0,0.8)",
-        display: "flex",
-        flexDirection: "column",
-      }}>
-
-      {/* Top brand bar */}
+    <div style={{
+      width: 360,
+      minHeight: 640,
+      margin: "0 auto",
+      background: "linear-gradient(170deg,#07070d 0%,#0b0820 40%,#0e0628 70%,#07070d 100%)",
+      borderRadius: 20,
+      overflow: "hidden",
+      fontFamily: "'DM Sans', system-ui, sans-serif",
+      position: "relative",
+      boxShadow: "0 0 0 1px rgba(107,47,212,0.3), 0 32px 80px rgba(0,0,0,0.8)",
+      display: "flex",
+      flexDirection: "column",
+    }}>
       <div style={{ height: 3, background: "linear-gradient(90deg,#6b2fd4,#d4537e,#f0b84a)", flexShrink: 0 }}/>
-
-      {/* Ambient glows */}
       <div style={{ position:"absolute", top:"-10%", left:"-20%", width:"80%", height:"50%",
         background:"radial-gradient(ellipse,rgba(107,47,212,0.1) 0%,transparent 70%)", pointerEvents:"none" }}/>
       <div style={{ position:"absolute", bottom:"10%", right:"-15%", width:"60%", height:"40%",
         background:"radial-gradient(ellipse,rgba(212,83,126,0.07) 0%,transparent 70%)", pointerEvents:"none" }}/>
-
-      {/* Stars */}
       <div style={{ position:"absolute", inset:0, pointerEvents:"none" }}>
         {[
           {t:"8%",l:"10%",s:1.5,o:0.25},{t:"15%",l:"85%",s:1,o:0.2},{t:"25%",l:"7%",s:1,o:0.15},
@@ -517,8 +618,6 @@ function ViralShareCard({
             width:d.s, height:d.s, borderRadius:"50%", background:"#fff", opacity:d.o }}/>
         ))}
       </div>
-
-      {/* Logo */}
       <div style={{ padding:"18px 24px 0", display:"flex", alignItems:"center", gap:6, position:"relative", zIndex:1 }}>
         <span style={{ fontSize:14, lineHeight:1, color:"rgba(240,184,74,0.7)" }}>✦</span>
         <span style={{ fontFamily:"Georgia,serif", fontSize:11, fontWeight:700, letterSpacing:"0.08em",
@@ -530,18 +629,11 @@ function ViralShareCard({
           · your chart read you first.
         </span>
       </div>
-
-      {/* Name hero */}
       <div style={{ padding:"32px 28px 20px", textAlign:"center", position:"relative", zIndex:1 }}>
         <div style={{
-          fontFamily:"Georgia,serif",
-          fontSize:52,
-          fontWeight:700,
-          letterSpacing:"6px",
-          textTransform:"uppercase",
-          color:"#f0ece8",
-          lineHeight:1,
-          marginBottom:10,
+          fontFamily:"Georgia,serif", fontSize:52, fontWeight:700,
+          letterSpacing:"6px", textTransform:"uppercase" as const,
+          color:"#f0ece8", lineHeight:1, marginBottom:10,
           textShadow:"0 0 60px rgba(240,184,74,0.12)",
         }}>
           {fname.toUpperCase()}
@@ -550,82 +642,41 @@ function ViralShareCard({
           background:"linear-gradient(90deg,transparent,rgba(240,184,74,0.5),transparent)",
           margin:"0 auto" }}/>
       </div>
-
-      {/* Punchy 3-line card — hierarchy: flex / sting / witness */}
       <div style={{ flex:1, padding:"0 36px 24px", position:"relative", zIndex:1,
         display:"flex", flexDirection:"column", justifyContent:"center", gap:0 }}>
-
         {shareCard.lines.slice(0, 3).map((line, i) => {
-          // Line 0: The Flex — large, white, bold, owns it
-          // Line 1: The Sting — gold/rose gradient, slightly smaller, the truth
-          // Line 2: The Witness — italic, dimmer, warm landing
           const styles: React.CSSProperties[] = [
-            {
-              fontFamily:"Georgia, serif",
-              fontSize: 22,
-              fontWeight: 700,
-              lineHeight: 1.4,
-              color: "#f0ece8",
-              marginBottom: 18,
-              letterSpacing: "0.01em",
-            },
-            {
-              fontFamily:"'DM Sans', system-ui, sans-serif",
-              fontSize: 19,
-              fontWeight: 500,
-              lineHeight: 1.5,
-              background: "linear-gradient(135deg,#f0b84a,#d4537e)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-              backgroundClip: "text",
-              marginBottom: 22,
-              letterSpacing: "0.01em",
-            },
-            {
-              fontFamily:"Georgia, serif",
-              fontSize: 16,
-              fontWeight: 400,
-              fontStyle: "italic",
-              lineHeight: 1.65,
-              color: "rgba(220,214,235,0.65)",
-              marginBottom: 0,
-              letterSpacing: "0.01em",
-            },
+            { fontFamily:"Georgia, serif", fontSize:22, fontWeight:700, lineHeight:1.4,
+              color:"#f0ece8", marginBottom:18, letterSpacing:"0.01em" },
+            { fontFamily:"'DM Sans', system-ui, sans-serif", fontSize:19, fontWeight:500, lineHeight:1.5,
+              background:"linear-gradient(135deg,#f0b84a,#d4537e)",
+              WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", backgroundClip:"text",
+              marginBottom:22, letterSpacing:"0.01em" },
+            { fontFamily:"Georgia, serif", fontSize:16, fontWeight:400, fontStyle:"italic" as const,
+              lineHeight:1.65, color:"rgba(220,214,235,0.65)", marginBottom:0, letterSpacing:"0.01em" },
           ];
-          return (
-            <p key={i} style={styles[i] || styles[2]}>
-              {line}
-            </p>
-          );
+          return <p key={i} style={styles[i] || styles[2]}>{line}</p>;
         })}
       </div>
-
-      {/* Identity badge */}
       <div style={{ padding:"0 28px 20px", position:"relative", zIndex:1, display:"flex", justifyContent:"center" }}>
         <div style={{
           display:"inline-block", padding:"8px 20px", borderRadius:100,
           border:"1px solid rgba(107,47,212,0.5)", background:"rgba(107,47,212,0.12)",
-          fontSize:11, fontWeight:700, letterSpacing:"2.5px", textTransform:"uppercase",
+          fontSize:11, fontWeight:700, letterSpacing:"2.5px", textTransform:"uppercase" as const,
           color:"rgba(155,111,232,0.9)",
         }}>
           {shareCard.keyword}
         </div>
       </div>
-
-      {/* Divider */}
       <div style={{ margin:"0 28px", height:"0.5px",
         background:"linear-gradient(90deg,transparent,rgba(107,47,212,0.3),transparent)",
         position:"relative", zIndex:1 }}/>
-
-      {/* Quote */}
       <div style={{ padding:"18px 32px 14px", textAlign:"center", position:"relative", zIndex:1 }}>
         <div style={{ fontFamily:"Georgia,serif", fontSize:13, fontStyle:"italic",
           color:"rgba(232,228,240,0.45)", lineHeight:1.75 }}>
           &ldquo;{shareCard.quote}&rdquo;
         </div>
       </div>
-
-      {/* Footer */}
       <div style={{ padding:"10px 24px 14px", display:"flex", alignItems:"center",
         justifyContent:"space-between", position:"relative", zIndex:1 }}>
         <div style={{ fontSize:9, color:"rgba(232,228,240,0.2)", letterSpacing:"0.5px" }}>
@@ -635,7 +686,6 @@ function ViralShareCard({
           bluntchart.com
         </div>
       </div>
-
       <div style={{ height:3, background:"linear-gradient(90deg,#f0b84a,#d4537e,#6b2fd4)", flexShrink:0 }}/>
     </div>
   );
@@ -651,6 +701,21 @@ const lbl: React.CSSProperties = {
   display:"block", fontSize:11, fontWeight:600, color:"#6b6585",
   letterSpacing:"1.2px", textTransform:"uppercase", marginBottom:6,
 };
+
+// ─── SECTION DIVIDER ──────────────────────────────────────────────────────────
+
+function SectionDivider({ label }: { label: string }) {
+  return (
+    <div style={{ display:"flex", alignItems:"center", gap:16, marginBottom:32 }}>
+      <span style={{ flex:1, height:"0.5px", background:"rgba(255,255,255,0.06)", display:"block" }}/>
+      <span style={{ fontSize:10, fontWeight:700, letterSpacing:"2.5px",
+        textTransform:"uppercase" as const, color:"#3a3858", whiteSpace:"nowrap" }}>
+        {label}
+      </span>
+      <span style={{ flex:1, height:"0.5px", background:"rgba(255,255,255,0.06)", display:"block" }}/>
+    </div>
+  );
+}
 
 // ─── READING APP ───────────────────────────────────────────────────────────────
 
@@ -712,9 +777,8 @@ function ReadingApp({ onResultChange }: { onResultChange?: (v: boolean) => void 
       if (!parsed.shareCard.lines) {
         parsed.shareCard.lines = [parsed.shareCard.quote || "Some things are hard to say out loud."];
       }
-      if (!parsed.shareCard.keyword) {
-        parsed.shareCard.keyword = "CHART READING";
-      }
+      if (!parsed.shareCard.keyword) parsed.shareCard.keyword = "CHART READING";
+      if (!parsed.paidInsights) parsed.paidInsights = [];
       setData(parsed);
       setScreen("result");
       onResultChange?.(true);
@@ -730,78 +794,62 @@ function ReadingApp({ onResultChange }: { onResultChange?: (v: boolean) => void 
     onResultChange?.(false);
   };
 
-  // ── Pure Canvas 2D card renderer — 1080x1920 (9:16 Stories format) ──
+  const handleUnlock = () => {
+    setUnlocked(true);
+    setTimeout(() => {
+      document.getElementById("paid-reading-sec")?.scrollIntoView({ behavior: "smooth" });
+    }, 120);
+  };
+
+  // ── Canvas card renderer ──────────────────────────────────────────────────
   const drawCardToCanvas = (targetFname: string, card: ShareCard): HTMLCanvasElement => {
     const W = 1080, H = 1920;
     const cvs = document.createElement("canvas");
     cvs.width = W; cvs.height = H;
     const ctx = cvs.getContext("2d")!;
 
-    // Helper: word-wrap text into lines that fit maxWidth
     const wrapText = (text: string, maxWidth: number): string[] => {
       const words = text.split(" ");
       const lines: string[] = [];
       let line = "";
       for (const word of words) {
         const test = line ? `${line} ${word}` : word;
-        if (ctx.measureText(test).width > maxWidth && line) {
-          lines.push(line);
-          line = word;
-        } else {
-          line = test;
-        }
+        if (ctx.measureText(test).width > maxWidth && line) { lines.push(line); line = word; }
+        else line = test;
       }
       if (line) lines.push(line);
       return lines;
     };
 
-    const PAD = 88; // side padding
+    const PAD = 88;
     const CONTENT_W = W - PAD * 2;
 
-    // ── Background ──
     const bg = ctx.createLinearGradient(0, 0, 0, H);
-    bg.addColorStop(0,   "#08070f");
-    bg.addColorStop(0.35,"#0c0a1e");
-    bg.addColorStop(0.7, "#0e0628");
-    bg.addColorStop(1,   "#08070f");
-    ctx.fillStyle = bg;
-    ctx.fillRect(0, 0, W, H);
+    bg.addColorStop(0, "#08070f"); bg.addColorStop(0.35,"#0c0a1e");
+    bg.addColorStop(0.7,"#0e0628"); bg.addColorStop(1,"#08070f");
+    ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
 
-    // ── Ambient purple glow top-left ──
     const glow1 = ctx.createRadialGradient(180, 320, 0, 180, 320, 680);
-    glow1.addColorStop(0, "rgba(107,47,212,0.14)");
-    glow1.addColorStop(1, "rgba(107,47,212,0)");
-    ctx.fillStyle = glow1;
-    ctx.fillRect(0, 0, W, H);
+    glow1.addColorStop(0,"rgba(107,47,212,0.14)"); glow1.addColorStop(1,"rgba(107,47,212,0)");
+    ctx.fillStyle = glow1; ctx.fillRect(0, 0, W, H);
 
-    // ── Ambient rose glow bottom-right ──
-    const glow2 = ctx.createRadialGradient(W - 160, H - 400, 0, W - 160, H - 400, 600);
-    glow2.addColorStop(0, "rgba(212,83,126,0.08)");
-    glow2.addColorStop(1, "rgba(212,83,126,0)");
-    ctx.fillStyle = glow2;
-    ctx.fillRect(0, 0, W, H);
+    const glow2 = ctx.createRadialGradient(W-160, H-400, 0, W-160, H-400, 600);
+    glow2.addColorStop(0,"rgba(212,83,126,0.08)"); glow2.addColorStop(1,"rgba(212,83,126,0)");
+    ctx.fillStyle = glow2; ctx.fillRect(0, 0, W, H);
 
-    // ── Scattered stars ──
     const starPositions = [
       [90,160,2.2],[950,240,1.6],[72,510,1.4],[1002,800,1.8],[68,1100,1.4],
       [870,1240,1.6],[220,1380,2.0],[760,1560,1.4],[440,1750,1.6],[580,80,1.2],
     ];
     for (const [sx, sy, sr] of starPositions) {
-      ctx.beginPath();
-      ctx.arc(sx, sy, sr, 0, Math.PI * 2);
-      ctx.fillStyle = "rgba(255,255,255,0.25)";
-      ctx.fill();
+      ctx.beginPath(); ctx.arc(sx, sy, sr, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(255,255,255,0.25)"; ctx.fill();
     }
 
-    // ── Top gradient bar ──
     const topBar = ctx.createLinearGradient(0, 0, W, 0);
-    topBar.addColorStop(0,   "#6b2fd4");
-    topBar.addColorStop(0.5, "#d4537e");
-    topBar.addColorStop(1,   "#f0b84a");
-    ctx.fillStyle = topBar;
-    ctx.fillRect(0, 0, W, 10);
+    topBar.addColorStop(0,"#6b2fd4"); topBar.addColorStop(0.5,"#d4537e"); topBar.addColorStop(1,"#f0b84a");
+    ctx.fillStyle = topBar; ctx.fillRect(0, 0, W, 10);
 
-    // ── Logo line ──
     ctx.textAlign = "left";
     ctx.font = "600 34px Georgia, serif";
     ctx.fillStyle = "rgba(240,184,74,0.8)";
@@ -810,174 +858,108 @@ function ReadingApp({ onResultChange }: { onResultChange?: (v: boolean) => void 
     ctx.fillStyle = "rgba(232,228,240,0.2)";
     ctx.fillText("your chart read you first.", PAD + 310, 170);
 
-    // ── Thin rule ──
-    const ruleGrad = ctx.createLinearGradient(PAD, 0, W - PAD, 0);
-    ruleGrad.addColorStop(0, "rgba(107,47,212,0)");
-    ruleGrad.addColorStop(0.4, "rgba(107,47,212,0.4)");
-    ruleGrad.addColorStop(1, "rgba(107,47,212,0)");
-    ctx.strokeStyle = ruleGrad;
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.moveTo(PAD, 200); ctx.lineTo(W - PAD, 200);
-    ctx.stroke();
+    const ruleGrad = ctx.createLinearGradient(PAD, 0, W-PAD, 0);
+    ruleGrad.addColorStop(0,"rgba(107,47,212,0)"); ruleGrad.addColorStop(0.4,"rgba(107,47,212,0.4)");
+    ruleGrad.addColorStop(1,"rgba(107,47,212,0)");
+    ctx.strokeStyle = ruleGrad; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(PAD, 200); ctx.lineTo(W-PAD, 200); ctx.stroke();
 
-    // ── Name ──
-    // Scale font size to fit the name in one line
     let nameFontSize = 152;
     ctx.font = `700 ${nameFontSize}px Georgia, serif`;
     while (ctx.measureText(targetFname.toUpperCase()).width > CONTENT_W && nameFontSize > 72) {
       nameFontSize -= 4;
       ctx.font = `700 ${nameFontSize}px Georgia, serif`;
     }
-    ctx.fillStyle = "#f0ece8";
-    ctx.textAlign = "center";
-    ctx.fillText(targetFname.toUpperCase(), W / 2, 500);
+    ctx.fillStyle = "#f0ece8"; ctx.textAlign = "center";
+    ctx.fillText(targetFname.toUpperCase(), W/2, 500);
 
-    // ── Name gold underline ──
     const nameW = ctx.measureText(targetFname.toUpperCase()).width;
     const ulX1 = W/2 - Math.min(nameW/2, 180);
     const ulX2 = W/2 + Math.min(nameW/2, 180);
     const ulGrad = ctx.createLinearGradient(ulX1, 0, ulX2, 0);
-    ulGrad.addColorStop(0, "rgba(240,184,74,0)");
-    ulGrad.addColorStop(0.5, "rgba(240,184,74,0.65)");
-    ulGrad.addColorStop(1, "rgba(240,184,74,0)");
-    ctx.strokeStyle = ulGrad;
-    ctx.lineWidth = 2.5;
-    ctx.beginPath();
-    ctx.moveTo(ulX1, 526); ctx.lineTo(ulX2, 526);
-    ctx.stroke();
+    ulGrad.addColorStop(0,"rgba(240,184,74,0)"); ulGrad.addColorStop(0.5,"rgba(240,184,74,0.65)");
+    ulGrad.addColorStop(1,"rgba(240,184,74,0)");
+    ctx.strokeStyle = ulGrad; ctx.lineWidth = 2.5;
+    ctx.beginPath(); ctx.moveTo(ulX1, 526); ctx.lineTo(ulX2, 526); ctx.stroke();
 
-    // ── 3 punchy lines with hierarchy ──
-    // Line 0: The Flex — large, white, serif, bold
-    // Line 1: The Sting — gold/rose gradient, medium
-    // Line 2: The Witness — italic, dimmer, warm
     const lineStyles = [
-      { font: "700 62px Georgia, serif",        color: "flex",   leadAfter: 30 },
-      { font: "500 54px sans-serif",             color: "sting",  leadAfter: 36 },
-      { font: "italic 400 44px Georgia, serif",  color: "warm",   leadAfter: 0  },
+      { font:"700 62px Georgia, serif", color:"flex", leadAfter:30 },
+      { font:"500 54px sans-serif", color:"sting", leadAfter:36 },
+      { font:"italic 400 44px Georgia, serif", color:"warm", leadAfter:0 },
     ];
-
     let lineY = 650;
     const lines3 = card.lines.slice(0, 3);
-
     for (let i = 0; i < lines3.length; i++) {
       const line = lines3[i];
       const style = lineStyles[i] || lineStyles[2];
       ctx.font = style.font;
-
-      // Auto-scale if too wide
-      let currentFont = style.font;
-      const parts = currentFont.match(/^(.*?)(\d+)(px.*)$/);
+      const parts = style.font.match(/^(.*?)(\d+)(px.*)$/);
       if (parts) {
         let sz = parseInt(parts[2]);
         while (ctx.measureText(line).width > CONTENT_W && sz > 32) {
           sz -= 2;
-          currentFont = `${parts[1]}${sz}${parts[3]}`;
-          ctx.font = currentFont;
+          ctx.font = `${parts[1]}${sz}${parts[3]}`;
         }
       }
-
-      // Word wrap
       const wrapped = wrapText(line, CONTENT_W);
-
       for (const wl of wrapped) {
         ctx.textAlign = "left";
-
         if (style.color === "flex") {
           ctx.fillStyle = "#f0ece8";
         } else if (style.color === "sting") {
           const tw = ctx.measureText(wl).width;
-          const g = ctx.createLinearGradient(PAD, 0, PAD + tw, 0);
-          g.addColorStop(0, "#f0b84a");
-          g.addColorStop(1, "#d4537e");
+          const g = ctx.createLinearGradient(PAD, 0, PAD+tw, 0);
+          g.addColorStop(0,"#f0b84a"); g.addColorStop(1,"#d4537e");
           ctx.fillStyle = g;
         } else {
           ctx.fillStyle = "rgba(210,205,228,0.6)";
         }
-
         ctx.fillText(wl, PAD, lineY);
         lineY += parseInt((ctx.font.match(/(\d+)px/) || ["","60"])[1]) * 1.45;
       }
       lineY += style.leadAfter;
     }
-
     lineY += 28;
 
-    // ── Identity badge pill ──
     const badgeText = card.keyword;
-    ctx.font = "700 30px sans-serif";
-    ctx.textAlign = "center";
+    ctx.font = "700 30px sans-serif"; ctx.textAlign = "center";
     const bTextW = ctx.measureText(badgeText).width;
     const bPadH = 36, bPadW = 56;
-    const bW = bTextW + bPadW * 2;
-    const bH = 70;
-    const bX = W / 2 - bW / 2;
-    const bY = lineY;
-    const bR = 35;
-
-    // Pill shape
+    const bW = bTextW + bPadW*2; const bH = 70;
+    const bX = W/2 - bW/2; const bY = lineY; const bR = 35;
     ctx.beginPath();
-    ctx.moveTo(bX + bR, bY);
-    ctx.lineTo(bX + bW - bR, bY);
-    ctx.arcTo(bX + bW, bY, bX + bW, bY + bR, bR);
-    ctx.lineTo(bX + bW, bY + bH - bR);
-    ctx.arcTo(bX + bW, bY + bH, bX + bW - bR, bY + bH, bR);
-    ctx.lineTo(bX + bR, bY + bH);
-    ctx.arcTo(bX, bY + bH, bX, bY + bH - bR, bR);
-    ctx.lineTo(bX, bY + bR);
-    ctx.arcTo(bX, bY, bX + bR, bY, bR);
-    ctx.closePath();
-    ctx.fillStyle = "rgba(107,47,212,0.18)";
-    ctx.fill();
-    ctx.strokeStyle = "rgba(155,111,232,0.55)";
-    ctx.lineWidth = 1.5;
-    ctx.stroke();
+    ctx.moveTo(bX+bR, bY); ctx.lineTo(bX+bW-bR, bY);
+    ctx.arcTo(bX+bW, bY, bX+bW, bY+bR, bR); ctx.lineTo(bX+bW, bY+bH-bR);
+    ctx.arcTo(bX+bW, bY+bH, bX+bW-bR, bY+bH, bR); ctx.lineTo(bX+bR, bY+bH);
+    ctx.arcTo(bX, bY+bH, bX, bY+bH-bR, bR); ctx.lineTo(bX, bY+bR);
+    ctx.arcTo(bX, bY, bX+bR, bY, bR); ctx.closePath();
+    ctx.fillStyle = "rgba(107,47,212,0.18)"; ctx.fill();
+    ctx.strokeStyle = "rgba(155,111,232,0.55)"; ctx.lineWidth = 1.5; ctx.stroke();
+    ctx.fillStyle = "rgba(185,155,240,0.95)"; ctx.font = "700 30px sans-serif";
+    ctx.textAlign = "center"; ctx.fillText(badgeText, W/2, bY+bPadH+10);
 
-    ctx.fillStyle = "rgba(185,155,240,0.95)";
-    ctx.font = "700 30px sans-serif";
-    ctx.textAlign = "center";
-    ctx.fillText(badgeText, W / 2, bY + bPadH + 10);
-
-    // ── Divider ──
     const divY = bY + bH + 56;
-    const divGrad = ctx.createLinearGradient(PAD, 0, W - PAD, 0);
-    divGrad.addColorStop(0, "rgba(107,47,212,0)");
-    divGrad.addColorStop(0.5, "rgba(155,111,232,0.4)");
-    divGrad.addColorStop(1, "rgba(107,47,212,0)");
-    ctx.strokeStyle = divGrad;
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.moveTo(PAD, divY); ctx.lineTo(W - PAD, divY);
-    ctx.stroke();
+    const divGrad = ctx.createLinearGradient(PAD, 0, W-PAD, 0);
+    divGrad.addColorStop(0,"rgba(107,47,212,0)"); divGrad.addColorStop(0.5,"rgba(155,111,232,0.4)");
+    divGrad.addColorStop(1,"rgba(107,47,212,0)");
+    ctx.strokeStyle = divGrad; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(PAD, divY); ctx.lineTo(W-PAD, divY); ctx.stroke();
 
-    // ── Quote with word-wrap ──
     ctx.font = "italic 400 40px Georgia, serif";
-    ctx.fillStyle = "rgba(220,216,235,0.45)";
-    ctx.textAlign = "center";
-    const quoteWrapped = wrapText(`"${card.quote}"`, CONTENT_W - 40);
+    ctx.fillStyle = "rgba(220,216,235,0.45)"; ctx.textAlign = "center";
+    const quoteWrapped = wrapText(`"${card.quote}"`, CONTENT_W-40);
     let qY = divY + 72;
-    const Q_LEAD = 60;
-    for (const ql of quoteWrapped) {
-      ctx.fillText(ql, W / 2, qY);
-      qY += Q_LEAD;
-    }
+    for (const ql of quoteWrapped) { ctx.fillText(ql, W/2, qY); qY += 60; }
 
-    // ── Footer ──
     const footerY = H - 52;
     ctx.font = "400 26px sans-serif";
     ctx.fillStyle = "rgba(232,228,240,0.18)";
-    ctx.textAlign = "left";
-    ctx.fillText("your chart picked you specifically.", PAD, footerY);
-    ctx.textAlign = "right";
-    ctx.fillText("bluntchart.com", W - PAD, footerY);
+    ctx.textAlign = "left"; ctx.fillText("your chart picked you specifically.", PAD, footerY);
+    ctx.textAlign = "right"; ctx.fillText("bluntchart.com", W-PAD, footerY);
 
-    // ── Bottom gradient bar ──
     const botBar = ctx.createLinearGradient(0, 0, W, 0);
-    botBar.addColorStop(0,   "#f0b84a");
-    botBar.addColorStop(0.5, "#d4537e");
-    botBar.addColorStop(1,   "#6b2fd4");
-    ctx.fillStyle = botBar;
-    ctx.fillRect(0, H - 10, W, 10);
+    botBar.addColorStop(0,"#f0b84a"); botBar.addColorStop(0.5,"#d4537e"); botBar.addColorStop(1,"#6b2fd4");
+    ctx.fillStyle = botBar; ctx.fillRect(0, H-10, W, 10);
 
     return cvs;
   };
@@ -993,18 +975,13 @@ function ReadingApp({ onResultChange }: { onResultChange?: (v: boolean) => void 
         const a = document.createElement("a");
         a.href = url;
         a.download = `bluntchart-${fname.toLowerCase().replace(/\s+/g,"-")}.png`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-        setDlLbl("✓ Downloaded!");
-        setDownloading(false);
+        document.body.appendChild(a); a.click();
+        document.body.removeChild(a); URL.revokeObjectURL(url);
+        setDlLbl("✓ Downloaded!"); setDownloading(false);
         setTimeout(() => setDlLbl("⬇ Download card"), 3000);
       }, "image/png");
     } catch(e) {
-      console.error(e);
-      setDlLbl("Failed, try again");
-      setDownloading(false);
+      console.error(e); setDlLbl("Failed, try again"); setDownloading(false);
       setTimeout(() => setDlLbl("⬇ Download card"), 3000);
     }
   };
@@ -1016,12 +993,10 @@ function ReadingApp({ onResultChange }: { onResultChange?: (v: boolean) => void 
       const canvas = drawCardToCanvas(fname, data.shareCard);
       canvas.toBlob(async (blob) => {
         if (!blob) { setShareLbl("Failed, try Download"); return; }
-
         const file = new File([blob],
           `bluntchart-${fname.toLowerCase().replace(/\s+/g,"-")}.png`,
           { type: "image/png" }
         );
-
         if (navigator.share && navigator.canShare?.({ files: [file] })) {
           try {
             await navigator.share({
@@ -1030,26 +1005,20 @@ function ReadingApp({ onResultChange }: { onResultChange?: (v: boolean) => void 
               url: "https://bluntchart.com",
             });
             setShareLbl("✓ Shared!");
-          } catch {
-            setShareLbl("Cancelled");
-          }
+          } catch { setShareLbl("Cancelled"); }
         } else {
-          // Desktop: just download it
           const url = URL.createObjectURL(blob);
           const a = document.createElement("a");
           a.href = url;
           a.download = `bluntchart-${fname.toLowerCase().replace(/\s+/g,"-")}.png`;
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-          URL.revokeObjectURL(url);
+          document.body.appendChild(a); a.click();
+          document.body.removeChild(a); URL.revokeObjectURL(url);
           setShareLbl("✓ Saved. Ready to share!");
         }
         setTimeout(() => setShareLbl("Share My Card"), 3000);
       }, "image/png");
     } catch(e) {
-      console.error(e);
-      setShareLbl("Failed. Try Download");
+      console.error(e); setShareLbl("Failed. Try Download");
       setTimeout(() => setShareLbl("Share My Card"), 3000);
     }
   };
@@ -1128,9 +1097,7 @@ function ReadingApp({ onResultChange }: { onResultChange?: (v: boolean) => void 
 
   // ── RESULT ────────────────────────────────────────────────────────────────────
   if (screen === "result" && data) {
-    const { planets, sunDates, preview, locked, shareCard } = data;
-    const sunSign = shareCard.sign || (planets.sun || "").split(" ")[0] || "Unknown";
-    void sunSign; void sunDates;
+    const { planets, preview, locked, paidInsights, shareCard } = data;
 
     return (
       <div style={{ maxWidth: 800, margin: "0 auto" }}>
@@ -1146,7 +1113,7 @@ function ReadingApp({ onResultChange }: { onResultChange?: (v: boolean) => void 
             <div style={{ width:6, height:6, borderRadius:"50%",
               background:"linear-gradient(135deg,#9b6fe8,#d4537e)", flexShrink:0 }}/>
             <div style={{ fontSize:11, fontWeight:700, letterSpacing:"2px",
-              textTransform:"uppercase", color:"rgba(155,111,232,0.7)" }}>
+              textTransform:"uppercase" as const, color:"rgba(155,111,232,0.7)" }}>
               Natal Chart
             </div>
             <div style={{ flex:1 }}/>
@@ -1154,7 +1121,6 @@ function ReadingApp({ onResultChange }: { onResultChange?: (v: boolean) => void 
               {fname} · Swiss Ephemeris
             </div>
           </div>
-
           <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr",
             gap:0, padding:"36px 32px 32px", alignItems:"center" }}>
             <div>
@@ -1162,7 +1128,7 @@ function ReadingApp({ onResultChange }: { onResultChange?: (v: boolean) => void 
             </div>
             <div style={{ paddingLeft:28 }}>
               <div style={{ fontSize:10, fontWeight:700, letterSpacing:"2px",
-                textTransform:"uppercase", color:"rgba(232,228,240,0.25)", marginBottom:20 }}>
+                textTransform:"uppercase" as const, color:"rgba(232,228,240,0.25)", marginBottom:20 }}>
                 Planetary Positions
               </div>
               <div style={{ display:"flex", flexDirection:"column", gap:0 }}>
@@ -1187,175 +1153,151 @@ function ReadingApp({ onResultChange }: { onResultChange?: (v: boolean) => void 
         </div>
 
         {/* ── FREE PREVIEW — 2 insights ── */}
-        <div style={{ display:"flex", alignItems:"center", gap:16, marginBottom:32 }}>
-          <span style={{ flex:1, height:"0.5px", background:"rgba(255,255,255,0.06)", display:"block" }}/>
-          <span style={{ fontSize:10, fontWeight:700, letterSpacing:"2.5px",
-            textTransform:"uppercase", color:"#3a3858", whiteSpace:"nowrap" }}>
-            Free preview · 2 insights
-          </span>
-          <span style={{ flex:1, height:"0.5px", background:"rgba(255,255,255,0.06)", display:"block" }}/>
-        </div>
+        <SectionDivider label="Free preview · 2 insights" />
+        {preview.slice(0, 2).map((ins, i) => (
+          <InsightCard key={i} ins={ins} badge="Free" badgeColor="teal" />
+        ))}
 
-        {preview.slice(0, 2).map((ins, i) => {
-          const col = DOT_COLORS[ins.colorKey] || "#6B2FD4";
-          const parts = ins.explain.split("In simple words:");
-          return (
-            <div key={i} style={{ background:"rgba(255,255,255,0.02)",
-              border:"0.5px solid rgba(255,255,255,0.06)", borderRadius:20,
-              overflow:"hidden", marginBottom:28 }}>
-              <div style={{ padding:"16px 28px 14px",
-                borderBottom:"0.5px solid rgba(255,255,255,0.04)",
-                display:"flex", alignItems:"center", gap:10 }}>
-                <div style={{ width:9, height:9, borderRadius:"50%", background:col,
-                  flexShrink:0, boxShadow:`0 0 10px ${col}70` }}/>
-                <div style={{ fontSize:11, fontWeight:700, letterSpacing:"1.2px",
-                  textTransform:"uppercase", color:"rgba(232,228,240,0.4)", flex:1 }}>
-                  {ins.planet}
-                </div>
-                <div style={{ fontSize:10, background:"rgba(29,158,117,0.1)", color:"#5dcaa5",
-                  padding:"3px 12px", borderRadius:20, fontWeight:600, letterSpacing:"0.5px" }}>
-                  Free
-                </div>
-              </div>
-              <div style={{ padding:"28px 28px 24px" }}>
-                <p style={{ fontSize:17, lineHeight:1.85, color:"#e8e4f0", marginBottom:20,
-                  fontFamily:"var(--font-display)", fontStyle:"italic", fontWeight:400,
-                  letterSpacing:"0.01em" }}>
-                  {ins.truth}
-                </p>
-                <div style={{ background:"rgba(107,47,212,0.05)", borderLeft:"2px solid rgba(107,47,212,0.35)",
-                  borderRadius:"0 12px 12px 0", padding:"16px 20px", fontSize:14,
-                  color:"rgba(184,176,212,0.85)", lineHeight:1.85,
-                  marginBottom: ins.action ? 14 : 0 }}>
-                  {parts.length > 1
-                    ? <><span style={{ color:"#c4a8ff", fontWeight:600 }}>In simple words: </span>
-                        <span>{parts[1].trim()}</span></>
-                    : ins.explain}
-                </div>
-                {ins.action && (
-                  <div style={{ background:"rgba(240,184,74,0.04)",
-                    borderLeft:"2px solid rgba(240,184,74,0.3)",
-                    borderRadius:"0 12px 12px 0", padding:"14px 20px",
-                    fontSize:14, color:"rgba(212,168,58,0.9)", lineHeight:1.8 }}>
-                    <strong style={{ color:"#f0b84a" }}>This week: </strong>{ins.action}
+        {/* ── LOCK WALL (visible before unlock) ── */}
+        {!unlocked && (
+          <div style={{ background:"rgba(255,255,255,0.02)",
+            border:"0.5px solid rgba(255,255,255,0.06)", borderRadius:20,
+            overflow:"hidden", marginBottom:28 }}>
+
+            {/* Teaser list — visible, partially obscured */}
+            <div style={{ padding:"8px 0", position:"relative" }}>
+              {locked.map((l, i) => (
+                <div key={i} style={{ display:"flex", alignItems:"flex-start", gap:12,
+                  padding:"14px 28px",
+                  borderBottom: i < locked.length - 1 ? "0.5px solid rgba(255,255,255,0.05)" : "none",
+                  filter: i >= 3 ? "blur(3px)" : "none",
+                  transition:"filter 0.2s",
+                }}>
+                  <div style={{ width:7, height:7, borderRadius:"50%",
+                    background:"rgba(107,47,212,0.4)", flexShrink:0, marginTop:4 }}/>
+                  <div style={{ fontSize:13, color:"rgba(232,228,240,0.45)", flex:1, lineHeight:1.55 }}>
+                    {l}
                   </div>
-                )}
+                  <span style={{ fontSize:13, color:"rgba(155,111,232,0.4)", flexShrink:0 }}>🔒</span>
+                </div>
+              ))}
+              {/* Gradient overlay to entice */}
+              <div style={{ position:"absolute", bottom:0, left:0, right:0, height:80,
+                background:"linear-gradient(to bottom, transparent, rgba(9,9,15,0.9))",
+                pointerEvents:"none" }}/>
+            </div>
+
+            {/* CTA */}
+            <div style={{ background:"rgba(107,47,212,0.04)",
+              borderTop:"0.5px solid rgba(107,47,212,0.1)",
+              padding:"32px 28px 28px", textAlign:"center" }}>
+              <div style={{ fontFamily:"var(--font-display)", fontSize:20,
+                marginBottom:10, color:"#e8e4f0" }}>
+                {locked.length} more insights waiting
+              </div>
+              <div style={{ fontSize:14, color:"#6b6585", lineHeight:1.75,
+                marginBottom:24, maxWidth:380, margin:"0 auto 24px" }}>
+                Venus retrograde truth. Your self-sabotage pattern named.
+                The 12th house shadow. One payment, yours forever.
+              </div>
+              <button onClick={handleUnlock}
+                style={{ display:"block", width:"100%",
+                  background:"linear-gradient(135deg,#f0b84a,#e8854a)",
+                  color:"#0d0800", border:"none", borderRadius:12, padding:"17px 20px",
+                  fontSize:15, fontWeight:700, fontFamily:"inherit", cursor:"pointer" }}>
+                Unlock full reading · $15 ✦
+              </button>
+              <button onClick={handleUnlock}
+                style={{ marginTop:10, background:"transparent",
+                  border:"0.5px solid rgba(255,255,255,0.08)",
+                  borderRadius:8, padding:"8px 16px", fontSize:11, color:"#3a3858",
+                  cursor:"pointer", fontFamily:"inherit" }}>
+                👁 Preview full reading (dev only)
+              </button>
+              <div style={{ fontSize:11, color:"#3a3858", marginTop:10 }}>
+                One-time · No subscription · Delivered instantly
               </div>
             </div>
-          );
-        })}
-
-        {/* ── LOCKED INSIGHTS + CTA ── */}
-        <div style={{ background:"rgba(255,255,255,0.02)",
-          border:"0.5px solid rgba(255,255,255,0.06)", borderRadius:20,
-          overflow:"hidden", marginBottom:28 }}>
-          <div style={{ padding:"8px 0" }}>
-            {locked.map((l, i) => (
-              <div key={i} style={{ display:"flex", alignItems:"flex-start", gap:12,
-                padding:"13px 28px",
-                borderBottom: i < locked.length - 1 ? "0.5px solid rgba(255,255,255,0.03)" : "none" }}>
-                <div style={{ width:5, height:5, borderRadius:"50%", background:"#1e1c35",
-                  flexShrink:0, marginTop:5 }}/>
-                <div style={{ fontSize:13, color:"#1e1c35", flex:1, lineHeight:1.5 }}>{l}</div>
-                <span style={{ fontSize:11, color:"#1e1c35", flexShrink:0 }}>🔒</span>
-              </div>
-            ))}
           </div>
-          <div style={{ background:"rgba(107,47,212,0.04)", borderTop:"0.5px solid rgba(107,47,212,0.1)",
-            padding:"32px 28px 28px", textAlign:"center" }}>
-            <div style={{ fontFamily:"var(--font-display)", fontSize:20,
-              marginBottom:10, color:"#e8e4f0" }}>
-              {locked.length} more insights waiting
-            </div>
-            <div style={{ fontSize:14, color:"#6b6585", lineHeight:1.75,
-              marginBottom:24, maxWidth:380, margin:"0 auto 24px" }}>
-              Venus retrograde truth. Your self-sabotage pattern named.
-              The 12th house shadow. One payment, yours forever.
-            </div>
-            <button
-              onClick={() => {
-                setUnlocked(true);
-                setTimeout(() => document.getElementById("share-card-sec")
-                  ?.scrollIntoView({ behavior:"smooth" }), 120);
-              }}
-              style={{ display:"block", width:"100%",
-                background:"linear-gradient(135deg,#f0b84a,#e8854a)",
-                color:"#0d0800", border:"none", borderRadius:12, padding:"17px 20px",
-                fontSize:15, fontWeight:700, fontFamily:"inherit", cursor:"pointer" }}>
-              Unlock full reading · $15 ✦
-            </button>
-            <button
-              onClick={() => {
-                setUnlocked(true);
-                setTimeout(() => document.getElementById("share-card-sec")
-                  ?.scrollIntoView({ behavior:"smooth" }), 120);
-              }}
-              style={{ marginTop:10, background:"transparent", border:"0.5px solid rgba(255,255,255,0.08)",
-                borderRadius:8, padding:"8px 16px", fontSize:11, color:"#3a3858",
-                cursor:"pointer", fontFamily:"inherit" }}>
-              👁 Preview card (dev only)
-            </button>
-            <div style={{ fontSize:11, color:"#3a3858", marginTop:10 }}>
-              One-time · No subscription · Delivered instantly
-            </div>
-          </div>
-        </div>
+        )}
 
-        {/* ── VIRAL SHARE CARD ── */}
+        {/* ── FULL PAID READING ── */}
         {unlocked && (
-          <div id="share-card-sec" style={{ marginTop:48 }}>
-            <div style={{ display:"flex", alignItems:"center", gap:16, marginBottom:12 }}>
-              <span style={{ flex:1, height:"0.5px", background:"rgba(255,255,255,0.06)", display:"block" }}/>
-              <span style={{ fontSize:10, fontWeight:700, letterSpacing:"2.5px",
-                textTransform:"uppercase", color:"#3a3858" }}>
-                Your shareable identity card
-              </span>
-              <span style={{ flex:1, height:"0.5px", background:"rgba(255,255,255,0.06)", display:"block" }}/>
+          <div id="paid-reading-sec">
+
+            {/* Unlock confirmation banner */}
+            <div style={{
+              background:"linear-gradient(135deg,rgba(240,184,74,0.08),rgba(232,133,74,0.06))",
+              border:"0.5px solid rgba(240,184,74,0.2)",
+              borderRadius:14,
+              padding:"18px 24px",
+              marginBottom:36,
+              display:"flex",
+              alignItems:"center",
+              gap:14,
+            }}>
+              <div style={{ fontSize:24, flexShrink:0 }}>✦</div>
+              <div>
+                <div style={{ fontSize:14, fontWeight:700, color:"#f0b84a", marginBottom:3 }}>
+                  Full reading unlocked
+                </div>
+                <div style={{ fontSize:13, color:"rgba(232,228,240,0.5)", lineHeight:1.5 }}>
+                  {paidInsights.length} additional insights below, specific to your exact chart.
+                  This is yours forever.
+                </div>
+              </div>
             </div>
 
-            {/* CTA copy above card */}
-            <p style={{ textAlign:"center", fontSize:14, color:"rgba(232,228,240,0.45)",
-              marginBottom:24, fontFamily:"var(--font-display)", fontStyle:"italic" }}>
-              Your chart just exposed you. Post it. Send it. Let them figure out who it&apos;s about.
-            </p>
+            <SectionDivider label={`Full reading · ${paidInsights.length} paid insights`} />
 
-            <ViralShareCard
-              fname={fname}
-              shareCard={shareCard}
-            />
+            {/* Paid insight cards */}
+            {paidInsights.map((ins, i) => (
+              <InsightCard key={i} ins={ins} badge="Paid" badgeColor="gold" />
+            ))}
 
-            {/* Share + Download buttons */}
-            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:12, marginTop:18 }}>
-              <button onClick={handleShare}
-                style={{ background:"linear-gradient(135deg,#d4537e,#6b2fd4)", border:"none",
-                  borderRadius:12, padding:"15px 16px", fontSize:13, fontWeight:600,
-                  fontFamily:"inherit", color:"#fff", cursor:"pointer" }}>
-                {shareLbl}
-              </button>
-              <button onClick={handleDownload} disabled={downloading}
-                style={{ background:"linear-gradient(135deg,#6b2fd4,#9b4fd4)", border:"none",
-                  borderRadius:12, padding:"15px 16px", fontSize:13, fontWeight:600,
-                  fontFamily:"inherit", color:"#fff",
-                  cursor:downloading ? "not-allowed" : "pointer",
-                  opacity:downloading ? 0.65 : 1, transition:"opacity .2s" }}>
-                {dlLbl}
-              </button>
-              <button onClick={() => copyQuote(shareCard.quote)}
-                style={{ background:"transparent", border:"0.5px solid rgba(255,255,255,0.12)",
-                  borderRadius:12, padding:"15px 16px", fontSize:13, fontWeight:500,
-                  fontFamily:"inherit", color:"#e8e4f0", cursor:"pointer" }}>
-                {copyLbl}
-              </button>
-            </div>
-            <div style={{ fontSize:11, color:"#252340", textAlign:"center", marginTop:10 }}>
-              Download saves a 1080px PNG · perfect for Stories, Reels &amp; Snapchat
+            {/* Share card section */}
+            <div style={{ marginTop:56 }}>
+              <SectionDivider label="Your shareable identity card" />
+
+              <p style={{ textAlign:"center", fontSize:14, color:"rgba(232,228,240,0.45)",
+                marginBottom:24, fontFamily:"var(--font-display)", fontStyle:"italic" }}>
+                Your chart just exposed you. Post it. Send it. Let them figure out who it&apos;s about.
+              </p>
+
+              <ViralShareCard fname={fname} shareCard={shareCard} />
+
+              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:12, marginTop:18 }}>
+                <button onClick={handleShare}
+                  style={{ background:"linear-gradient(135deg,#d4537e,#6b2fd4)", border:"none",
+                    borderRadius:12, padding:"15px 16px", fontSize:13, fontWeight:600,
+                    fontFamily:"inherit", color:"#fff", cursor:"pointer" }}>
+                  {shareLbl}
+                </button>
+                <button onClick={handleDownload} disabled={downloading}
+                  style={{ background:"linear-gradient(135deg,#6b2fd4,#9b4fd4)", border:"none",
+                    borderRadius:12, padding:"15px 16px", fontSize:13, fontWeight:600,
+                    fontFamily:"inherit", color:"#fff",
+                    cursor:downloading ? "not-allowed" : "pointer",
+                    opacity:downloading ? 0.65 : 1, transition:"opacity .2s" }}>
+                  {dlLbl}
+                </button>
+                <button onClick={() => copyQuote(shareCard.quote)}
+                  style={{ background:"transparent", border:"0.5px solid rgba(255,255,255,0.12)",
+                    borderRadius:12, padding:"15px 16px", fontSize:13, fontWeight:500,
+                    fontFamily:"inherit", color:"#e8e4f0", cursor:"pointer" }}>
+                  {copyLbl}
+                </button>
+              </div>
+              <div style={{ fontSize:11, color:"#252340", textAlign:"center", marginTop:10 }}>
+                Download saves a 1080px PNG · perfect for Stories, Reels &amp; Snapchat
+              </div>
             </div>
           </div>
         )}
 
         <button onClick={reset} style={{ width:"100%", background:"transparent", border:"none",
           padding:"18px", fontSize:13, color:"#4a4560", cursor:"pointer",
-          fontFamily:"inherit", marginTop:18 }}>
+          fontFamily:"inherit", marginTop:28 }}>
           ← Read a different chart
         </button>
         <div style={{ fontSize:11, color:"#2a2840", textAlign:"center", marginTop:4, lineHeight:1.5 }}>
@@ -1454,6 +1396,7 @@ export default function HomePage() {
         @keyframes fadeUp{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
         @keyframes pulse{0%,100%{opacity:.5;transform:translate(-50%,-55%) scale(1)}50%{opacity:1;transform:translate(-50%,-55%) scale(1.03)}}
         @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+        @keyframes slideDown{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:translateY(0)}}
         .c{max-width:1100px;margin:0 auto;padding:0 24px}
         section{position:relative;z-index:1}
 
@@ -1500,7 +1443,7 @@ export default function HomePage() {
         h2 em{font-style:italic;background:linear-gradient(135deg,#f0b84a,#d4537e);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
         .sub{font-size:1rem;color:var(--dim);max-width:500px;line-height:1.72}
 
-        /* TRY SECTION — full width, stacked */
+        /* TRY SECTION */
         .try-sec{padding:96px 0}
 
         /* Credential pills row */
@@ -1511,7 +1454,7 @@ export default function HomePage() {
         .cred-label{font-size:12px;font-weight:700;color:var(--white);letter-spacing:.03em;margin-bottom:1px}
         .cred-desc{font-size:11px;color:rgba(232,228,240,.35)}
 
-        /* Form section — centered below heading */
+        /* Form section */
         .form-wrap{margin-top:64px;padding-top:56px;border-top:0.5px solid rgba(255,255,255,0.06)}
 
         /* REVEAL GRID */
@@ -1673,11 +1616,9 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── TRY IT — full width, stacked ── */}
+      {/* ── TRY IT ── */}
       <section className="try-sec" id="try-it">
         <div className="c">
-
-          {/* ── TOP: Heading + credentials — hidden when result is showing ── */}
           {!resultShowing && (
             <>
               <div className="sl"><span>Real natal chart · Swiss Ephemeris</span></div>
@@ -1689,8 +1630,6 @@ export default function HomePage() {
                 what your chart actually says. Sun, Moon, Rising, Venus, Mars, all 8 placements
                 calculated from your exact birth time. Not your sign. <em>Your chart.</em>
               </p>
-
-              {/* Planet credentials grid */}
               <div className="cred-grid">
                 {PLANET_CREDENTIALS.map((item, i) => (
                   <div className="cred-item" key={i}>
@@ -1702,8 +1641,6 @@ export default function HomePage() {
                   </div>
                 ))}
               </div>
-
-              {/* Trust + quote strip */}
               <div style={{ display:"flex", alignItems:"stretch", gap:16,
                 marginTop:28, flexWrap:"wrap", maxWidth:800 }}>
                 <div style={{ display:"flex", alignItems:"center", gap:20,
@@ -1719,8 +1656,6 @@ export default function HomePage() {
               </div>
             </>
           )}
-
-          {/* ── BOTTOM: The form / result tool ── */}
           <div className="form-wrap" style={resultShowing ? { borderTop:"none", marginTop:0, paddingTop:0 } : {}}>
             {!resultShowing && (
               <div style={{ textAlign:"center", marginBottom:40 }}>
@@ -1736,7 +1671,6 @@ export default function HomePage() {
             )}
             <ReadingApp onResultChange={setResultShowing} />
           </div>
-
         </div>
       </section>
 
@@ -1777,6 +1711,7 @@ export default function HomePage() {
               <ul className="price-includes">
                 <li>~1,500 words specific to your exact birth chart</li>
                 <li>2 free insights before you pay</li>
+                <li>8 full paid insights after unlock</li>
                 <li>Shareable viral identity card</li>
                 <li>Real Swiss Ephemeris calculations</li>
                 <li>No account required</li>
@@ -1790,7 +1725,7 @@ export default function HomePage() {
             <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:24 }}>
               <div style={{ width:22, height:1, background:"rgba(255,255,255,.15)" }}/>
               <span style={{ fontSize:".7rem", fontWeight:700, letterSpacing:".16em",
-                textTransform:"uppercase", color:"#4a4560" }}>
+                textTransform:"uppercase" as const, color:"#4a4560" }}>
                 More readings coming
               </span>
             </div>
