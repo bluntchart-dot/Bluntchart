@@ -795,7 +795,7 @@ function ReadingApp({ onResultChange }: { onResultChange?: (v: boolean) => void 
   };
 
   const handleUnlock = () => {
-    setUnlocked(true);
+    window.location.href = "https://bluntchart.gumroad.com/l/bluntchart-reading";
     setTimeout(() => {
       document.getElementById("paid-reading-sec")?.scrollIntoView({ behavior: "smooth" });
     }, 120);

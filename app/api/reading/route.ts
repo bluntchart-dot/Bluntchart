@@ -1,4 +1,3 @@
-// app/api/reading/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { buildClaudePrompt } from "@/lib/claude-prompt";
 
