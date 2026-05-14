@@ -1,6 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 import { buildClaudePrompt } from "@/lib/claude-prompt";
 
+type Tier = "preview" | "full";
+
+const MODEL_CONFIG: Record<Tier, { model: string; max_tokens: number }> = {
+  preview: {
+    model: "claude-haiku-4-5-20251001",
+    max_tokens: 900,
+  },
+  full: {
+    model: "claude-sonnet-4-6",
+    max_tokens: 2800,
+  },
+};
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
@@ -13,17 +26,14 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // ── Resolve the prompt ──────────────────────────────────────────────────
-    // Two calling paths:
-    //   A) page.tsx sends { prompt: string }  — legacy direct path, still works
-    //   B) Future: sends { birth, chartData, insight } — uses buildClaudePrompt
+    const tier: Tier =
+      body.model === "preview" || body.mode === "preview" ? "preview" : "full";
+
     let prompt: string;
 
     if (typeof body.prompt === "string" && body.prompt.trim().length > 0) {
-      // Path A — page.tsx already built the prompt, use it as-is
-      prompt = body.prompt;
+      prompt = body.prompt.trim();
     } else if (body.birth && body.chartData) {
-      // Path B — structured data, build the prompt server-side
       prompt = buildClaudePrompt(body.birth, body.chartData, body.insight ?? {});
     } else {
       return NextResponse.json(
@@ -32,7 +42,8 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // ── Call Claude ─────────────────────────────────────────────────────────
+    const { model, max_tokens } = MODEL_CONFIG[tier];
+
     const response = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
       headers: {
@@ -41,14 +52,15 @@ export async function POST(req: NextRequest) {
         "anthropic-version": "2023-06-01",
       },
       body: JSON.stringify({
-        model: "claude-sonnet-4-6",
-        max_tokens: 3500,           // bumped from 2500 — richer readings need room
+        model,
+        max_tokens,
         messages: [{ role: "user", content: prompt }],
       }),
     });
 
     if (!response.ok) {
       const errText = await response.text();
+      console.error("[reading] Anthropic error:", response.status, errText);
       return NextResponse.json(
         { error: `Anthropic API error: ${response.status}`, detail: errText },
         { status: response.status }
@@ -57,8 +69,8 @@ export async function POST(req: NextRequest) {
 
     const data = await response.json();
     return NextResponse.json(data);
-
   } catch (err) {
+    console.error("[reading] Unexpected error:", err);
     return NextResponse.json(
       { error: "Internal server error", detail: (err as Error).message },
       { status: 500 }
