@@ -21,14 +21,32 @@ function extractJsonFromText(raw: string) {
     .replace(/\s*```$/i, "")
     .trim();
 
+  const fallback = {
+    planets: {},
+    preview: [],
+    shareCard: {
+      sign: "",
+      keyword: "CHART READING",
+      lines: ["Your chart knows more than you think."],
+      quote: "",
+    },
+  };
+
   try {
     return JSON.parse(cleaned);
   } catch {
     const match = cleaned.match(/\{[\s\S]*\}/);
     if (match) {
-      return JSON.parse(match[0]);
+      try {
+        return JSON.parse(match[0]);
+      } catch {
+        console.error("[reading] JSON parse failed after extraction");
+        return fallback;
+      }
     }
-    throw new Error("Model returned invalid JSON");
+
+    console.error("[reading] No JSON found in model response");
+    return fallback;
   }
 }
 
@@ -85,23 +103,23 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const data = await response.json();
-    const text = data?.content?.[0]?.text ?? "";
+  const data = await response.json();
+const text = data?.content?.[0]?.text ?? "";
 
-    if (!text) {
-      return NextResponse.json(
-        { error: "Empty response from Anthropic" },
-        { status: 500 }
-      );
-    }
+if (!text) {
+  console.error("[reading] Empty response from Anthropic:", data);
+  return NextResponse.json(
+    { error: "Empty response from Anthropic" },
+    { status: 500 }
+  );
+}
 
-    const parsed = extractJsonFromText(text);
+const parsed = extractJsonFromText(text);
 
-    return NextResponse.json({
-      success: true,
-      data: parsed,
-      raw: data,
-    });
+return NextResponse.json({
+  success: true,
+  data: parsed,
+});
   } catch (err) {
     console.error("[reading] Unexpected error:", err);
     return NextResponse.json(
