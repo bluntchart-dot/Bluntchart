@@ -727,25 +727,23 @@ function ReadingApp({ onResultChange }: { onResultChange?: (v: boolean) => void 
         throw new Error(e.error || `Server error ${res.status}`);
       }
 
-      const resp = await res.json();
-      if (!resp.content?.[0]?.text) throw new Error("Empty response from API");
+      const result = await res.json();
 
-      const txt = resp.content[0].text.trim()
-        .replace(/^```json\s*/i, "").replace(/\s*```$/i, "").trim();
+if (!result.success || !result.data) {
+  throw new Error(result.error || "Invalid reading response");
+}
 
-      let parsed: ReadingData;
-      try { parsed = JSON.parse(txt); }
-      catch {
-        const m = txt.match(/\{[\s\S]*\}/);
-        if (m) parsed = JSON.parse(m[0]);
-        else throw new Error("JSON parse failed — please try again");
-      }
+const parsed: ReadingData = result.data;
 
-      if (!parsed.shareCard?.lines?.length) {
-        parsed.shareCard = parsed.shareCard || { sign:"", keyword:"CHART READING", lines:[], quote:"" };
-        parsed.shareCard.lines = [parsed.shareCard.quote || "Your chart knows."];
-      }
-      if (!parsed.shareCard.keyword) parsed.shareCard.keyword = "CHART READING";
+if (!parsed.shareCard?.lines?.length) {
+  parsed.shareCard = parsed.shareCard || { sign: "", keyword: "CHART READING", lines: [], quote: "" };
+  parsed.shareCard.lines = [parsed.shareCard.quote || "Your stars knows."];
+}
+
+if (!parsed.shareCard.keyword) parsed.shareCard.keyword = "CHART READING";
+setData(parsed);
+setScreen("result");
+onResultChange?.(true);
 
       // Persist to localStorage so success page can reuse without re-generating
       try {

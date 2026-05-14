@@ -14,6 +14,24 @@ const MODEL_CONFIG: Record<Tier, { model: string; max_tokens: number }> = {
   },
 };
 
+function extractJsonFromText(raw: string) {
+  const cleaned = raw
+    .trim()
+    .replace(/^```json\s*/i, "")
+    .replace(/\s*```$/i, "")
+    .trim();
+
+  try {
+    return JSON.parse(cleaned);
+  } catch {
+    const match = cleaned.match(/\{[\s\S]*\}/);
+    if (match) {
+      return JSON.parse(match[0]);
+    }
+    throw new Error("Model returned invalid JSON");
+  }
+}
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
@@ -68,7 +86,22 @@ export async function POST(req: NextRequest) {
     }
 
     const data = await response.json();
-    return NextResponse.json(data);
+    const text = data?.content?.[0]?.text ?? "";
+
+    if (!text) {
+      return NextResponse.json(
+        { error: "Empty response from Anthropic" },
+        { status: 500 }
+      );
+    }
+
+    const parsed = extractJsonFromText(text);
+
+    return NextResponse.json({
+      success: true,
+      data: parsed,
+      raw: data,
+    });
   } catch (err) {
     console.error("[reading] Unexpected error:", err);
     return NextResponse.json(
