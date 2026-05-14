@@ -48,17 +48,22 @@ export async function POST(req: NextRequest) {
     let emailSent = false;
 
     try {
-      await sendEmail(
-        email,
-        previewMail({
-          firstName: name,
-          birthDate: dob,
-          readingUrl: `${SITE_URL}#try-it`,
-        })
-      );
-      emailSent = true;
-    } catch (mailErr) {
-      console.error("[save-pending] Preview email failed:", mailErr);
+      const template = previewMail({
+    firstName: name,
+    birthDate: dob,
+    readingUrl: `${SITE_URL}#try-it`,
+  });
+
+  await sendEmail({
+    to: email,
+    subject: template.subject,
+    html: template.html,
+    text: template.text,
+  });
+
+  emailSent = true;
+} catch (mailErr) {
+  console.error("[save-pending] Preview email failed:", mailErr);
     }
 
     return NextResponse.json({
