@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { buildGumroadCheckoutUrl } from "@/lib/gumroad-checkout"
 
 export default function Form() {
   const [name, setName] = useState("")
@@ -32,7 +33,11 @@ export default function Form() {
       console.log(data)
 
       if (data.success) {
-        window.location.href ="https://bluntchart.gumroad.com/l/bluntchart-reading"
+        const checkoutUrl = buildGumroadCheckoutUrl({
+          email: email.trim().toLowerCase(),
+          sessionId: data.sessionId ?? null,
+        })
+        window.location.href = checkoutUrl
       } else {
         alert("Something went wrong")
       }

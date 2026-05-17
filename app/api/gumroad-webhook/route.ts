@@ -1,15 +1,20 @@
 import { NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase";
+import { createSupabaseAdmin } from "@/lib/supabase-admin";
+import {
+  loadBirthLeadByEmail,
+  SITE_URL,
+} from "@/lib/db/checkout-flow";
+import { fulfillPaidOrder, markPaymentFailed } from "@/lib/db/fulfillment";
+import { readingAccessUrl } from "@/lib/db/checkout-flow";
+import { parseGumroadSessionId } from "@/lib/gumroad-checkout";
+import { dbError, dbLog } from "@/lib/db/log";
 import { sendEmail } from "@/lib/send-email";
 import {
   paidConfirmationMail,
   fullReadingDeliveryMail,
 } from "@/lib/email-templates";
 
-const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://bluntchart.com";
-
-// ── Full reading prompt ───────────────────────────────────────────────────────
+// ── Full reading prompt (unchanged generation logic) ─────────────────────────
 
 function makeFullPrompt(
   name: string,
@@ -75,16 +80,7 @@ Return ONLY valid JSON. No markdown. No code blocks. No backticks.
       "action": ""
     }
   ],
-  "locked": [
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    ""
-  ],
+  "locked": ["", "", "", "", "", "", "", ""],
   "shareCard": {
     "sign": "",
     "keyword": "",
@@ -98,8 +94,6 @@ Generate EXACTLY 8 paidInsights.
 Each insight must feel deeply personal and specific.`;
 }
 
-// ── Generate full reading ────────────────────────────────────────────────────
-
 async function generateFullReading(
   name: string,
   dob: string,
@@ -109,7 +103,7 @@ async function generateFullReading(
   const apiKey = process.env.ANTHROPIC_API_KEY;
 
   if (!apiKey) {
-    console.error("[webhook] Missing ANTHROPIC_API_KEY");
+    dbError("webhook", "Missing ANTHROPIC_API_KEY", "");
     return null;
   }
 
@@ -130,12 +124,13 @@ async function generateFullReading(
   });
 
   if (!res.ok) {
-    console.error("[webhook] Anthropic error:", res.status, await res.text());
+    dbError("webhook", "Anthropic error", await res.text(), {
+      status: res.status,
+    });
     return null;
   }
 
   const data = await res.json();
-
   const raw: string = data?.content?.[0]?.text ?? "";
 
   const cleaned = raw
@@ -148,208 +143,167 @@ async function generateFullReading(
     return JSON.parse(cleaned);
   } catch {
     const match = cleaned.match(/\{[\s\S]*\}/);
-
     if (match) {
       try {
         return JSON.parse(match[0]);
       } catch {
-        console.error("[webhook] JSON parse failed");
+        dbError("webhook", "JSON parse failed", "");
         return null;
       }
     }
-
-    console.error("[webhook] No JSON found");
+    dbError("webhook", "No JSON in model response", "");
     return null;
   }
 }
 
-// ── Gumroad webhook handler ──────────────────────────────────────────────────
-
+/**
+ * POST /api/gumroad-webhook
+ *
+ * Gumroad sale → load lead from abandoned_checkouts → generate reading →
+ * payments (paid + access_token) + readings → clear abandoned_checkouts.
+ *
+ * Links checkout via custom_fields[session_id] or latest pending payment by email.
+ */
 export async function POST(req: Request) {
+  const scope = "gumroad-webhook";
+
   try {
-    // ── Parse Gumroad payload ────────────────────────────────────────────────
     const raw = await req.text();
     const params = new URLSearchParams(raw);
 
-    const email =
-      params.get("email") || params.get("purchaser_email") || "";
+    const email = (
+      params.get("email") ||
+      params.get("purchaser_email") ||
+      ""
+    )
+      .trim()
+      .toLowerCase();
 
-    const paymentId =
+    const gumroadPaymentId =
       params.get("sale_id") || params.get("id") || "";
 
-    const productId =
-      params.get("product_id") ||
-      params.get("product_permalink") ||
-      "";
+    const amountCents = Number(params.get("price") || "1500");
 
-    const amount = Number(params.get("price") || "1500");
+    const sessionId = parseGumroadSessionId(params);
+
+    dbLog(scope, "webhook received", {
+      email,
+      gumroadPaymentId,
+      sessionId: sessionId ?? null,
+    });
 
     if (!email) {
-      console.error("[webhook] Missing email");
-      return Response.json(
-        { error: "Missing email" },
-        { status: 400 }
-      );
+      dbError(scope, "missing email", "");
+      return Response.json({ error: "Missing email" }, { status: 400 });
     }
 
-    // ── Find pending row ────────────────────────────────────────────────────
-    const { data: pending, error: pendingError } = await supabase
-      .from("pending_readings")
-      .select("*")
-      .eq("email", email)
-      .single();
+    const supabase = createSupabaseAdmin();
 
-    if (pendingError || !pending) {
-      console.error(
-        "[webhook] No pending data found:",
-        email,
-        pendingError
-      );
+    const { lead, error: leadError } = await loadBirthLeadByEmail(
+      supabase,
+      email
+    );
 
-      // IMPORTANT:
-      // Return 200 so Gumroad does NOT retry forever.
+    if (leadError) {
+      dbError(scope, "load lead failed", leadError, { email });
+      return Response.json({ error: leadError }, { status: 500 });
+    }
+
+    if (!lead || !lead.birth_time || !lead.dob) {
+      dbError(scope, "no abandoned_checkouts row for purchaser", "", { email });
+      // Return 200 so Gumroad does not retry forever; log for manual fix
       return Response.json(
-        { error: "No pending data found" },
+        {
+          error:
+            "No checkout data found. User must submit the form before paying.",
+          email,
+        },
         { status: 200 }
       );
     }
 
-    const { name, dob, birth_time, city } = pending as {
-      name: string;
-      dob: string;
-      birth_time: string;
-      city: string;
-    };
+    const firstName = lead.name.split(" ")[0] || lead.name;
 
-    // ── Upsert user ─────────────────────────────────────────────────────────
-    const { data: user, error: userError } = await supabase
-      .from("users")
-      .upsert([{ email, name }], { onConflict: "email" })
-      .select()
-      .single();
-
-    if (userError || !user) {
-      console.error("[webhook] User upsert failed:", userError);
-
-      return Response.json(
-        { error: userError?.message || "User save failed" },
-        { status: 500 }
-      );
-    }
-
-    // ── Send payment confirmation email ─────────────────────────────────────
     try {
-    const paymentTemplate = paidConfirmationMail({
-  firstName: name,
-  birthDate: dob,
-});
-
-await sendEmail({
-  to: email,
-  subject: paymentTemplate.subject,
-  html: paymentTemplate.html,
-  text: paymentTemplate.text,
-});
+      const paymentTemplate = paidConfirmationMail({
+        firstName,
+        birthDate: lead.dob,
+      });
+      await sendEmail({
+        to: email,
+        subject: paymentTemplate.subject,
+        html: paymentTemplate.html,
+        text: paymentTemplate.text,
+      });
     } catch (mailErr) {
-      console.error(
-        "[webhook] Payment confirmation email failed:",
-        mailErr
-      );
+      dbError(scope, "confirmation email failed (non-fatal)", mailErr);
     }
 
-    // ── Generate full reading ───────────────────────────────────────────────
     const readingJson = await generateFullReading(
-      name,
-      dob,
-      birth_time,
-      city
+      lead.name,
+      lead.dob,
+      lead.birth_time,
+      lead.birth_place
     );
 
     if (!readingJson) {
-      console.error("[webhook] Reading generation failed");
-
-      await supabase.from("payments").insert([
-        {
-          user_id: user.id,
-          gumroad_payment_id: paymentId,
-          product_id: productId,
-          amount,
-          status: "paid_generation_failed",
-        },
-      ]);
-
+      await markPaymentFailed(supabase, email, gumroadPaymentId, sessionId);
       return Response.json(
         { error: "Reading generation failed" },
         { status: 500 }
       );
     }
 
-    // ── Save reading ────────────────────────────────────────────────────────
-    const { error: readingError } = await supabase
-      .from("readings")
-      .insert([
-        {
-          user_id: user.id,
-          dob,
-          birth_time,
-          city,
-          reading_json: readingJson,
-        },
-      ]);
+    const fulfilled = await fulfillPaidOrder(supabase, {
+      email,
+      gumroadPaymentId,
+      amountCents,
+      sessionId,
+      lead,
+      readingJson,
+    });
 
-    if (readingError) {
-      console.error("[webhook] Reading save failed:", readingError);
+    if (!fulfilled.ok || !fulfilled.accessToken) {
+      dbError(scope, "fulfillPaidOrder failed", fulfilled.error ?? "", { email });
+      return Response.json(
+        { error: fulfilled.error ?? "Fulfillment failed" },
+        { status: 500 }
+      );
     }
 
-    // ── Save payment ────────────────────────────────────────────────────────
-    const { error: paymentError } = await supabase
-      .from("payments")
-      .insert([
-        {
-          user_id: user.id,
-          gumroad_payment_id: paymentId,
-          product_id: productId,
-          amount,
-          status: "paid",
-        },
-      ]);
+    const accessUrl = readingAccessUrl(fulfilled.accessToken);
 
-    if (paymentError) {
-      console.error("[webhook] Payment save failed:", paymentError);
-    }
+    dbLog(scope, "fulfillment complete", {
+      email,
+      paymentId: fulfilled.paymentId,
+      readingId: fulfilled.readingId,
+      accessUrl,
+    });
 
-    // ── Delete pending row ──────────────────────────────────────────────────
-    await supabase
-      .from("pending_readings")
-      .delete()
-      .eq("email", email);
-
-    // ── Send final delivery email ───────────────────────────────────────────
     try {
       const deliveryTemplate = fullReadingDeliveryMail({
-  firstName: name,
-  birthDate: dob,
-  readingUrl: SITE_URL,
-  cardUrl: SITE_URL,
-});
+        firstName,
+        birthDate: lead.dob,
+        readingUrl: accessUrl,
+        cardUrl: SITE_URL,
+      });
 
-await sendEmail({
-  to: email,
-  subject: deliveryTemplate.subject,
-  html: deliveryTemplate.html,
-  text: deliveryTemplate.text,
-});
+      await sendEmail({
+        to: email,
+        subject: deliveryTemplate.subject,
+        html: deliveryTemplate.html,
+        text: deliveryTemplate.text,
+      });
     } catch (mailErr) {
-      console.error("[webhook] Delivery email failed:", mailErr);
+      dbError(scope, "delivery email failed (non-fatal)", mailErr);
     }
 
-    return Response.json({ success: true });
+    return Response.json({
+      success: true,
+      accessUrl,
+    });
   } catch (err) {
-    console.error("[webhook] Unexpected error:", err);
-
-    return Response.json(
-      { error: "Something went wrong" },
-      { status: 500 }
-    );
+    dbError(scope, "unexpected", err);
+    return Response.json({ error: "Something went wrong" }, { status: 500 });
   }
 }

@@ -161,7 +161,7 @@ export function paidConfirmationMail({ firstName, birthDate }: BaseVars): EmailT
 
 ✅ Payment received.
 
-Your ${birthDate ?? "birth date"} chart is now processing through Swiss Ephemeris.
+Your ${birthDate ?? "birth date"} chart is now processing using a high-precision ephemeris (Astronomy Engine).
 
 This takes 45 seconds. Check back in 1 minute for your full reading link.
 
@@ -174,7 +174,7 @@ xx bluntchart`;
   const html = wrap(`
     <p style="font-size:18px;line-height:1.8;margin:0 0 14px;">${esc(firstName)},</p>
     <p style="font-size:16px;line-height:1.9;margin:0 0 14px;">✅ Payment received.</p>
-    <p style="font-size:16px;line-height:1.9;margin:0 0 14px;">Your <strong>${esc(birthDate ?? "birth date")}</strong> chart is now processing through Swiss Ephemeris.</p>
+    <p style="font-size:16px;line-height:1.9;margin:0 0 14px;">Your <strong>${esc(birthDate ?? "birth date")}</strong> chart is now processing using a high-precision ephemeris (Astronomy Engine).</p>
     <p style="font-size:16px;line-height:1.9;margin:0 0 14px;">This takes 45 seconds. Check back in 1 minute for your full reading link.</p>
     <p style="font-size:16px;line-height:1.9;margin:0 0 14px;">You're about to see what top astrologers charge $100/hour for.</p>
     <p style="font-size:16px;line-height:1.9;margin:0 0 14px;">Deep breath.</p>
@@ -191,7 +191,7 @@ export function fullReadingDeliveryMail({ firstName, birthDate, readingUrl, card
 
 It's done.
 
-Your full personalized reading from ${birthDate ?? "your birth date"}. Swiss Ephemeris precision.
+Your full personalized reading from ${birthDate ?? "your birth date"}. Planet positions use a high-precision ephemeris (Astronomy Engine).
 
 Open My Full Chart:
 ${readingUrl ?? "https://bluntchart.com"}
@@ -206,7 +206,7 @@ xx`;
   const html = wrap(`
     <p style="font-size:18px;line-height:1.8;margin:0 0 14px;">${esc(firstName)},</p>
     <p style="font-size:16px;line-height:1.9;margin:0 0 14px;">It's done.</p>
-    <p style="font-size:16px;line-height:1.9;margin:0 0 14px;">Your full personalized reading from <strong>${esc(birthDate ?? "your birth date")}</strong>. Swiss Ephemeris precision.</p>
+    <p style="font-size:16px;line-height:1.9;margin:0 0 14px;">Your full personalized reading from <strong>${esc(birthDate ?? "your birth date")}</strong>. Planet positions use a high-precision ephemeris (Astronomy Engine).</p>
     ${button(readingUrl ?? "https://bluntchart.com", "Open My Full Chart →")}
     <p style="font-size:16px;line-height:1.9;margin:18px 0 10px;">Made you this shareable card too:</p>
     ${button(cardUrl ?? "https://bluntchart.com", "Flex your card with your friends →")}
