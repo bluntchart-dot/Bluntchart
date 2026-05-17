@@ -1,6 +1,7 @@
 import { randomUUID } from "crypto";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { dbError, dbLog } from "./log";
+import { DB } from "./tables";
 import { ensureUser } from "./users";
 import type { BirthLead } from "./checkout-flow";
 
@@ -43,7 +44,7 @@ export async function fulfillPaidOrder(
 
   if (params.sessionId) {
     const { data: bySession } = await supabase
-      .from("payments")
+      .from(DB.payments)
       .select("id")
       .eq("session_id", params.sessionId)
       .maybeSingle();
@@ -52,7 +53,7 @@ export async function fulfillPaidOrder(
 
   if (!paymentId) {
     const { data: pendingRows } = await supabase
-      .from("payments")
+      .from(DB.payments)
       .select("id")
       .eq("email", email)
       .eq("payment_status", "pending")
@@ -75,7 +76,7 @@ export async function fulfillPaidOrder(
 
   if (paymentId) {
     const { error: updatePayError } = await supabase
-      .from("payments")
+      .from(DB.payments)
       .update(paymentPatch)
       .eq("id", paymentId);
 
@@ -87,7 +88,7 @@ export async function fulfillPaidOrder(
     }
   } else {
     const { data: inserted, error: insertPayError } = await supabase
-      .from("payments")
+      .from(DB.payments)
       .insert([
         {
           ...paymentPatch,
@@ -119,7 +120,7 @@ export async function fulfillPaidOrder(
   };
 
   const { data: reading, error: readingError } = await supabase
-    .from("readings")
+    .from(DB.readings)
     .insert([
       {
         user_id: userId,
@@ -149,7 +150,7 @@ export async function fulfillPaidOrder(
 
   // Paid — remove from abandoned leads
   const { error: abandonDeleteError } = await supabase
-    .from("abandoned_checkouts")
+    .from(DB.abandonedCheckouts)
     .delete()
     .eq("email", email);
 
@@ -186,10 +187,10 @@ export async function markPaymentFailed(
   };
 
   if (sessionId) {
-    await supabase.from("payments").update(patch).eq("session_id", sessionId);
+    await supabase.from(DB.payments).update(patch).eq("session_id", sessionId);
   } else {
     await supabase
-      .from("payments")
+      .from(DB.payments)
       .update(patch)
       .eq("email", email.trim().toLowerCase())
       .eq("payment_status", "pending");
@@ -206,7 +207,7 @@ export async function loadReadingByAccessToken(
   error: string | null;
 }> {
   const { data: payment, error: payError } = await supabase
-    .from("payments")
+    .from(DB.payments)
     .select("id, payment_status, access_token")
     .eq("access_token", accessToken)
     .eq("payment_status", "paid")
@@ -227,7 +228,7 @@ export async function loadReadingByAccessToken(
   }
 
   const { data: readingRow, error: readError } = await supabase
-    .from("readings")
+    .from(DB.readings)
     .select("reading_json, birth_time, birth_place, reading_status")
     .eq("payment_id", payment.id)
     .order("created_at", { ascending: false })

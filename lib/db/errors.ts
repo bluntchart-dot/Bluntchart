@@ -8,9 +8,10 @@ export function formatDbError(message: string | undefined | null): string {
   if (
     /could not find the table/i.test(msg) ||
     /relation .* does not exist/i.test(msg) ||
-    /schema cache/i.test(msg)
+    /schema cache/i.test(msg) ||
+    /invalid path/i.test(msg)
   ) {
-    return "Checkout database is not set up yet. Run supabase/migrations/20250517000000_initial_schema.sql in your Supabase SQL editor, then try again.";
+    return "Checkout database is not set up correctly. Ensure Users, Payments, abandoned_checkouts, and readings tables exist in Supabase.";
   }
 
   if (/permission denied|row-level security|RLS/i.test(msg)) {
@@ -29,6 +30,7 @@ export function isMissingTableError(message: string | undefined | null): boolean
   return (
     /could not find the table/i.test(msg) ||
     /relation .* does not exist/i.test(msg) ||
-    /schema cache/i.test(msg)
+    /schema cache/i.test(msg) ||
+    /invalid path/i.test(msg)
   );
 }

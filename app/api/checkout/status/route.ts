@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createSupabaseAdmin } from "@/lib/supabase-admin";
 import { readingAccessUrl } from "@/lib/db/checkout-flow";
 import { dbError, dbLog } from "@/lib/db/log";
+import { DB } from "@/lib/db/tables";
 
 /**
  * GET /api/checkout/status?session_id=...
@@ -22,7 +23,7 @@ export async function GET(req: NextRequest) {
     const supabase = createSupabaseAdmin();
 
     const { data: payment, error } = await supabase
-      .from("payments")
+      .from(DB.payments)
       .select("payment_status, access_token")
       .eq("session_id", sessionId)
       .maybeSingle();

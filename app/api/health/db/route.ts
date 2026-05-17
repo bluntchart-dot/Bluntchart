@@ -1,8 +1,14 @@
 import { NextResponse } from "next/server";
 import { createSupabaseAdmin } from "@/lib/supabase-admin";
 import { isMissingTableError } from "@/lib/db/errors";
+import { DB } from "@/lib/db/tables";
 
-const TABLES = ["users", "payments", "abandoned_checkouts", "readings"] as const;
+const TABLES = [
+  DB.users,
+  DB.payments,
+  DB.abandonedCheckouts,
+  DB.readings,
+] as const;
 
 /**
  * GET /api/health/db

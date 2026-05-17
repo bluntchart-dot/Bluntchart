@@ -1,6 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { formatDbError } from "./errors";
 import { dbError, dbLog } from "./log";
+import { DB } from "./tables";
 import type { UserRow } from "./types";
 
 /**
@@ -16,7 +17,7 @@ export async function ensureUser(
   const normalizedEmail = email.trim().toLowerCase();
 
   const { data: existing, error: findError } = await supabase
-    .from("users")
+    .from(DB.users)
     .select("id, email, name, created_at")
     .eq("email", normalizedEmail)
     .maybeSingle();
@@ -28,7 +29,7 @@ export async function ensureUser(
 
   if (existing) {
     const { data: updated, error: updateError } = await supabase
-      .from("users")
+      .from(DB.users)
       .update({ name: name.trim() })
       .eq("id", existing.id)
       .select("id, email, name, created_at")
@@ -44,7 +45,7 @@ export async function ensureUser(
   }
 
   const { data: created, error: insertError } = await supabase
-    .from("users")
+    .from(DB.users)
     .insert([{ email: normalizedEmail, name: name.trim() }])
     .select("id, email, name, created_at")
     .single();

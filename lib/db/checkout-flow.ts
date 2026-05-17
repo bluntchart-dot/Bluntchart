@@ -2,6 +2,7 @@ import { randomUUID } from "crypto";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { formatDbError } from "./errors";
 import { dbError, dbLog } from "./log";
+import { DB, pendingGumroadId } from "./tables";
 import { ensureUser } from "./users";
 import type { CheckoutStartPayload, CheckoutStep } from "./types";
 
@@ -42,7 +43,7 @@ export async function startCheckout(
 
   // Pending payment row — linked to Gumroad webhook via session_id + email
   const { data: payment, error: paymentError } = await supabase
-    .from("payments")
+    .from(DB.payments)
     .insert([
       {
         session_id: sessionId,
@@ -51,8 +52,8 @@ export async function startCheckout(
         amount: "15",
         payment_status: "pending",
         payment_provider: "gumroad",
-        gumroad_payment_id: null,
-        access_token: null,
+        gumroad_payment_id: pendingGumroadId(sessionId),
+        access_token: randomUUID(),
       },
     ])
     .select("id, session_id")
@@ -78,7 +79,7 @@ export async function startCheckout(
 
   // Incomplete lead — replaced on each new attempt for same email
   const { error: deleteAbandonedError } = await supabase
-    .from("abandoned_checkouts")
+    .from(DB.abandonedCheckouts)
     .delete()
     .eq("email", email);
 
@@ -91,7 +92,7 @@ export async function startCheckout(
   const step: CheckoutStep = payload.step_reached ?? "form_submitted";
 
   const { error: abandonedError } = await supabase
-    .from("abandoned_checkouts")
+    .from(DB.abandonedCheckouts)
     .insert([
       {
         email,
@@ -139,7 +140,7 @@ export async function updateCheckoutStep(
   const normalizedEmail = email.trim().toLowerCase();
 
   const { error } = await supabase
-    .from("abandoned_checkouts")
+    .from(DB.abandonedCheckouts)
     .update({ step_reached: step, abandoned_at: new Date().toISOString() })
     .eq("email", normalizedEmail);
 
@@ -173,7 +174,7 @@ export async function loadBirthLeadByEmail(
   const normalizedEmail = email.trim().toLowerCase();
 
   const { data, error } = await supabase
-    .from("abandoned_checkouts")
+    .from(DB.abandonedCheckouts)
     .select(
       "name, email, dob, birth_time, birth_place, timezone, user_id"
     )
@@ -219,7 +220,7 @@ export async function findPendingPayment(
 
   if (opts.sessionId) {
     const { data, error } = await supabase
-      .from("payments")
+      .from(DB.payments)
       .select("id, session_id, payment_status")
       .eq("session_id", opts.sessionId)
       .maybeSingle();
@@ -230,7 +231,7 @@ export async function findPendingPayment(
   }
 
   const { data: rows, error } = await supabase
-    .from("payments")
+    .from(DB.payments)
     .select("id, session_id, payment_status, created_at")
     .eq("email", email)
     .eq("payment_status", "pending")
