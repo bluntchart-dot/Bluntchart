@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createSupabaseAdmin } from "@/lib/supabase-admin";
 import { startCheckout } from "@/lib/db/checkout-flow";
+import { formatDbError } from "@/lib/db/errors";
 import { dbError, dbLog } from "@/lib/db/log";
 import { previewMail } from "@/lib/email-templates";
 import { sendEmail } from "@/lib/send-email";
@@ -63,7 +64,10 @@ export async function POST(req: NextRequest) {
         email,
       });
       return NextResponse.json(
-        { success: false, error: result.error ?? "Database save failed" },
+        {
+          success: false,
+          error: formatDbError(result.error ?? "Database save failed"),
+        },
         { status: 500 }
       );
     }

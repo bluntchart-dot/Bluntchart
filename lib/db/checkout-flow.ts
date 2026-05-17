@@ -1,5 +1,6 @@
 import { randomUUID } from "crypto";
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { formatDbError } from "./errors";
 import { dbError, dbLog } from "./log";
 import { ensureUser } from "./users";
 import type { CheckoutStartPayload, CheckoutStep } from "./types";
@@ -64,7 +65,9 @@ export async function startCheckout(
     });
     return {
       ok: false,
-      error: paymentError?.message ?? "Payment row insert failed",
+      error: formatDbError(
+        paymentError?.message ?? "Payment row insert failed"
+      ),
     };
   }
 
@@ -111,7 +114,9 @@ export async function startCheckout(
     });
     return {
       ok: false,
-      error: abandonedError.message ?? "Abandoned checkout insert failed",
+      error: formatDbError(
+        abandonedError.message ?? "Abandoned checkout insert failed"
+      ),
     };
   }
 

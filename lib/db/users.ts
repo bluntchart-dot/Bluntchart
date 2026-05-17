@@ -1,4 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { formatDbError } from "./errors";
 import { dbError, dbLog } from "./log";
 import type { UserRow } from "./types";
 
@@ -22,7 +23,7 @@ export async function ensureUser(
 
   if (findError) {
     dbError("users", "lookup failed", findError, { email: normalizedEmail });
-    return { user: null, error: findError.message };
+    return { user: null, error: formatDbError(findError.message) };
   }
 
   if (existing) {
@@ -50,7 +51,10 @@ export async function ensureUser(
 
   if (insertError || !created) {
     dbError("users", "insert failed", insertError, { email: normalizedEmail });
-    return { user: null, error: insertError?.message ?? "User insert failed" };
+    return {
+      user: null,
+      error: formatDbError(insertError?.message ?? "User insert failed"),
+    };
   }
 
   dbLog("users", "user created", { userId: created.id });
