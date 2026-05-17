@@ -1,10 +1,19 @@
-import { timezoneAt } from "@/lib/chart-calculator";
+import { find as findTimezonesAt } from "geo-tz";
 
 export interface GeoResult {
   lat: number;
   lng: number;
   timezone: string;
   displayName: string;
+}
+
+function timezoneAt(lat: number, lng: number): string | null {
+  try {
+    const zones = findTimezonesAt(lat, lng);
+    return zones[0] ?? null;
+  } catch {
+    return null;
+  }
 }
 
 /** Resolve birth city to coordinates (Nominatim / OpenStreetMap). */

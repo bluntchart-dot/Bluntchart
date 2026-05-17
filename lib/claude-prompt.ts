@@ -80,6 +80,8 @@ export function buildClaudePrompt(
     chart: {
       ascendant: chart.ascendant,
       midheaven: chart.midheaven,
+      descendant: chart.descendant,
+      imumCoeli: chart.imumCoeli,
       planets: compactPlanets(chart),
       aspects: compactAspects(chart),
     },

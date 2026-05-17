@@ -49,6 +49,8 @@ export interface ChartData {
 
   ascendant: AnglePoint;
   midheaven: AnglePoint;
+  descendant: AnglePoint;
+  imumCoeli: AnglePoint;
 
   houses: HouseData[];
 }

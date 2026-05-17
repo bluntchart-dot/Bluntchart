@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import type { BirthData } from '@/lib/types';
+import { timezoneAt } from '@/lib/chart-calculator';
 
 interface Props {
   onSubmit: (data: BirthData) => void;
@@ -81,7 +82,7 @@ async function handleSubmit(e: React.FormEvent) {
     time,
     lat,
     lng,
-    timezone: '',
+    timezone: timezoneAt(lat, lng) ?? '',
     placeName: selectedCity.display_name
       .split(',')
       .slice(0, 2)
