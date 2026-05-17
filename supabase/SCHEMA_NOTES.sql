@@ -1,15 +1,23 @@
--- BluntChart — Supabase setup
+-- BluntChart — Supabase + Gumroad setup
 --
--- REQUIRED: Run the migration once before checkout will work:
---   File: supabase/migrations/20250517000000_initial_schema.sql
---   Supabase Dashboard → SQL Editor → paste → Run
+-- TABLES (must match code in lib/db/tables.ts):
+--   Users, Payments (PascalCase), abandoned_checkouts, readings
 --
--- REQUIRED env vars (Vercel / .env.local):
+-- ENV (Vercel + .env.local):
 --   NEXT_PUBLIC_SUPABASE_URL
 --   NEXT_PUBLIC_SUPABASE_ANON_KEY
---   SUPABASE_SERVICE_ROLE_KEY  (server writes; do not expose to browser)
+--   SUPABASE_SERVICE_ROLE_KEY   ← required for API writes in production
+--   ANTHROPIC_API_KEY
+--   RESEND_API_KEY
+--   RESEND_FROM_EMAIL
+--   NEXT_PUBLIC_SITE_URL=https://bluntchart.com
 --
--- Verify after migration:
---   GET /api/health/db  →  { "ok": true }
+-- VERIFY: GET https://bluntchart.com/api/health/db → { "ok": true }
 --
--- Tables: users, payments, abandoned_checkouts, readings
+-- GUMROAD (required for post-payment flow):
+-- 1. Product → Settings → After purchase → Redirect to:
+--    https://bluntchart.com/checkout/complete
+-- 2. Settings → Advanced → Ping / Webhook URL:
+--    https://bluntchart.com/api/gumroad-webhook
+-- 3. Optional custom field on product: session_id (URL also passes it)
+-- 4. Update product description — buyers already submitted the form on bluntchart.com

@@ -24,9 +24,13 @@ export function createSupabaseAdmin(): SupabaseClient {
   }
 
   if (!serviceKey) {
-    console.warn(
-      "[supabase-admin] SUPABASE_SERVICE_ROLE_KEY not set — using anon key. Writes may fail if RLS is enabled."
-    );
+    const msg =
+      "[supabase-admin] SUPABASE_SERVICE_ROLE_KEY not set — using anon key. Writes may fail if RLS is enabled.";
+    if (process.env.NODE_ENV === "production") {
+      console.error(msg);
+    } else {
+      console.warn(msg);
+    }
   }
 
   return createClient(url, key, {

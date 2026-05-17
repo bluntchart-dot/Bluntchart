@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
 import { buildGumroadCheckoutUrl } from "@/lib/gumroad-checkout";
+import { persistCheckoutSession } from "@/lib/checkout-session";
 
 // ─── TYPES ─────────────────────────────────────────────────────────────────────
 
@@ -436,10 +437,22 @@ function ReadingApp({ onResultChange }: { onResultChange?: (v: boolean) => void 
           city: city.trim(),
         }),
       });
-      const saveJson = await saveRes.json();
+      const saveText = await saveRes.text();
+      let saveJson: {
+        success?: boolean;
+        error?: string;
+        sessionId?: string;
+      } = {};
+      try {
+        saveJson = saveText ? JSON.parse(saveText) : {};
+      } catch {
+        console.error("[checkout] save-pending non-JSON:", saveText.slice(0, 200));
+      }
       if (!saveRes.ok || !saveJson.success) {
-        console.error("[checkout] save-pending failed:", saveJson);
-        throw new Error(saveJson.error || "Could not save your details. Please try again.");
+        console.error("[checkout] save-pending failed:", saveJson, saveRes.status);
+        throw new Error(
+          saveJson.error || `Could not save your details (${saveRes.status}). Please try again.`
+        );
       }
       checkoutSessionId = saveJson.sessionId ?? null;
       setSessionId(checkoutSessionId);
@@ -551,6 +564,8 @@ function ReadingApp({ onResultChange }: { onResultChange?: (v: boolean) => void 
       email: normalizedEmail,
       sessionId: checkoutSessionId,
     });
+
+    persistCheckoutSession(checkoutSessionId, normalizedEmail);
 
     console.log("[checkout] redirecting to Gumroad direct checkout", {
       sessionId: checkoutSessionId,

@@ -32,14 +32,21 @@ export function buildGumroadCheckoutUrl(params: GumroadCheckoutParams): string {
     // Also pass as plain query param for products that surface it without custom field UI
     url.searchParams.set("session_id", sessionId);
 
-    // Return buyers to our app after payment (honored when product redirect is enabled)
-    url.searchParams.set(
-      "redirect_url",
-      `${SITE_URL}/checkout/complete?session_id=${encodeURIComponent(sessionId)}`
-    );
+    // Gumroad may ignore these — also set redirect in Gumroad product settings:
+    // Content → After purchase → https://bluntchart.com/checkout/complete
+    const returnUrl = `${SITE_URL}/checkout/complete?session_id=${encodeURIComponent(sessionId)}`;
+    url.searchParams.set("redirect_url", returnUrl);
+    url.searchParams.set("return_url", returnUrl);
   }
 
   return url.toString();
+}
+
+/** URL buyers should land on after payment (also set in Gumroad product settings). */
+export function checkoutCompleteUrl(sessionId?: string | null): string {
+  const base = `${SITE_URL}/checkout/complete`;
+  if (!sessionId?.trim()) return base;
+  return `${base}?session_id=${encodeURIComponent(sessionId.trim())}`;
 }
 
 /** Parse session_id from Gumroad ping / webhook body (several shapes). */

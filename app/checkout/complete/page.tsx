@@ -1,21 +1,36 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
+import { readCheckoutSession } from "@/lib/checkout-session";
 
 const POLL_MS = 2500;
-const MAX_ATTEMPTS = 48; // ~2 minutes
+const MAX_ATTEMPTS = 60; // ~2.5 minutes
 
 function CheckoutCompleteContent() {
   const searchParams = useSearchParams();
-  const sessionId = searchParams.get("session_id")?.trim() ?? "";
+
+  const { sessionId, email } = useMemo(() => {
+    const fromUrl = {
+      sessionId: searchParams.get("session_id")?.trim() ?? "",
+      email: searchParams.get("email")?.trim().toLowerCase() ?? "",
+    };
+    if (fromUrl.sessionId) return fromUrl;
+    const stored = readCheckoutSession();
+    return {
+      sessionId: stored.sessionId ?? "",
+      email: fromUrl.email || stored.email || "",
+    };
+  }, [searchParams]);
 
   const [message, setMessage] = useState("Confirming your payment…");
   const [error, setError] = useState("");
 
   useEffect(() => {
-    if (!sessionId) {
-      setError("Missing checkout session. Use the link from your payment email.");
+    if (!sessionId && !email) {
+      setError(
+        "We could not match your checkout. Open the link from your payment email, or return to bluntchart.com and contact support."
+      );
       return;
     }
 
@@ -25,9 +40,11 @@ function CheckoutCompleteContent() {
     const poll = async () => {
       attempts += 1;
       try {
-        const res = await fetch(
-          `/api/checkout/status?session_id=${encodeURIComponent(sessionId)}`
-        );
+        const params = new URLSearchParams();
+        if (sessionId) params.set("session_id", sessionId);
+        if (email) params.set("email", email);
+
+        const res = await fetch(`/api/checkout/status?${params.toString()}`);
         const data = await res.json();
 
         if (cancelled) return;
@@ -40,7 +57,7 @@ function CheckoutCompleteContent() {
         if (data.status === "failed") {
           setError(
             data.error ??
-              "We received your payment but could not finish your reading. Email support if this persists."
+              "We received your payment but could not finish your reading. Check your email or contact support."
           );
           return;
         }
@@ -48,7 +65,7 @@ function CheckoutCompleteContent() {
         if (attempts >= MAX_ATTEMPTS) {
           setMessage("");
           setError(
-            "Your reading is still generating. Check your inbox for your private link — it usually arrives within a minute."
+            "Your reading is still generating. Check your inbox for your private link — it usually arrives within a few minutes."
           );
           return;
         }
@@ -56,7 +73,7 @@ function CheckoutCompleteContent() {
         setMessage(
           attempts < 4
             ? "Confirming your payment…"
-            : "Generating your full reading…"
+            : "Generating your full reading, chart, and share card…"
         );
         setTimeout(poll, POLL_MS);
       } catch (e) {
@@ -71,7 +88,7 @@ function CheckoutCompleteContent() {
     return () => {
       cancelled = true;
     };
-  }, [sessionId]);
+  }, [sessionId, email]);
 
   return (
     <main className="min-h-screen bg-[#09090f] text-[#e8e4f0] flex items-center justify-center p-6">
@@ -80,6 +97,9 @@ function CheckoutCompleteContent() {
           <>
             <h1 className="text-xl font-semibold mb-3">Almost there</h1>
             <p className="text-sm opacity-70">{message}</p>
+            <p className="text-xs opacity-50 mt-4">
+              Do not close this tab — we will open your reading automatically.
+            </p>
           </>
         ) : (
           <>

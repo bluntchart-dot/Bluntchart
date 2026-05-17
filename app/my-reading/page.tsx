@@ -1,12 +1,19 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
+import type { ChartData } from "@/lib/types";
 
-/**
- * Private revisit page for paid customers.
- * URL: /my-reading?token=<payments.access_token>
- */
+const ChartWheel = dynamic(() => import("@/components/ChartWheel"), {
+  ssr: false,
+  loading: () => (
+    <div className="h-[320px] flex items-center justify-center opacity-50 text-sm">
+      Loading your chart…
+    </div>
+  ),
+});
+
 function MyReadingContent() {
   const searchParams = useSearchParams();
   const token = searchParams.get("token")?.trim() ?? "";
@@ -96,6 +103,8 @@ function MyReadingContent() {
     | { keyword?: string; lines?: string[]; quote?: string }
     | undefined;
 
+  const chart = reading?.chart as ChartData | undefined;
+
   return (
     <main className="min-h-screen bg-[#09090f] text-[#e8e4f0] py-12 px-4">
       <div className="max-w-2xl mx-auto">
@@ -103,6 +112,12 @@ function MyReadingContent() {
           BluntChart · Your full reading
         </p>
         <h1 className="text-3xl font-serif mb-8">Saved for you</h1>
+
+        {chart && (
+          <section className="mb-10 flex justify-center">
+            <ChartWheel chart={chart} />
+          </section>
+        )}
 
         {preview.length > 0 && (
           <section className="mb-10">
@@ -124,7 +139,7 @@ function MyReadingContent() {
         {paidInsights.length > 0 && (
           <section className="mb-10">
             <h2 className="text-sm uppercase tracking-wider text-[#f0b84a] mb-4">
-              Full reading
+              Full reading · 8 insights
             </h2>
             {paidInsights.map((ins, i) => (
               <div
