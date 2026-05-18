@@ -210,7 +210,7 @@ export async function loadReadingByAccessToken(
     .from(DB.payments)
     .select("id, payment_status, access_token")
     .eq("access_token", accessToken)
-    .ilike("payment_status", "paid")
+    .in("payment_status", ["paid", "completed"])
     .maybeSingle();
 
   if (payError) {

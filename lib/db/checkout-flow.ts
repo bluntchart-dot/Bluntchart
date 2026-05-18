@@ -166,47 +166,98 @@ export interface BirthLead {
   user_id: string | null;
 }
 
-/** Load birth details for paid fulfillment (abandoned_checkouts is source of truth pre-payment). */
+function mapAbandonedRowToLead(row: {
+  name: string | null;
+  email: string;
+  dob: string | null;
+  birth_time: string | null;
+  birth_place: string | null;
+  timezone: string | null;
+  user_id: string | null;
+}): BirthLead {
+  return {
+    name: row.name ?? "",
+    email: row.email,
+    dob: row.dob ?? "",
+    birth_time: row.birth_time ?? "",
+    birth_place: row.birth_place ?? "",
+    timezone: row.timezone,
+    user_id: row.user_id,
+  };
+}
+
+/**
+ * Load birth details for paid fulfillment from abandoned_checkouts (direct Supabase).
+ * When session_id is present, resolves the purchaser email via the pending Payments row first.
+ */
 export async function loadBirthLeadByEmail(
   supabase: SupabaseClient,
-  email: string
+  email: string,
+  sessionId?: string | null
 ): Promise<{ lead: BirthLead | null; error: string | null }> {
   const normalizedEmail = email.trim().toLowerCase();
+  const sid = sessionId?.trim();
+  let lookupEmail = normalizedEmail;
+
+  dbLog("checkout", "loadBirthLeadByEmail", {
+    email: normalizedEmail,
+    sessionId: sid ?? null,
+  });
+
+  if (sid) {
+    const { data: payment, error: payError } = await supabase
+      .from(DB.payments)
+      .select("email")
+      .eq("session_id", sid)
+      .maybeSingle();
+
+    if (payError) {
+      dbError("checkout", "payment lookup by session_id failed", payError, {
+        sessionId: sid,
+      });
+      return { lead: null, error: formatDbError(payError.message) };
+    }
+
+    if (payment?.email) {
+      lookupEmail = payment.email.trim().toLowerCase();
+      dbLog("checkout", "resolved email from session_id", {
+        sessionId: sid,
+        lookupEmail,
+      });
+    }
+  }
 
   const { data, error } = await supabase
     .from(DB.abandonedCheckouts)
-    .select(
-      "name, email, dob, birth_time, birth_place, timezone, user_id"
-    )
-    .eq("email", normalizedEmail)
+    .select("name, email, dob, birth_time, birth_place, timezone, user_id")
+    .eq("email", lookupEmail)
     .order("created_at", { ascending: false })
     .limit(1)
     .maybeSingle();
 
   if (error) {
     dbError("checkout", "loadBirthLeadByEmail failed", error, {
-      email: normalizedEmail,
+      email: lookupEmail,
+      sessionId: sid ?? null,
     });
-    return { lead: null, error: error.message };
+    return { lead: null, error: formatDbError(error.message) };
   }
 
   if (!data) {
     dbLog("checkout", "no abandoned_checkouts row for email", {
-      email: normalizedEmail,
+      email: lookupEmail,
+      sessionId: sid ?? null,
     });
     return { lead: null, error: null };
   }
 
+  dbLog("checkout", "lead loaded from abandoned_checkouts", {
+    email: lookupEmail,
+    sessionId: sid ?? null,
+  });
+
   return {
-    lead: {
-      name: data.name ?? "",
-      email: data.email,
-      dob: data.dob ?? "",
-      birth_time: data.birth_time ?? "",
-      birth_place: data.birth_place ?? "",
-      timezone: data.timezone,
-      user_id: data.user_id,
-    },
+    lead: mapAbandonedRowToLead(data),
     error: null,
   };
 }

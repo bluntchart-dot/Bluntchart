@@ -4,7 +4,6 @@ import { buildPaidReadingPayload } from "@/lib/build-paid-reading";
 import {
   loadBirthLeadByEmail,
   readingAccessUrl,
-  SITE_URL,
 } from "@/lib/db/checkout-flow";
 import { fulfillPaidOrder, markPaymentFailed } from "@/lib/db/fulfillment";
 import { parseGumroadSessionId } from "@/lib/gumroad-checkout";
@@ -23,7 +22,7 @@ function isPaidStatus(status: string | null | undefined): boolean {
 /**
  * POST /api/gumroad-webhook
  *
- * Gumroad sale → load lead → generate reading + chart → save → email private link.
+ * Gumroad sale → load lead (Supabase) → generate reading + chart → save → email private link.
  */
 export async function POST(req: Request) {
   const scope = "gumroad-webhook";
@@ -35,13 +34,14 @@ export async function POST(req: Request) {
     const email = (
       params.get("email") ||
       params.get("purchaser_email") ||
+      params.get("buyer_email") ||
       ""
     )
       .trim()
       .toLowerCase();
 
     const gumroadPaymentId =
-      params.get("sale_id") || params.get("id") || "";
+      params.get("sale_id") || params.get("id") || params.get("transaction_id") || "";
 
     const amountCents = Number(params.get("price") || "1500");
 
@@ -74,23 +74,30 @@ export async function POST(req: Request) {
         existingSale.access_token
       ) {
         const accessUrl = readingAccessUrl(existingSale.access_token);
-        dbLog(scope, "duplicate webhook — already fulfilled", { email });
+        dbLog(scope, "already fulfilled — duplicate webhook", {
+          email,
+          accessUrl,
+        });
         return Response.json({ success: true, accessUrl, duplicate: true });
       }
     }
 
     const { lead, error: leadError } = await loadBirthLeadByEmail(
       supabase,
-      email
+      email,
+      sessionId
     );
 
     if (leadError) {
-      dbError(scope, "load lead failed", leadError, { email });
+      dbError(scope, "load lead failed", leadError, { email, sessionId });
       return Response.json({ error: leadError }, { status: 500 });
     }
 
     if (!lead || !lead.birth_time || !lead.dob) {
-      dbError(scope, "no abandoned_checkouts row for purchaser", "", { email });
+      dbError(scope, "no abandoned_checkouts row for purchaser", "", {
+        email,
+        sessionId,
+      });
       return Response.json(
         {
           error:
@@ -100,6 +107,13 @@ export async function POST(req: Request) {
         { status: 200 }
       );
     }
+
+    dbLog(scope, "lead found", {
+      email,
+      sessionId,
+      name: lead.name,
+      dob: lead.dob,
+    });
 
     const firstName = lead.name.split(" ")[0] || lead.name;
 
@@ -114,19 +128,25 @@ export async function POST(req: Request) {
         html: paymentTemplate.html,
         text: paymentTemplate.text,
       });
+      dbLog(scope, "payment confirmation email sent", { email });
     } catch (mailErr) {
-      dbError(scope, "confirmation email failed (non-fatal)", mailErr);
+      dbError(scope, "confirmation email failed (non-fatal)", mailErr, { email });
     }
+
+    dbLog(scope, "reading generation started", { email });
 
     const readingJson = await buildPaidReadingPayload(lead);
 
     if (!readingJson) {
+      dbError(scope, "reading generation failed", "", { email });
       await markPaymentFailed(supabase, email, gumroadPaymentId, sessionId);
       return Response.json(
         { error: "Reading generation failed" },
         { status: 500 }
       );
     }
+
+    dbLog(scope, "reading generation success", { email });
 
     const fulfilled = await fulfillPaidOrder(supabase, {
       email,
@@ -147,19 +167,25 @@ export async function POST(req: Request) {
 
     const accessUrl = readingAccessUrl(fulfilled.accessToken);
 
-    dbLog(scope, "fulfillment complete", {
+    dbLog(scope, "reading saved", {
       email,
       paymentId: fulfilled.paymentId,
       readingId: fulfilled.readingId,
-      accessUrl,
     });
+
+    dbLog(scope, "access token generated", {
+      email,
+      paymentId: fulfilled.paymentId,
+    });
+
+    dbLog(scope, "reading URL generated", { email, accessUrl });
 
     try {
       const deliveryTemplate = fullReadingDeliveryMail({
         firstName,
         birthDate: lead.dob,
         readingUrl: accessUrl,
-        cardUrl: SITE_URL,
+        cardUrl: accessUrl,
       });
 
       await sendEmail({
@@ -168,13 +194,23 @@ export async function POST(req: Request) {
         html: deliveryTemplate.html,
         text: deliveryTemplate.text,
       });
+
+      dbLog(scope, "delivery email sent", { email, accessUrl });
     } catch (mailErr) {
-      dbError(scope, "delivery email failed (non-fatal)", mailErr);
+      dbError(scope, "delivery email failed (non-fatal)", mailErr, { email });
     }
+
+    dbLog(scope, "fulfillment complete", {
+      email,
+      paymentId: fulfilled.paymentId,
+      readingId: fulfilled.readingId,
+      accessUrl,
+    });
 
     return Response.json({
       success: true,
       accessUrl,
+      reading_url: accessUrl,
     });
   } catch (err) {
     dbError(scope, "unexpected", err);

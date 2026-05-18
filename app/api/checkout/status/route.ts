@@ -32,6 +32,7 @@ export async function GET(req: NextRequest) {
     const supabase = createSupabaseAdmin();
 
     let payment: {
+      id: string;
       payment_status: string | null;
       access_token: string | null;
     } | null = null;
@@ -39,7 +40,7 @@ export async function GET(req: NextRequest) {
     if (sessionId) {
       const { data, error } = await supabase
         .from(DB.payments)
-        .select("payment_status, access_token")
+        .select("id, payment_status, access_token")
         .eq("session_id", sessionId)
         .maybeSingle();
 
@@ -56,7 +57,7 @@ export async function GET(req: NextRequest) {
     if (!payment && email) {
       const { data, error } = await supabase
         .from(DB.payments)
-        .select("payment_status, access_token")
+        .select("id, payment_status, access_token")
         .eq("email", email)
         .order("created_at", { ascending: false })
         .limit(1)
@@ -90,14 +91,34 @@ export async function GET(req: NextRequest) {
     }
 
     if (isPaidStatus(payment.payment_status) && payment.access_token) {
-      const accessUrl = readingAccessUrl(payment.access_token);
-      dbLog(scope, "reading ready", { sessionId, email });
-      return NextResponse.json({
-        success: true,
-        status: "ready",
-        accessToken: payment.access_token,
-        accessUrl,
-      });
+      const { data: readingRow, error: readingError } = await supabase
+        .from(DB.readings)
+        .select("id, reading_status")
+        .eq("payment_id", payment.id)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (readingError) {
+        dbError(scope, "readings lookup failed", readingError, {
+          paymentId: payment.id,
+        });
+        return NextResponse.json(
+          { success: false, error: readingError.message },
+          { status: 500 }
+        );
+      }
+
+      if (readingRow?.id) {
+        const accessUrl = readingAccessUrl(payment.access_token);
+        dbLog(scope, "reading ready", { sessionId, email, accessUrl });
+        return NextResponse.json({
+          success: true,
+          status: "ready",
+          accessToken: payment.access_token,
+          accessUrl,
+        });
+      }
     }
 
     return NextResponse.json({
