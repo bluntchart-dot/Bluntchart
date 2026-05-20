@@ -1,16 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
-import { buildClaudePrompt } from "@/lib/claude-prompt";
+import { buildClaudePrompt, getSystemPrompt } from "@/lib/claude-prompt";
 
 type Tier = "preview" | "full";
 
 const MODEL_CONFIG: Record<Tier, { model: string; max_tokens: number }> = {
   preview: {
     model: "claude-haiku-4-5-20251001",
-    max_tokens: 900,
+    max_tokens: 1100, // bumped slightly — the new preview needs room to breathe
   },
   full: {
     model: "claude-sonnet-4-6",
-    max_tokens: 2800,
+    max_tokens: 3500, // bumped — full reading is richer now
   },
 };
 
@@ -65,12 +65,19 @@ export async function POST(req: NextRequest) {
     const tier: Tier =
       body.model === "preview" || body.mode === "preview" ? "preview" : "full";
 
-    let prompt: string;
+    let userPrompt: string;
 
     if (typeof body.prompt === "string" && body.prompt.trim().length > 0) {
-      prompt = body.prompt.trim();
+      // Raw prompt passed directly — use as-is
+      userPrompt = body.prompt.trim();
     } else if (body.birth && body.chartData) {
-      prompt = buildClaudePrompt(body.birth, body.chartData, body.insight ?? {});
+      // Normal path: build prompt from birth data + chart
+      userPrompt = buildClaudePrompt(
+        body.birth,
+        body.chartData,
+        body.insight ?? {},
+        tier
+      );
     } else {
       return NextResponse.json(
         { error: "Missing prompt or birth/chartData" },
@@ -79,6 +86,10 @@ export async function POST(req: NextRequest) {
     }
 
     const { model, max_tokens } = MODEL_CONFIG[tier];
+
+    // System prompt is now passed separately — keeps it out of the token-counted
+    // user message and ensures the model always has the voice instructions
+    const systemPrompt = getSystemPrompt(tier);
 
     const response = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
@@ -90,7 +101,8 @@ export async function POST(req: NextRequest) {
       body: JSON.stringify({
         model,
         max_tokens,
-        messages: [{ role: "user", content: prompt }],
+        system: systemPrompt,
+        messages: [{ role: "user", content: userPrompt }],
       }),
     });
 
@@ -103,23 +115,23 @@ export async function POST(req: NextRequest) {
       );
     }
 
-  const data = await response.json();
-const text = data?.content?.[0]?.text ?? "";
+    const data = await response.json();
+    const text = data?.content?.[0]?.text ?? "";
 
-if (!text) {
-  console.error("[reading] Empty response from Anthropic:", data);
-  return NextResponse.json(
-    { error: "Empty response from Anthropic" },
-    { status: 500 }
-  );
-}
+    if (!text) {
+      console.error("[reading] Empty response from Anthropic:", data);
+      return NextResponse.json(
+        { error: "Empty response from Anthropic" },
+        { status: 500 }
+      );
+    }
 
-const parsed = extractJsonFromText(text);
+    const parsed = extractJsonFromText(text);
 
-return NextResponse.json({
-  success: true,
-  data: parsed,
-});
+    return NextResponse.json({
+      success: true,
+      data: parsed,
+    });
   } catch (err) {
     console.error("[reading] Unexpected error:", err);
     return NextResponse.json(
