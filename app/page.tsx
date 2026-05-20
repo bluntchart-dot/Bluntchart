@@ -232,7 +232,14 @@ function ReadingApp({ onResultChange }: { onResultChange?: (v: boolean) => void 
         placeName: city.trim(),
       };
 
-      const chartData = calculateChart(birth);
+      let chartData;
+      try {
+        chartData = calculateChart(birth);
+      } catch (calcErr) {
+        throw new Error(
+          calcErr instanceof Error ? calcErr.message : "Chart calculation failed. Check your birth date and time."
+        );
+      }
 
       const res = await fetch("/api/reading", {
         method: "POST",
@@ -315,7 +322,8 @@ function ReadingApp({ onResultChange }: { onResultChange?: (v: boolean) => void 
     } catch (e) {
       stopRot();
       setScreen("form");
-      setErr("Something went wrong. Please try again. (" + (e as Error).message + ")");
+      const msg = e instanceof Error ? e.message : (typeof e === "string" ? e : "Unknown error");
+      setErr("Something went wrong. Please try again. (" + msg + ")");
     }
   };
 
