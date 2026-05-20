@@ -45,6 +45,7 @@ interface ChartPatterns {
   venusStory: string;
   marsStory: string;
   moonStory: string;
+  mercuryStory: string;
   sunStory: string;
   risingStory: string;
   jupiterStory: string;
@@ -141,6 +142,7 @@ function extractPatterns(chart: ChartData, birth: BirthData): ChartPatterns {
     name,
     sunStory:       planetStory("Sun"),
     moonStory:      planetStory("Moon"),
+    mercuryStory:   planetStory("Mercury"),
     risingStory:    `${chart.ascendant.sign} ${chart.ascendant.degree}°`,
     midheavenStory: `${chart.midheaven.sign} ${chart.midheaven.degree}° (House 10 — career and public reputation)`,
     venusStory:     planetStory("Venus"),
@@ -155,7 +157,7 @@ function buildChartContext(patterns: ChartPatterns): string {
 SUN (core identity, ego, life path): ${patterns.sunStory}
 MOON (emotions, inner world, needs): ${patterns.moonStory}
 RISING (first impressions, appearance, mask): ${patterns.risingStory}
-MERCURY (mind, communication, thinking): ${patterns.name}
+MERCURY (mind, communication, thinking): ${patterns.mercuryStory}
 VENUS (love, attraction, self-worth): ${patterns.venusStory}
 MARS (drive, anger, ambition, sex): ${patterns.marsStory}
 JUPITER (luck, expansion, gifts): ${patterns.jupiterStory}

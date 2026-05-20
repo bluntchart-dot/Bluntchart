@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import type { BirthData } from '@/lib/types';
-import { timezoneAt } from '@/lib/chart-calculator';
+import { timezoneAt } from "@/lib/geocode-city";
 
 interface Props {
   onSubmit: (data: BirthData) => void;

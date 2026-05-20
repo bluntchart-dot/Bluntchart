@@ -6,6 +6,7 @@ import { Suspense, useEffect, useState } from "react";
 import type { ChartData } from "@/lib/types";
 import ShareCard from "@/components/ShareCard";
 import type { ShareCardData } from "@/components/ShareCard";
+import { ReadingText } from "@/components/ReadingText";
 
 const ChartWheel = dynamic(() => import("@/components/ChartWheel"), {
   ssr: false,
@@ -15,17 +16,6 @@ const ChartWheel = dynamic(() => import("@/components/ChartWheel"), {
     </div>
   ),
 });
-
-/* ─── Renders \n\n as paragraph breaks — preserves dramatic short-line format ─ */
-function ReadingText({ text }: { text: string }) {
-  return (
-    <div className="space-y-3">
-      {text.split(/\n\n+/).map((para, i) => (
-        <p key={i} className="leading-relaxed">{para}</p>
-      ))}
-    </div>
-  );
-}
 
 /* ─── Main page content ────────────────────────────────────────────────────── */
 function MyReadingContent() {
@@ -146,20 +136,20 @@ function MyReadingContent() {
 
   /* ── Render ── */
   return (
-    <main className="min-h-screen bg-[#09090f] text-[#e8e4f0] py-12 px-4">
-      <div className="max-w-2xl mx-auto">
+    <main className="min-h-screen bg-[#09090f] text-[#e8e4f0] py-12 px-4 sm:px-6 lg:px-10">
+      <div className="max-w-4xl mx-auto w-full">
 
-        <p className="text-xs uppercase tracking-widest text-[#6b6585] mb-2">
+        <p className="text-xs uppercase tracking-[0.2em] text-[#6b6585] mb-3">
           BluntChart · Your full reading
         </p>
 
         {/* Letter Opener */}
         {letterOpener ? (
-          <section className="mb-10 text-base leading-loose">
-            <ReadingText text={letterOpener} />
+          <section className="mb-12 text-base sm:text-lg leading-relaxed text-[#d8d2ec] max-w-3xl">
+            <ReadingText text={letterOpener} className="space-y-4" />
           </section>
         ) : (
-          <h1 className="text-3xl font-serif mb-8">Saved for you</h1>
+          <h1 className="text-3xl sm:text-4xl font-serif mb-10 tracking-tight">Saved for you</h1>
         )}
 
         {/* Chart Wheel */}
@@ -190,34 +180,41 @@ function MyReadingContent() {
 
         {/* Full Reading */}
         {paidInsights.length > 0 && (
-          <section className="mb-10">
-            <h2 className="text-xs uppercase tracking-widest text-[#f0b84a] mb-5">
+          <section className="mb-12">
+            <h2 className="text-xs uppercase tracking-[0.2em] text-[#f0b84a] mb-7">
               Full reading · {paidInsights.length} insights
             </h2>
             {paidInsights.map((ins, i) => (
-              <div key={i} className="mb-8 p-6 rounded-xl border border-white/10 bg-white/[0.03]">
+              <article
+                key={i}
+                className="mb-10 p-7 sm:p-9 rounded-2xl border border-white/10 bg-white/[0.03]"
+              >
                 {ins.planet && (
-                  <div className="text-xs uppercase tracking-wider text-[#6b6585] mb-3">
+                  <div className="text-xs uppercase tracking-[0.14em] text-[#6b6585] mb-5 font-semibold">
                     {ins.planet}
                   </div>
                 )}
                 {ins.truth && (
-                  <p className="text-lg font-semibold leading-snug mb-4">{ins.truth}</p>
+                  <p className="text-xl sm:text-2xl font-serif font-semibold leading-snug mb-6 text-[#f0ece8]">
+                    {ins.truth}
+                  </p>
                 )}
                 {ins.explain && (
-                  <div className="text-[#b8b0d4] mb-4 text-sm">
-                    <ReadingText text={ins.explain} />
+                  <div className="text-[#b8b0d4] mb-6 text-base sm:text-[1.05rem] leading-relaxed max-w-3xl">
+                    <ReadingText text={ins.explain} className="space-y-4" />
                   </div>
                 )}
                 {ins.action && (
-                  <div className="mt-4 pt-4 border-t border-white/5">
-                    <span className="text-xs uppercase tracking-wider text-[#f0b84a] mr-2">
-                      This week:
+                  <div className="mt-6 pt-5 border-t border-white/8">
+                    <span className="text-[10px] uppercase tracking-[0.14em] text-[#f0b84a] block mb-2">
+                      This week
                     </span>
-                    <span className="text-sm text-[#f0b84a]">{ins.action}</span>
+                    <p className="text-sm sm:text-base text-[#f0b84a] leading-relaxed">
+                      {ins.action}
+                    </p>
                   </div>
                 )}
-              </div>
+              </article>
             ))}
           </section>
         )}

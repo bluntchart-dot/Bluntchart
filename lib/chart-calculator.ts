@@ -1,6 +1,5 @@
 import * as Astronomy from "astronomy-engine";
 import { fromZonedTime } from "date-fns-tz";
-import { find as findTimezonesAt } from "geo-tz";
 import type {
   BirthData,
   PlanetPosition,
@@ -89,25 +88,11 @@ function houseFromPlanet(planetDeg: number, ascDeg: number): number {
   return Math.floor(diff / 30) + 1;
 }
 
-/** IANA zone from coordinates; empty at poles/ocean handled by caller. */
-export function timezoneAt(lat: number, lng: number): string | null {
-  try {
-    const zones = findTimezonesAt(lat, lng);
-    return zones[0] ?? null;
-  } catch {
-    return null;
-  }
-}
-
 /**
- * Birth instant in UTC. Uses `birth.timezone` when set; otherwise `geo-tz` at lat/lng.
- * Falls back to interpreting date/time as UTC if no zone can be resolved.
+ * Birth instant in UTC. Uses `birth.timezone` from geocoding; falls back to UTC.
  */
 export function birthInstantUtc(birth: BirthData): Date {
-  const iana =
-    birth.timezone?.trim() ||
-    timezoneAt(birth.lat, birth.lng) ||
-    "Etc/UTC";
+  const iana = birth.timezone?.trim() || "Etc/UTC";
   const localIso = `${birth.date}T${birth.time}:00`;
   return fromZonedTime(localIso, iana);
 }

@@ -2,21 +2,27 @@
 
 import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
+import { PreviewReadingStage } from "@/components/PreviewReadingStage";
+import { calculateChart } from "@/lib/chart-calculator";
+import { geocodeBirthPlace } from "@/lib/geocode-client";
+import { normalizeReadingCopy } from "@/lib/normalize-reading-copy";
 import { buildGumroadCheckoutUrl } from "@/lib/gumroad-checkout";
 import { persistCheckoutSession } from "@/lib/checkout-session";
+import type { BirthData } from "@/lib/types";
 
 // ─── TYPES ─────────────────────────────────────────────────────────────────────
 
 interface Insight {
   planet: string;
-  colorKey: string;
+  colorKey?: string;
   truth: string;
-  explain: string;
+  explain?: string;
   action?: string;
 }
 // Preview: 2 insights only. Chart wheel, 8 paid beats + share card come after payment (webhook email).
 interface ReadingData {
   preview: Insight[];
+  letter_opener?: string;
 }
 
 // ─── STATIC DATA ───────────────────────────────────────────────────────────────
@@ -87,263 +93,7 @@ const LOCKED_TEASERS = [
   "Your core life pattern: the one your chart has been pointing to for years",
 ];
 
-// ─── PLANET COLOURS — soft pastels for dark background ────────────────────────
-const DOT_COLORS: Record<string, string> = {
-  sun:     "#F4C878",  // warm gold
-  moon:    "#C8B8EC",  // soft lavender
-  rising:  "#B898EC",  // soft purple
-  venus:   "#EC96B4",  // rose pink
-  mars:    "#F0A87A",  // peach orange
-  mercury: "#82DCBA",  // mint teal
-  saturn:  "#AAA4C8",  // dusty purple-grey
-  jupiter: "#F0E09A",  // pale yellow
-};
 const LOADING_MSGS = ["Reading the stars…","Consulting your planets…","Finding your truth…","Almost there…"];
-
-// ─── COMPACT PREVIEW PROMPT — Haiku 4.5, ≤900 output tokens ──────────────────
-// Only 2 preview insights (no chart JSON, no share card). Full delivery is post-payment.
-const makePreviewPrompt = (name: string, dob: string, time: string, city: string) =>
-`You are BluntChart. Brutally honest astrologer. Warm, unfiltered, psychologically sharp. You sound like the references people screenshot.
-
-Birth: Name=${name}, DOB=${dob}, Time=${time || "12:00"}, City=${city}
-
-You ONLY output two free preview beats. Do not output planets, houses JSON, wheel data, or a share card. Paid delivery handles the natal chart wheel (high-precision ephemeris, Astronomy Engine), eight deeper insights, and the identity card.
-
-Each beat is one angle (example: Sun core pattern, Moon emotional loop). They must feel written for ${name} specifically, not like a generic Sun-sign paragraph pasted onto a stranger.
-
-Rules:
-- Address ${name} by first name at least twice across the two beats combined (natural, not forced every line).
-- No em dashes. No "universe", "journey", or "healing".
-- truth MUST be 3 or 4 short lines separated by the pipe character | only (example: Biggest energy in the room.|Gone before it gets real.|${name} your chart did not stutter.|Stop flirting with your own potential and call it ambition.). Each segment max 16 words. Punchy. Plain language. Roasty but not cruel.
-- explain MUST start exactly with "In simple words:" then two short grounding sentences.
-- action is one concrete sentence: what ${name} tries differently this week.
-
-Return ONLY valid JSON (no markdown, no backticks, nothing before or after):
-{
-  "preview": [
-    {
-      "planet": "Sun in [sign]",
-      "colorKey": "sun",
-      "truth": "line one|line two|line three",
-      "explain": "In simple words: two sentences.",
-      "action": "One sentence this week."
-    },
-    {
-      "planet": "Moon in [sign]",
-      "colorKey": "moon",
-      "truth": "line one|line two|line three|optional fourth",
-      "explain": "In simple words: two sentences.",
-      "action": "One sentence this week."
-    }
-  ]
-}`;
-
-// ─── FREE PREVIEW PANEL (beats only; chart wheel + share card unlock after payment) ─
-
-function splitPreviewTruth(truth: string): string[] {
-  const t = truth.trim();
-  if (!t) return [];
-  if (t.includes("|")) return t.split("|").map((x) => x.trim()).filter(Boolean);
-  const byNl = t.split(/\n+/).map((x) => x.trim()).filter(Boolean);
-  if (byNl.length > 1) return byNl;
-  return [t];
-}
-
-function previewLineStyle(lineIndex: number, colorKey: string) {
-  const accent = DOT_COLORS[colorKey] || "#EC96B4";
-  const mod = lineIndex % 4;
-  if (mod === 1) {
-    return {
-      fontFamily: "var(--font-display)",
-      fontSize: "clamp(1.05rem, 2.9vw, 1.22rem)",
-      fontWeight: 600,
-      lineHeight: 1.45,
-      color: accent,
-      marginBottom: 12,
-      textAlign: "center" as const,
-    };
-  }
-  if (mod === 3) {
-    return {
-      fontFamily: "var(--font-display)",
-      fontSize: "clamp(0.95rem, 2.5vw, 1.05rem)",
-      fontStyle: "italic" as const,
-      color: "rgba(220,214,235,0.55)",
-      marginBottom: 12,
-      textAlign: "center" as const,
-      lineHeight: 1.55,
-    };
-  }
-  return {
-    fontFamily: "var(--font-display)",
-    fontSize: "clamp(1.05rem, 3vw, 1.28rem)",
-    fontWeight: 600,
-    lineHeight: 1.45,
-    color: "#f0ece8",
-    marginBottom: 12,
-    textAlign: "center" as const,
-  };
-}
-
-function FreePreviewStage({ fname, preview }: { fname: string; preview: Insight[] }) {
-  const displayName = (fname.trim() || "You").toUpperCase();
-  const stars = Array.from({ length: 28 }, (_, i) => ({
-    top: ((i * 17.3) % 88).toFixed(1) + "%",
-    left: ((i * 23.7) % 94).toFixed(1) + "%",
-    s: i % 4 === 0 ? 2 : 1,
-    o: i % 3 === 0 ? 0.14 : 0.08,
-  }));
-  return (
-    <div
-      style={{
-        position: "relative",
-        overflow: "hidden",
-        borderRadius: 24,
-        border: "1px solid rgba(107,47,212,0.22)",
-        background: "linear-gradient(170deg,#07070d 0%,#0b0820 38%,#0e0628 72%,#07070d 100%)",
-        boxShadow: "0 0 0 1px rgba(107,47,212,0.12), 0 32px 80px rgba(0,0,0,0.45)",
-        marginBottom: 40,
-        padding: "28px 20px 36px",
-      }}
-    >
-      <div style={{ position: "absolute", inset: 0, pointerEvents: "none", opacity: 0.92 }}>
-        {stars.map((d, i) => (
-          <div
-            key={i}
-            style={{
-              position: "absolute",
-              top: d.top,
-              left: d.left,
-              width: d.s,
-              height: d.s,
-              borderRadius: "50%",
-              background: "#fff",
-              opacity: d.o,
-            }}
-          />
-        ))}
-      </div>
-      <div style={{ position: "relative", zIndex: 1 }}>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: 8,
-            marginBottom: 8,
-            flexWrap: "wrap",
-          }}
-        >
-          <span style={{ fontSize: 13, color: "rgba(240,184,74,0.75)" }}>✦</span>
-          <span
-            style={{
-              fontFamily: "var(--font-display)",
-              fontSize: 12,
-              fontWeight: 700,
-              letterSpacing: "0.14em",
-              background: "linear-gradient(135deg,rgba(240,184,74,0.85),rgba(212,83,126,0.85))",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-              backgroundClip: "text",
-            }}
-          >
-            BluntChart
-          </span>
-          <span style={{ fontSize: 10, color: "rgba(232,228,240,0.22)" }}>· your chart read you first.</span>
-        </div>
-        <div
-          style={{
-            width: 56,
-            height: 1,
-            margin: "0 auto 18px",
-            background: "linear-gradient(90deg,transparent,rgba(240,184,74,0.45),transparent)",
-          }}
-        />
-        <div
-          style={{
-            fontFamily: "var(--font-display)",
-            fontSize: "clamp(2rem, 8vw, 2.75rem)",
-            fontWeight: 800,
-            letterSpacing: "0.12em",
-            textTransform: "uppercase" as const,
-            textAlign: "center",
-            color: "#f0ece8",
-            marginBottom: 26,
-            lineHeight: 1.05,
-          }}
-        >
-          {displayName}
-        </div>
-
-        {preview.slice(0, 2).map((ins, i) => {
-          const lines = splitPreviewTruth(ins.truth);
-          const parts = ins.explain.split("In simple words:");
-          const plainExplain = parts.length > 1 ? parts[1].trim() : ins.explain.trim();
-          return (
-            <div
-              key={i}
-              style={{
-                marginBottom: i === 1 ? 4 : 30,
-                paddingBottom: i === 0 ? 26 : 0,
-                borderBottom: i === 0 ? "0.5px solid rgba(107,47,212,0.2)" : undefined,
-              }}
-            >
-              <div
-                style={{
-                  fontSize: 10,
-                  fontWeight: 700,
-                  letterSpacing: "2px",
-                  textTransform: "uppercase" as const,
-                  color: "rgba(155,111,232,0.55)",
-                  textAlign: "center",
-                  marginBottom: 14,
-                }}
-              >
-                {ins.planet}
-              </div>
-              {lines.map((line, li) => (
-                <p key={li} style={previewLineStyle(li, ins.colorKey)}>
-                  {line}
-                </p>
-              ))}
-              {plainExplain ? (
-                <div
-                  style={{
-                    marginTop: 16,
-                    padding: "14px 16px",
-                    borderRadius: 14,
-                    background: "rgba(107,47,212,0.06)",
-                    border: "0.5px solid rgba(107,47,212,0.18)",
-                    fontSize: 13,
-                    lineHeight: 1.7,
-                    color: "rgba(200,192,228,0.88)",
-                    textAlign: "center",
-                  }}
-                >
-                  <span style={{ color: "#c4a8ff", fontWeight: 600 }}>In simple words: </span>
-                  {plainExplain}
-                </div>
-              ) : null}
-              {ins.action ? (
-                <p
-                  style={{
-                    marginTop: 12,
-                    fontSize: 12,
-                    textAlign: "center",
-                    color: "rgba(240,184,74,0.88)",
-                    fontWeight: 500,
-                  }}
-                >
-                  This week: {ins.action}
-                </p>
-              ) : null}
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
 
 // ─── STYLE HELPERS ─────────────────────────────────────────────────────────────
 
@@ -463,14 +213,35 @@ function ReadingApp({ onResultChange }: { onResultChange?: (v: boolean) => void 
       return;
     }
 
-    // Generate preview with Haiku — cheap + fast
+    // Geocode + ephemeris chart → chart-synthesized preview (claude-prompt.ts)
     try {
+      const geo = await geocodeBirthPlace(city.trim());
+      if (!geo) {
+        throw new Error(
+          "Could not locate your birth city. Try adding country (e.g. Mumbai, India)."
+        );
+      }
+
+      const birth: BirthData = {
+        name: fname.trim(),
+        date: dob,
+        time: btime,
+        lat: geo.lat,
+        lng: geo.lng,
+        timezone: geo.timezone,
+        placeName: city.trim(),
+      };
+
+      const chartData = calculateChart(birth);
+
       const res = await fetch("/api/reading", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           mode: "preview",
-          prompt: makePreviewPrompt(fname.trim(), dob, btime, city.trim()),
+          birth,
+          chartData,
+          insight: {},
         }),
       });
       stopRot();
@@ -486,10 +257,25 @@ function ReadingApp({ onResultChange }: { onResultChange?: (v: boolean) => void 
         throw new Error(result.error || "Invalid reading response");
       }
 
-      const raw = result.data as ReadingData & { preview?: Insight[] };
-      const previewList = Array.isArray(raw.preview) ? raw.preview : [];
+      const raw = result.data as ReadingData & {
+        preview?: Insight[];
+        letter_opener?: string;
+      };
+      const previewList = (Array.isArray(raw.preview) ? raw.preview : [])
+        .slice(0, 2)
+        .map((ins) => ({
+          ...ins,
+          truth: normalizeReadingCopy(ins.truth ?? ""),
+          explain: ins.explain ? normalizeReadingCopy(ins.explain) : "",
+        }));
+      const letterOpener =
+        typeof raw.letter_opener === "string"
+          ? normalizeReadingCopy(raw.letter_opener)
+          : "";
+
       const parsed: ReadingData = {
-        preview: previewList.slice(0, 2),
+        preview: previewList,
+        ...(letterOpener ? { letter_opener: letterOpener } : {}),
       };
 
       if (parsed.preview.length === 0) {
@@ -510,15 +296,20 @@ function ReadingApp({ onResultChange }: { onResultChange?: (v: boolean) => void 
       }).catch((e) => console.warn("[checkout] step update failed:", e));
 
       try {
-        localStorage.setItem("bluntchart_session", JSON.stringify({
-          fname: fname.trim(),
-          email: normalizedEmail,
-          dob,
-          btime,
-          city: city.trim(),
-          preview: parsed.preview,
-          sessionId: checkoutSessionId,
-        }));
+        localStorage.setItem(
+          "bluntchart_session",
+          JSON.stringify({
+            fname: fname.trim(),
+            email: normalizedEmail,
+            dob,
+            btime,
+            city: city.trim(),
+            preview: parsed.preview,
+            letter_opener: parsed.letter_opener,
+            sessionId: checkoutSessionId,
+            previewSource: "chart",
+          })
+        );
       } catch { /* ignore */ }
 
     } catch (e) {
@@ -581,7 +372,7 @@ function ReadingApp({ onResultChange }: { onResultChange?: (v: boolean) => void 
 
   // ── FORM ────────────────────────────────────────────────────────────────────
   if (screen === "form") return (
-    <div style={{ maxWidth:560, margin:"0 auto" }}>
+    <div style={{ maxWidth:640, margin:"0 auto", width:"100%" }}>
       {err && (
         <div style={{ background:"rgba(212,83,126,0.08)", border:"0.5px solid rgba(212,83,126,0.3)",
           borderRadius:10, padding:"11px 14px", fontSize:13, color:"#f0a0b8", marginBottom:14 }}>
@@ -655,7 +446,7 @@ function ReadingApp({ onResultChange }: { onResultChange?: (v: boolean) => void 
       <div style={{ fontFamily:"var(--font-display)", fontSize:22, margin:"16px 0 8px", color:"#e8e4f0" }}>
         {loadMsg}
       </div>
-      <div style={{ fontSize:13, color:"#4a4560" }}>Writing your two preview beats…</div>
+      <div style={{ fontSize:13, color:"#4a4560" }}>Calculating your chart and writing your preview…</div>
     </div>
   );
 
@@ -664,7 +455,7 @@ function ReadingApp({ onResultChange }: { onResultChange?: (v: boolean) => void 
     const { preview } = data;
 
     return (
-      <div style={{ maxWidth:560, margin:"0 auto" }}>
+      <div className="reading-stage">
         {err && (
           <div style={{ background:"rgba(212,83,126,0.08)", border:"0.5px solid rgba(212,83,126,0.3)",
             borderRadius:10, padding:"11px 14px", fontSize:13, color:"#f0a0b8", marginBottom:14 }}>
@@ -672,11 +463,16 @@ function ReadingApp({ onResultChange }: { onResultChange?: (v: boolean) => void 
           </div>
         )}
         <SectionDivider label="Free preview · 2 of 10" />
-        <p style={{ textAlign:"center", fontSize:14, color:"rgba(232,228,240,0.42)",
-          marginBottom:22, fontFamily:"var(--font-display)", fontStyle:"italic", lineHeight:1.55 }}>
-          No chart wheel yet. No card yet. Just two lines your chart wanted you to hear first.
+        <p style={{ textAlign:"center", fontSize:15, color:"rgba(232,228,240,0.48)",
+          marginBottom:28, fontFamily:"var(--font-display)", fontStyle:"italic", lineHeight:1.65,
+          maxWidth:560, marginLeft:"auto", marginRight:"auto" }}>
+          Your real placements. Two truths your chart wanted you to hear before you unlock the rest.
         </p>
-        <FreePreviewStage fname={fname} preview={preview} />
+        <PreviewReadingStage
+          fname={fname}
+          preview={preview}
+          letterOpener={data.letter_opener}
+        />
 
         {/* ── LOCK WALL ── */}
         <div style={{ background:"rgba(255,255,255,0.02)", border:"0.5px solid rgba(255,255,255,0.06)",
@@ -864,7 +660,25 @@ export default function HomePage() {
         .cred-icon{font-size:18px;width:28px;text-align:center;flex-shrink:0;color:var(--gold);font-family:serif}
         .cred-label{font-size:12px;font-weight:700;color:var(--white);letter-spacing:.03em;margin-bottom:1px}
         .cred-desc{font-size:11px;color:rgba(232,228,240,.35)}
-        .form-wrap{margin-top:64px;padding-top:56px;border-top:0.5px solid rgba(255,255,255,0.06)}
+        .form-wrap{margin-top:64px;padding-top:56px;border-top:0.5px solid rgba(255,255,255,0.06);max-width:min(1100px,96vw);margin-left:auto;margin-right:auto;width:100%}
+        .reading-stage{width:100%;max-width:min(1100px,96vw);margin:0 auto}
+        .preview-landscape{width:100%;margin-bottom:40px}
+        .preview-letter{max-width:100%;margin-bottom:28px;padding:22px 26px;border-radius:16px;background:rgba(107,47,212,0.06);border:0.5px solid rgba(107,47,212,0.2);font-size:clamp(0.95rem,1.6vw,1.08rem);line-height:1.75;color:rgba(220,214,235,0.88);text-align:left}
+        .preview-header{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;margin-bottom:28px;flex-wrap:wrap}
+        .preview-eyebrow{font-size:10px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:rgba(155,111,232,0.65);margin-bottom:6px}
+        .preview-name{font-family:var(--font-display);font-size:clamp(1.75rem,4vw,2.5rem);font-weight:800;color:#f0ece8;line-height:1.05;margin:0}
+        .preview-count{font-size:11px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:rgba(232,228,240,0.35);white-space:nowrap}
+        .preview-grid{display:grid;grid-template-columns:1fr;gap:22px;width:100%}
+        @media(min-width:900px){.preview-grid{grid-template-columns:1fr 1fr;gap:28px}}
+        .preview-panel{text-align:left;padding:26px 28px;border-radius:18px;background:linear-gradient(165deg,rgba(12,10,22,0.95),rgba(18,12,32,0.88));border:0.5px solid rgba(107,47,212,0.22);box-shadow:0 20px 50px rgba(0,0,0,0.25)}
+        .preview-theme{font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;margin:0 0 18px;line-height:1.4}
+        .preview-truth{font-family:var(--font-display);font-size:clamp(1rem,1.8vw,1.15rem);line-height:1.6;color:#f0ece8}
+        .preview-truth p{margin-bottom:14px}
+        .preview-truth p:last-child{margin-bottom:0}
+        .preview-explain{margin-top:20px;padding:16px 18px;border-radius:12px;background:rgba(0,0,0,0.25);border:0.5px solid rgba(107,47,212,0.15);font-size:0.9rem;line-height:1.7;color:rgba(200,192,228,0.9)}
+        .preview-explain-label{display:block;font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#c4a8ff;margin-bottom:10px}
+        .preview-action{margin-top:18px;padding-top:16px;border-top:0.5px solid rgba(240,184,74,0.2);font-size:0.88rem;line-height:1.6;color:rgba(240,184,74,0.92)}
+        .preview-action span{display:block;font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px;opacity:0.85}
         .rg{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-top:48px}
         .ri{background:var(--card);padding:30px;transition:background .2s}
         .ri:hover{background:#1a1a2e}

@@ -7,7 +7,7 @@ export interface GeoResult {
   displayName: string;
 }
 
-function timezoneAt(lat: number, lng: number): string | null {
+export function timezoneAt(lat: number, lng: number): string | null {
   try {
     const zones = findTimezonesAt(lat, lng);
     return zones[0] ?? null;

@@ -6,7 +6,7 @@ type Tier = "preview" | "full";
 const MODEL_CONFIG: Record<Tier, { model: string; max_tokens: number }> = {
   preview: {
     model: "claude-haiku-4-5-20251001",
-    max_tokens: 1100, // bumped slightly — the new preview needs room to breathe
+    max_tokens: 2200,
   },
   full: {
     model: "claude-sonnet-4-6",
@@ -67,11 +67,25 @@ export async function POST(req: NextRequest) {
 
     let userPrompt: string;
 
-    if (typeof body.prompt === "string" && body.prompt.trim().length > 0) {
-      // Raw prompt passed directly — use as-is
+    if (tier === "preview") {
+      if (!body.birth || !body.chartData) {
+        return NextResponse.json(
+          {
+            error:
+              "Preview requires birth details and calculated chart data.",
+          },
+          { status: 400 }
+        );
+      }
+      userPrompt = buildClaudePrompt(
+        body.birth,
+        body.chartData,
+        body.insight ?? {},
+        "preview"
+      );
+    } else if (typeof body.prompt === "string" && body.prompt.trim().length > 0) {
       userPrompt = body.prompt.trim();
     } else if (body.birth && body.chartData) {
-      // Normal path: build prompt from birth data + chart
       userPrompt = buildClaudePrompt(
         body.birth,
         body.chartData,
