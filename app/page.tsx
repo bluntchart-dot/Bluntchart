@@ -6,6 +6,8 @@ import { PreviewReadingStage } from "@/components/PreviewReadingStage";
 import { calculateChart } from "@/lib/chart-calculator";
 import { geocodeBirthPlace } from "@/lib/geocode-client";
 import { normalizeReadingCopy } from "@/lib/normalize-reading-copy";
+import LocationPicker from "@/components/LocationPicker";
+import type { SelectedLocation } from "@/components/LocationPicker";
 import { buildGumroadCheckoutUrl } from "@/lib/gumroad-checkout";
 import { persistCheckoutSession } from "@/lib/checkout-session";
 import type { BirthData } from "@/lib/types";
@@ -127,7 +129,8 @@ function ReadingApp({ onResultChange }: { onResultChange?: (v: boolean) => void 
   const [email,  setEmail]    = useState("");   // NEW — collected with birth details
   const [dob,    setDob]      = useState("");
   const [btime,  setBtime]    = useState("");
-  const [city,   setCity]     = useState("");
+  const [city,    setCity]    = useState("");
+const [cityGeo, setCityGeo] = useState<SelectedLocation | null>(null);
   const [err,    setErr]      = useState("");
   const [loadMsg, setLoadMsg] = useState(LOADING_MSGS[0]);
   const [data,   setData]     = useState<ReadingData|null>(null);
@@ -157,6 +160,7 @@ function ReadingApp({ onResultChange }: { onResultChange?: (v: boolean) => void 
   const stopRot = () => { if (rotTimer.current) clearInterval(rotTimer.current); };
 
   // ── Submit: save lead → generate preview (Haiku, ~$0.003) ────────────────
+  // ── Submit: geocode FIRST → save lead with coords → generate preview ─────
   const submit = async () => {
     if (!fname.trim() || !email.trim() || !dob || !city.trim()) {
       setErr("Please fill in your name, email, date of birth, and city."); return;
@@ -168,12 +172,41 @@ function ReadingApp({ onResultChange }: { onResultChange?: (v: boolean) => void 
     if (!emailRx.test(email.trim())) {
       setErr("Please enter a valid email address."); return;
     }
-
+ 
     setErr(""); setScreen("loading"); startRot();
-
+ 
     const normalizedEmail = email.trim().toLowerCase();
-
-    // Save checkout to Supabase (users + payments pending + abandoned_checkouts)
+ 
+    /* ───────────────────────────────────────────────────────────────────────
+       STEP 1: Geocode the city BEFORE saving to DB.
+       This way we can store lat/lng so the paid chart never fails.
+       ─────────────────────────────────────────────────────────────────────── */
+    let geo: { lat: number; lng: number; timezone: string } | null = null;
+try {
+  if (cityGeo) {
+    // Use coordinates from the LocationPicker dropdown (always accurate)
+    // Timezone will be resolved server-side during chart calculation
+    const browserTz = Intl.DateTimeFormat().resolvedOptions().timeZone ?? "";
+    geo = { lat: cityGeo.lat, lng: cityGeo.lng, timezone: browserTz };
+} else {
+    // Fallback: user typed without selecting from dropdown
+    geo = await geocodeBirthPlace(city.trim());
+  }
+      if (!geo) {
+        throw new Error(
+          "Could not locate your birth city. Try adding country (e.g. Mumbai, India)."
+        );
+      }
+    } catch (geoErr) {
+      stopRot();
+      setScreen("form");
+      setErr(geoErr instanceof Error ? geoErr.message : "Could not locate city. Try adding the country name.");
+      return;
+    }
+ 
+    /* ───────────────────────────────────────────────────────────────────────
+       STEP 2: Save checkout to Supabase — now WITH coordinates.
+       ─────────────────────────────────────────────────────────────────────── */
     let checkoutSessionId: string | null = null;
     try {
       const saveRes = await fetch("/api/save-pending", {
@@ -185,6 +218,9 @@ function ReadingApp({ onResultChange }: { onResultChange?: (v: boolean) => void 
           dob,
           birth_time: btime,
           city: city.trim(),
+          birth_lat: geo.lat,
+          birth_lng: geo.lng,
+          timezone: geo.timezone,
         }),
       });
       const saveText = await saveRes.text();
@@ -212,16 +248,12 @@ function ReadingApp({ onResultChange }: { onResultChange?: (v: boolean) => void 
       setErr((saveErr as Error).message);
       return;
     }
-
-    // Geocode + ephemeris chart → chart-synthesized preview (claude-prompt.ts)
+ 
+    /* ───────────────────────────────────────────────────────────────────────
+       STEP 3: Calculate chart + generate preview (using same geo data).
+       No second geocode call needed — we already have lat/lng.
+       ─────────────────────────────────────────────────────────────────────── */
     try {
-      const geo = await geocodeBirthPlace(city.trim());
-      if (!geo) {
-        throw new Error(
-          "Could not locate your birth city. Try adding country (e.g. Mumbai, India)."
-        );
-      }
-
       const birth: BirthData = {
         name: fname.trim(),
         date: dob,
@@ -231,16 +263,25 @@ function ReadingApp({ onResultChange }: { onResultChange?: (v: boolean) => void 
         timezone: geo.timezone,
         placeName: city.trim(),
       };
-
+ 
       let chartData;
+ 
+      console.log("BIRTH OBJECT:", birth);
+      console.log("DATE:", birth.date);
+      console.log("TIME:", birth.time);
+      console.log("TIMEZONE:", birth.timezone);
+      console.log("LAT:", birth.lat);
+      console.log("LNG:", birth.lng);
+ 
       try {
         chartData = calculateChart(birth);
       } catch (calcErr) {
+        console.error("CALC ERROR:", calcErr);
         throw new Error(
-          calcErr instanceof Error ? calcErr.message : "Chart calculation failed. Check your birth date and time."
+          calcErr instanceof Error ? calcErr.message : "Chart calculation failed"
         );
       }
-
+ 
       const res = await fetch("/api/reading", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -252,18 +293,18 @@ function ReadingApp({ onResultChange }: { onResultChange?: (v: boolean) => void 
         }),
       });
       stopRot();
-
+ 
       if (!res.ok) {
         const e = await res.json().catch(() => ({}));
         throw new Error(e.error || `Server error ${res.status}`);
       }
-
+ 
       const result = await res.json();
-
+ 
       if (!result.success || !result.data) {
         throw new Error(result.error || "Invalid reading response");
       }
-
+ 
       const raw = result.data as ReadingData & {
         preview?: Insight[];
         letter_opener?: string;
@@ -279,20 +320,20 @@ function ReadingApp({ onResultChange }: { onResultChange?: (v: boolean) => void 
         typeof raw.letter_opener === "string"
           ? normalizeReadingCopy(raw.letter_opener)
           : "";
-
+ 
       const parsed: ReadingData = {
         preview: previewList,
         ...(letterOpener ? { letter_opener: letterOpener } : {}),
       };
-
+ 
       if (parsed.preview.length === 0) {
         throw new Error("No preview generated");
       }
-
+ 
       setData(parsed);
       setScreen("result");
       onResultChange?.(true);
-
+ 
       fetch("/api/checkout/step", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -301,7 +342,7 @@ function ReadingApp({ onResultChange }: { onResultChange?: (v: boolean) => void 
           step: "preview_generated",
         }),
       }).catch((e) => console.warn("[checkout] step update failed:", e));
-
+ 
       try {
         localStorage.setItem(
           "bluntchart_session",
@@ -318,7 +359,7 @@ function ReadingApp({ onResultChange }: { onResultChange?: (v: boolean) => void 
           })
         );
       } catch { /* ignore */ }
-
+ 
     } catch (e) {
       stopRot();
       setScreen("form");
@@ -374,7 +415,7 @@ function ReadingApp({ onResultChange }: { onResultChange?: (v: boolean) => void 
 
   const reset = () => {
     setScreen("form"); setData(null); setSessionId(null);
-    setFname(""); setEmail(""); setDob(""); setBtime(""); setCity(""); setErr("");
+    setFname(""); setEmail(""); setDob(""); setBtime(""); setCity(""); setCityGeo(null); setErr("");
     onResultChange?.(false);
   };
 
@@ -429,10 +470,16 @@ function ReadingApp({ onResultChange }: { onResultChange?: (v: boolean) => void 
 
         {/* City */}
         <div style={{ marginBottom:24 }}>
-          <label style={lbl}>City &amp; country of birth</label>
-          <input value={city} onChange={e=>setCity(e.target.value)}
-            placeholder="e.g. New York, USA or London, UK" style={inp}/>
-        </div>
+  <label style={lbl}>City &amp; country of birth</label>
+  <LocationPicker
+    value={city}
+    onChange={(location, rawText) => {
+      setCityGeo(location);
+      setCity(rawText);
+    }}
+    placeholder="e.g. New York, USA or London, UK"
+  />
+</div>
 
         <button onClick={submit} style={{ width:"100%",
           background:"linear-gradient(135deg,#6b2fd4,#d4537e)", color:"#fff", border:"none",
@@ -477,10 +524,11 @@ function ReadingApp({ onResultChange }: { onResultChange?: (v: boolean) => void 
           Your real placements. Two truths your chart wanted you to hear before you unlock the rest.
         </p>
         <PreviewReadingStage
-          fname={fname}
-          preview={preview}
-          letterOpener={data.letter_opener}
-        />
+           fname={fname}
+  preview={preview}
+  letterOpener={data?.letter_opener ?? ""}
+  onUnlock={handleUnlock}   // ← add this
+/>
 
         {/* ── LOCK WALL ── */}
         <div style={{ background:"rgba(255,255,255,0.02)", border:"0.5px solid rgba(255,255,255,0.06)",

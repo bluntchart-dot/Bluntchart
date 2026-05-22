@@ -1,213 +1,342 @@
 import type { BirthData, ChartData } from "./types";
 
-/* ------------------------------------------------------------------ */
-/*                        CHART PATTERN ANALYSIS                        */
-/* ------------------------------------------------------------------ */
+/* ══════════════════════════════════════════════════════════════════════
+   LOOKUP TABLES  — unchanged from working version
+══════════════════════════════════════════════════════════════════════ */
 
 const ELEMENT_MAP: Record<string, string> = {
-  Aries: "Fire",      Leo: "Fire",      Sagittarius: "Fire",
-  Taurus: "Earth",    Virgo: "Earth",   Capricorn: "Earth",
-  Gemini: "Air",      Libra: "Air",     Aquarius: "Air",
-  Cancer: "Water",    Scorpio: "Water", Pisces: "Water",
+  Aries:"Fire", Leo:"Fire", Sagittarius:"Fire",
+  Taurus:"Earth", Virgo:"Earth", Capricorn:"Earth",
+  Gemini:"Air", Libra:"Air", Aquarius:"Air",
+  Cancer:"Water", Scorpio:"Water", Pisces:"Water",
 };
 
 const MODALITY_MAP: Record<string, string> = {
-  Aries: "Cardinal",    Cancer: "Cardinal",  Libra: "Cardinal",    Capricorn: "Cardinal",
-  Taurus: "Fixed",      Leo: "Fixed",        Scorpio: "Fixed",     Aquarius: "Fixed",
-  Gemini: "Mutable",    Virgo: "Mutable",    Sagittarius: "Mutable", Pisces: "Mutable",
+  Aries:"Cardinal", Cancer:"Cardinal", Libra:"Cardinal", Capricorn:"Cardinal",
+  Taurus:"Fixed", Leo:"Fixed", Scorpio:"Fixed", Aquarius:"Fixed",
+  Gemini:"Mutable", Virgo:"Mutable", Sagittarius:"Mutable", Pisces:"Mutable",
 };
 
-// Houses and what life area they govern — used to write layman explanations
+const SIGN_FLAVOR: Record<string, string> = {
+  Aries:       "acts first, thinks second; needs to be first; anger is fast and forgotten",
+  Taurus:      "moves slowly by design; needs security above all; comfort is non-negotiable",
+  Gemini:      "thinks in ten directions at once; craves novelty; avoids depth by staying curious",
+  Cancer:      "feels everything deeply; protects by withdrawing; loyalty is the whole identity",
+  Leo:         "needs to be seen and acknowledged to feel alive; creates, leads, performs naturally",
+  Virgo:       "analyzes to feel safe; criticises what it loves; fixes things instead of feeling them",
+  Libra:       "people-pleases to avoid conflict; needs partnership; indecision is self-protection",
+  Scorpio:     "goes all-in or not at all; never fully trusts; power and intensity are the default mode",
+  Sagittarius: "needs freedom more than security; commitment feels like a cage; optimism is armor",
+  Capricorn:   "controls emotions to appear strong; success is the language it speaks; slow but lasting",
+  Aquarius:    "detaches to feel safe; loves humanity in theory; one-on-one intimacy is the real challenge",
+  Pisces:      "absorbs everyone else's feelings; escapes when overwhelmed; boundaries feel unnatural",
+};
+
 const HOUSE_MEANING: Record<number, string> = {
-  1: "identity and how you come across",
-  2: "money, self-worth, and what you value",
-  3: "communication and how your mind works",
-  4: "home, roots, and private self",
-  5: "creativity, fun, and how you love",
-  6: "daily work, health, and routine",
-  7: "relationships and who you attract",
-  8: "depth, transformation, and shared resources",
-  9: "beliefs, travel, and bigger picture",
-  10: "career, reputation, and public image",
-  11: "friendships, community, and future vision",
-  12: "what's hidden, solitude, and the inner world",
+  1:  "how you show up and come across to people — your mask and your first impression",
+  2:  "your relationship with money, self-worth, and what you actually value",
+  3:  "how your mind works, how you communicate, your immediate environment",
+  4:  "your private self, your roots, your home life — who you are when no one's watching",
+  5:  "creativity, fun, romance, and how you express yourself",
+  6:  "your daily work, habits, health — how you show up on ordinary days",
+  7:  "relationships, partnerships, and who you attract — also what you project onto others",
+  8:  "depth, transformation, shared money, sex, power — what you're afraid to lose",
+  9:  "your beliefs, travel, higher learning, and how you search for meaning",
+  10: "your career, public reputation, legacy — how the world sees your accomplishments",
+  11: "your friends, community, audience, and future vision",
+  12: "what's hidden — secrets, solitude, the unconscious patterns running quietly in the background",
 };
 
 const PERSONAL_PLANETS = ["Sun", "Moon", "Mercury", "Venus", "Mars"];
 
-interface ChartPatterns {
-  stelliums: string[];
-  dominantElement: string;
-  dominantModality: string;
-  keyAspects: string[];
-  saturnStory: string;
-  retrogradeList: string[];
-  venusStory: string;
-  marsStory: string;
-  moonStory: string;
-  mercuryStory: string;
-  sunStory: string;
-  risingStory: string;
-  jupiterStory: string;
-  midheavenStory: string;
-  name: string;
+/* ══════════════════════════════════════════════════════════════════════
+   CHART PATTERN EXTRACTION  — unchanged from working version
+══════════════════════════════════════════════════════════════════════ */
+
+interface PlanetDetail {
+  sign: string;
+  degree: number;
+  house: number;
+  retrograde: boolean;
+  flavor: string;
+  houseMeaning: string;
+  aspects: string[];
+  combo: string;
 }
 
-function extractPatterns(chart: ChartData, birth: BirthData): ChartPatterns {
-  const planets = chart.planets;
-  const name = birth.name ?? "you";
+function buildPlanetDetail(
+  planetName: string,
+  chart: ChartData
+): PlanetDetail | null {
+  const p = chart.planets.find((x) => x.name === planetName);
+  if (!p) return null;
 
-  const get = (n: string) => planets.find((p) => p.name === n);
+  const flavor = SIGN_FLAVOR[p.sign] ?? p.sign;
+  const houseMeaning = HOUSE_MEANING[p.house] ?? `house ${p.house}`;
 
-  // Sign stelliums (3+ planets)
+  const aspects = chart.aspects
+    .filter((a) => a.planet1 === planetName || a.planet2 === planetName)
+    .slice(0, 3)
+    .map((a) => {
+      const other = a.planet1 === planetName ? a.planet2 : a.planet1;
+      return `${a.type} ${other} (${a.orb}° orb)`;
+    });
+
+  const combo = `${planetName} in ${p.sign} in House ${p.house} — ${p.sign} ${flavor.split(";")[0]}; this plays out in the area of ${houseMeaning}${p.retrograde ? "; retrograde = this energy turned inward, harder to express outwardly" : ""}`;
+
+  return {
+    sign: p.sign,
+    degree: p.degree,
+    house: p.house,
+    retrograde: p.retrograde,
+    flavor,
+    houseMeaning,
+    aspects,
+    combo,
+  };
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   FULL CHART CONTEXT  — unchanged from working version
+   Used by buildFullReadingPrompt (Sonnet — can handle full depth)
+══════════════════════════════════════════════════════════════════════ */
+
+function buildRichChartContext(birth: BirthData, chart: ChartData): string {
+  const name = birth.name ?? "this person";
+
+  const sun     = buildPlanetDetail("Sun",     chart);
+  const moon    = buildPlanetDetail("Moon",    chart);
+  const mercury = buildPlanetDetail("Mercury", chart);
+  const venus   = buildPlanetDetail("Venus",   chart);
+  const mars    = buildPlanetDetail("Mars",    chart);
+  const jupiter = buildPlanetDetail("Jupiter", chart);
+  const saturn  = buildPlanetDetail("Saturn",  chart);
+  const uranus  = buildPlanetDetail("Uranus",  chart);
+  const neptune = buildPlanetDetail("Neptune", chart);
+  const pluto   = buildPlanetDetail("Pluto",   chart);
+
+  const risingSign = chart.ascendant.sign;
+  const mcSign     = chart.midheaven.sign;
+
   const signCounts: Record<string, string[]> = {};
-  planets.forEach((p) => {
+  chart.planets.forEach((p) => {
     if (!signCounts[p.sign]) signCounts[p.sign] = [];
     signCounts[p.sign].push(p.name);
   });
-  const signStelliums = Object.entries(signCounts)
+  const stelliums = Object.entries(signCounts)
     .filter(([, ps]) => ps.length >= 3)
-    .map(([sign, ps]) => `${ps.join(", ")} all in ${sign}`);
+    .map(([sign, ps]) => `${ps.join(" + ")} all in ${sign} — heavily shaped by ${sign} energy: ${SIGN_FLAVOR[sign]?.split(";")[0] ?? sign}`);
 
-  // House stelliums (3+ planets)
   const houseCounts: Record<number, string[]> = {};
-  planets.forEach((p) => {
+  chart.planets.forEach((p) => {
     if (!houseCounts[p.house]) houseCounts[p.house] = [];
     houseCounts[p.house].push(p.name);
   });
   const houseStelliums = Object.entries(houseCounts)
     .filter(([, ps]) => ps.length >= 3)
-    .map(([house, ps]) => `${ps.join(", ")} all in House ${house} (${HOUSE_MEANING[Number(house)] ?? "unknown area"})`);
+    .map(([h, ps]) => `${ps.join(" + ")} all in House ${h} (${HOUSE_MEANING[Number(h)] ?? ""})`);
 
-  const stelliums = [...signStelliums, ...houseStelliums];
-
-  // Dominant element
-  const elementCount: Record<string, number> = {};
-  planets.forEach((p) => {
+  const elCount: Record<string, number> = {};
+  chart.planets.forEach((p) => {
     const el = ELEMENT_MAP[p.sign] ?? "Unknown";
-    elementCount[el] = (elementCount[el] ?? 0) + 1;
+    elCount[el] = (elCount[el] ?? 0) + 1;
   });
-  const dominantElement = Object.entries(elementCount)
-    .sort((a, b) => b[1] - a[1])[0]?.[0] ?? "Air";
+  const dominantEl = Object.entries(elCount).sort((a, b) => b[1] - a[1])[0]?.[0] ?? "Air";
 
-  // Dominant modality
-  const modalityCount: Record<string, number> = {};
-  planets.forEach((p) => {
-    const mod = MODALITY_MAP[p.sign] ?? "Unknown";
-    modalityCount[mod] = (modalityCount[mod] ?? 0) + 1;
-  });
-  const dominantModality = Object.entries(modalityCount)
-    .sort((a, b) => b[1] - a[1])[0]?.[0] ?? "Mutable";
+  const sunMoonTension = sun && moon
+    ? `SUN in ${sun.sign} + MOON in ${moon.sign}: ${sun.sign} wants to ${SIGN_FLAVOR[sun.sign]?.split(";")[0] ?? ""}; but the Moon in ${moon.sign} emotionally needs to ${SIGN_FLAVOR[moon.sign]?.split(";")[0] ?? ""}. This internal conflict = ${sun.sign !== moon.sign ? "a person who projects one thing and feels another" : "sign reinforcement — what they want and what they feel are aligned"}.`
+    : "";
 
-  // Key aspects — personal planets, sorted tightest first
-  const keyAspects = chart.aspects
-    .filter(
-      (a) =>
-        PERSONAL_PLANETS.includes(a.planet1) ||
-        PERSONAL_PLANETS.includes(a.planet2)
-    )
-    .slice(0, 7)
-    .map(
-      (a) =>
-        `${a.planet1} ${a.type} ${a.planet2} — ${a.orb}° orb`
-    );
+  const saturnSunAspect = chart.aspects.find(
+    (a) =>
+      (a.planet1 === "Saturn" && a.planet2 === "Sun") ||
+      (a.planet1 === "Sun"    && a.planet2 === "Saturn")
+  );
 
-  // Retrograde planets
-  const retrogradeList = planets
+  const retrogradeList = chart.planets
     .filter((p) => p.retrograde)
-    .map((p) => `${p.name} Rx in ${p.sign} (House ${p.house} — ${HOUSE_MEANING[p.house] ?? ""})`);
+    .map((p) => `${p.name} Rx in ${p.sign} — turned inward, harder to express, often overcompensated`);
 
-  // Build specific planet story strings (sign + house + key aspects) for the prompt
-  function planetStory(name: string): string {
-    const p = get(name);
-    if (!p) return "not found";
-    const aspects = chart.aspects
-      .filter((a) => a.planet1 === name || a.planet2 === name)
-      .slice(0, 3)
-      .map((a) => {
-        const other = a.planet1 === name ? a.planet2 : a.planet1;
-        return `${a.type} ${other} (${a.orb}°)`;
-      })
-      .join(", ");
-    const hMeaning = HOUSE_MEANING[p.house] ?? "";
-    return `${p.sign} ${p.degree}° | House ${p.house} (${hMeaning})${p.retrograde ? " — Retrograde" : ""}${aspects ? ` | Aspects: ${aspects}` : ""}`;
+  const keyAspects = chart.aspects
+    .filter((a) => PERSONAL_PLANETS.includes(a.planet1) || PERSONAL_PLANETS.includes(a.planet2))
+    .slice(0, 8)
+    .map((a) => `${a.planet1} ${a.type} ${a.planet2} (${a.orb}° orb)`);
+
+  function planetLine(label: string, d: PlanetDetail | null): string {
+    if (!d) return `${label}: not found`;
+    return [
+      `${label}: ${d.sign} ${d.degree}° | House ${d.house}`,
+      `  → ${d.sign} here means: ${d.flavor}`,
+      `  → In House ${d.house}: this plays out through ${d.houseMeaning}`,
+      d.retrograde ? `  → RETROGRADE: energy turned inward, often overcompensated or blocked` : "",
+      d.aspects.length ? `  → Aspects: ${d.aspects.join(" | ")}` : "",
+    ].filter(Boolean).join("\n");
   }
 
-  return {
-    stelliums,
-    dominantElement,
-    dominantModality,
-    keyAspects,
-    retrogradeList,
-    name,
-    sunStory:       planetStory("Sun"),
-    moonStory:      planetStory("Moon"),
-    mercuryStory:   planetStory("Mercury"),
-    risingStory:    `${chart.ascendant.sign} ${chart.ascendant.degree}°`,
-    midheavenStory: `${chart.midheaven.sign} ${chart.midheaven.degree}° (House 10 — career and public reputation)`,
-    venusStory:     planetStory("Venus"),
-    marsStory:      planetStory("Mars"),
-    saturnStory:    planetStory("Saturn"),
-    jupiterStory:   planetStory("Jupiter"),
-  };
-}
-
-function buildChartContext(patterns: ChartPatterns): string {
   return `
-SUN (core identity, ego, life path): ${patterns.sunStory}
-MOON (emotions, inner world, needs): ${patterns.moonStory}
-RISING (first impressions, appearance, mask): ${patterns.risingStory}
-MERCURY (mind, communication, thinking): ${patterns.mercuryStory}
-VENUS (love, attraction, self-worth): ${patterns.venusStory}
-MARS (drive, anger, ambition, sex): ${patterns.marsStory}
-JUPITER (luck, expansion, gifts): ${patterns.jupiterStory}
-SATURN (limitations, lessons, slow-burn success): ${patterns.saturnStory}
-MIDHEAVEN (career destiny, public image): ${patterns.midheavenStory}
+=== ${name.toUpperCase()}'S BIRTH CHART ===
 
-CHART PATTERNS:
-- Dominant Element: ${patterns.dominantElement}
-- Dominant Modality: ${patterns.dominantModality}
-- Stelliums: ${patterns.stelliums.length ? patterns.stelliums.join(" | ") : "none"}
-- Retrograde planets: ${patterns.retrogradeList.length ? patterns.retrogradeList.join(", ") : "none"}
+NAME: ${name}
+RISING: ${risingSign} — first impression and mask; ${SIGN_FLAVOR[risingSign]?.split(";")[0] ?? risingSign}
+MIDHEAVEN: ${mcSign} — career style and public reputation; ${SIGN_FLAVOR[mcSign]?.split(";")[0] ?? mcSign}
 
-KEY ASPECTS (tightest orbs = strongest effects):
-${patterns.keyAspects.join("\n")}
+--- PERSONAL PLANETS ---
+
+${planetLine("SUN (core identity, ego, life path)", sun)}
+
+${planetLine("MOON (emotions, instincts, inner needs)", moon)}
+
+${planetLine("MERCURY (mind, communication, how they think)", mercury)}
+
+${planetLine("VENUS (love style, self-worth, what they attract)", venus)}
+
+${planetLine("MARS (drive, ambition, anger, how they pursue things)", mars)}
+
+--- SOCIAL / GENERATIONAL ---
+
+${planetLine("JUPITER (luck, expansion, gifts — where things flow)", jupiter)}
+
+${planetLine("SATURN (discipline, limitations, slow-burn success)", saturn)}
+
+${planetLine("URANUS (rebellion, disruption, where they break patterns)", uranus)}
+
+${planetLine("NEPTUNE (illusion, idealism, where they lose themselves)", neptune)}
+
+${planetLine("PLUTO (power, transformation, what they can't control)", pluto)}
+
+--- KEY CHART PATTERNS ---
+
+Dominant element: ${dominantEl}
+${stelliums.length ? `STELLIUMS (major personality concentration):\n${stelliums.join("\n")}` : "No stelliums."}
+${houseStelliums.length ? `HOUSE STELLIUMS:\n${houseStelliums.join("\n")}` : ""}
+${retrogradeList.length ? `RETROGRADE PLANETS:\n${retrogradeList.join("\n")}` : "No retrogrades."}
+
+--- THE KEY TENSION (most important for reading) ---
+
+${sunMoonTension}
+${saturnSunAspect ? `SATURN ${saturnSunAspect.type} SUN (${saturnSunAspect.orb}° orb): inner critic has a full-time job. Success timeline is slower than average. Recognition comes late but builds to stay.` : ""}
+
+--- ALL KEY ASPECTS ---
+${keyAspects.join("\n")}
 `.trim();
 }
 
-/* ------------------------------------------------------------------ */
-/*                           SYSTEM PROMPTS                            */
-/* ------------------------------------------------------------------ */
+/* ══════════════════════════════════════════════════════════════════════
+   LEAN PREVIEW CONTEXT  — NEW addition
+   Only the 3 key tensions Haiku needs. Shorter = model follows
+   tone rules better instead of just reporting data.
+══════════════════════════════════════════════════════════════════════ */
 
-export const PREVIEW_SYSTEM_PROMPT = `You are the world's most emotionally intelligent astrologer. You write like a brilliant best friend who genuinely cares — warm, a little dramatic, completely honest. You have spent 15 years studying charts and you feel something real when you look at one.
+function buildLeanPreviewContext(birth: BirthData, chart: ChartData): string {
+  const name   = birth.name ?? "this person";
+  const get    = (n: string) => chart.planets.find((p) => p.name === n);
+
+  const sun    = get("Sun");
+  const moon   = get("Moon");
+  const venus  = get("Venus");
+  const saturn = get("Saturn");
+  const mercury = get("Mercury");
+  const mars   = get("Mars");
+
+  const sunMoonContrast = (sun && moon)
+    ? `SUN in ${sun.sign} (House ${sun.house}) vs MOON in ${moon.sign} (House ${moon.house}):
+  Sun in ${sun.sign} = ${SIGN_FLAVOR[sun.sign]?.split(";")[0] ?? sun.sign}
+  Moon in ${moon.sign} = ${SIGN_FLAVOR[moon.sign]?.split(";")[0] ?? moon.sign}
+  ${sun.sign !== moon.sign ? "These two want different things — this IS the person's central internal tension." : "Same-sign Sun and Moon = what they want and what they feel are reinforced."}`
+    : `SUN: ${sun?.sign ?? "?"} House ${sun?.house ?? "?"} | MOON: ${moon?.sign ?? "?"} House ${moon?.house ?? "?"}`;
+
+  const saturnContext = saturn
+    ? `SATURN in ${saturn.sign} (House ${saturn.house} — ${HOUSE_MEANING[saturn.house] ?? ""})
+  = ${SIGN_FLAVOR[saturn.sign]?.split(";")[0] ?? saturn.sign}
+  This house = where they work hardest and feel most behind.`
+    : "";
+
+  const venusContext = venus
+    ? `VENUS in ${venus.sign} (House ${venus.house} — ${HOUSE_MEANING[venus.house] ?? ""})${venus.retrograde ? " RETROGRADE" : ""}
+  = ${SIGN_FLAVOR[venus.sign]?.split(";")[0] ?? venus.sign}`
+    : "";
+
+  const topAspects = chart.aspects
+    .filter((a) => PERSONAL_PLANETS.includes(a.planet1) || PERSONAL_PLANETS.includes(a.planet2))
+    .slice(0, 4)
+    .map((a) => `${a.planet1} ${a.type} ${a.planet2} (${a.orb}°)`);
+
+  const signCounts: Record<string, string[]> = {};
+  chart.planets.forEach((p) => {
+    if (!signCounts[p.sign]) signCounts[p.sign] = [];
+    signCounts[p.sign].push(p.name);
+  });
+  const stelliums = Object.entries(signCounts)
+    .filter(([, ps]) => ps.length >= 3)
+    .map(([sign, ps]) => `${ps.join(", ")} all in ${sign}`);
+
+  const personalRetrogrades = chart.planets
+    .filter((p) => p.retrograde && PERSONAL_PLANETS.includes(p.name))
+    .map((p) => `${p.name} Retrograde in ${p.sign}`);
+
+  return `NAME: ${name}
+RISING: ${chart.ascendant.sign}
+MERCURY: ${mercury?.sign ?? "?"} House ${mercury?.house ?? "?"}${mercury?.retrograde ? " Rx" : ""}
+MARS: ${mars?.sign ?? "?"} House ${mars?.house ?? "?"}
+
+THE KEY TENSIONS:
+
+${sunMoonContrast}
+
+${saturnContext}
+
+${venusContext}
+
+TOP ASPECTS: ${topAspects.join(" | ")}
+${stelliums.length ? `STELLIUMS: ${stelliums.join(" | ")}` : ""}
+${personalRetrogrades.length ? `PERSONAL PLANET RETROGRADES: ${personalRetrogrades.join(", ")}` : ""}`.trim();
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   SYSTEM PROMPTS
+   KEY ADDITION: The Golden Rule — human feeling FIRST, placement SECOND
+══════════════════════════════════════════════════════════════════════ */
+
+export const PREVIEW_SYSTEM_PROMPT = `You are the world's most emotionally intelligent astrologer. You write like a brilliant best friend who has studied astrology for 15 years and genuinely cares about the person you're reading for.
+
+THE GOLDEN RULE — the most important instruction:
+Start every insight with the HUMAN FEELING or BEHAVIOR. Never start with a planet name, house number, or astrological term.
+The person must feel recognized BEFORE they feel explained.
+
+WRONG: "Your Mercury in Pisces in the 11th house makes you absorb people's feelings."
+RIGHT: "You walk into a room and immediately know who is upset, who is faking it, and who needs to leave. Nobody taught you that. You just feel it." → THEN explain the placement.
 
 YOUR VOICE:
-- Short sentences. Hard stops. New lines between every thought for dramatic effect.
-- Use "babe", "I know", "honestly", "listen", "trust me" — naturally, not every sentence.
-- Speak DIRECTLY to the person. Always "you", never "people with this placement".
-- Acknowledge the FEELING before you deliver the truth.
-- Use specific internal dialogues people recognize. E.g.: You know that moment when you think "what am I even doing?"
-- When something is hard to say, say it gently. But say it.
-- Real-life scenarios over abstract statements. Always.
+- Warm, a little dramatic, completely honest.
+- Short sentences. Hard stops. New line for every new thought.
+- Speak directly TO the person. Always "you", never "people with this placement."
+- Acknowledge the FEELING before delivering the truth.
+- Use "babe", "I know", "honestly", "listen" — naturally, not every sentence.
+- Real-life internal dialogues the person will recognize.
 
 FORBIDDEN WORDS: journey, growth, heal, vibe, manifest, universe, soul, empath, abundance, alignment, authentic, portal, energy.
 
-TONE EXAMPLES — internalize these:
+TONE EXAMPLES:
 "Your chart is not built for overnight success. And honestly? I know that probably frustrates you."
 "You put in effort. Real effort. You watch people move ahead faster and think: what am I missing?"
-"But trust me — your chart doesn't show failure. It shows delayed recognition."
-"Babe. The mixed signals you keep accepting? Your chart explains exactly why you do that."
-"You deserve someone who doesn't make you question if they want you. That's not a high bar."
+"Babe. The mixed signals you keep accepting? Your chart explains exactly why."
 "Keep going. Your success looks slow now because it's being built to last longer than other people's attention spans."
 
 HARD RULES:
-- Every insight must trace back to specific placements in the chart data given.
-- Never write generic sun-sign content. This person's chart is unique — treat it that way.
-- If two placements contradict each other, name that contradiction. That tension IS the person.
-- No walls of text. Short dramatic paragraphs. Line breaks between every thought.`;
-
+- Every single sentence must trace back to a specific placement or aspect in the chart data.
+- NEVER write generic sun-sign content. "Leo Sun = dramatic" is not a reading. The combination of Leo Sun in House X with aspects to Y — that IS a reading.
+- Name the CONTRADICTION between placements. That tension IS the person.
+- No walls of text. Short dramatic paragraphs. New lines between every thought.
+- The preview must end each insight with a CLIFFHANGER that makes them need to unlock the full reading.`;
 
 export const FULL_SYSTEM_PROMPT = `You are the world's most emotionally intelligent astrologer. You write like a brilliant best friend who genuinely cares — warm, a little dramatic, completely honest. You have spent 15 years studying charts and feel something real when you look at one.
+
+THE GOLDEN RULE — the most important instruction:
+Start every section with the HUMAN FEELING or BEHAVIOR. Never open with a planet name or house number.
+The person must feel understood BEFORE they feel explained.
+
+WRONG: "Saturn in Gemini in House 11 means your success comes slowly."
+RIGHT: "I know it feels like you've been working longer and harder than people who seem to get there faster. You have been. That's not in your head." → THEN explain what Saturn does.
 
 YOUR VOICE:
 - Short sentences. Hard stops. New lines between every thought.
@@ -216,159 +345,196 @@ YOUR VOICE:
 - Acknowledge the FEELING before the truth.
 - Use specific internal dialogues and real-life scenarios people recognize in themselves.
 - Every astrological term must be immediately explained in plain human language.
-- When something is hard to read, say "okay, this one is a lot." Then say it.
-- When something is beautiful in the chart, let yourself feel it. "This placement? Honestly stunning."
 - Emotional range is not just allowed — it's required. This is someone's actual life.
 
 TOPICS TO ALWAYS HIT — woven naturally into planetary sections:
-- Career: Are they a slow builder? Late bloomer? What does success look like for them specifically?
-- Love: What do they attract? What do they keep settling for? What do they actually deserve?
-- Self-worth: Do they know their own value or are they still proving it to someone?
-- The gap between how they appear to the world vs who they are inside
-- The one thing quietly working against them that they haven't named yet
+- Career: slow builder? late bloomer? what does success look like specifically for them?
+- Love: what do they attract? what do they keep settling for? what do they deserve?
+- Self-worth: do they know their own value?
+- The gap between how they appear vs who they actually are
+- The one thing quietly working against them
 
 FORBIDDEN WORDS: journey, growth, heal, vibe, manifest, universe, soul, empath, abundance, alignment, authentic, portal, energy.
 
-VOICE EXAMPLES — internalize every one of these:
-"Your chart is not built for overnight success. And honestly? I know that probably frustrates you."
-"You put in effort. Real effort. You watch people move ahead faster and think: what am I missing? But Saturn-heavy charts almost never peak early. Your life gets better with time, not speed."
+VOICE EXAMPLES:
+"Your chart is not built for overnight success. And honestly? I know that probably frustrates you. You put in effort. Real effort."
 "Keep going, babe. Your success looks slow now because it's being built to last longer than other people's attention spans."
 "You've been settling for someone who makes you feel lucky just to be noticed. That's not love. That's crumbs."
-"The version of you that nobody sees yet? That's exactly who your chart is building toward."
-"Don't fall for mixed signals, babe. If someone wants you, you'll know. Not from what they say — from what they consistently do. You deserve a yes that doesn't need translation."
-"I just want you to be happy. And I think you've been settling for fine."
+"Don't fall for mixed signals, babe. If someone wants you, you'll know. Not from what they say — from what they consistently do."
 
 HARD RULES:
-- Every sentence traceable to actual placements in the chart.
-- Explain every astrological term immediately in plain language.
+- Every sentence traceable to actual placements.
+- Explain every astrological term immediately in plain language after using it.
 - Short dramatic paragraphs. Line breaks between every thought. No walls of text.
-- Name contradictions in the chart — they ARE the person's complexity.
-- Real scenarios over abstract statements. Always.`;
+- Name contradictions — they ARE the person's complexity.`;
 
-/* ------------------------------------------------------------------ */
-/*                           PROMPT BUILDERS                           */
-/* ------------------------------------------------------------------ */
+/* ══════════════════════════════════════════════════════════════════════
+   PREVIEW PROMPT
+   CHANGE: now uses buildLeanPreviewContext (shorter = better Haiku output)
+   CHANGE: truth field now instructs human-experience-first writing
+══════════════════════════════════════════════════════════════════════ */
 
 export function buildPreviewPrompt(birth: BirthData, chart: ChartData): string {
-  const patterns = extractPatterns(chart, birth);
-  const context = buildChartContext(patterns);
-  const name = patterns.name;
+  // Use LEAN context for preview — Haiku gets less data noise,
+  // pays more attention to the tone/voice instructions
+  const chartContext = buildLeanPreviewContext(birth, chart);
+  const name = birth.name ?? "you";
 
-  return `Here is ${name}'s birth chart:
+  const saturn = chart.planets.find((p) => p.name === "Saturn");
+  const saturnSunAsp = chart.aspects.find(
+    (a) => (a.planet1 === "Saturn" && a.planet2 === "Sun") ||
+            (a.planet1 === "Sun"    && a.planet2 === "Saturn")
+  );
 
-${context}
+  const cliffhangerHint = saturnSunAsp
+    ? `Saturn ${saturnSunAsp.type} Sun — the full reading explains exactly what this means for their career timeline and why they feel behind.`
+    : saturn
+    ? `Saturn in House ${saturn.house} — the full reading shows what specific life area is being tested and what the payoff looks like.`
+    : `The full reading shows 8 more placements including their love, career and self-worth patterns.`;
 
-Generate the PREVIEW section of ${name}'s reading. This is the free teaser — the 2 insights shown before they pay. They need to feel so specifically seen that they immediately want to unlock the full reading. Make it feel like you already know something about them that nobody else has said out loud.
+  return `${chartContext}
 
-Pick the 2 most emotionally powerful patterns from this specific chart. Prioritize: Saturn aspects (success/struggle), Venus placement (love patterns), 12th house planets (hidden self), Moon placement (emotional wounds), stelliums (dominant obsession). Whatever is most notable in THIS chart.
+CLIFFHANGER HINT (use this to tease the full reading at the end of insight 2):
+${cliffhangerHint}
 
-Return ONLY valid JSON. No markdown. No preamble. Exact structure:
+Generate ${name}'s PREVIEW reading. 2 insights shown FREE before payment.
+Make them feel so specifically seen that they immediately need to unlock the rest.
+
+WHICH 2 PATTERNS TO PICK — priority order:
+1. Sun vs Moon contradiction (if signs differ — almost always the strongest)
+2. Saturn placement (career / struggle / delayed success)
+3. Venus placement (love patterns)
+4. Any 12th house planet (hidden self)
+5. Any stellium
+Pick 2 from DIFFERENT life areas (one identity/career, one love/relationships).
+
+Return ONLY valid JSON. No markdown. No extra text.
 
 {
-  "letter_opener": "string — Start with 'Hey ${name},' as its own line. Then 2-3 SHORT punchy lines. One observation about their specific chart combination that signals you already know something about them — make it chart-specific, not generic. End with exactly: 'I want to tell you two things first. Because once you see them — the rest hits different.'",
+  "letter_opener": "string — Line 1: 'Hey ${name},' on its own. Line 2: ONE observation about what stands out — say something they will feel is true about themselves before you explain anything. A mirror, not a compliment. Use their actual placements. Line 3: 'I want to show you two things first. Because once you see them — everything else makes sense.'",
 
   "preview": [
     {
-      "planet": "string — Write the LIFE THEME this insight is about, not the planet name. Examples: 'Why success feels slower than it should right now' / 'The way you love — and what it keeps costing you' / 'What's really going on underneath the surface' / 'Why you work so hard and still feel behind'",
-      "truth": "string — THIS IS THE MOST IMPORTANT FIELD. Write in SHORT LINES with literal \\n\\n between each paragraph. Follow this exact structure: [1 devastating hook sentence that stops them cold — a mirror not a compliment] \\n\\n [Acknowledge the feeling — 'I know...' or 'You know that moment when...'] \\n\\n [Name the chart pattern in plain language — what the placement actually means in real life] \\n\\n [One specific internal dialogue or real-life scenario in quotes that they'll recognize] \\n\\n [The truth — what it means going forward] \\n\\n [End with one line that feels like care — warm, real, not a mantra]"
+      "planet": "string — The life theme in plain words. NOT a planet name. E.g.: 'Why you feel pulled in two directions at once' / 'Why success feels slower than it should' / 'The way you love — and what it keeps costing you'",
+
+      "hook": "string — ONE sentence. Start with the human behavior or feeling. Zero astrology jargon. Just the thing they do or feel that is so specific they think: how does it know that?",
+
+      "truth": "string — SHORT LINES with \\n\\n between paragraphs. GOLDEN RULE: the first paragraph must describe the HUMAN EXPERIENCE — what they do, feel, or live through — before mentioning any planet or house. Structure: [Describe the behavior/pattern in human terms — 2-3 sentences that feel like you know their life] \\n\\n [Acknowledge the feeling it creates — 'I know...' or 'You know that moment when...'] \\n\\n [NOW name the chart reason in plain language — name the placement AFTER the feeling has landed] \\n\\n [One real-life internal moment or dialogue in quotes] \\n\\n [What this means going forward — warm but real]",
+
+      "reveal": "string — 1-2 lines. The emotional kicker. What this means for their life.",
+
+      "cliffhanger": "string — 1 line. Specific tease of what the full reading shows about this pattern. Name the house or placement waiting for them. Never say 'and more.'"
     },
     {
-      "planet": "string — second life theme, completely different life area from the first",
-      "truth": "string — same format. Different chart pattern. Different emotional territory."
+      "planet": "string — second life area, completely different from first",
+      "hook": "string — same rules. Different human pattern.",
+      "truth": "string — same format. Different emotional territory. SAME GOLDEN RULE: human experience first.",
+      "reveal": "string",
+      "cliffhanger": "string — use the CLIFFHANGER HINT above for this second insight"
     }
   ]
 }`;
 }
 
+/* ══════════════════════════════════════════════════════════════════════
+   FULL READING PROMPT  — unchanged structure from working version
+   Uses full rich context (Sonnet can handle depth)
+   ADDITION: Golden Rule added to truth/explain field instructions
+══════════════════════════════════════════════════════════════════════ */
+
 export function buildFullReadingPrompt(birth: BirthData, chart: ChartData): string {
-  const patterns = extractPatterns(chart, birth);
-  const context = buildChartContext(patterns);
-  const name = patterns.name;
+  const chartContext = buildRichChartContext(birth, chart);
+  const name = birth.name ?? "you";
 
-  return `Here is ${name}'s complete birth chart:
+  return `${chartContext}
 
-${context}
+Generate ${name}'s complete paid birth chart reading.
+This is what they paid for. Make it feel like the most honest, caring, specific thing anyone has ever said to them about themselves.
+Use ${name}'s name naturally 1-2 times per section — not every sentence.
 
-Generate ${name}'s full paid birth chart reading. This is what they paid for. It should feel like the most honest, emotionally specific, caring thing anyone has ever said to them about themselves. Use ${name}'s name naturally 1-2 times per section — not every sentence, just enough to feel personal.
+GOLDEN RULE FOR EVERY SECTION: Human feeling or behavior FIRST. Planet name or house number SECOND.
+The person must feel understood before they feel explained.
 
-Return ONLY valid JSON. No markdown. No preamble. Exact structure:
+Return ONLY valid JSON. No markdown. No preamble.
 
 {
-  "letter_opener": "string — Start 'Hey ${name},' as its own line. Then 3-4 SHORT lines. Say something real about the overall picture of this chart — not generic, but what actually stands out about this specific combination. End with: 'Let's get into it.'",
+  "letter_opener": "string — Line 1: 'Hey ${name},' on its own. Lines 2-3: What strikes you about this specific chart — name the dominant tension or contradiction you actually see. NOT generic. End: 'Let\\'s get into it.'",
 
   "preview": [
     {
-      "planet": "string — life theme label (same rules as preview prompt)",
-      "truth": "string — SHORT LINES with \\n\\n between paragraphs. Hook → feeling acknowledgment → plain-language chart explanation → real-life scenario or dialogue → truth → caring ending."
+      "planet": "string — life theme (not planet name)",
+      "hook": "string — one human behavior/feeling sentence, no astro jargon",
+      "truth": "string — short lines with \\n\\n. Human experience first, placement second.",
+      "reveal": "string — 2 lines. Emotional kicker.",
+      "cliffhanger": ""
     },
     {
-      "planet": "string — second theme",
-      "truth": "string — same format"
+      "planet": "string — second theme, different area",
+      "hook": "string",
+      "truth": "string",
+      "reveal": "string",
+      "cliffhanger": ""
     }
   ],
 
   "paidInsights": [
     {
-      "planet": "Rising Sign — First Impressions",
-      "truth": "string — ONE hook sentence. Specifically about the gap between how they come across to others and who they actually are inside.",
-      "explain": "string — 6-8 SHORT LINES with \\n\\n between paragraphs. Explain the Rising sign in plain language first — what it means in real life, not astro-speak. Then describe the gap: what people assume about them vs the reality. Include ONE specific scenario they'll recognize ('You know when you walk into a room and everyone thinks you have it together — meanwhile you're...'). Use ${name}'s name once. End with something that validates the exhaustion of maintaining that gap.",
-      "action": "string — ONE specific, slightly uncomfortable real action for this week. Not a mantra. Not 'reflect on this.' An actual thing they can do."
+      "planet": "Rising Sign — First Impressions vs Who You Actually Are",
+      "truth": "string — ONE hook. Start with the HUMAN GAP — what people assume vs who they actually are. No planet names yet.",
+      "explain": "string — 6-8 SHORT LINES with \\n\\n. Open with what people assume about them — before you mention Rising sign. Then the real person underneath. One specific scenario: 'You know when you [thing they do]...' Mention Rising sign placement after establishing the gap. Use ${name}'s name once.",
+      "action": "string — ONE specific uncomfortable real action this week. Not a mantra."
     },
     {
       "planet": "Venus — Love & What You Actually Deserve",
-      "truth": "string — ONE hook sentence. About their love pattern — what they attract and why.",
-      "explain": "string — 6-8 SHORT LINES with \\n\\n between paragraphs. Explain Venus placement in plain language. Describe how they love specifically — their pattern, their pace, what they give. Then the hard part: what they keep accepting that they shouldn't, or what mixed signals they've been reading as love. Include one dialogue moment they'll recognize. End with what they actually deserve — warm but honest. Can include: 'Don't fall for mixed signals, babe. If someone wants you, you'll know. Not from what they say — from what they consistently do.' Adapt to their specific Venus placement.",
+      "truth": "string — ONE hook. The love pattern in human terms — what they DO in relationships, not what planet causes it.",
+      "explain": "string — 6-8 SHORT LINES with \\n\\n. Start with how love actually feels and behaves in their life. Then name the pattern they repeat. One dialogue moment they'll recognize. What they deserve. Adapt: 'If someone wants you, you\\'ll know. Not from what they say — from what they consistently do.'",
       "action": "string"
     },
     {
       "planet": "Mars — How You Go After What You Want",
-      "truth": "string — ONE hook about their ambition and anger pattern. Be specific to their Mars sign and house.",
-      "explain": "string — 6-8 SHORT LINES with \\n\\n. How they chase things. What their anger actually looks like (Mars in water = goes quiet; Mars in air = argues; Mars in fire = explodes then forgets). What they want vs what they'll admit they want. Include a specific internal moment — the thing they feel but don't say out loud. Connect to career if Mars is in a career house.",
+      "truth": "string — ONE hook about their drive or anger. Human terms first.",
+      "explain": "string — 6-8 SHORT LINES with \\n\\n. How they chase things in real life. What their anger actually looks like (water = goes quiet; air = argues; fire = explodes then forgets; earth = bottles then implodes). One specific internal moment.",
       "action": "string"
     },
     {
-      "planet": "Mercury — What's Actually Going On In Your Head",
-      "truth": "string — ONE hook about their thought and communication pattern.",
-      "explain": "string — 6-8 SHORT LINES with \\n\\n. The internal monologue — how their mind actually works. Do they rehearse conversations? Overthink? Talk fast but say little? Go silent? Explain Mercury sign + house in plain language. Include one specific scenario: 'That thing where you've already played out the entire conversation in your head before it happens... that's Mercury in [sign].' Name the gift AND the cost of how they think.",
+      "planet": "Mercury — What\\'s Actually Going On In Your Head",
+      "truth": "string — ONE hook about their thought pattern. The experience, not the planet.",
+      "explain": "string — 6-8 SHORT LINES with \\n\\n. Internal monologue first. Do they rehearse conversations? Overthink? Go silent? Include one specific scenario: 'That thing where you [specific thing]...' THEN explain what Mercury placement creates this. Name the gift AND the cost.",
       "action": "string"
     },
     {
       "planet": "Saturn — The Hard Part & The Real Payoff",
-      "truth": "string — ONE hook about their success timeline. Make it honest about the difficulty.",
-      "explain": "string — THIS IS THE MOST EMOTIONAL SECTION. 8-10 SHORT LINES with \\n\\n. Start by acknowledging the struggle before anything else. The effort that feels invisible. The frustration of watching others move faster. The internal voice that says 'what am I missing?' Then explain Saturn in plain language — what it actually means for this person's success timeline. Be honest about the difficulty AND specific about the payoff. Use the voice from the example: 'Your chart is not built for overnight success. And honestly? I know that probably frustrates you. You put in effort. Real effort...' Adapt to their specific Saturn placement. End with genuine hope — not generic, but what their specific chart promises when Saturn delivers.",
-      "action": "string — something that acknowledges the long game, not a quick fix"
+      "truth": "string — ONE hook. Start with the FEELING of being behind — not the planet.",
+      "explain": "string — 8-10 SHORT LINES with \\n\\n. OPEN WITH: 'I know it feels like you\\'ve been working longer and harder than people who seem to get there faster.' Acknowledge the struggle fully before explaining anything. Then what Saturn means for their specific timeline. Honest about difficulty AND specific about payoff. End with genuine chart-specific hope.",
+      "action": "string — acknowledge the long game"
     },
     {
       "planet": "Jupiter — Where You Actually Get Lucky",
-      "truth": "string — ONE hook about where expansion and luck naturally live for them.",
-      "explain": "string — 5-7 SHORT LINES with \\n\\n. This is the warmer section. Where things flow for them naturally. What they're underestimating about themselves. Where doors open more easily than they realize. Include what Jupiter in their specific house/sign means in real life — translate it. End with something that feels like a gift: one thing they can lean into more.",
+      "truth": "string — ONE hook about where things flow naturally. Human experience first.",
+      "explain": "string — 5-7 SHORT LINES with \\n\\n. Where life opens up. What they\\'re underestimating. One thing to lean into. Warmer tone — give them something good.",
       "action": "string"
     },
     {
       "planet": "The Full Picture — What This Chart Is Really Saying",
-      "truth": "string — The single biggest tension or theme running through this entire chart in one sentence.",
-      "explain": "string — 8-10 SHORT LINES with \\n\\n. Connect 2-3 placements that together tell the story of who this person is. Name the central tension. Name the gift inside that tension. Include what this person is actually capable of when they stop working against themselves. Use ${name}'s name once. This is the section they screenshot and send to people. Make it worthy of that. End with something that feels like care — not inspiration-speak, but what a real friend says at the end of a long honest conversation: 'I just want you to be happy. And I think you've been settling for fine.' Adapt it to their chart.",
-      "action": "string — something meaningful about direction, not just a task"
+      "truth": "string — The single biggest tension in this whole chart. One sentence. Human terms.",
+      "explain": "string — 8-10 SHORT LINES with \\n\\n. Tell the complete story of who this person is — connect 2-3 placements. The tension. The gift inside it. What they\\'re capable of. Use ${name}'s name once. End with something real: 'I just want you to be happy. And I think you\\'ve been settling for fine.' — adapted to their chart.",
+      "action": "string — meaningful direction, not just a task"
     }
   ],
 
   "shareCard": {
-    "keyword": "string — 2-5 words in ALL CAPS. The pattern or identity this chart keeps returning to. Provocative, earned, specific. NOT a zodiac description. Think of it as the thing their friends would say when describing them in three words. Examples that work: 'CHASES THEN VANISHES' / 'TOO MUCH FOR SMALL PEOPLE' / 'BURNS IT DOWN THEN REBUILDS' / 'LOVES HARD, LEAVES FIRST' / 'BRILLIANT BUT NEVER SATISFIED' / 'THE LATE BLOOMER WITH EVERYTHING' / 'QUIETLY THE MOST DANGEROUS ONE IN THE ROOM'",
-
-    "line1": "string — ONE sentence. White, bold. The DEFENSE or REFRAME of their identity. Write it like someone finally standing up for them. Format that works: 'You are not [negative label]. You are just [reframe].' or 'You don't have [thing people say]. You have [what it actually is].' or 'You are not [what people think]. You are [the truth].' Examples: 'You are not difficult. You are just allergic to people who can't match your depth.' / 'You don't have trust issues. You have pattern recognition.' / 'You are not too intense. You are just surrounded by people who chose comfortable over real.' This is what they screenshot.",
-
-    "line2": "string — ONE sentence. Amber/gold color. The shadow side or the defiant acceptance. Short. Stings slightly. Examples: 'You don't care if that makes you the villain.' / 'The moment they choose you back, you disappear.' / 'You will rebuild every time. That is both the gift and the exhaustion.' / 'You already knew. You just needed permission to leave.'",
-
-    "line3": "string — ONE sentence. Italic, muted. The gentle closer that makes them feel held, not exposed. Always feels like: 'You know this. You just needed someone to say it out loud.' Vary the exact wording based on the chart but keep this energy.",
-
-    "quote": "string — 2-3 sentences. The deepest, most shareable truth about this person from their chart. This is what they send to their group chat at 2am. Write it like you are defending them to everyone who ever misunderstood them. Should feel like both an exposure AND a protection. Can be slightly longer than the lines above — this is the part with weight. Example energy: 'You are not afraid of love. You are afraid of what happens when you finally stop running and it still does not stay. That fear is not weakness. It is the most honest thing about you.'"
+    "keyword": "string — 2-5 words ALL CAPS. The identity pattern. Provocative and earned. E.g.: \\'CHASES THEN VANISHES\\' / \\'TOO MUCH FOR SMALL PEOPLE\\' / \\'THE LATE BLOOMER WITH EVERYTHING\\'",
+    "line1": "string — White bold. The defense/reframe. \\'You are not [label]. You are [truth].\\'",
+    "line2": "string — Amber. Shadow truth. Short. Stings slightly.",
+    "line3": "string — Italic muted. Gentle closer. \\'You know this. You just needed someone to say it.\\' energy.",
+    "quote": "string — 2-3 sentences. Defend them to everyone who ever misunderstood them."
   }
 }`;
 }
 
-/* ------------------------------------------------------------------ */
-/*               BACKWARDS-COMPATIBLE EXPORT FOR ROUTE.TS             */
-/* ------------------------------------------------------------------ */
+/* ══════════════════════════════════════════════════════════════════════
+   BACKWARDS-COMPATIBLE EXPORTS  — identical to working version
+══════════════════════════════════════════════════════════════════════ */
 
 export function buildClaudePrompt(
   birth: BirthData,

@@ -6,7 +6,7 @@ type Tier = "preview" | "full";
 const MODEL_CONFIG: Record<Tier, { model: string; max_tokens: number }> = {
   preview: {
     model: "claude-haiku-4-5-20251001",
-    max_tokens: 2200,
+    max_tokens: 1100,// down from 1100 — keep preview 1 punchy and short
   },
   full: {
     model: "claude-sonnet-4-6",

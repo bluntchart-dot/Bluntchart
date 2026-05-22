@@ -12,53 +12,36 @@ import type {
 /* -------------------------------------------------------------------------- */
 
 const SIGNS = [
-  { name: "Aries", symbol: "♈" },
-  { name: "Taurus", symbol: "♉" },
-  { name: "Gemini", symbol: "♊" },
-  { name: "Cancer", symbol: "♋" },
-  { name: "Leo", symbol: "♌" },
-  { name: "Virgo", symbol: "♍" },
-  { name: "Libra", symbol: "♎" },
-  { name: "Scorpio", symbol: "♏" },
+  { name: "Aries",       symbol: "♈" },
+  { name: "Taurus",      symbol: "♉" },
+  { name: "Gemini",      symbol: "♊" },
+  { name: "Cancer",      symbol: "♋" },
+  { name: "Leo",         symbol: "♌" },
+  { name: "Virgo",       symbol: "♍" },
+  { name: "Libra",       symbol: "♎" },
+  { name: "Scorpio",     symbol: "♏" },
   { name: "Sagittarius", symbol: "♐" },
-  { name: "Capricorn", symbol: "♑" },
-  { name: "Aquarius", symbol: "♒" },
-  { name: "Pisces", symbol: "♓" },
+  { name: "Capricorn",   symbol: "♑" },
+  { name: "Aquarius",    symbol: "♒" },
+  { name: "Pisces",      symbol: "♓" },
 ] as const;
 
 const PLANETS = [
-  "Sun",
-  "Moon",
-  "Mercury",
-  "Venus",
-  "Mars",
-  "Jupiter",
-  "Saturn",
-  "Uranus",
-  "Neptune",
-  "Pluto",
+  "Sun", "Moon", "Mercury", "Venus", "Mars",
+  "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto",
 ] as const;
 
 const PLANET_SYMBOLS: Record<string, string> = {
-  Sun: "☉",
-  Moon: "☽",
-  Mercury: "☿",
-  Venus: "♀",
-  Mars: "♂",
-  Jupiter: "♃",
-  Saturn: "♄",
-  Uranus: "♅",
-  Neptune: "♆",
-  Pluto: "♇",
+  Sun: "☉", Moon: "☽", Mercury: "☿", Venus: "♀", Mars: "♂",
+  Jupiter: "♃", Saturn: "♄", Uranus: "♅", Neptune: "♆", Pluto: "♇",
 };
 
-/** Standard major-aspect orbs (degrees). */
 const ASPECT_DEFS: { angle: number; type: Aspect["type"]; orb: number }[] = [
-  { angle: 0, type: "conjunction", orb: 8 },
-  { angle: 60, type: "sextile", orb: 6 },
-  { angle: 90, type: "square", orb: 8 },
-  { angle: 120, type: "trine", orb: 8 },
-  { angle: 180, type: "opposition", orb: 8 },
+  { angle: 0,   type: "conjunction", orb: 8 },
+  { angle: 60,  type: "sextile",     orb: 6 },
+  { angle: 90,  type: "square",      orb: 8 },
+  { angle: 120, type: "trine",       orb: 8 },
+  { angle: 180, type: "opposition",  orb: 8 },
 ];
 
 /* -------------------------------------------------------------------------- */
@@ -88,19 +71,12 @@ function houseFromPlanet(planetDeg: number, ascDeg: number): number {
   return Math.floor(diff / 30) + 1;
 }
 
-/**
- * Birth instant in UTC. Uses `birth.timezone` from geocoding; falls back to UTC.
- */
 export function birthInstantUtc(birth: BirthData): Date {
   const iana = birth.timezone?.trim() || "Etc/UTC";
   const localIso = `${birth.date}T${birth.time}:00`;
   return fromZonedTime(localIso, iana);
 }
 
-/**
- * True tropical ecliptic longitude (0–360°) where the horizon direction
- * (azimuth ° clockwise from north, altitude 0°) meets the ecliptic of date.
- */
 function eclipticLongitudeFromHorizon(
   time: Astronomy.AstroTime,
   observer: Astronomy.Observer,
@@ -121,51 +97,92 @@ function eclipticLongitudeFromHorizon(
 }
 
 /* -------------------------------------------------------------------------- */
-/*                              PLANET POSITIONS                              */
+/*                           GEOCENTRIC LONGITUDE FIX                         */
+/*                                                                            */
+/*  astronomy-engine's EclipticLongitude(body, time) is HELIOCENTRIC and     */
+/*  throws for the Sun ("Cannot calculate heliocentric longitude of the Sun") */
+/*  Astrology needs GEOCENTRIC positions for every body, so we use the        */
+/*  correct API call for each case:                                           */
+/*                                                                            */
+/*  Sun   → SunPosition(time).elon          geocentric ecliptic longitude     */
+/*  Moon  → GeoMoon(time) → Ecliptic()      geocentric ecliptic longitude     */
+/*  Other → GeoVector(body) → Ecliptic()    geocentric ecliptic longitude     */
 /* -------------------------------------------------------------------------- */
 
-function getPlanetLongitude(planet: string, time: Astronomy.AstroTime): number {
+function getGeocentricLongitude(
+  planet: string,
+  time: Astronomy.AstroTime
+): number {
   switch (planet) {
-    case "Sun":
-      return Astronomy.EclipticLongitude(Astronomy.Body.Sun, time);
-    case "Moon":
-      return Astronomy.EclipticLongitude(Astronomy.Body.Moon, time);
-    default:
-      return Astronomy.EclipticLongitude(
-        Astronomy.Body[planet as keyof typeof Astronomy.Body],
-        time
-      );
+    case "Sun": {
+      // SunPosition() returns the Sun's geocentric ecliptic coordinates
+      const pos = Astronomy.SunPosition(time);
+      return normalizeDeg(pos.elon);
+    }
+
+    case "Moon": {
+      // GeoMoon() returns geocentric equatorial vector (EQJ)
+      // Ecliptic() converts EQJ vector → ecliptic coordinates
+      const moonVec = Astronomy.GeoMoon(time);
+      const ecl = Astronomy.Ecliptic(moonVec);
+      return normalizeDeg(ecl.elon);
+    }
+
+    default: {
+      // GeoVector() returns geocentric equatorial vector (EQJ) for any planet
+      // true = apply stellar aberration correction (correct for apparent position)
+      const body = Astronomy.Body[planet as keyof typeof Astronomy.Body];
+      const geoVec = Astronomy.GeoVector(body, time, true);
+      const ecl = Astronomy.Ecliptic(geoVec);
+      return normalizeDeg(ecl.elon);
+    }
   }
 }
 
+/* -------------------------------------------------------------------------- */
+/*                           RETROGRADE DETECTION                             */
+/* -------------------------------------------------------------------------- */
+
 function isRetrograde(planet: string, time: Astronomy.AstroTime): boolean {
+  // Sun and Moon never retrograde
   if (planet === "Sun" || planet === "Moon") return false;
+
+  // Verify body exists in the enum
   const body = Astronomy.Body[planet as keyof typeof Astronomy.Body];
   if (typeof body === "undefined") return false;
-  const t0 = time;
+
+  // Compare geocentric longitude 36 hours apart
+  // Negative change = planet appears to move backward = retrograde
   const t1 = Astronomy.MakeTime(
     new Date(time.date.getTime() - 36 * 3600 * 1000)
   );
-  const lon0 = normalizeDeg(getPlanetLongitude(planet, t0));
-  const lon1 = normalizeDeg(getPlanetLongitude(planet, t1));
+
+  const lon0 = getGeocentricLongitude(planet, time);
+  const lon1 = getGeocentricLongitude(planet, t1);
+
   let diff = lon0 - lon1;
-  if (diff > 180) diff -= 360;
+  if (diff >  180) diff -= 360;
   if (diff < -180) diff += 360;
+
   return diff < 0;
 }
+
+/* -------------------------------------------------------------------------- */
+/*                              PLANET BUILDER                                */
+/* -------------------------------------------------------------------------- */
 
 function buildPlanet(
   name: string,
   time: Astronomy.AstroTime,
   ascDeg: number
 ): PlanetPosition {
-  const absoluteDegree = normalizeDeg(getPlanetLongitude(name, time));
+  const absoluteDegree = getGeocentricLongitude(name, time);
   const sign = getSign(absoluteDegree);
 
   return {
     name,
     sign: sign.name,
-    symbol: PLANET_SYMBOLS[name],
+    symbol: PLANET_SYMBOLS[name] ?? "",
     degree: getDegreeInSign(absoluteDegree),
     absoluteDegree: Number(absoluteDegree.toFixed(4)),
     house: houseFromPlanet(absoluteDegree, ascDeg),
@@ -184,7 +201,6 @@ function calculateAspects(planets: PlanetPosition[]): Aspect[] {
     for (let j = i + 1; j < planets.length; j++) {
       const p1 = planets[i];
       const p2 = planets[j];
-
       const diff = angleDistance(p1.absoluteDegree, p2.absoluteDegree);
 
       let best: { type: Aspect["type"]; orb: number } | null = null;
@@ -209,6 +225,7 @@ function calculateAspects(planets: PlanetPosition[]): Aspect[] {
     }
   }
 
+  // Sort tightest orb first — tighter = stronger influence
   results.sort((a, b) => a.orb - b.orb);
   return results;
 }
@@ -217,32 +234,27 @@ function calculateAspects(planets: PlanetPosition[]): Aspect[] {
 /*                                MAIN EXPORT                                 */
 /* -------------------------------------------------------------------------- */
 
-/**
- * Tropical natal chart: planet longitudes from Astronomy Engine (VSOP87 / DE405-class),
- * Ascendant / MC from horizon–ecliptic geometry, equal houses from Ascendant.
- */
 export function calculateChart(birth: BirthData): ChartData {
-  const utc = birthInstantUtc(birth);
+  const utc  = birthInstantUtc(birth);
   const time = Astronomy.MakeTime(utc);
   const observer = new Astronomy.Observer(birth.lat, birth.lng, 0);
 
+  // Ascendant / angles from horizon–ecliptic intersection
   const ascDeg = eclipticLongitudeFromHorizon(time, observer, 90);
-  const mcDeg = eclipticLongitudeFromHorizon(time, observer, 180);
-  const dcDeg = eclipticLongitudeFromHorizon(time, observer, 270);
-  const icDeg = eclipticLongitudeFromHorizon(time, observer, 0);
+  const mcDeg  = eclipticLongitudeFromHorizon(time, observer, 180);
+  const dcDeg  = eclipticLongitudeFromHorizon(time, observer, 270);
+  const icDeg  = eclipticLongitudeFromHorizon(time, observer, 0);
 
-  const planets = PLANETS.map((planet) =>
-    buildPlanet(planet, time, ascDeg)
-  );
-
+  const planets = PLANETS.map((planet) => buildPlanet(planet, time, ascDeg));
   const aspects = calculateAspects(planets);
 
+  // Equal house system from Ascendant (30° per house)
   const houses = Array.from({ length: 12 }, (_, i) => {
     const deg = normalizeDeg(ascDeg + i * 30);
     return {
-      number: i + 1,
-      sign: getSign(deg).name,
-      degree: getDegreeInSign(deg),
+      number:        i + 1,
+      sign:          getSign(deg).name,
+      degree:        getDegreeInSign(deg),
       absoluteDegree: Number(deg.toFixed(4)),
     };
   });
@@ -252,23 +264,23 @@ export function calculateChart(birth: BirthData): ChartData {
     aspects,
     houses,
     ascendant: {
-      sign: getSign(ascDeg).name,
-      degree: getDegreeInSign(ascDeg),
+      sign:          getSign(ascDeg).name,
+      degree:        getDegreeInSign(ascDeg),
       absoluteDegree: Number(ascDeg.toFixed(4)),
     },
     midheaven: {
-      sign: getSign(mcDeg).name,
-      degree: getDegreeInSign(mcDeg),
+      sign:          getSign(mcDeg).name,
+      degree:        getDegreeInSign(mcDeg),
       absoluteDegree: Number(mcDeg.toFixed(4)),
     },
     descendant: {
-      sign: getSign(dcDeg).name,
-      degree: getDegreeInSign(dcDeg),
+      sign:          getSign(dcDeg).name,
+      degree:        getDegreeInSign(dcDeg),
       absoluteDegree: Number(dcDeg.toFixed(4)),
     },
     imumCoeli: {
-      sign: getSign(icDeg).name,
-      degree: getDegreeInSign(icDeg),
+      sign:          getSign(icDeg).name,
+      degree:        getDegreeInSign(icDeg),
       absoluteDegree: Number(icDeg.toFixed(4)),
     },
   };

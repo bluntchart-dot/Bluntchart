@@ -39,6 +39,16 @@ export async function POST(req: NextRequest) {
     const timezone =
       typeof body.timezone === "string" ? body.timezone.trim() : undefined;
 
+    /* NEW: extract coordinates from the request body */
+    const birth_lat =
+  body.birth_lat != null && !isNaN(Number(body.birth_lat))
+    ? Number(body.birth_lat)
+    : undefined;
+const birth_lng =
+  body.birth_lng != null && !isNaN(Number(body.birth_lng))
+    ? Number(body.birth_lng)
+    : undefined;
+
     if (!name || !email || !dob || !birth_time || !birth_place) {
       dbError(scope, "validation failed", "missing fields", { email });
       return NextResponse.json(
@@ -56,6 +66,8 @@ export async function POST(req: NextRequest) {
       birth_time,
       birth_place,
       timezone,
+      birth_lat,   /* NEW: pass coordinates to startCheckout */
+      birth_lng,   /* NEW: pass coordinates to startCheckout */
       step_reached: "form_submitted",
     });
 
@@ -76,6 +88,7 @@ export async function POST(req: NextRequest) {
       email,
       sessionId: result.sessionId,
       paymentId: result.paymentId,
+      hasCoords: !!(birth_lat && birth_lng),
     });
 
     let emailSent = false;

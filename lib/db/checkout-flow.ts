@@ -101,6 +101,9 @@ export async function startCheckout(
         birth_time: payload.birth_time,
         birth_place: payload.birth_place,
         timezone: payload.timezone?.trim() || null,
+        /* NEW: store coordinates from LocationPicker */
+        birth_lat: payload.birth_lat ?? null,
+        birth_lng: payload.birth_lng ?? null,
         step_reached: step,
         utm_source: payload.utm_source?.trim() || null,
         user_id: user.id,
@@ -164,6 +167,9 @@ export interface BirthLead {
   birth_place: string;
   timezone: string | null;
   user_id: string | null;
+  /* NEW: coordinates from LocationPicker (null for legacy readings) */
+  birth_lat: number | null;
+  birth_lng: number | null;
 }
 
 function mapAbandonedRowToLead(row: {
@@ -174,6 +180,8 @@ function mapAbandonedRowToLead(row: {
   birth_place: string | null;
   timezone: string | null;
   user_id: string | null;
+  birth_lat?: number | null;
+  birth_lng?: number | null;
 }): BirthLead {
   return {
     name: row.name ?? "",
@@ -183,6 +191,8 @@ function mapAbandonedRowToLead(row: {
     birth_place: row.birth_place ?? "",
     timezone: row.timezone,
     user_id: row.user_id,
+    birth_lat: row.birth_lat ?? null,
+    birth_lng: row.birth_lng ?? null,
   };
 }
 
@@ -227,9 +237,10 @@ export async function loadBirthLeadByEmail(
     }
   }
 
+  /* NEW: also select birth_lat, birth_lng */
   const { data, error } = await supabase
     .from(DB.abandonedCheckouts)
-    .select("name, email, dob, birth_time, birth_place, timezone, user_id")
+    .select("name, email, dob, birth_time, birth_place, timezone, user_id, birth_lat, birth_lng")
     .eq("email", lookupEmail)
     .order("created_at", { ascending: false })
     .limit(1)
@@ -254,6 +265,7 @@ export async function loadBirthLeadByEmail(
   dbLog("checkout", "lead loaded from abandoned_checkouts", {
     email: lookupEmail,
     sessionId: sid ?? null,
+    hasCoords: !!(data.birth_lat && data.birth_lng),
   });
 
   return {

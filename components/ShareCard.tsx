@@ -135,7 +135,7 @@ export default function ShareCard({
       }
     } catch (err) {
       // User cancelled = AbortError — silently ignore
-      if ((err as Error).name !== "AbortError") {
+      if ((err as Error).name !== "AbortError" && (err as Error).name !== "NotAllowedError") {
         console.error("[ShareCard] share error:", err);
         await handleDownload(); // fall back to download
       }

@@ -2,7 +2,8 @@
 
 import dynamic from "next/dynamic";
 import { useSearchParams } from "next/navigation";
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useState, Component } from "react";
+import type { ReactNode } from "react";
 import type { ChartData } from "@/lib/types";
 import ShareCard from "@/components/ShareCard";
 import type { ShareCardData } from "@/components/ShareCard";
@@ -17,13 +18,45 @@ const ChartWheel = dynamic(() => import("@/components/ChartWheel"), {
   ),
 });
 
+/* ─── Error boundary so ShareCard / ChartWheel can't crash the whole page ── */
+class SafeRender extends Component<
+  { fallback?: ReactNode; label?: string; children: ReactNode },
+  { error: Error | null }
+> {
+  state: { error: Error | null } = { error: null };
+
+  static getDerivedStateFromError(error: Error) {
+    return { error };
+  }
+
+  componentDidCatch(error: Error) {
+    console.error(`[SafeRender:${this.props.label}]`, error);
+  }
+
+  render() {
+    if (this.state.error) {
+      return (
+        this.props.fallback ?? (
+          <div className="p-4 rounded-lg border border-red-500/30 bg-red-500/5 text-sm text-red-300">
+            {this.props.label ?? "Component"} failed to render:{" "}
+            {this.state.error.message}
+          </div>
+        )
+      );
+    }
+    return this.props.children;
+  }
+}
+
 /* ─── Main page content ────────────────────────────────────────────────────── */
 function MyReadingContent() {
   const searchParams = useSearchParams();
   const token = searchParams.get("token")?.trim() ?? "";
 
-  const [status,  setStatus]  = useState<"loading" | "ready" | "error">("loading");
-  const [error,   setError]   = useState("");
+  const [status, setStatus] = useState<"loading" | "ready" | "error">(
+    "loading"
+  );
+  const [error, setError] = useState("");
   const [reading, setReading] = useState<Record<string, unknown> | null>(null);
 
   useEffect(() => {
@@ -37,7 +70,9 @@ function MyReadingContent() {
 
     (async () => {
       try {
-        const res  = await fetch(`/api/reading/access?token=${encodeURIComponent(token)}`);
+        const res = await fetch(
+          `/api/reading/access?token=${encodeURIComponent(token)}`
+        );
         const data = await res.json();
         if (cancelled) return;
 
@@ -50,11 +85,16 @@ function MyReadingContent() {
         setReading(data.reading);
         setStatus("ready");
       } catch (e) {
-        if (!cancelled) { setStatus("error"); setError((e as Error).message); }
+        if (!cancelled) {
+          setStatus("error");
+          setError((e as Error).message);
+        }
       }
     })();
 
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [token]);
 
   /* ── Loading / Error states ── */
@@ -72,7 +112,10 @@ function MyReadingContent() {
         <div className="max-w-md text-center">
           <h1 className="text-xl font-semibold mb-3">Reading unavailable</h1>
           <p className="text-sm opacity-70">{error}</p>
-          <a href="/" className="inline-block mt-6 text-sm text-[#c4a8ff] underline">
+          <a
+            href="/"
+            className="inline-block mt-6 text-sm text-[#c4a8ff] underline"
+          >
             Back to BluntChart
           </a>
         </div>
@@ -84,10 +127,10 @@ function MyReadingContent() {
 
   const paidInsights = Array.isArray(reading?.paidInsights)
     ? (reading!.paidInsights as Array<{
-        planet?:  string;
-        truth?:   string;
+        planet?: string;
+        truth?: string;
         explain?: string;
-        action?:  string;
+        action?: string;
       }>)
     : [];
 
@@ -96,7 +139,8 @@ function MyReadingContent() {
     : [];
 
   const rawCard = reading?.shareCard as Record<string, unknown> | undefined;
-  const chart   = reading?.chart    as ChartData | undefined;
+  const chart = reading?.chart as ChartData | undefined;
+  const meta = reading?.meta as Record<string, unknown> | undefined;
 
   /* letter_opener can be a string or { greeting, line1, line2, teaser } */
   const rawOpener = reading?.letter_opener;
@@ -105,40 +149,51 @@ function MyReadingContent() {
     if (typeof rawOpener === "string") return rawOpener;
     if (typeof rawOpener === "object") {
       const o = rawOpener as Record<string, string>;
-      return [o.greeting, o.line1, o.line2, o.teaser].filter(Boolean).join("\n\n");
+      return [o.greeting, o.line1, o.line2, o.teaser]
+        .filter(Boolean)
+        .join("\n\n");
     }
     return null;
   })();
 
-  /* Pull Sun/Moon/Rising from REAL chart data — not AI output */
-  const sunSign    = chart?.planets?.find((p) => p.name === "Sun")?.sign;
-  const moonSign   = chart?.planets?.find((p) => p.name === "Moon")?.sign;
-  const risingSign = chart?.ascendant?.sign;
+  /* Pull Sun/Moon/Rising from REAL chart data OR fall back to AI planets */
+  const aiPlanets = reading?.planets as Record<string, string> | undefined;
+  const sunSign =
+    chart?.planets?.find((p) => p.name === "Sun")?.sign ?? aiPlanets?.sun;
+  const moonSign =
+    chart?.planets?.find((p) => p.name === "Moon")?.sign ?? aiPlanets?.moon;
+  const risingSign =
+    chart?.ascendant?.sign ?? aiPlanets?.rising;
 
   /* Build ShareCard props
      Supports both:
      - NEW format:  { line1, line2, line3 }           ← from updated claude-prompt.ts
      - OLD format:  { lines: [line1, line2, line3] }  ← backwards compat
   */
-  const shareCardProps: ShareCardData | null = rawCard
-    ? {
-        name:    (reading?.name as string) ?? "",
-        keyword: (rawCard.keyword  as string) ?? "",
-        line1:   (rawCard.line1    as string) ?? (rawCard.lines as string[])?.[0] ?? "",
-        line2:   (rawCard.line2    as string) ?? (rawCard.lines as string[])?.[1] ?? "",
-        line3:   (rawCard.line3    as string) ?? (rawCard.lines as string[])?.[2] ?? "",
-        quote:   (rawCard.quote    as string) ?? "",
-        sun:     sunSign,
-        moon:    moonSign,
-        rising:  risingSign,
-      }
-    : null;
+  const resolvedName =
+    (reading?.name as string) ?? (meta?.name as string) ?? "";
+
+  const lines = rawCard?.lines as string[] | undefined;
+
+  const shareCardProps: ShareCardData | null =
+    rawCard && resolvedName
+      ? {
+          name: resolvedName,
+          keyword: (rawCard.keyword as string) ?? "",
+          line1: (rawCard.line1 as string) ?? lines?.[0] ?? "",
+          line2: (rawCard.line2 as string) ?? lines?.[1] ?? "",
+          line3: (rawCard.line3 as string) ?? lines?.[2] ?? "",
+          quote: (rawCard.quote as string) ?? "",
+          sun: sunSign,
+          moon: moonSign,
+          rising: risingSign,
+        }
+      : null;
 
   /* ── Render ── */
   return (
     <main className="min-h-screen bg-[#09090f] text-[#e8e4f0] py-12 px-4 sm:px-6 lg:px-10">
       <div className="max-w-4xl mx-auto w-full">
-
         <p className="text-xs uppercase tracking-[0.2em] text-[#6b6585] mb-3">
           BluntChart · Your full reading
         </p>
@@ -149,13 +204,17 @@ function MyReadingContent() {
             <ReadingText text={letterOpener} className="space-y-4" />
           </section>
         ) : (
-          <h1 className="text-3xl sm:text-4xl font-serif mb-10 tracking-tight">Saved for you</h1>
+          <h1 className="text-3xl sm:text-4xl font-serif mb-10 tracking-tight">
+            Saved for you
+          </h1>
         )}
 
         {/* Chart Wheel */}
         {chart && (
           <section className="mb-10 flex justify-center">
-            <ChartWheel chart={chart} />
+            <SafeRender label="ChartWheel">
+              <ChartWheel chart={chart} />
+            </SafeRender>
           </section>
         )}
 
@@ -166,7 +225,10 @@ function MyReadingContent() {
               Preview insights
             </h2>
             {preview.map((ins, i) => (
-              <div key={i} className="mb-6 p-6 rounded-xl border border-white/10 bg-white/[0.03]">
+              <div
+                key={i}
+                className="mb-6 p-6 rounded-xl border border-white/10 bg-white/[0.03]"
+              >
                 {ins.planet && (
                   <div className="text-xs uppercase tracking-wider text-[#6b6585] mb-3">
                     {ins.planet}
@@ -219,13 +281,15 @@ function MyReadingContent() {
           </section>
         )}
 
-        {/* Share Card — 4:5, max 420px */}
-        {shareCardProps && shareCardProps.name && (
+        {/* Share Card */}
+        {shareCardProps && (
           <section className="mb-10">
             <h2 className="text-xs uppercase tracking-widest text-[#6b6585] mb-4">
               Your shareable card
             </h2>
-            <ShareCard {...shareCardProps} />
+            <SafeRender label="ShareCard">
+              <ShareCard {...shareCardProps} />
+            </SafeRender>
           </section>
         )}
 
@@ -238,11 +302,13 @@ function MyReadingContent() {
 
         <div className="pt-6 border-t border-white/5 mt-6">
           <p className="text-xs text-[#6b6585] mb-1">
-            For entertainment purposes only. Not medical, financial, or psychological advice.
+            For entertainment purposes only. Not medical, financial, or
+            psychological advice.
           </p>
-          <a href="/" className="text-sm text-[#c4a8ff] underline">bluntchart.com</a>
+          <a href="/" className="text-sm text-[#c4a8ff] underline">
+            bluntchart.com
+          </a>
         </div>
-
       </div>
     </main>
   );

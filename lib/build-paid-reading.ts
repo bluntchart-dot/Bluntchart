@@ -28,7 +28,39 @@ export async function buildPaidReadingPayload(
 
   if (!reading) return null;
 
-  const geo = await geocodeCity(lead.birth_place);
+  /* ──────────────────────────────────────────────────────────────────────────
+     USE STORED LAT/LNG FROM LOCATION PICKER FIRST.
+     Only fall back to geocoding if the user typed a place manually
+     (old flow or picker unavailable).
+     ────────────────────────────────────────────────────────────────────────── */
+  let geo: { lat: number; lng: number; timezone: string } | null = null;
+
+  if (lead.birth_lat && lead.birth_lng) {
+    // Coordinates came from the LocationPicker — always accurate
+    console.log("[build-paid-reading] using stored coordinates for:", lead.birth_place);
+
+    // Determine timezone from stored value or try to resolve it
+    let tz = lead.timezone ?? "UTC";
+
+    // If we have geo-tz available, we could resolve timezone from coords here.
+    // For now, rely on the timezone stored during checkout.
+
+    geo = { lat: lead.birth_lat, lng: lead.birth_lng, timezone: tz };
+  } else {
+    // Legacy flow: no coordinates stored, try geocoding the city name
+    console.log("[build-paid-reading] no stored coords, geocoding:", lead.birth_place);
+    const geocoded = await geocodeCity(lead.birth_place);
+    if (geocoded) {
+      geo = geocoded;
+    } else {
+      console.warn(
+        "[build-paid-reading] geocode FAILED for:",
+        lead.birth_place,
+        "- chart will be missing for this reading"
+      );
+    }
+  }
+
   let chart: ChartData | undefined;
 
   if (geo) {
@@ -43,8 +75,9 @@ export async function buildPaidReadingPayload(
     };
     try {
       chart = calculateChart(birth);
+      console.log("[build-paid-reading] chart OK for:", lead.birth_place);
     } catch (err) {
-      console.warn("[build-paid-reading] chart failed:", (err as Error).message);
+      console.warn("[build-paid-reading] chart calculation failed:", (err as Error).message);
     }
   }
 
