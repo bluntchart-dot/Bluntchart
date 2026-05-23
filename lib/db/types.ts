@@ -34,6 +34,8 @@ export interface AbandonedCheckoutRow {
   birth_time: string | null;
   birth_place: string | null;
   timezone: string | null;
+  birth_lat: number | null;
+  birth_lng: number | null;
   step_reached: string | null;
   utm_source: string | null;
   user_id: string | null;
@@ -60,6 +62,8 @@ export interface CheckoutStartPayload {
   birth_time: string;
   birth_place: string;
   timezone?: string;
+  birth_lat?: number;
+  birth_lng?: number;
   step_reached?: CheckoutStep;
   utm_source?: string;
 }
