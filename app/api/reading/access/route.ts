@@ -5,6 +5,7 @@ import { dbError, dbLog } from "@/lib/db/log";
 import { calculateChart } from "@/lib/chart-calculator";
 import { geocodeCity } from "@/lib/geocode-city";
 
+
 /**
  * GET /api/reading/access?token=...
  * Returns the paid reading JSON for a private access_token (from payments table).

@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState, Component } from "react";
 import type { ReactNode } from "react";
 import ShareCard from "@/components/ShareCard";
+import type { ChartData } from "@/lib/types";
 import type { ShareCardData } from "@/components/ShareCard";
 import { ReadingText } from "@/components/ReadingText";
 
@@ -138,8 +139,7 @@ function MyReadingContent() {
     : [];
 
   const rawCard = reading?.shareCard as Record<string, unknown> | undefined;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const chart = reading?.chart as any;
+  const chart = reading?.chart as ChartData | undefined;
 console.log("[DEBUG] chart data:", chart ? "YES" : "NO", JSON.stringify(chart)?.slice(0, 200));
 const meta = reading?.meta as Record<string, unknown> | undefined;
 
@@ -160,9 +160,9 @@ const meta = reading?.meta as Record<string, unknown> | undefined;
   /* Pull Sun/Moon/Rising from REAL chart data OR fall back to AI planets */
   const aiPlanets = reading?.planets as Record<string, string> | undefined;
   const sunSign =
-    chart?.planets?.find((p: any) => p.name === "Sun")?.sign ?? aiPlanets?.sun;
+    chart?.planets?.find((p) => p.name === "Sun")?.sign ?? aiPlanets?.sun;
   const moonSign =
-    chart?.planets?.find((p: any) => p.name === "Moon")?.sign ?? aiPlanets?.moon;
+    chart?.planets?.find((p) => p.name === "Moon")?.sign ?? aiPlanets?.moon;
   const risingSign =
     chart?.ascendant?.sign ?? aiPlanets?.rising;
 

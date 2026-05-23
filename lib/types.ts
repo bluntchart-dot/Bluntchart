@@ -1,69 +1,73 @@
-/** Row shapes aligned with your Supabase schema (see dashboard ERD). */
-
-export type CheckoutStep =
-  | "form_submitted"
-  | "preview_generated"
-  | "clicked_pay";
-
-export interface UserRow {
-  id: string;
-  email: string;
-  name: string | null;
-  created_at?: string;
-}
-
-export interface PaymentRow {
-  id: string;
-  session_id: string | null;
-  email: string | null;
-  gumroad_payment_id: string | null;
-  amount: string | null;
-  payment_status: string | null;
-  payment_provider: string | null;
-  access_token: string | null;
-  user_id: string | null;
-  created_at?: string;
-  updated_at?: string;
-}
-
-export interface AbandonedCheckoutRow {
-  id: string;
-  email: string;
-  name: string | null;
-  dob: string | null;
-  birth_time: string | null;
-  birth_place: string | null;
-  timezone: string | null;
-  birth_lat: number | null;
-  birth_lng: number | null;
-  step_reached: string | null;
-  utm_source: string | null;
-  user_id: string | null;
-  abandoned_at?: string;
-  created_at?: string;
-}
-
-export interface ReadingRow {
-  id: string;
-  user_id: string | null;
-  payment_id: string | null;
-  birth_time: string | null;
-  birth_place: string | null;
-  timezone: string | null;
-  reading_json: Record<string, unknown> | null;
-  reading_status: string | null;
-  created_at?: string;
-}
-
-export interface CheckoutStartPayload {
+export interface BirthData {
   name: string;
-  email: string;
-  dob: string;
-  birth_time: string;
-  birth_place: string;
-  timezone?: string;
-  birth_lat?: number;
-  birth_lng?: number;
-  step_reached?: CheckoutStep;
-  utm_source?: string;
+  date: string; // YYYY-MM-DD
+  time: string; // HH:mm
+  lat: number;
+  lng: number;
+  timezone: string;
+  placeName: string;
+}
+
+export interface PlanetPosition {
+  name: string;
+  sign: string;
+  symbol: string;
+  degree: number;
+  absoluteDegree: number;
+  house: number;
+  retrograde: boolean;
+}
+
+export interface Aspect {
+  planet1: string;
+  planet2: string;
+  type:
+    | "conjunction"
+    | "sextile"
+    | "square"
+    | "trine"
+    | "opposition";
+  orb: number;
+}
+
+export interface AnglePoint {
+  sign: string;
+  degree: number;
+  absoluteDegree: number;
+}
+
+export interface HouseData {
+  number: number;
+  sign: string;
+  degree: number;
+  absoluteDegree: number;
+}
+
+export interface ChartData {
+  planets: PlanetPosition[];
+  aspects: Aspect[];
+
+  ascendant: AnglePoint;
+  midheaven: AnglePoint;
+  descendant: AnglePoint;
+  imumCoeli: AnglePoint;
+
+  houses: HouseData[];
+}
+
+export interface ReadingSection {
+  title: string;
+  content: string;
+}
+
+export interface ShareCard {
+  title: string;
+  text: string;
+}
+
+export interface ReadingResponse {
+  summary: string;
+  sections: ReadingSection[];
+  nextMonth: string;
+  shareCard: ShareCard;
 }
