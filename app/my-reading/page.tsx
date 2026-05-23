@@ -140,7 +140,8 @@ function MyReadingContent() {
 
   const rawCard = reading?.shareCard as Record<string, unknown> | undefined;
   const chart = reading?.chart as ChartData | undefined;
-  const meta = reading?.meta as Record<string, unknown> | undefined;
+console.log("[DEBUG] chart data:", chart ? "YES" : "NO", JSON.stringify(chart)?.slice(0, 200));
+const meta = reading?.meta as Record<string, unknown> | undefined;
 
   /* letter_opener can be a string or { greeting, line1, line2, teaser } */
   const rawOpener = reading?.letter_opener;
