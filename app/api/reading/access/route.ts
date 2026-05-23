@@ -4,7 +4,6 @@ import { loadReadingByAccessToken } from "@/lib/db/fulfillment";
 import { dbError, dbLog } from "@/lib/db/log";
 import { calculateChart } from "@/lib/chart-calculator";
 import { geocodeCity } from "@/lib/geocode-city";
-import type { BirthData } from "@/lib/types";
 
 /**
  * GET /api/reading/access?token=...
@@ -68,7 +67,7 @@ export async function GET(req: NextRequest) {
           (meta?.birth_time as string) || birth_time || "";
 
         if (lat !== undefined && lng !== undefined && dob && time) {
-          const birthData: BirthData = {
+          const birthData= {
             name: (meta?.name as string) || "",
             date: dob,
             time: time,
