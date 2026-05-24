@@ -1120,6 +1120,17 @@ export default function HomePage() {
               </ul>
             </div>
             <div className="fl">
+              <h4>Free Tools</h4>
+              <ul>
+                <li><a href="/free-birth-chart">Free Birth Chart</a></li>
+                <li><a href="/natal-chart">Natal Chart</a></li>
+                <li><a href="/big-three-calculator">Big Three Calculator</a></li>
+                <li><a href="/moon-sign-calculator">Moon Sign Calculator</a></li>
+                <li><a href="/rising-sign-calculator">Rising Sign Calculator</a></li>
+                <li><a href="/zodiac-signs">Zodiac Signs</a></li>
+              </ul>
+            </div>
+            <div className="fl">
               <h4>Legal</h4>
               <ul>
                 <li><a href="/terms">Terms of Service</a></li>
