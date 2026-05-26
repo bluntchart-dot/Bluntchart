@@ -47,18 +47,86 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
 
     // ── Zodiac hub + only Aries is live ──
-    {
-      url: `${BASE_URL}/zodiac-signs`,
-      lastModified: now,
-      changeFrequency: "weekly",
-      priority: 0.85,
-    },
-    {
-      url: `${BASE_URL}/zodiac-signs/aries`,
-      lastModified: now,
-      changeFrequency: "monthly",
-      priority: 0.8,
-    },
+    // ── Zodiac Pages ──
+{
+  url: `${BASE_URL}/zodiac-signs`,
+  lastModified: now,
+  changeFrequency: "weekly",
+  priority: 0.85,
+},
+
+{
+  url: `${BASE_URL}/zodiac-signs/aries`,
+  lastModified: now,
+  changeFrequency: "monthly",
+  priority: 0.8,
+},
+{
+  url: `${BASE_URL}/zodiac-signs/taurus`,
+  lastModified: now,
+  changeFrequency: "monthly",
+  priority: 0.8,
+},
+{
+  url: `${BASE_URL}/zodiac-signs/gemini`,
+  lastModified: now,
+  changeFrequency: "monthly",
+  priority: 0.8,
+},
+{
+  url: `${BASE_URL}/zodiac-signs/cancer`,
+  lastModified: now,
+  changeFrequency: "monthly",
+  priority: 0.8,
+},
+{
+  url: `${BASE_URL}/zodiac-signs/leo`,
+  lastModified: now,
+  changeFrequency: "monthly",
+  priority: 0.8,
+},
+{
+  url: `${BASE_URL}/zodiac-signs/virgo`,
+  lastModified: now,
+  changeFrequency: "monthly",
+  priority: 0.8,
+},
+{
+  url: `${BASE_URL}/zodiac-signs/libra`,
+  lastModified: now,
+  changeFrequency: "monthly",
+  priority: 0.8,
+},
+{
+  url: `${BASE_URL}/zodiac-signs/scorpio`,
+  lastModified: now,
+  changeFrequency: "monthly",
+  priority: 0.8,
+},
+{
+  url: `${BASE_URL}/zodiac-signs/sagittarius`,
+  lastModified: now,
+  changeFrequency: "monthly",
+  priority: 0.8,
+},
+{
+  url: `${BASE_URL}/zodiac-signs/capricorn`,
+  lastModified: now,
+  changeFrequency: "monthly",
+  priority: 0.8,
+},
+{
+  url: `${BASE_URL}/zodiac-signs/aquarius`,
+  lastModified: now,
+  changeFrequency: "monthly",
+  priority: 0.8,
+},
+{
+  url: `${BASE_URL}/zodiac-signs/pisces`,
+  lastModified: now,
+  changeFrequency: "monthly",
+  priority: 0.8,
+},
 
     // ── Legal ──
     {
