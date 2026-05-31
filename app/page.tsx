@@ -817,15 +817,16 @@ export default function HomePage() {
       <nav className={`nav${scrolled?" on":""}`}>
         <div className="c nav-i">
           <a className="logo" href="#" style={{ display:"flex", alignItems:"center", gap:10 }}>
-            <Image src="/mascot.png" alt="BluntChart mascot" width={34} height={34} style={{ borderRadius:"50%" }}/>
+            <Image src="/mascot.png" alt="BluntChart mascot" width={34} height={34} style={{ borderRadius:"50%" }} priority/>
             <span className="g">BluntChart</span>
           </a>
           <ul className="nl">
             <li><a href="#try-it">Try Free</a></li>
-            <li><a href="#reveals">What We Reveal</a></li>
-            <li><a href="#reviews">Reviews</a></li>
-            <li><a href="#compare">vs Co-Star</a></li>
-            <li><a className="ncta" href="#try-it">Get Reading $15</a></li>
+<li><a href="/free-birth-chart-readings">How It Works</a></li>
+<li><a href="#reveals">What We Reveal</a></li>
+<li><a href="/zodiac-signs">Zodiac Signs</a></li>
+<li><a href="#compare">vs Co&#8209;Star</a></li>
+<li><a className="ncta" href="#try-it">Get Reading $15</a></li>
           </ul>
         </div>
       </nav>
@@ -1129,6 +1130,20 @@ export default function HomePage() {
                 <li><a href="/rising-sign-calculator">Rising Sign Calculator</a></li>
                 <li><a href="/zodiac-signs">Zodiac Signs</a></li>
               </ul>
+            </div>
+            <div className="fl">
+              <h4>Learn</h4>
+              <ul>
+                <li><a href="/free-birth-chart-readings">How Birth Chart Readings Work</a></li>
+                <li><a href="/is-mercury-retrograde">Is Mercury Retrograde?</a></li>
+                <li><a href="/mercury-retrograde-2026">Mercury Retrograde 2026</a></li>
+                <li><a href="/mercury-retrograde-in-cancer">Mercury Retrograde in Cancer</a></li>
+                <li><a href="/mercury-retrograde-in-scorpio">Mercury Retrograde in Scorpio</a></li>
+                <li><a href="/venus-retrograde-2026">Venus Retrograde 2026</a></li>
+                <li><a href="/saturn-return-calculator">Saturn Return Calculator</a></li>
+                <li><a href="/why-you-attract-the-wrong-people">Why You Attract the Wrong People</a></li>
+              </ul>
+  
             </div>
             <div className="fl">
               <h4>Legal</h4>
