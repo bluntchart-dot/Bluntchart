@@ -43,32 +43,6 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  // Temporary diagnostic mode for the "access_denied: unverified app" OAuth
-  // issue — reveals only non-secret shape info about the client ID actually
-  // loaded in this runtime, never the full client ID or secret. Remove once
-  // the project/client mismatch is confirmed and OAuth succeeds.
-  if (req.nextUrl.searchParams.get("diag") === "1") {
-    return NextResponse.json({
-      ok: true,
-      clientIdExists: true,
-      clientIdLength: clientId.length,
-      clientIdLast20: clientId.slice(-20),
-      endsWithGoogleUserContent: clientId.endsWith(
-        ".apps.googleusercontent.com"
-      ),
-      // The leading numeric segment of a Google OAuth client ID is that
-      // client's GCP *project number* — safe to reveal (it's already
-      // visible in plaintext in the public authorize URL below), and it's
-      // the fastest way to confirm this client belongs to the same GCP
-      // project as the consent screen / test-user list you configured.
-      // Compare this against the "Project number" shown in Cloud Console
-      // for "Default Gemini Project" (gen-lang-client-0271974646).
-      gcpProjectNumberPrefix: clientId.split("-")[0],
-      redirectUri: BLOGGER_OAUTH_REDIRECT_URI,
-      requestedScope: BLOGGER_OAUTH_SCOPE,
-    });
-  }
-
   const authUrl = new URL("https://accounts.google.com/o/oauth2/v2/auth");
   authUrl.searchParams.set("client_id", clientId);
   authUrl.searchParams.set("redirect_uri", BLOGGER_OAUTH_REDIRECT_URI);
