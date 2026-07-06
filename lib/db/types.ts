@@ -26,6 +26,20 @@ export interface PaymentRow {
   updated_at?: string;
 }
 
+/** Exact shape saved from the free preview generation, reused verbatim on the paid page. */
+export interface StoredPreviewInsight {
+  planet: string;
+  hook?: string;
+  truth: string;
+  reveal?: string;
+  cliffhanger?: string;
+}
+
+export interface StoredPreview {
+  letter_opener: string;
+  preview: StoredPreviewInsight[];
+}
+
 export interface AbandonedCheckoutRow {
   id: string;
   email: string;
@@ -36,6 +50,8 @@ export interface AbandonedCheckoutRow {
   timezone: string | null;
   birth_lat: number | null;
   birth_lng: number | null;
+  focus_area: string | null;
+  preview_json: StoredPreview | null;
   step_reached: string | null;
   utm_source: string | null;
   user_id: string | null;
@@ -64,6 +80,7 @@ export interface CheckoutStartPayload {
   timezone?: string;
   birth_lat?: number;
   birth_lng?: number;
+  focus_area?: string;
   step_reached?: CheckoutStep;
   utm_source?: string;
 }

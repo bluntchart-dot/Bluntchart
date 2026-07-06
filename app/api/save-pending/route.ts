@@ -1,11 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createSupabaseAdmin } from "@/lib/supabase-admin";
-import { startCheckout } from "@/lib/db/checkout-flow";
+import {
+  startCheckout,
+  loadAbandonedEmailIdsByEmail,
+  saveAbandonedEmailIds,
+  SITE_URL,
+} from "@/lib/db/checkout-flow";
 import { formatDbError } from "@/lib/db/errors";
 import { dbError, dbLog } from "@/lib/db/log";
-import { previewMail } from "@/lib/email-templates";
-import { sendEmail } from "@/lib/send-email";
-import { SITE_URL } from "@/lib/db/checkout-flow";
+import { previewMail, abandonedOneMail, abandonedTwoMail } from "@/lib/email-templates";
+import { sendEmail, cancelScheduledEmail } from "@/lib/send-email";
+import { DELAY_MS, scheduledIso } from "@/lib/email-timing";
 
 /**
  * POST /api/save-pending
@@ -48,6 +53,8 @@ const birth_lng =
   body.birth_lng != null && !isNaN(Number(body.birth_lng))
     ? Number(body.birth_lng)
     : undefined;
+    const focus_area =
+  typeof body.focus_area === "string" ? body.focus_area.trim() : undefined;
 
     if (!name || !email || !dob || !birth_time || !birth_place) {
       dbError(scope, "validation failed", "missing fields", { email });
@@ -59,6 +66,18 @@ const birth_lng =
 
     const supabase = createSupabaseAdmin();
 
+    // Resubmission: cancel the prior lead's still-pending scheduled nudges
+    // before startCheckout wipes the row that was tracking their ids.
+    const staleIds = await loadAbandonedEmailIdsByEmail(supabase, email);
+    if (staleIds) {
+      const { preview_email_id, abandoned_one_email_id, abandoned_two_email_id } = staleIds;
+      await Promise.all(
+        [preview_email_id, abandoned_one_email_id, abandoned_two_email_id]
+          .filter((id): id is string => !!id)
+          .map((id) => cancelScheduledEmail(id))
+      );
+    }
+
     const result = await startCheckout(supabase, {
       name,
       email,
@@ -68,6 +87,7 @@ const birth_lng =
       timezone,
       birth_lat,   /* NEW: pass coordinates to startCheckout */
       birth_lng,   /* NEW: pass coordinates to startCheckout */
+      focus_area,
       step_reached: "form_submitted",
     });
 
@@ -91,23 +111,38 @@ const birth_lng =
       hasCoords: !!(birth_lat && birth_lng),
     });
 
-    let emailSent = false;
+    let emailScheduled = false;
     try {
-      const template = previewMail({
-        firstName: name.split(" ")[0] || name,
-        birthDate: dob,
-        readingUrl: `${SITE_URL}#try-it`,
+      const firstName = name.split(" ")[0] || name;
+      const readingUrl = `${SITE_URL}#try-it`;
+
+      const [preview, abandonedOne, abandonedTwo] = await Promise.all([
+        sendEmail({
+          to: email,
+          ...previewMail({ firstName, birthDate: dob, readingUrl }),
+          scheduledAt: scheduledIso(DELAY_MS.preview),
+        }),
+        sendEmail({
+          to: email,
+          ...abandonedOneMail({ firstName, birthDate: dob, readingUrl }),
+          scheduledAt: scheduledIso(DELAY_MS.abandonedOne),
+        }),
+        sendEmail({
+          to: email,
+          ...abandonedTwoMail({ firstName, readingUrl }),
+          scheduledAt: scheduledIso(DELAY_MS.abandonedTwo),
+        }),
+      ]);
+
+      await saveAbandonedEmailIds(supabase, email, {
+        previewEmailId: preview.id,
+        abandonedOneEmailId: abandonedOne.id,
+        abandonedTwoEmailId: abandonedTwo.id,
       });
 
-      await sendEmail({
-        to: email,
-        subject: template.subject,
-        html: template.html,
-        text: template.text,
-      });
-      emailSent = true;
+      emailScheduled = preview.ok && abandonedOne.ok && abandonedTwo.ok;
     } catch (mailErr) {
-      dbError(scope, "preview email failed (non-fatal)", mailErr, { email });
+      dbError(scope, "abandoned sequence scheduling failed (non-fatal)", mailErr, { email });
     }
 
     return NextResponse.json({
@@ -115,7 +150,7 @@ const birth_lng =
       sessionId: result.sessionId,
       paymentId: result.paymentId,
       userId: result.userId,
-      emailSent,
+      emailScheduled,
     });
   } catch (err) {
     dbError(scope, "unexpected error", err);

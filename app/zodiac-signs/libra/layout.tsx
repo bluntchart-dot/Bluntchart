@@ -34,6 +34,18 @@ export default function LibraLayout({ children }: { children: React.ReactNode })
         publisher: { "@type": "Organization", name: "BluntChart" },
       },
       {
+        "@type": "FAQPage",
+        mainEntity: [
+          { "@type": "Question", name: "What are the Libra dates?", acceptedAnswer: { "@type": "Answer", text: "September 23 to October 22. Those on cusp dates should check their birth chart." } },
+          { "@type": "Question", name: "What planet rules Libra?", acceptedAnswer: { "@type": "Answer", text: "Venus, through air — aesthetic and relational. Libra's Venus wants beautiful ideas and fair relationships." } },
+          { "@type": "Question", name: "What element is Libra?", acceptedAnswer: { "@type": "Answer", text: "Air, along with Gemini and Aquarius. Libra is Cardinal Air — initiating social connections." } },
+          { "@type": "Question", name: "What signs are most compatible with Libra?", acceptedAnswer: { "@type": "Answer", text: "Leo (warmth and decisive energy), Sagittarius (philosophical depth), Aquarius (intellectual curiosity)." } },
+          { "@type": "Question", name: "Why are Libras so indecisive?", acceptedAnswer: { "@type": "Answer", text: "They see every side equally. Choosing feels like being unfair to the option not picked. It's extreme fairness taken to a fault." } },
+          { "@type": "Question", name: "What is Libra Rising?", acceptedAnswer: { "@type": "Answer", text: "Your outward personality projects charm and grace. People find you easy to talk to and socially polished." } },
+          { "@type": "Question", name: "What is Libra Moon?", acceptedAnswer: { "@type": "Answer", text: "Your emotional stability depends on relational harmony. Conflict disrupts your nervous system. You need a partner who engages during disagreements." } },
+        ],
+      },
+      {
         "@type": "BreadcrumbList",
         itemListElement: [
           { "@type": "ListItem", position: 1, name: "BluntChart", item: "https://bluntchart.com" },

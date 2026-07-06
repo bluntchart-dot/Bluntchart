@@ -1,0 +1,39 @@
+# BluntChart
+
+> BluntChart generates brutally honest, personalized birth chart (natal chart) readings from a person's exact birth date, time, and location. Unlike vague, one-size-fits-all horoscopes, each reading is calculated from the user's actual planetary positions and written in a direct, no-fluff tone. Readings cost a one-time $15 (no subscription) and include a shareable result card.
+
+## Core product
+
+- [Free Birth Chart Calculator](https://bluntchart.com/free-birth-chart): Calculate a full natal chart (Sun, Moon, Rising, and all planetary placements) for free from birth date, time, and location.
+- [Free Birth Chart Readings](https://bluntchart.com/free-birth-chart-readings): Explains how BluntChart's birth chart readings work, what's included, and how they differ from generic horoscopes.
+- [Natal Chart](https://bluntchart.com/natal-chart): Natal chart calculator and explainer — what a natal chart is and how to read one.
+- [Get a paid reading](https://bluntchart.com/#try-it): One-time $15 personalized reading with a blunt, specific tone and a shareable card. No subscription.
+
+## Free calculators
+
+- [Big Three Calculator](https://bluntchart.com/big-three-calculator): Calculates Sun, Moon, and Rising signs (the "big three") from birth details.
+- [Moon Sign Calculator](https://bluntchart.com/moon-sign-calculator): Calculates a person's Moon sign, which governs emotional nature.
+- [Rising Sign Calculator](https://bluntchart.com/rising-sign-calculator): Calculates a person's Rising sign (Ascendant), which governs first impressions and outward personality.
+- [Saturn Return Calculator](https://bluntchart.com/saturn-return-calculator): Calculates when a person's Saturn Return occurs (roughly ages 27-30 and 57-60) and what it means.
+
+## Zodiac sign guides
+
+Full personality, compatibility, dates, ruling planet, and element guides for each sign:
+[Aries](https://bluntchart.com/zodiac-signs/aries), [Taurus](https://bluntchart.com/zodiac-signs/taurus), [Gemini](https://bluntchart.com/zodiac-signs/gemini), [Cancer](https://bluntchart.com/zodiac-signs/cancer), [Leo](https://bluntchart.com/zodiac-signs/leo), [Virgo](https://bluntchart.com/zodiac-signs/virgo), [Libra](https://bluntchart.com/zodiac-signs/libra), [Scorpio](https://bluntchart.com/zodiac-signs/scorpio), [Sagittarius](https://bluntchart.com/zodiac-signs/sagittarius), [Capricorn](https://bluntchart.com/zodiac-signs/capricorn), [Aquarius](https://bluntchart.com/zodiac-signs/aquarius), [Pisces](https://bluntchart.com/zodiac-signs/pisces). Index at [/zodiac-signs](https://bluntchart.com/zodiac-signs).
+
+## Mercury & Venus retrograde guides
+
+- [Is Mercury Retrograde Right Now?](https://bluntchart.com/is-mercury-retrograde): Live-updating tracker for current Mercury retrograde status.
+- [Mercury Retrograde 2026](https://bluntchart.com/mercury-retrograde-2026): Full 2026 Mercury retrograde calendar and survival guide.
+- [Mercury Retrograde in Cancer 2026](https://bluntchart.com/mercury-retrograde-in-cancer-2026): The June/July 2026 retrograde — home, family, emotional roots.
+- [Mercury Retrograde in Scorpio 2026](https://bluntchart.com/mercury-retrograde-in-scorpio-2026): The October/November 2026 retrograde — intimacy, power, secrets.
+- [Venus Retrograde 2026](https://bluntchart.com/venus-retrograde-2026): 2026 Venus retrograde dates and what it means for love and money.
+
+## Relationship astrology
+
+- [Why You Attract the Wrong Person](https://bluntchart.com/why-you-attract-the-wrong-person): Chart-based explanation of recurring relationship patterns (Venus, Mars, and Moon placements).
+
+## About
+
+- [BluntChart](https://bluntchart.com): Homepage — product overview, sample readings, pricing, and testimonials.
+- [Terms](https://bluntchart.com/terms), [Privacy](https://bluntchart.com/privacy), [Refunds](https://bluntchart.com/refunds): Legal pages.

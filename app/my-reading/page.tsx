@@ -8,6 +8,9 @@ import ShareCard from "@/components/ShareCard";
 import type { ChartData } from "@/lib/types";
 import type { ShareCardData } from "@/components/ShareCard";
 import { ReadingText } from "@/components/ReadingText";
+import { getChartHighlights } from "@/lib/chart-calculator";
+import ChartHighlightBoxes from "@/components/ChartHighlightBoxes";
+import FunFactBoxes from "@/components/FunFactBoxes";
 
 const ChartWheel = dynamic(() => import("@/components/ChartWheel"), {
   ssr: false,
@@ -143,6 +146,10 @@ function MyReadingContent() {
 console.log("[DEBUG] chart data:", chart ? "YES" : "NO", JSON.stringify(chart)?.slice(0, 200));
 const meta = reading?.meta as Record<string, unknown> | undefined;
 
+  /* Big 3 + key planet highlight boxes. Computed once here from the
+     same chart object ChartWheel already uses. Null-safe. */
+  const highlights = chart ? getChartHighlights(chart) : null;
+
   /* letter_opener can be a string or { greeting, line1, line2, teaser } */
   const rawOpener = reading?.letter_opener;
   const letterOpener: string | null = (() => {
@@ -165,6 +172,7 @@ const meta = reading?.meta as Record<string, unknown> | undefined;
     chart?.planets?.find((p) => p.name === "Moon")?.sign ?? aiPlanets?.moon;
   const risingSign =
     chart?.ascendant?.sign ?? aiPlanets?.rising;
+
 
   /* Build ShareCard props
      Supports both:
@@ -194,7 +202,7 @@ const meta = reading?.meta as Record<string, unknown> | undefined;
   /* ── Render ── */
   return (
     <main className="min-h-screen bg-[#09090f] text-[#e8e4f0] py-12 px-4 sm:px-6 lg:px-10">
-      <div className="max-w-4xl mx-auto w-full">
+      <div className="max-w-6xl mx-auto w-full">
         <p className="text-xs uppercase tracking-[0.2em] text-[#6b6585] mb-3">
           BluntChart · Your full reading
         </p>
@@ -210,11 +218,33 @@ const meta = reading?.meta as Record<string, unknown> | undefined;
           </h1>
         )}
 
+        {/* Big 3 + key planet highlight boxes, shown above the wheel */}
+        {highlights && (
+          <section className="mb-8 flex justify-center">
+            <SafeRender label="ChartHighlightBoxes">
+              <div className="w-full max-w-[960px]">
+                <ChartHighlightBoxes highlights={highlights} />
+              </div>
+            </SafeRender>
+          </section>
+        )}
+
         {/* Chart Wheel */}
         {chart && (
           <section className="mb-10 flex justify-center">
             <SafeRender label="ChartWheel">
               <ChartWheel chart={chart} />
+            </SafeRender>
+          </section>
+        )}
+
+        {/* Compatibility snapshot, shown after the chart wheel */}
+        {chart && (
+          <section className="mb-10 flex justify-center">
+            <SafeRender label="FunFactBoxes">
+              <div className="w-full max-w-[960px]">
+                <FunFactBoxes chart={chart} />
+              </div>
             </SafeRender>
           </section>
         )}

@@ -147,13 +147,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.8,
     },
     {
-      url: `${BASE_URL}/mercury-retrograde-in-cancer`,
+      url: `${BASE_URL}/mercury-retrograde-in-cancer-2026`,
       lastModified: now,
       changeFrequency: "monthly",
       priority: 0.75,
     },
     {
-      url: `${BASE_URL}/mercury-retrograde-in-scorpio`,
+      url: `${BASE_URL}/mercury-retrograde-in-scorpio-2026`,
       lastModified: now,
       changeFrequency: "monthly",
       priority: 0.75,
@@ -171,7 +171,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.8,
     },
     {
-      url: `${BASE_URL}/why-you-attract-the-wrong-people`,
+      url: `${BASE_URL}/why-you-attract-the-wrong-person`,
       lastModified: now,
       changeFrequency: "monthly",
       priority: 0.75,

@@ -81,7 +81,8 @@ export async function POST(req: NextRequest) {
         body.birth,
         body.chartData,
         body.insight ?? {},
-        "preview"
+        "preview",
+        typeof body.focusArea === "string" ? body.focusArea : null
       );
     } else if (typeof body.prompt === "string" && body.prompt.trim().length > 0) {
       userPrompt = body.prompt.trim();

@@ -4,7 +4,7 @@ import { formatDbError } from "./errors";
 import { dbError, dbLog } from "./log";
 import { DB, pendingGumroadId } from "./tables";
 import { ensureUser } from "./users";
-import type { CheckoutStartPayload, CheckoutStep } from "./types";
+import type { CheckoutStartPayload, CheckoutStep, StoredPreview } from "./types";
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "https://bluntchart.com";
@@ -104,6 +104,7 @@ export async function startCheckout(
         /* NEW: store coordinates from LocationPicker */
         birth_lat: payload.birth_lat ?? null,
         birth_lng: payload.birth_lng ?? null,
+        focus_area: payload.focus_area?.trim() || null,
         step_reached: step,
         utm_source: payload.utm_source?.trim() || null,
         user_id: user.id,
@@ -134,17 +135,30 @@ export async function startCheckout(
   };
 }
 
-/** Update funnel step on abandoned_checkouts + optional payment session match by email. */
+/**
+ * Update funnel step on abandoned_checkouts + optional payment session match by email.
+ * When step is "preview_generated", pass `preview` to persist the exact free-preview
+ * content so the paid page can reuse it verbatim instead of regenerating it.
+ */
 export async function updateCheckoutStep(
   supabase: SupabaseClient,
   email: string,
-  step: CheckoutStep
+  step: CheckoutStep,
+  preview?: StoredPreview | null
 ): Promise<{ ok: boolean; error?: string }> {
   const normalizedEmail = email.trim().toLowerCase();
 
+  const patch: Record<string, unknown> = {
+    step_reached: step,
+    abandoned_at: new Date().toISOString(),
+  };
+  if (preview) {
+    patch.preview_json = preview;
+  }
+
   const { error } = await supabase
     .from(DB.abandonedCheckouts)
-    .update({ step_reached: step, abandoned_at: new Date().toISOString() })
+    .update(patch)
     .eq("email", normalizedEmail);
 
   if (error) {
@@ -170,6 +184,13 @@ export interface BirthLead {
   /* NEW: coordinates from LocationPicker (null for legacy readings) */
   birth_lat: number | null;
   birth_lng: number | null;
+  focus_area: string | null;
+  /* Exact free-preview content, when the user saw one before paying. */
+  preview_json: StoredPreview | null;
+  /* Resend ids for the scheduled abandoned-cart nudges, so they can be cancelled on payment. */
+  preview_email_id: string | null;
+  abandoned_one_email_id: string | null;
+  abandoned_two_email_id: string | null;
 }
 
 function mapAbandonedRowToLead(row: {
@@ -182,6 +203,11 @@ function mapAbandonedRowToLead(row: {
   user_id: string | null;
   birth_lat?: number | null;
   birth_lng?: number | null;
+  focus_area?: string | null;
+  preview_json?: StoredPreview | null;
+  preview_email_id?: string | null;
+  abandoned_one_email_id?: string | null;
+  abandoned_two_email_id?: string | null;
 }): BirthLead {
   return {
     name: row.name ?? "",
@@ -193,6 +219,11 @@ function mapAbandonedRowToLead(row: {
     user_id: row.user_id,
     birth_lat: row.birth_lat ?? null,
     birth_lng: row.birth_lng ?? null,
+    focus_area: row.focus_area ?? null,
+    preview_json: row.preview_json ?? null,
+    preview_email_id: row.preview_email_id ?? null,
+    abandoned_one_email_id: row.abandoned_one_email_id ?? null,
+    abandoned_two_email_id: row.abandoned_two_email_id ?? null,
   };
 }
 
@@ -237,10 +268,10 @@ export async function loadBirthLeadByEmail(
     }
   }
 
-  /* NEW: also select birth_lat, birth_lng */
+  /* NEW: also select birth_lat, birth_lng, preview_json, scheduled-email ids */
   const { data, error } = await supabase
     .from(DB.abandonedCheckouts)
-    .select("name, email, dob, birth_time, birth_place, timezone, user_id, birth_lat, birth_lng")
+    .select("name, email, dob, birth_time, birth_place, timezone, user_id, birth_lat, birth_lng, focus_area, preview_json, preview_email_id, abandoned_one_email_id, abandoned_two_email_id")
     .eq("email", lookupEmail)
     .order("created_at", { ascending: false })
     .limit(1)
@@ -272,6 +303,66 @@ export async function loadBirthLeadByEmail(
     lead: mapAbandonedRowToLead(data),
     error: null,
   };
+}
+
+/** Loads just the 3 scheduled-email ids for an email, so a resubmit can cancel the stale sequence. */
+export async function loadAbandonedEmailIdsByEmail(
+  supabase: SupabaseClient,
+  email: string
+): Promise<{
+  preview_email_id: string | null;
+  abandoned_one_email_id: string | null;
+  abandoned_two_email_id: string | null;
+} | null> {
+  const normalizedEmail = email.trim().toLowerCase();
+
+  const { data, error } = await supabase
+    .from(DB.abandonedCheckouts)
+    .select("preview_email_id, abandoned_one_email_id, abandoned_two_email_id")
+    .eq("email", normalizedEmail)
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (error || !data) return null;
+
+  return {
+    preview_email_id: data.preview_email_id ?? null,
+    abandoned_one_email_id: data.abandoned_one_email_id ?? null,
+    abandoned_two_email_id: data.abandoned_two_email_id ?? null,
+  };
+}
+
+/** Persists the Resend ids for the 3 scheduled abandoned-cart nudges on the lead row. */
+export async function saveAbandonedEmailIds(
+  supabase: SupabaseClient,
+  email: string,
+  ids: {
+    previewEmailId?: string;
+    abandonedOneEmailId?: string;
+    abandonedTwoEmailId?: string;
+  }
+): Promise<{ ok: boolean; error?: string }> {
+  const normalizedEmail = email.trim().toLowerCase();
+
+  const patch: Record<string, unknown> = {};
+  if (ids.previewEmailId) patch.preview_email_id = ids.previewEmailId;
+  if (ids.abandonedOneEmailId) patch.abandoned_one_email_id = ids.abandonedOneEmailId;
+  if (ids.abandonedTwoEmailId) patch.abandoned_two_email_id = ids.abandonedTwoEmailId;
+
+  if (Object.keys(patch).length === 0) return { ok: true };
+
+  const { error } = await supabase
+    .from(DB.abandonedCheckouts)
+    .update(patch)
+    .eq("email", normalizedEmail);
+
+  if (error) {
+    dbError("checkout", "saveAbandonedEmailIds failed", error, { email: normalizedEmail });
+    return { ok: false, error: error.message };
+  }
+
+  return { ok: true };
 }
 
 /** Find latest pending payment for this checkout session or email. */

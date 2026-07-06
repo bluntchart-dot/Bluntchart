@@ -34,6 +34,18 @@ export default function TaurusLayout({ children }: { children: React.ReactNode }
         publisher: { "@type": "Organization", name: "BluntChart" },
       },
       {
+        "@type": "FAQPage",
+        mainEntity: [
+          { "@type": "Question", name: "What are the Taurus dates?", acceptedAnswer: { "@type": "Answer", text: "Taurus season runs from April 20 to May 20. Those born on cusp dates should check their birth chart." } },
+          { "@type": "Question", name: "What planet rules Taurus?", acceptedAnswer: { "@type": "Answer", text: "Venus, the planet of love, beauty, and value. It gives Taurus refined taste, sensual nature, and deep attachment to comfort." } },
+          { "@type": "Question", name: "What element is Taurus?", acceptedAnswer: { "@type": "Answer", text: "Earth, along with Virgo and Capricorn. Taurus is Fixed Earth — sustaining and preserving rather than initiating or adapting." } },
+          { "@type": "Question", name: "What signs are most compatible with Taurus?", acceptedAnswer: { "@type": "Answer", text: "Cancer (emotional depth meets physical security), Virgo (shared practical values), and Capricorn (mutual ambition and work ethic)." } },
+          { "@type": "Question", name: "Why are Taurus so stubborn?", acceptedAnswer: { "@type": "Answer", text: "Their Fixed quality means they sustain and persist. Change threatens the stability they've carefully built. Pushing them only makes them dig in harder." } },
+          { "@type": "Question", name: "What is Taurus Rising?", acceptedAnswer: { "@type": "Answer", text: "Your outward personality projects Venus energy — calm, attractive, grounded. You make others feel safe." } },
+          { "@type": "Question", name: "What is Taurus Moon?", acceptedAnswer: { "@type": "Answer", text: "Your emotional needs center on physical comfort, routine, and security. You process slowly and show love through touch." } },
+        ],
+      },
+      {
         "@type": "BreadcrumbList",
         itemListElement: [
           { "@type": "ListItem", position: 1, name: "BluntChart", item: "https://bluntchart.com" },

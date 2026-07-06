@@ -9,10 +9,13 @@ import { fulfillPaidOrder, markPaymentFailed } from "@/lib/db/fulfillment";
 import { parseGumroadSessionId } from "@/lib/gumroad-checkout";
 import { dbError, dbLog } from "@/lib/db/log";
 import { DB } from "@/lib/db/tables";
-import { sendEmail } from "@/lib/send-email";
+import { sendEmail, cancelScheduledEmail } from "@/lib/send-email";
+import { DELAY_MS, scheduledIso } from "@/lib/email-timing";
 import {
   paidConfirmationMail,
   fullReadingDeliveryMail,
+  shareReminderOneMail,
+  shareReminderTwoMail,
 } from "@/lib/email-templates";
 
 function isPaidStatus(status: string | null | undefined): boolean {
@@ -115,6 +118,13 @@ export async function POST(req: Request) {
       dob: lead.dob,
     });
 
+    // Lead converted — stop any still-pending abandoned-cart nudges from going out.
+    await Promise.all(
+      [lead.preview_email_id, lead.abandoned_one_email_id, lead.abandoned_two_email_id]
+        .filter((id): id is string => !!id)
+        .map((id) => cancelScheduledEmail(id))
+    );
+
     const firstName = lead.name.split(" ")[0] || lead.name;
 
     try {
@@ -135,7 +145,7 @@ export async function POST(req: Request) {
 
     dbLog(scope, "reading generation started", { email });
 
-    const readingJson = await buildPaidReadingPayload(lead);
+    const readingJson = await buildPaidReadingPayload(lead, lead.focus_area);
 
     if (!readingJson) {
       dbError(scope, "reading generation failed", "", { email });
@@ -198,6 +208,24 @@ export async function POST(req: Request) {
       dbLog(scope, "delivery email sent", { email, accessUrl });
     } catch (mailErr) {
       dbError(scope, "delivery email failed (non-fatal)", mailErr, { email });
+    }
+
+    try {
+      await Promise.all([
+        sendEmail({
+          to: email,
+          ...shareReminderOneMail({ firstName, cardUrl: accessUrl }),
+          scheduledAt: scheduledIso(DELAY_MS.shareReminderOne),
+        }),
+        sendEmail({
+          to: email,
+          ...shareReminderTwoMail({ firstName, cardUrl: accessUrl }),
+          scheduledAt: scheduledIso(DELAY_MS.shareReminderTwo),
+        }),
+      ]);
+      dbLog(scope, "share reminders scheduled", { email });
+    } catch (mailErr) {
+      dbError(scope, "share reminder scheduling failed (non-fatal)", mailErr, { email });
     }
 
     dbLog(scope, "fulfillment complete", {

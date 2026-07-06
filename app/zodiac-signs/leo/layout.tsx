@@ -34,6 +34,18 @@ export default function LeoLayout({ children }: { children: React.ReactNode }) {
         publisher: { "@type": "Organization", name: "BluntChart" },
       },
       {
+        "@type": "FAQPage",
+        mainEntity: [
+          { "@type": "Question", name: "What are the Leo dates?", acceptedAnswer: { "@type": "Answer", text: "July 23 to August 22. Those on cusp dates should check their birth chart." } },
+          { "@type": "Question", name: "What planet rules Leo?", acceptedAnswer: { "@type": "Answer", text: "The Sun — the center of the solar system. It gives Leo warmth, charisma, and the need to be seen." } },
+          { "@type": "Question", name: "What element is Leo?", acceptedAnswer: { "@type": "Answer", text: "Fire, along with Aries and Sagittarius. Leo is Fixed Fire — sustaining and radiating passionate energy." } },
+          { "@type": "Question", name: "What signs are most compatible with Leo?", acceptedAnswer: { "@type": "Answer", text: "Aries and Sagittarius (fellow fire signs), plus Libra (air sign that fans Leo's flames with admiration)." } },
+          { "@type": "Question", name: "Why do Leos need so much attention?", acceptedAnswer: { "@type": "Answer", text: "It's not vanity — it's the Sun's energy. The Sun needs to shine; Leo needs to be seen. Without recognition, they feel existentially invisible." } },
+          { "@type": "Question", name: "What is Leo Rising?", acceptedAnswer: { "@type": "Answer", text: "Your outward personality radiates warmth and star quality. People notice you immediately. Notable hair, expressive features, theatrical self-assurance." } },
+          { "@type": "Question", name: "What is Leo Moon?", acceptedAnswer: { "@type": "Answer", text: "Your emotional needs center on feeling special and appreciated. Silence from loved ones is devastating. You express emotions dramatically." } },
+        ],
+      },
+      {
         "@type": "BreadcrumbList",
         itemListElement: [
           { "@type": "ListItem", position: 1, name: "BluntChart", item: "https://bluntchart.com" },

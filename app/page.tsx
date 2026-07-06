@@ -96,6 +96,20 @@ const LOCKED_TEASERS = [
 ];
 
 const LOADING_MSGS = ["Reading the stars…","Consulting your planets…","Finding your truth…","Almost there…"];
+// NEW — focus area options for the optional question
+const FOCUS_AREAS = [
+  { value: "love",    label: "Love" },
+  { value: "career",  label: "Career" },
+  { value: "money",   label: "Money" },
+  { value: "purpose", label: "Purpose" },
+];
+
+const FOCUS_LOCKWALL_COPY: Record<string, string> = {
+  love:    "Including a dedicated love deep-dive built from your Venus, Mars and 7th house placements.",
+  career:  "Including a dedicated career deep-dive built from your Saturn, Midheaven and 10th house placements.",
+  money:   "Including a dedicated money deep-dive built from your Jupiter, 2nd house and money-house placements.",
+  purpose: "Including a dedicated deep-dive connecting who you actually are to the exact pattern you keep repeating.",
+};
 
 // ─── STYLE HELPERS ─────────────────────────────────────────────────────────────
 
@@ -131,6 +145,7 @@ function ReadingApp({ onResultChange }: { onResultChange?: (v: boolean) => void 
   const [btime,  setBtime]    = useState("");
   const [city,    setCity]    = useState("");
 const [cityGeo, setCityGeo] = useState<SelectedLocation | null>(null);
+const [focusArea, setFocusArea] = useState<string>("");   // NEW — optional, empty = skipped
   const [err,    setErr]      = useState("");
   const [loadMsg, setLoadMsg] = useState(LOADING_MSGS[0]);
   const [data,   setData]     = useState<ReadingData|null>(null);
@@ -221,6 +236,7 @@ try {
           birth_lat: geo.lat,
           birth_lng: geo.lng,
           timezone: geo.timezone,
+          focus_area: focusArea || undefined,   // NEW
         }),
       });
       const saveText = await saveRes.text();
@@ -290,6 +306,7 @@ try {
           birth,
           chartData,
           insight: {},
+          focusArea: focusArea || undefined,   // NEW
         }),
       });
       stopRot();
@@ -340,6 +357,8 @@ try {
         body: JSON.stringify({
           email: normalizedEmail,
           step: "preview_generated",
+          preview: parsed.preview,
+          letter_opener: parsed.letter_opener ?? "",
         }),
       }).catch((e) => console.warn("[checkout] step update failed:", e));
  
@@ -415,7 +434,8 @@ try {
 
   const reset = () => {
     setScreen("form"); setData(null); setSessionId(null);
-    setFname(""); setEmail(""); setDob(""); setBtime(""); setCity(""); setCityGeo(null); setErr("");
+    setFname(""); setEmail(""); setDob(""); setBtime(""); setCity(""); setCityGeo(null); setFocusArea("");   // NEW
+setErr("");
     onResultChange?.(false);
   };
 
@@ -479,6 +499,32 @@ try {
     }}
     placeholder="e.g. New York, USA or London, UK"
   />
+</div>
+{/* NEW — optional focus area question, dropdown to save space */}
+<div style={{ marginBottom:24 }}>
+  <label style={lbl}>
+    What part of your life brought you here?{" "}
+    <span style={{ color:"#4a4560", fontWeight:400, textTransform:"none", letterSpacing:0 }}>
+      (optional)
+    </span>
+  </label>
+  <select
+    value={focusArea}
+    onChange={e => setFocusArea(e.target.value)}
+    style={{
+      ...inp,
+      appearance:"none",
+      cursor:"pointer",
+      color: focusArea ? "#e8e4f0" : "rgba(232,228,240,0.4)",
+    }}
+  >
+    <option value="" style={{ background:"#12121e" }}>Select one (optional)</option>
+    {FOCUS_AREAS.map(opt => (
+      <option key={opt.value} value={opt.value} style={{ background:"#12121e", color:"#e8e4f0" }}>
+        {opt.label}
+      </option>
+    ))}
+  </select>
 </div>
 
         <button onClick={submit} style={{ width:"100%",
@@ -553,13 +599,12 @@ try {
           <div style={{ background:"rgba(107,47,212,0.04)", borderTop:"0.5px solid rgba(107,47,212,0.1)",
             padding:"32px 28px 28px", textAlign:"center" }}>
             <div style={{ fontFamily:"var(--font-display)", fontSize:20, marginBottom:10, color:"#e8e4f0" }}>
-              8 more insights waiting
-            </div>
-            <p style={{ fontSize:14, color:"#6b6585", lineHeight:1.75, maxWidth:380,
-              margin:"0 auto 24px" }}>
-              Natal chart wheel (high-precision ephemeris, Astronomy Engine), eight deeper cuts, these two previews again in one thread,
-              plus your shareable identity card. In your inbox the moment you pay. Yours forever.
-            </p>
+  {focusArea && FOCUS_LOCKWALL_COPY[focusArea] ? "9 insights waiting, including the one you asked about" : "8 more insights waiting"}
+</div>
+<p style={{ fontSize:14, color:"#6b6585", lineHeight:1.75, maxWidth:380,
+  margin:"0 auto 24px" }}>
+  Natal chart wheel (high-precision ephemeris, Astronomy Engine). {focusArea && FOCUS_LOCKWALL_COPY[focusArea] ? FOCUS_LOCKWALL_COPY[focusArea] + " Plus these two previews again in one thread and your shareable identity card." : "Eight deeper cuts, these two previews again in one thread, plus your shareable identity card."} In your inbox the moment you pay. Yours forever.
+</p>
             <button onClick={handleUnlock}
               style={{ display:"block", width:"100%",
                 background:"linear-gradient(135deg,#f0b84a,#e8854a)",
@@ -654,6 +699,7 @@ export default function HomePage() {
 
   return (
     <>
+      <link rel="canonical" href="https://bluntchart.com/" />
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Sans:wght@300;400;500;600&display=swap');
         *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -1137,11 +1183,11 @@ export default function HomePage() {
                 <li><a href="/free-birth-chart-readings">How Birth Chart Readings Work</a></li>
                 <li><a href="/is-mercury-retrograde">Is Mercury Retrograde?</a></li>
                 <li><a href="/mercury-retrograde-2026">Mercury Retrograde 2026</a></li>
-                <li><a href="/mercury-retrograde-in-cancer">Mercury Retrograde in Cancer</a></li>
-                <li><a href="/mercury-retrograde-in-scorpio">Mercury Retrograde in Scorpio</a></li>
+                <li><a href="/mercury-retrograde-in-cancer-2026">Mercury Retrograde in Cancer</a></li>
+                <li><a href="/mercury-retrograde-in-scorpio-2026">Mercury Retrograde in Scorpio</a></li>
                 <li><a href="/venus-retrograde-2026">Venus Retrograde 2026</a></li>
                 <li><a href="/saturn-return-calculator">Saturn Return Calculator</a></li>
-                <li><a href="/why-you-attract-the-wrong-people">Why You Attract the Wrong People</a></li>
+                <li><a href="/why-you-attract-the-wrong-person">Why You Attract the Wrong Person</a></li>
               </ul>
   
             </div>

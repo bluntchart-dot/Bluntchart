@@ -1,5 +1,6 @@
 import * as Astronomy from "astronomy-engine";
 import { fromZonedTime } from "date-fns-tz";
+
 import type {
   BirthData,
   PlanetPosition,
@@ -98,15 +99,6 @@ function eclipticLongitudeFromHorizon(
 
 /* -------------------------------------------------------------------------- */
 /*                           GEOCENTRIC LONGITUDE FIX                         */
-/*                                                                            */
-/*  astronomy-engine's EclipticLongitude(body, time) is HELIOCENTRIC and     */
-/*  throws for the Sun ("Cannot calculate heliocentric longitude of the Sun") */
-/*  Astrology needs GEOCENTRIC positions for every body, so we use the        */
-/*  correct API call for each case:                                           */
-/*                                                                            */
-/*  Sun   → SunPosition(time).elon          geocentric ecliptic longitude     */
-/*  Moon  → GeoMoon(time) → Ecliptic()      geocentric ecliptic longitude     */
-/*  Other → GeoVector(body) → Ecliptic()    geocentric ecliptic longitude     */
 /* -------------------------------------------------------------------------- */
 
 function getGeocentricLongitude(
@@ -115,22 +107,15 @@ function getGeocentricLongitude(
 ): number {
   switch (planet) {
     case "Sun": {
-      // SunPosition() returns the Sun's geocentric ecliptic coordinates
       const pos = Astronomy.SunPosition(time);
       return normalizeDeg(pos.elon);
     }
-
     case "Moon": {
-      // GeoMoon() returns geocentric equatorial vector (EQJ)
-      // Ecliptic() converts EQJ vector → ecliptic coordinates
       const moonVec = Astronomy.GeoMoon(time);
       const ecl = Astronomy.Ecliptic(moonVec);
       return normalizeDeg(ecl.elon);
     }
-
     default: {
-      // GeoVector() returns geocentric equatorial vector (EQJ) for any planet
-      // true = apply stellar aberration correction (correct for apparent position)
       const body = Astronomy.Body[planet as keyof typeof Astronomy.Body];
       const geoVec = Astronomy.GeoVector(body, time, true);
       const ecl = Astronomy.Ecliptic(geoVec);
@@ -144,26 +129,17 @@ function getGeocentricLongitude(
 /* -------------------------------------------------------------------------- */
 
 function isRetrograde(planet: string, time: Astronomy.AstroTime): boolean {
-  // Sun and Moon never retrograde
   if (planet === "Sun" || planet === "Moon") return false;
-
-  // Verify body exists in the enum
   const body = Astronomy.Body[planet as keyof typeof Astronomy.Body];
   if (typeof body === "undefined") return false;
-
-  // Compare geocentric longitude 36 hours apart
-  // Negative change = planet appears to move backward = retrograde
   const t1 = Astronomy.MakeTime(
     new Date(time.date.getTime() - 36 * 3600 * 1000)
   );
-
   const lon0 = getGeocentricLongitude(planet, time);
   const lon1 = getGeocentricLongitude(planet, t1);
-
   let diff = lon0 - lon1;
   if (diff >  180) diff -= 360;
   if (diff < -180) diff += 360;
-
   return diff < 0;
 }
 
@@ -178,7 +154,6 @@ function buildPlanet(
 ): PlanetPosition {
   const absoluteDegree = getGeocentricLongitude(name, time);
   const sign = getSign(absoluteDegree);
-
   return {
     name,
     sign: sign.name,
@@ -196,15 +171,12 @@ function buildPlanet(
 
 function calculateAspects(planets: PlanetPosition[]): Aspect[] {
   const results: Aspect[] = [];
-
   for (let i = 0; i < planets.length; i++) {
     for (let j = i + 1; j < planets.length; j++) {
       const p1 = planets[i];
       const p2 = planets[j];
       const diff = angleDistance(p1.absoluteDegree, p2.absoluteDegree);
-
       let best: { type: Aspect["type"]; orb: number } | null = null;
-
       for (const asp of ASPECT_DEFS) {
         const orb = Math.abs(diff - asp.angle);
         if (orb <= asp.orb) {
@@ -213,7 +185,6 @@ function calculateAspects(planets: PlanetPosition[]): Aspect[] {
           }
         }
       }
-
       if (best) {
         results.push({
           planet1: p1.name,
@@ -224,8 +195,6 @@ function calculateAspects(planets: PlanetPosition[]): Aspect[] {
       }
     }
   }
-
-  // Sort tightest orb first — tighter = stronger influence
   results.sort((a, b) => a.orb - b.orb);
   return results;
 }
@@ -239,7 +208,6 @@ export function calculateChart(birth: BirthData): ChartData {
   const time = Astronomy.MakeTime(utc);
   const observer = new Astronomy.Observer(birth.lat, birth.lng, 0);
 
-  // Ascendant / angles from horizon–ecliptic intersection
   const ascDeg = eclipticLongitudeFromHorizon(time, observer, 90);
   const mcDeg  = eclipticLongitudeFromHorizon(time, observer, 180);
   const dcDeg  = eclipticLongitudeFromHorizon(time, observer, 270);
@@ -248,7 +216,6 @@ export function calculateChart(birth: BirthData): ChartData {
   const planets = PLANETS.map((planet) => buildPlanet(planet, time, ascDeg));
   const aspects = calculateAspects(planets);
 
-  // Equal house system from Ascendant (30° per house)
   const houses = Array.from({ length: 12 }, (_, i) => {
     const deg = normalizeDeg(ascDeg + i * 30);
     return {
@@ -283,5 +250,87 @@ export function calculateChart(birth: BirthData): ChartData {
       degree:        getDegreeInSign(icDeg),
       absoluteDegree: Number(icDeg.toFixed(4)),
     },
+  };
+}
+
+/* -------------------------------------------------------------------------- */
+/*                          HIGHLIGHT BOXES EXPORT                            */
+/*                                                                            */
+/*  Call getChartHighlights(chart) after calculateChart() to get clean data  */
+/*  for Big 3 boxes and key planet chips shown below the chart.              */
+/* -------------------------------------------------------------------------- */
+
+export interface HighlightEntry {
+  label:      string;        // "Sun" | "Moon" | "Rising" | "Mercury" | "Venus" | "Mars"
+  sign:       string;        // e.g. "Scorpio"
+  symbol:     string;        // zodiac glyph e.g. "♏"
+  degree:     number;        // degree within sign e.g. 14.5
+  house:      number | null; // null for Rising (it IS the 1st house cusp)
+  retrograde: boolean;       // always false for Sun / Moon / Rising
+}
+
+export interface ChartHighlights {
+  /** Big 3 — shown first, larger boxes */
+  big3: {
+    sun:    HighlightEntry;
+    moon:   HighlightEntry;
+    rising: HighlightEntry;
+  };
+  /** Secondary — Mercury, Venus, Mars shown as smaller chips */
+  keyPlanets: HighlightEntry[];
+}
+
+const SIGN_SYMBOLS: Record<string, string> = {
+  Aries: "♈", Taurus: "♉", Gemini: "♊", Cancer: "♋",
+  Leo: "♌", Virgo: "♍", Libra: "♎", Scorpio: "♏",
+  Sagittarius: "♐", Capricorn: "♑", Aquarius: "♒", Pisces: "♓",
+};
+
+function toEntry(
+  label: string,
+  p: PlanetPosition,
+  overrideHouse?: number | null
+): HighlightEntry {
+  return {
+    label,
+    sign:       p.sign,
+    symbol:     SIGN_SYMBOLS[p.sign] ?? p.sign,
+    degree:     p.degree,
+    house:      overrideHouse !== undefined ? overrideHouse : p.house,
+    retrograde: p.retrograde,
+  };
+}
+
+function fallback(label: string): HighlightEntry {
+  return { label, sign: "—", symbol: "—", degree: 0, house: null, retrograde: false };
+}
+
+export function getChartHighlights(chart: ChartData): ChartHighlights {
+  const get = (name: string) => chart.planets.find((p) => p.name === name);
+
+  const sun     = get("Sun");
+  const moon    = get("Moon");
+  const mercury = get("Mercury");
+  const venus   = get("Venus");
+  const mars    = get("Mars");
+
+  return {
+    big3: {
+      sun:    sun  ? toEntry("Sun",  sun)  : fallback("Sun"),
+      moon:   moon ? toEntry("Moon", moon) : fallback("Moon"),
+      rising: {
+        label:      "Rising",
+        sign:       chart.ascendant.sign,
+        symbol:     SIGN_SYMBOLS[chart.ascendant.sign] ?? chart.ascendant.sign,
+        degree:     chart.ascendant.degree,
+        house:      null,
+        retrograde: false,
+      },
+    },
+    keyPlanets: [
+      mercury ? toEntry("Mercury", mercury) : fallback("Mercury"),
+      venus   ? toEntry("Venus",   venus)   : fallback("Venus"),
+      mars    ? toEntry("Mars",    mars)    : fallback("Mars"),
+    ],
   };
 }
