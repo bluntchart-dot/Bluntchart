@@ -7,6 +7,8 @@ export const DB = {
   payments: "Payments",
   abandonedCheckouts: "abandoned_checkouts",
   readings: "readings",
+  blogRuns: "blog_runs",
+  blogPosts: "blog_posts",
 } as const;
 
 /** Placeholder until Gumroad webhook provides the real sale id (unique per checkout). */
