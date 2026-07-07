@@ -177,6 +177,32 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.75,
     },
 
+    // ── Quizzes / calculators ──
+    {
+      url: `${BASE_URL}/relationship-red-flags-birth-chart`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
+    {
+      url: `${BASE_URL}/career-strength-birth-chart`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
+    {
+      url: `${BASE_URL}/love-language-birth-chart`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
+    {
+      url: `${BASE_URL}/how-toxic-are-you-quiz`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
+
     // ── Legal ──
     {
       url: `${BASE_URL}/terms`,

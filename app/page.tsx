@@ -1188,8 +1188,12 @@ export default function HomePage() {
                 <li><a href="/venus-retrograde-2026">Venus Retrograde 2026</a></li>
                 <li><a href="/saturn-return-calculator">Saturn Return Calculator</a></li>
                 <li><a href="/why-you-attract-the-wrong-person">Why You Attract the Wrong Person</a></li>
+                <li><a href="/relationship-red-flags-birth-chart">Relationship Red Flags Test</a></li>
+                <li><a href="/career-strength-birth-chart">Career Strength by Chart</a></li>
+                <li><a href="/love-language-birth-chart">Love Language by Chart</a></li>
+                <li><a href="/how-toxic-are-you-quiz">How Toxic Are You Quiz</a></li>
               </ul>
-  
+
             </div>
             <div className="fl">
               <h4>Legal</h4>
