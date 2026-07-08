@@ -21,9 +21,6 @@ export const MODELS = {
   /** Cheapest/fastest — used for keyword scoring, dedup, classification, QA. */
   scoring: "gemini-3.1-flash-lite",
 
-  /** Fallback if the primary article model 429s. */
-  articleFallback: "gemini-2.5-flash",
-
   /** QA gate — structured rubric scoring. */
   qaGate: "gemini-3.1-flash-lite",
 

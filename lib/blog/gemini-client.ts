@@ -1,5 +1,5 @@
 import { GoogleGenAI, Type } from "@google/genai";
-import { MODELS, NATIVE_JSON_MODELS, ERROR_CODES } from "./config";
+import { NATIVE_JSON_MODELS, ERROR_CODES } from "./config";
 
 let _client: GoogleGenAI | null = null;
 
@@ -129,30 +129,6 @@ export async function generateText(
     const { code, message } = classifyError(err);
     return { ok: false, errorCode: code, errorMessage: message };
   }
-}
-
-/**
- * Attempt generation with the primary model, fall back to the fallback
- * model on quota exhaustion or unavailability.
- */
-export async function generateTextWithFallback(
-  options: GeminiTextOptions
-): Promise<GeminiResult<string>> {
-  const result = await generateText(options);
-
-  if (
-    result.ok ||
-    (result.errorCode !== ERROR_CODES.GEMINI_QUOTA_EXHAUSTED &&
-      result.errorCode !== ERROR_CODES.GEMINI_MODEL_UNAVAILABLE)
-  ) {
-    return result;
-  }
-
-  if (options.model === MODELS.articleFallback) {
-    return result;
-  }
-
-  return generateText({ ...options, model: MODELS.articleFallback });
 }
 
 /** Extract JSON from a string that may be wrapped in markdown fences. */

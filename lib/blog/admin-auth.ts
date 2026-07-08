@@ -1,13 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 
 /**
- * Validates admin access for blog automation routes.
+ * Validates admin access for blog automation POST routes.
  *
- * Checks the BLOG_ADMIN_SECRET against either:
- * - ?key= query parameter (for simple GET requests)
- * - Authorization: Bearer header (for API calls from the dashboard)
+ * Requires Authorization: Bearer <BLOG_ADMIN_SECRET>. The query-string
+ * form is deliberately not accepted here to keep the secret out of logs,
+ * referrers, and history. Link-clickable admin flows (e.g. Blogger
+ * OAuth authorize) do their own inline ?key= check and are unaffected.
  *
- * Returns null if authorized, or a 401/403 NextResponse to return.
+ * Returns null if authorized, or a 401/500 NextResponse to return.
  */
 export function requireAdmin(req: NextRequest): NextResponse | null {
   const secret = process.env.BLOG_ADMIN_SECRET;
@@ -19,18 +20,15 @@ export function requireAdmin(req: NextRequest): NextResponse | null {
     );
   }
 
-  const keyParam = req.nextUrl.searchParams.get("key");
   const authHeader = req.headers.get("authorization");
   const bearerToken = authHeader?.startsWith("Bearer ")
     ? authHeader.slice(7)
     : null;
 
-  const provided = keyParam ?? bearerToken;
-
-  if (!provided || provided !== secret) {
+  if (!bearerToken || bearerToken !== secret) {
     return NextResponse.json(
       { ok: false, error: "Unauthorized" },
-      { status: 403 }
+      { status: 401 }
     );
   }
 
