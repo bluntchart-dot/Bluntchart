@@ -12,8 +12,15 @@
 export const AI_PROVIDER = "gemini" as const;
 
 export const MODELS = {
-  /** Strongest free-tier flash model — used for article writing. */
-  articleGeneration: "gemini-3.5-flash",
+  /**
+   * Article writing. Was gemini-3.5-flash, but that model tier is
+   * currently load-shed (HTTP 503 "high demand") and its thinking
+   * phase drives generation past Vercel's function timeout, producing
+   * empty-body 500s at the edge. gemini-2.5-flash is the same
+   * free-tier bracket, proven stable, and completes a 1500-word
+   * article in ~18s with thinkingBudget=0. No paid tier, no fallback.
+   */
+  articleGeneration: "gemini-2.5-flash",
 
   /** Mid-tier — used for content briefs, outreach email drafts. */
   contentBrief: "gemini-2.5-flash",

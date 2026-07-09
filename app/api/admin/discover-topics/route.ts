@@ -6,8 +6,10 @@ import { discoverTopics } from "@/lib/blog/topic-discovery";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+export const maxDuration = 60;
 
 export async function POST(req: NextRequest) {
+  try {
   const authError = requireAdmin(req);
   if (authError) return authError;
 
@@ -64,4 +66,15 @@ export async function POST(req: NextRequest) {
     },
     { status }
   );
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    return NextResponse.json(
+      {
+        ok: false,
+        errorCode: "ROUTE_UNHANDLED_EXCEPTION",
+        errorMessage: msg.slice(0, 500),
+      },
+      { status: 500 }
+    );
+  }
 }

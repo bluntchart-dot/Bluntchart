@@ -102,6 +102,11 @@ export async function generateJson<T = unknown>(
 
 /**
  * Generate free-form text from Gemini (used for article writing).
+ *
+ * Sets thinkingBudget=0 so thinking-capable models (2.5+, 3.x) don't
+ * spend the output-token budget on a hidden reasoning phase and return
+ * an empty visible response. The SDK ignores this flag on models that
+ * don't support thinking, so it's safe to set universally.
  */
 export async function generateText(
   options: GeminiTextOptions
@@ -110,7 +115,11 @@ export async function generateText(
 
   try {
     const ai = getClient();
-    const config: Record<string, unknown> = { temperature, maxOutputTokens };
+    const config: Record<string, unknown> = {
+      temperature,
+      maxOutputTokens,
+      thinkingConfig: { thinkingBudget: 0 },
+    };
 
     const response = await ai.models.generateContent({
       model,

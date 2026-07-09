@@ -9,13 +9,17 @@ import { ERROR_CODES } from "@/lib/blog/config";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+// Gemini article generation is ~15-25s per post on gemini-2.5-flash.
+// Vercel's plan default (10-15s) causes empty-body 500s at the edge.
+export const maxDuration = 60;
 
 // Article generation is expensive per post; default to 1 per invocation to
-// stay well inside Vercel serverless time limits. Cron or admin can loop.
+// stay well inside the maxDuration budget. Cron or admin can loop.
 const DEFAULT_COUNT = 1;
 const MAX_COUNT = 4;
 
 export async function POST(req: NextRequest) {
+  try {
   const authError = requireAdmin(req);
   if (authError) return authError;
 
@@ -119,4 +123,15 @@ export async function POST(req: NextRequest) {
     },
     { status: anyOk ? 200 : 502 }
   );
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    return NextResponse.json(
+      {
+        ok: false,
+        errorCode: "ROUTE_UNHANDLED_EXCEPTION",
+        errorMessage: msg.slice(0, 500),
+      },
+      { status: 500 }
+    );
+  }
 }

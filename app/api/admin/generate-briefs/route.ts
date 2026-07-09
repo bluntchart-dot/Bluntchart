@@ -8,8 +8,12 @@ import { ERROR_CODES, MAX_POSTS_PER_DAY } from "@/lib/blog/config";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+// Cheaper model, but batching up to MAX_POSTS_PER_DAY briefs in one
+// invocation can accumulate latency; give consistent headroom.
+export const maxDuration = 60;
 
 export async function POST(req: NextRequest) {
+  try {
   const authError = requireAdmin(req);
   if (authError) return authError;
 
@@ -96,4 +100,15 @@ export async function POST(req: NextRequest) {
     },
     { status: anyOk ? 200 : 502 }
   );
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    return NextResponse.json(
+      {
+        ok: false,
+        errorCode: "ROUTE_UNHANDLED_EXCEPTION",
+        errorMessage: msg.slice(0, 500),
+      },
+      { status: 500 }
+    );
+  }
 }
