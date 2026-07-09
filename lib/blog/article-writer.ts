@@ -4,7 +4,7 @@ import type { BlogPostRow } from "./db-types";
 import { MODELS, BANNED_PHRASES, type TargetProduct } from "./config";
 import { generateText } from "./gemini-client";
 import { wrapCtaHtml } from "./internal-links";
-import type { ContentBrief } from "./content-brief";
+import { validateBriefShape, type ContentBrief } from "./content-brief";
 import { toSlug, uniqueSlug } from "./slugify";
 
 export interface GeneratedArticle {
@@ -248,6 +248,16 @@ export async function generateArticle(
   options: { dryRun?: boolean; revisionFeedback?: string } = {}
 ): Promise<ArticleResult> {
   const dryRun = options.dryRun ?? false;
+
+  const shape = validateBriefShape(brief);
+  if (!shape.ok) {
+    return {
+      ok: false,
+      dryRun,
+      errorCode: "BRIEF_MALFORMED",
+      errorMessage: `Stored content_brief is missing required fields: ${shape.missing.join(", ")}. Reset pipeline_stage to TOPIC_SELECTED and re-run /api/admin/generate-briefs.`,
+    };
+  }
 
   const gen = await runOneGeneration({
     post,

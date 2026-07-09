@@ -67,6 +67,7 @@ export async function POST(req: NextRequest) {
     { status }
   );
   } catch (err) {
+    console.error("[discover-topics] unhandled:", err instanceof Error ? err.stack ?? err.message : err);
     const msg = err instanceof Error ? err.message : String(err);
     return NextResponse.json(
       {

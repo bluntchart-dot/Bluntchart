@@ -124,6 +124,9 @@ export async function POST(req: NextRequest) {
     { status: anyOk ? 200 : 502 }
   );
   } catch (err) {
+    // Full stack goes to Vercel function logs only. Response body stays
+    // short so we don't leak internal paths to any external caller.
+    console.error("[generate-articles] unhandled:", err instanceof Error ? err.stack ?? err.message : err);
     const msg = err instanceof Error ? err.message : String(err);
     return NextResponse.json(
       {

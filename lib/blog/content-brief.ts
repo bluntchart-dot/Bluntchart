@@ -150,6 +150,39 @@ export interface BriefResult {
   errorMessage?: string;
 }
 
+/**
+ * Structural check for a brief that the article writer can consume.
+ * Guards against Gemini returning an alternate JSON shape (e.g. nesting
+ * strategy fields under a wrapper key) — which is exactly how the
+ * original brief-generation bug slipped past. Returns the list of
+ * missing/empty required fields, empty when the brief is usable.
+ */
+export function validateBriefShape(brief: unknown): {
+  ok: boolean;
+  missing: string[];
+} {
+  const missing: string[] = [];
+  const b = brief as Record<string, unknown> | null | undefined;
+
+  const isNonEmptyString = (v: unknown): boolean =>
+    typeof v === "string" && v.trim().length > 0;
+  const isNonEmptyArray = (v: unknown): boolean =>
+    Array.isArray(v) && v.length > 0;
+
+  if (!b || typeof b !== "object") {
+    return { ok: false, missing: ["<brief is not an object>"] };
+  }
+
+  if (!isNonEmptyString(b.reader_pain_point)) missing.push("reader_pain_point");
+  if (!isNonEmptyString(b.proposed_title)) missing.push("proposed_title");
+  if (!isNonEmptyString(b.meta_description)) missing.push("meta_description");
+  if (!isNonEmptyArray(b.problem_signals)) missing.push("problem_signals");
+  if (!isNonEmptyArray(b.key_sections)) missing.push("key_sections");
+  if (!isNonEmptyArray(b.faq)) missing.push("faq");
+
+  return { ok: missing.length === 0, missing };
+}
+
 export async function generateBrief(
   supabase: SupabaseClient,
   post: BlogPostRow,
@@ -172,6 +205,16 @@ export async function generateBrief(
       dryRun,
       errorCode: result.errorCode,
       errorMessage: result.errorMessage,
+    };
+  }
+
+  const shape = validateBriefShape(result.data);
+  if (!shape.ok) {
+    return {
+      ok: false,
+      dryRun,
+      errorCode: "BRIEF_MALFORMED",
+      errorMessage: `Gemini returned a brief missing required fields: ${shape.missing.join(", ")}`,
     };
   }
 

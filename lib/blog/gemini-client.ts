@@ -64,16 +64,19 @@ export async function generateJson<T = unknown>(
     const ai = getClient();
     const useNativeSchema = NATIVE_JSON_MODELS.has(model);
 
+    // Always disable thinking for JSON generation. On thinking-capable
+    // models (2.5+, 3.x), leaving thinking enabled either eats the output
+    // budget (empty response) or, worse, lets the model improvise a
+    // structure that ignores responseSchema. Both branches must set it.
     const config: Record<string, unknown> = {
       temperature,
       maxOutputTokens,
       responseMimeType: "application/json",
+      thinkingConfig: { thinkingBudget: 0 },
     };
 
     if (useNativeSchema && schema) {
       config.responseSchema = schema;
-    } else {
-      config.thinkingConfig = { thinkingBudget: 0 };
     }
 
     const response = await ai.models.generateContent({
