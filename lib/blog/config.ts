@@ -178,6 +178,7 @@ export const COMPETITOR_TERMS = [
 // ── Banned AI phrases (QA gate rejects articles containing these) ───
 
 export const BANNED_PHRASES = [
+  // Generic AI slop
   "let's dive in",
   "let's delve into",
   "unlock the secrets",
@@ -191,4 +192,25 @@ export const BANNED_PHRASES = [
   "leos love attention",
   "scorpios are mysterious",
   "virgos are perfectionists",
+
+  // Astrology-publication drift (confirmed from the Saturn Return audit).
+  // Deterministic gate: match is case-insensitive substring after
+  // curly-quote normalization in qa-gate.findBannedMatches, so both
+  // "life's foundations" (straight) and "life’s foundations" (curly) match.
+  "life's foundations",
+  "stern teacher of the zodiac",
+  "cosmic audit",
+  "cosmic obstacle course",
+  "the universe is testing",
+  "the universe is asking you",
+  "profound growth",
+  "authentically you",
+  "foundational energies",
+
+  // Generic CTA openers — reader should feel a specific bridge, not a
+  // marketing pivot. Legitimate astrology terminology (transit, house,
+  // placement, aspect, archetype, karmic, Saturn, natal) stays allowed.
+  "ready to understand",
+  "discover powerful insights",
+  "dive deeper into",
 ];

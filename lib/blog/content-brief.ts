@@ -127,7 +127,11 @@ WHAT MAKES A GREAT BRIEF for BluntChart:
 - problem_signals: 4-6 concrete "if you..." patterns a reader would silently nod at.
 - proposed_title: 50-65 chars, keyword-forward, conversational, benefit or curiosity hook — never clickbait.
 - meta_description: 150-160 chars, includes the primary_keyword naturally, ends with a soft benefit or CTA-adjacent line.
-- target_word_count: 1200-1800.
+- target_word_count: pick based on search_intent and topic depth, not a fixed 1600. Do NOT pad direct-answer queries to hit an arbitrary target — over-length kills conversational register.
+    Direct/problem-aware informational query ("am I…", "why do I…", "what does X mean"): 1100-1500 words.
+    Placement/house/aspect deep dive ("moon in scorpio emotional patterns"): 1300-1800 words.
+    Broad pillar/guide content ("complete guide to synastry"): 1600-2200 words.
+  Quality and full intent completion matter more than hitting the upper end.
 - key_sections: 4-6 H2s. Each H2 should read like a question the reader would type into Google or ask out loud ("Why do I keep attracting emotionally unavailable partners?"). must_cover items must reference concrete astrology mechanics — placements, aspects, houses, transits — not generic sun-sign traits.
 - faq: 3-5 questions. Each question must be a real Google-style query. a_gist is a 1-2 sentence direct answer optimized for AI Overview extraction.
 

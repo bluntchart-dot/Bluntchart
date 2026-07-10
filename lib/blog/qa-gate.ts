@@ -76,9 +76,24 @@ function countWords(html: string): number {
     .filter(Boolean).length;
 }
 
+/**
+ * Normalize curly quotes / apostrophes to straight ones so substring
+ * matches survive Gemini's inconsistent quote output ("life's" vs
+ * "life’s"). Also collapses whitespace so line-wrapped phrases match.
+ */
+function normalizeForPhraseMatch(s: string): string {
+  return s
+    .replace(/[‘’ʼ]/g, "'")
+    .replace(/[“”]/g, '"')
+    .replace(/\s+/g, " ")
+    .toLowerCase();
+}
+
 function findBannedMatches(html: string): string[] {
-  const lower = html.toLowerCase();
-  return BANNED_PHRASES.filter((p) => lower.includes(p.toLowerCase()));
+  const normalized = normalizeForPhraseMatch(html);
+  return BANNED_PHRASES.filter((p) =>
+    normalized.includes(normalizeForPhraseMatch(p))
+  );
 }
 
 function escapeRegex(s: string): string {
@@ -181,10 +196,10 @@ BRIEF this article was meant to hit:
 RUBRIC (score each 1-10, be honest, do not inflate):
 1. problem_first_hook — does the article name a specific reader pain in the first ~100 words with second-person language? Zero throat-clearing. Zero "astrology has fascinated humans" energy.
 2. specificity — does it use concrete placements/aspects/houses/transits rather than generic sun-sign traits? Would an intermediate astrology reader nod?
-3. reader_recognition — second-person "you" voice throughout; the reader feels "how does this know me?"
-4. cta_integration — is the CTA a natural benefit-led bridge from the last body point? Not spammy, not detached.
+3. reader_recognition — BluntChart's register is "someone who has been quietly observing this reader for a while, telling them plainly what they've noticed, late at night". Second-person is necessary but NOT sufficient. Grammatically-clean publication prose caps this at 6 no matter how correct it is. Cap at 6 if any of these are present: abstract mystical filler ("cosmic audit", "profound growth", "foundational energies", "life's foundations"), inspirational Pinterest-quote-card conclusions ("emerging stronger, wiser", "authentically you"), encyclopedic third-person-in-second-person tone ("Saturn is the planet of discipline"), or if the reader could not stop mid-paragraph and think "wait — why is this describing me?". Score 8+ only when the writing feels like a specific, observant friend, not an astrology publication.
+4. cta_integration — the CTA must (a) bridge from the immediately preceding insight in a specific way, (b) NOT open with a generic pivot ("Ready to understand", "Discover powerful insights", "Dive deeper into"), (c) preserve curiosity — the article must NOT already have handed the reader every personalised answer, or there is nothing for the tool to reveal. Cap at 5 if the CTA opener is generic. Cap at 5 if by the time the CTA appears the article has already given away the personal expression the tool exists to show (sign+house interpretation, exact timing, personal pattern). The reader at the CTA moment should think "okay but what does MY placement say?"
 5. aeo_structure — H2s framed as reader-questions when it fits, direct-answer paragraphs, visible FAQ block that's useful.
-6. factual_grounding — astrology mechanics are internally consistent, no fabricated house rulerships or aspect claims.
+6. factual_grounding — astrology mechanics are internally consistent, no fabricated house rulerships or aspect claims, AND astrology is framed as symbolic pattern / archetypal interpretation, not physical causation. Cap at 6 if the article says things like "Saturn is testing you", "the universe is asking you to", "this planetary influence causes X". "In astrology, this pattern is associated with…" and "astrologers read this placement as…" score fine.
 
 VERDICT rules:
 - PASS: every rubric score >= 7 AND overall avg >= 7.5.
