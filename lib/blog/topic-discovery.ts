@@ -260,6 +260,7 @@ export async function discoverTopics(
 
   const rows = selected.map((s) => ({
     run_id: runId,
+    source: "gemini",
     primary_keyword: s.primary_keyword,
     normalized_topic: s.normalized_topic,
     secondary_keywords: s.secondary_keywords,

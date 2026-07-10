@@ -15,6 +15,7 @@ export interface BlogRunRow {
 export interface BlogPostRow {
   id: string;
   run_id: string;
+  source: "gemini" | "manual";
 
   primary_keyword: string;
   normalized_topic: string;

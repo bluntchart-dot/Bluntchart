@@ -41,6 +41,7 @@ export async function POST(req: NextRequest) {
 
   const { data, error } = await query
     .order("opportunity_score", { ascending: false })
+    .order("created_at", { ascending: true })
     .limit(count);
 
   if (error) {
@@ -74,6 +75,7 @@ export async function POST(req: NextRequest) {
         hard_rule_violations: r.outcome.hard_rule_violations,
         banned_matches: r.outcome.banned_matches,
         disallowed_links: r.outcome.disallowed_links,
+        competitor_matches: r.outcome.competitor_matches,
         feedback: r.outcome.feedback,
       });
     } else {

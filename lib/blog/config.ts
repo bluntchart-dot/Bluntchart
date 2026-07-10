@@ -156,6 +156,25 @@ export const ERROR_CODES = {
   PIPELINE_TIMEOUT: "PIPELINE_TIMEOUT",
 } as const;
 
+// ── Competitor terms (article writer must not name them; QA hard-fails on match) ─
+//
+// Centralized so we extend it in one place. Match is case-insensitive with word
+// boundaries. Keep entries specific enough to avoid false positives — e.g.
+// "the pattern app" not "the pattern", "sanctuary app" not "sanctuary",
+// "chani nicholas" not "chani".
+export const COMPETITOR_TERMS = [
+  "co-star",
+  "costar",
+  "the pattern app",
+  "astro.com",
+  "astrology.com",
+  "chani nicholas",
+  "cafe astrology",
+  "sanctuary app",
+  "astromatrix",
+  "timepassages",
+] as const;
+
 // ── Banned AI phrases (QA gate rejects articles containing these) ───
 
 export const BANNED_PHRASES = [

@@ -1,7 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { DB } from "../db/tables";
 import type { BlogPostRow } from "./db-types";
-import { MODELS, BANNED_PHRASES, type TargetProduct } from "./config";
+import { MODELS, BANNED_PHRASES, COMPETITOR_TERMS, type TargetProduct } from "./config";
 import { generateText } from "./gemini-client";
 import { wrapCtaHtml } from "./internal-links";
 import { validateBriefShape, type ContentBrief } from "./content-brief";
@@ -92,6 +92,7 @@ HARD RULES:
   <<<CTA_END>>>
 - Never use these banned phrases:
 ${BANNED_PHRASES.map((p) => `  • "${p}"`).join("\n")}
+- Do NOT mention, promote, compare against, or recommend competing astrology apps or services by name (including but not limited to: ${COMPETITOR_TERMS.join(", ")}). If a comparison feels needed, describe the pattern generically without naming the competitor.
 ${revisionBlock}
 OUTPUT FORMAT — return EXACTLY these five fenced sections in this order, no preamble, no epilogue:
 

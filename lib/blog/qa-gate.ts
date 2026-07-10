@@ -4,6 +4,7 @@ import type { BlogPostRow } from "./db-types";
 import {
   MODELS,
   BANNED_PHRASES,
+  COMPETITOR_TERMS,
   MAX_QA_REVISIONS,
   ERROR_CODES,
 } from "./config";
@@ -31,6 +32,7 @@ export interface QaOutcome {
   hard_rule_violations: string[];
   banned_matches: string[];
   disallowed_links: string[];
+  competitor_matches: string[];
   word_count: number;
 }
 
@@ -77,6 +79,26 @@ function countWords(html: string): number {
 function findBannedMatches(html: string): string[] {
   const lower = html.toLowerCase();
   return BANNED_PHRASES.filter((p) => lower.includes(p.toLowerCase()));
+}
+
+function escapeRegex(s: string): string {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+/**
+ * Word-boundary case-insensitive match against COMPETITOR_TERMS. Word
+ * boundaries prevent false positives when a competitor name is a
+ * substring of a legitimate word (rare given our specific entries, but
+ * cheap defense).
+ */
+function findCompetitorMatches(html: string): string[] {
+  const text = html.replace(/<[^>]+>/g, " ");
+  const found: string[] = [];
+  for (const term of COMPETITOR_TERMS) {
+    const re = new RegExp(`(?:^|[^a-z0-9])${escapeRegex(term)}(?:[^a-z0-9]|$)`, "i");
+    if (re.test(text)) found.push(term);
+  }
+  return found;
 }
 
 function findDisallowedLinks(html: string): string[] {
@@ -225,13 +247,20 @@ function overallScore(scores: RubricScores): number {
 function assessDeterministic(
   html: string,
   brief: ContentBrief
-): { hard_rule_violations: string[]; banned_matches: string[]; disallowed_links: string[]; word_count: number } {
+): {
+  hard_rule_violations: string[];
+  banned_matches: string[];
+  disallowed_links: string[];
+  competitor_matches: string[];
+  word_count: number;
+} {
   const word_count = countWords(html);
   return {
     word_count,
     hard_rule_violations: findHardRuleViolations(html, brief, word_count),
     banned_matches: findBannedMatches(html),
     disallowed_links: findDisallowedLinks(html),
+    competitor_matches: findCompetitorMatches(html),
   };
 }
 
@@ -245,7 +274,8 @@ function combineOutcome(
   const hasHardFail =
     det.hard_rule_violations.length > 0 ||
     det.banned_matches.length > 0 ||
-    det.disallowed_links.length > 0;
+    det.disallowed_links.length > 0 ||
+    det.competitor_matches.length > 0;
 
   if (hasHardFail) {
     // Hard-fail items are fixable in a revision (rewrite the CTA, drop the bad link).
@@ -316,6 +346,9 @@ export async function runQaGate(
         : []),
       ...(outcome.disallowed_links.length
         ? [`Remove/replace these links: ${outcome.disallowed_links.join("; ")}`]
+        : []),
+      ...(outcome.competitor_matches.length
+        ? [`Remove all mentions of competing astrology brands/products: ${outcome.competitor_matches.join("; ")}. Do NOT name any competitor.`]
         : []),
     ].join("\n");
 

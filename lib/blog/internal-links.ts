@@ -74,6 +74,35 @@ export function getCtaUrl(product: TargetProduct): string {
  * Wraps a CTA paragraph in semantic markers for future backfill.
  * The markers let the CTA-update endpoint find and replace
  * only the CTA block without rewriting the full article.
+ *
+ * ── FUTURE CTA-BACKFILL SAFETY (READ BEFORE BUILDING THAT ROUTE) ──
+ *
+ * When Compatibility or Transit go live and we backfill their CTAs into
+ * already-published Blogger posts:
+ *
+ *   1. GET the CURRENT article HTML from Blogger (blogger.posts.get) —
+ *      NEVER the stale copy in Supabase.blog_posts.article_html. If the
+ *      admin manually edited the article on Blogger after publish, that
+ *      manual edit is the source of truth.
+ *
+ *   2. Do a SURGICAL string replacement: match only the marker block
+ *
+ *          <!-- bluntchart:cta:{product} -->  …  <!-- /bluntchart:cta -->
+ *
+ *      and replace only its interior. Everything outside the markers
+ *      (body copy, headings, FAQ, images) must be preserved byte-for-byte.
+ *
+ *   3. If the markers are ABSENT in the fetched Blogger content, SKIP
+ *      the post and record cta_backfill_status='skipped_no_markers'.
+ *      The admin either stripped them intentionally or edited around
+ *      them — either way, do not rewrite the article.
+ *
+ *   4. PUT the modified content back via blogger.posts.update. Never
+ *      call blogger.posts.insert or push Supabase.article_html.
+ *
+ * Naive "just re-publish Supabase.article_html" would overwrite every
+ * manual Blogger edit the admin has made. That is the trap this comment
+ * exists to prevent.
  */
 export function wrapCtaHtml(
   ctaHtml: string,

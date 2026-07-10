@@ -38,6 +38,7 @@ export async function POST(req: NextRequest) {
 
   const { data, error } = await query
     .order("opportunity_score", { ascending: false })
+    .order("created_at", { ascending: true })
     .limit(count);
 
   if (error) {
