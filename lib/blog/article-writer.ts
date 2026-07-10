@@ -160,6 +160,39 @@ function countWords(html: string): number {
     .filter(Boolean).length;
 }
 
+/**
+ * Enforce a hard 160-char SEO ceiling on the persisted meta description
+ * without slicing mid-word or leaving broken punctuation. Prefer ending
+ * at a complete sentence when the last sentence-ending punctuation
+ * within the cap covers at least 60% of the budget; otherwise cut at
+ * the last word boundary and strip any trailing broken punctuation
+ * (commas, semicolons, dashes, open quotes/brackets).
+ *
+ * Prompt target stays 150-160; this is the safety net for when the
+ * model overshoots.
+ */
+function clampMetaDescription(raw: string, max = 160): string {
+  const cleaned = raw
+    .trim()
+    .replace(/^["']|["']$/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+  if (cleaned.length <= max) return cleaned;
+
+  const windowText = cleaned.slice(0, max);
+  const sentenceMatch = windowText.match(/^.*[.!?](?=\s|$)/);
+  if (sentenceMatch && sentenceMatch[0].length >= Math.floor(max * 0.6)) {
+    return sentenceMatch[0].trim();
+  }
+
+  const lastSpace = windowText.lastIndexOf(" ");
+  const cut = lastSpace > 0 ? windowText.slice(0, lastSpace) : windowText;
+  return cut.replace(/[,;:\-–—"'([{]+$/g, "").trimEnd();
+}
+
+// Exposed for unit-style verification against production-shaped outputs.
+export const _clampMetaDescriptionForTest = clampMetaDescription;
+
 interface WriteInput {
   post: BlogPostRow;
   brief: ContentBrief;
@@ -233,7 +266,7 @@ async function runOneGeneration(
     article: {
       title,
       slug: slugBase,
-      meta_description: sections.meta.replace(/^["']|["']$/g, "").slice(0, 200),
+      meta_description: clampMetaDescription(sections.meta),
       article_html: fullArticle,
       faq_data: faqData,
       generation_model: MODELS.articleGeneration,
