@@ -6,6 +6,7 @@ import { generateText } from "./gemini-client";
 import { wrapCtaHtml } from "./internal-links";
 import { validateBriefShape, type ContentBrief } from "./content-brief";
 import { toSlug, uniqueSlug } from "./slugify";
+import { formatStyleExamplesForPrompt } from "./style-examples";
 
 export interface GeneratedArticle {
   title: string;
@@ -78,6 +79,8 @@ Astrology is a symbolic pattern and archetypal interpretation, not proven physic
 Prefer: "In astrology, this pattern is associated with…", "Astrologers often read this placement as…", "This Saturn Return pattern often coincides with…".
 Avoid: "Saturn is making you…", "The universe is testing you…", "This planetary influence causes…", "The universe is asking you to…".
 Legit astrology terms — transit, house, placement, aspect, archetype, karmic, natal, Saturn Return — stay allowed when used precisely.
+
+${formatStyleExamplesForPrompt()}
 
 BRIEF:
 - reader_pain_point: ${brief.reader_pain_point}
