@@ -132,14 +132,24 @@ export async function generateImage(promptText: string): Promise<GeneratedImageB
         errorMessage: `Non-JSON, non-image response: ${(err instanceof Error ? err.message : String(err)).slice(0, 200)}`,
       };
     }
-    if (!json.success || !json.result?.image) {
+    // Cloudflare's /ai/run/ endpoint returns { result: { image } } on
+    // success — the standard v4 { success, errors, messages, result }
+    // envelope is only used on error responses. Rely on result.image
+    // being a non-empty string as the success signal; fall back to any
+    // errors[] the envelope provides when it's absent.
+    const image = json.result?.image;
+    if (typeof image !== "string" || image.length === 0) {
+      const errList = Array.isArray(json.errors) ? json.errors : [];
+      const errStr = errList.length
+        ? JSON.stringify(errList).slice(0, 200)
+        : "empty result.image";
       return {
         ok: false,
         errorCode: ERROR_CODES.IMAGE_GENERATION_FAILED,
-        errorMessage: `Cloudflare returned no image (success=${json.success}, errors=${JSON.stringify(json.errors ?? []).slice(0, 200)})`,
+        errorMessage: `Cloudflare returned no image (${errStr})`,
       };
     }
-    bytes = Uint8Array.from(Buffer.from(json.result.image, "base64"));
+    bytes = Uint8Array.from(Buffer.from(image, "base64"));
   }
 
   const contentType = sniffContentType(bytes);
