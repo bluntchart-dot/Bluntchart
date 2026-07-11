@@ -34,6 +34,52 @@ export interface QaOutcome {
   disallowed_links: string[];
   competitor_matches: string[];
   word_count: number;
+  /**
+   * True when every failure signal in this outcome is writer-correctable
+   * (editorial/register/format issue), false when at least one signal is
+   * a security/integrity/contract violation the revision path cannot
+   * safely operate on. Independent of verdict — a PASS is trivially
+   * recoverable=true. The revision loop uses this to allow a single
+   * auto-revision for FAIL when every failure is writer-correctable.
+   */
+  recoverable: boolean;
+}
+
+/**
+ * Terminal hard-rule violation patterns. If any of these appear in
+ * hard_rule_violations, the article cannot be safely revised — either
+ * because the revision path might reproduce the security issue (script,
+ * iframe, style, invented URL) or because it indicates an integrity
+ * failure at a layer the writer prompt does not control (Claude/Anthropic
+ * leak). Missing CTA marker, missing FAQ, and word-count violations are
+ * NOT terminal — writer can regenerate to fix them.
+ */
+const TERMINAL_HARD_RULE_PATTERNS: RegExp[] = [
+  /contains <script>/i,
+  /contains <iframe>/i,
+  /contains <style>/i,
+  /mentions Claude\/Anthropic/i,
+  /links to an invented URL/i,
+];
+
+/**
+ * Terminal iff any of:
+ *  - disallowed_links present (writer emitted an invented / non-allowlisted URL)
+ *  - hard_rule_violations includes any TERMINAL_HARD_RULE_PATTERNS entry
+ *
+ * Recoverable otherwise — including banned_matches, competitor_matches,
+ * missing CTA marker, missing FAQ, word-count out of bounds, and any
+ * rubric-driven editorial FAIL.
+ */
+export function isRecoverableFailure(outcome: {
+  disallowed_links: string[];
+  hard_rule_violations: string[];
+}): boolean {
+  if (outcome.disallowed_links.length > 0) return false;
+  for (const v of outcome.hard_rule_violations) {
+    if (TERMINAL_HARD_RULE_PATTERNS.some((re) => re.test(v))) return false;
+  }
+  return true;
 }
 
 const RUBRIC_SCHEMA = {
@@ -298,12 +344,18 @@ function combineOutcome(
     verdict = verdict === "PASS" ? "REVISE" : verdict;
   }
 
+  const recoverable = isRecoverableFailure({
+    disallowed_links: det.disallowed_links,
+    hard_rule_violations: det.hard_rule_violations,
+  });
+
   return {
     verdict,
     rubric_scores: model.rubric_scores,
     overall_score: Number(overall.toFixed(2)),
     feedback: model.feedback,
     ...det,
+    recoverable,
   };
 }
 
@@ -346,11 +398,17 @@ export async function runQaGate(
   let currentHtml = post.article_html;
   let currentPost = post;
 
-  if (
-    outcome.verdict === "REVISE" &&
+  // Revision eligibility: REVISE always, plus FAIL when every failure
+  // signal is writer-correctable (see isRecoverableFailure). Preserves
+  // MAX_QA_REVISIONS = 1 — a hard editorial FAIL still gets at most one
+  // shot, and terminal/security violations get zero.
+  const revisionEligible =
+    !dryRun &&
     (post.revision_count ?? 0) < MAX_QA_REVISIONS &&
-    !dryRun
-  ) {
+    (outcome.verdict === "REVISE" ||
+      (outcome.verdict === "FAIL" && outcome.recoverable));
+
+  if (revisionEligible) {
     const feedbackBundle = [
       outcome.feedback,
       ...(outcome.hard_rule_violations.length
@@ -393,8 +451,7 @@ export async function runQaGate(
     }
   }
 
-  const finalStage =
-    outcome.verdict === "PASS" ? "QA_PASSED" : outcome.verdict === "FAIL" ? "QA_FAILED" : "QA_FAILED";
+  const finalStage = outcome.verdict === "PASS" ? "QA_PASSED" : "QA_FAILED";
 
   if (dryRun) {
     return { ok: true, dryRun: true, outcome, revised, finalStage };

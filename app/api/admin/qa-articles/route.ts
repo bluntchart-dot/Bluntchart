@@ -69,6 +69,7 @@ export async function POST(req: NextRequest) {
         verdict: r.outcome.verdict,
         finalStage: r.finalStage,
         revised: r.revised ?? false,
+        recoverable: r.outcome.recoverable,
         overall_score: r.outcome.overall_score,
         rubric_scores: r.outcome.rubric_scores,
         word_count: r.outcome.word_count,
