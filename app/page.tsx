@@ -1180,6 +1180,7 @@ export default function HomePage() {
             <div className="fl">
               <h4>Learn</h4>
               <ul>
+                <li><a href="https://blog.bluntchart.com" rel="noopener">Astrology Blog</a></li>
                 <li><a href="/free-birth-chart-readings">How Birth Chart Readings Work</a></li>
                 <li><a href="/is-mercury-retrograde">Is Mercury Retrograde?</a></li>
                 <li><a href="/mercury-retrograde-2026">Mercury Retrograde 2026</a></li>

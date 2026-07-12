@@ -12,6 +12,7 @@ import { buildImagePrompt } from "@/lib/blog/image-prompt";
 import { generateImage } from "@/lib/blog/image-generator";
 import { uploadImage } from "@/lib/blog/image-uploader";
 import { publishToBlogger } from "@/lib/blog/blogger-publisher";
+import { refreshAccessToken, getPost } from "@/lib/blog/blogger-client";
 import type { ContentBrief } from "@/lib/blog/content-brief";
 import { ERROR_CODES, MAX_POSTS_PER_DAY } from "@/lib/blog/config";
 
@@ -46,6 +47,90 @@ export async function GET(req: NextRequest) {
 
     const supabase = createSupabaseAdmin();
     const today = new Date().toISOString().slice(0, 10);
+
+    // ── Stage 0: reconcile BLOGGER_SCHEDULED rows whose scheduled_publish_at
+    // has passed. Blogger owns the SCHEDULED→LIVE transition; this stage only
+    // catches up our own bookkeeping. Ask Blogger for the actual state; if it
+    // is LIVE, update Supabase to PUBLISHED with Blogger's own published
+    // timestamp. Safe to no-op — if nothing needs reconciling, we fall through
+    // to the normal pipeline. Bounded to 5 rows per tick.
+    const nowIso = new Date().toISOString();
+    const { data: dueRows } = await supabase
+      .from(DB.blogPosts)
+      .select(
+        "id, blogger_post_id, scheduled_publish_at, published_at, pipeline_stage"
+      )
+      .eq("pipeline_stage", "BLOGGER_SCHEDULED")
+      .not("blogger_post_id", "is", null)
+      .lte("scheduled_publish_at", nowIso)
+      .order("scheduled_publish_at", { ascending: true })
+      .limit(5);
+
+    if (dueRows && dueRows.length > 0) {
+      let accessToken: string | null = null;
+      try {
+        accessToken = await refreshAccessToken();
+      } catch (err) {
+        // If OAuth fails, don't block the rest of the pipeline — log and fall through.
+        console.error(
+          "[cron/reconcile] blogger oauth refresh failed:",
+          err instanceof Error ? err.message : err
+        );
+      }
+
+      const reconciled: Array<Record<string, unknown>> = [];
+      if (accessToken) {
+        for (const r of dueRows) {
+          const postId = r.blogger_post_id as string;
+          try {
+            const bp = await getPost(accessToken, postId);
+            if (bp && bp.status === "LIVE") {
+              await supabase
+                .from(DB.blogPosts)
+                .update({
+                  pipeline_stage: "PUBLISHED",
+                  publishing_status: "published",
+                  published_at: bp.published ?? r.scheduled_publish_at,
+                  last_error_code: null,
+                  last_error_message: null,
+                  updated_at: new Date().toISOString(),
+                })
+                .eq("id", r.id)
+                .eq("pipeline_stage", "BLOGGER_SCHEDULED");
+              reconciled.push({
+                postId: r.id,
+                bloggerPostId: postId,
+                status: "LIVE",
+              });
+            } else {
+              reconciled.push({
+                postId: r.id,
+                bloggerPostId: postId,
+                status: bp?.status ?? "not-found",
+                skipped: true,
+              });
+            }
+          } catch (err) {
+            reconciled.push({
+              postId: r.id,
+              bloggerPostId: postId,
+              error: (err instanceof Error ? err.message : String(err)).slice(
+                0,
+                200
+              ),
+            });
+          }
+        }
+      }
+
+      if (reconciled.length > 0) {
+        return NextResponse.json({
+          ok: true,
+          action: "reconcile",
+          reconciled,
+        });
+      }
+    }
 
     // ── Stage 1: today's run row ──────────────────────────────────
     const runResult = await createOrGetTodayRun(supabase, false);

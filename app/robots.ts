@@ -55,7 +55,10 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ["/api/", "/my-reading", "/admin/"],
       },
     ],
-    sitemap: `${BASE_URL}/sitemap.xml`,
+    sitemap: [
+      `${BASE_URL}/sitemap.xml`,
+      "https://blog.bluntchart.com/sitemap.xml",
+    ],
     host: BASE_URL,
   };
 }
