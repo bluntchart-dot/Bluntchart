@@ -842,59 +842,6 @@ export default function FreeBirthChartPage() {
           </div>
         </div>
       </section>
-
-      {/* ── FOOTER ── */}
-      <footer className="footer">
-        <div className="c">
-          <div className="fi">
-            <div className="fb">
-              <Link className="logo" href="/"><span className="g">BluntChart</span></Link>
-              <p>Brutally honest birth chart readings. Real astrology, zero filter, no subscription.</p>
-              <div className="slinks">
-                <a className="sl2" href="https://www.tiktok.com/@bluntchart" target="_blank" rel="noopener noreferrer">Tk</a>
-                <a className="sl2" href="https://www.instagram.com/bluntchart/" target="_blank" rel="noopener noreferrer">In</a>
-                <a className="sl2" href="https://www.youtube.com/@BluntChart" target="_blank" rel="noopener noreferrer">Yt</a>
-              </div>
-            </div>
-            <div className="fl">
-              <h4>Readings</h4>
-              <ul>
-                <li><Link href="/#try-it">Birth Chart · $15</Link></li>
-                <li><Link href="/#waitlist">Compatibility · Coming Soon</Link></li>
-                <li><Link href="/#waitlist">Year Ahead · Coming Soon</Link></li>
-                <li><Link href="/#waitlist">Gift a Reading · Coming Soon</Link></li>
-              </ul>
-            </div>
-            <div className="fl">
-              <h4>Free Tools</h4>
-              <ul>
-                <li><Link href="/free-birth-chart"><strong style={{ color: "var(--gold)" }}>Free Birth Chart</strong></Link></li>
-                <li><Link href="/natal-chart">Natal Chart</Link></li>
-                <li><Link href="/big-three-calculator">Big Three Calculator</Link></li>
-                <li><Link href="/moon-sign-calculator">Moon Sign Calculator</Link></li>
-                <li><Link href="/rising-sign-calculator">Rising Sign Calculator</Link></li>
-                <li><Link href="/zodiac-signs">Zodiac Signs</Link></li>
-              </ul>
-            </div>
-            <div className="fl">
-              <h4>Legal</h4>
-              <ul>
-                <li><Link href="/terms">Terms of Service</Link></li>
-                <li><Link href="/privacy">Privacy Policy</Link></li>
-                <li><Link href="/refunds">Refund Policy</Link></li>
-              </ul>
-            </div>
-          </div>
-          <div className="fb2">
-            <p className="disc">
-              For entertainment purposes only. BluntChart readings are not a substitute for
-              medical, psychological, financial, or legal advice. Do not make major life
-              decisions based solely on astrological content.
-            </p>
-            <p className="copy">© 2026 BluntChart. All rights reserved.</p>
-          </div>
-        </div>
-      </footer>
-    </>
+</>
   );
 }

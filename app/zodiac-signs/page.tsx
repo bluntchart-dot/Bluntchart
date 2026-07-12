@@ -475,24 +475,6 @@ export default function ZodiacSignsPage() {
           <Link href="/#try-it" style={{ display:"inline-flex", alignItems:"center", gap:8, padding:"16px 32px", background:"linear-gradient(135deg,#f0b84a,#e8854a)", color:"#0d0800", fontWeight:700, fontSize:15, textDecoration:"none", borderRadius:12 }}>Get My Full Reading · $15 ✦</Link>
         </div>
       </section>
-
-      {/* FOOTER */}
-      <footer style={{ borderTop:"1px solid var(--border)", padding:"36px 0" }}>
-        <div className="zs-c" style={{ display:"flex", alignItems:"center", justifyContent:"space-between", flexWrap:"wrap", gap:16 }}>
-          <div>
-            <Link href="/" className="zs-logo" style={{ marginBottom:6 }}><span className="g">BluntChart</span></Link>
-            <p style={{ fontSize:12, color:"rgba(232,228,240,0.25)", maxWidth:400, lineHeight:1.55, marginTop:8 }}>For entertainment purposes only.</p>
-          </div>
-          <div style={{ display:"flex", gap:20, fontSize:13, flexWrap:"wrap" }}>
-            <Link href="/free-birth-chart" style={{ color:"rgba(232,228,240,0.35)", textDecoration:"none" }}>Birth Chart</Link>
-            <Link href="/rising-sign-calculator" style={{ color:"rgba(232,228,240,0.35)", textDecoration:"none" }}>Rising Sign</Link>
-            <Link href="/moon-sign-calculator" style={{ color:"rgba(232,228,240,0.35)", textDecoration:"none" }}>Moon Sign</Link>
-            <Link href="/natal-chart" style={{ color:"rgba(232,228,240,0.35)", textDecoration:"none" }}>Natal Chart</Link>
-            <Link href="/terms" style={{ color:"rgba(232,228,240,0.35)", textDecoration:"none" }}>Terms</Link>
-            <Link href="/privacy" style={{ color:"rgba(232,228,240,0.35)", textDecoration:"none" }}>Privacy</Link>
-          </div>
-        </div>
-      </footer>
-    </>
+</>
   );
 }

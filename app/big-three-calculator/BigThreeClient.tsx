@@ -379,22 +379,6 @@ export default function BigThreeClient() {
           <Link href="/#try-it" className="b3-cta" style={{ maxWidth:360 }}>Get My Full Reading · $15 ✦</Link>
         </div>
       </section>
-
-      {/* FOOTER */}
-      <footer style={{ borderTop:"1px solid var(--border)", padding:"36px 0" }}>
-        <div className="b3-c" style={{ display:"flex", alignItems:"center", justifyContent:"space-between", flexWrap:"wrap", gap:16 }}>
-          <div>
-            <Link href="/" className="b3-logo" style={{ marginBottom:6 }}><span className="g">BluntChart</span></Link>
-            <p style={{ fontSize:12, color:"rgba(232,228,240,0.25)", maxWidth:400, lineHeight:1.55, marginTop:8 }}>For entertainment purposes only. Not a substitute for professional advice.</p>
-          </div>
-          <div style={{ display:"flex", gap:20, fontSize:13 }}>
-            <Link href="/free-birth-chart" style={{ color:"rgba(232,228,240,0.35)", textDecoration:"none" }}>Birth Chart</Link>
-            <Link href="/rising-sign-calculator" style={{ color:"rgba(232,228,240,0.35)", textDecoration:"none" }}>Rising Sign</Link>
-            <Link href="/terms" style={{ color:"rgba(232,228,240,0.35)", textDecoration:"none" }}>Terms</Link>
-            <Link href="/privacy" style={{ color:"rgba(232,228,240,0.35)", textDecoration:"none" }}>Privacy</Link>
-          </div>
-        </div>
-      </footer>
-    </>
+</>
   );
 }

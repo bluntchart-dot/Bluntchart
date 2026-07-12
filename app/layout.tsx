@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { DM_Sans, Playfair_Display } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
+import SiteFooter from "@/components/SiteFooter";
 import "./globals.css";
 
 const display = Playfair_Display({
@@ -60,6 +61,7 @@ export default function RootLayout({
         style={{ fontFamily: "var(--font-body)" }}
       >
         {children}
+        <SiteFooter />
         <Analytics />
       </body>
     </html>

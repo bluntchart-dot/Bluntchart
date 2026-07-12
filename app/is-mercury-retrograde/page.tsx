@@ -432,60 +432,7 @@ export default function IsMercuryRetrogradePage() {
           </div>
         </div>
       </main>
-
-      {/* FOOTER */}
-      <footer className="footer">
-        <div className="c">
-          <div className="fi">
-            <div className="fb">
-              <a className="logo" href="/"><span className="g">BluntChart</span></a>
-              <p>Brutally honest birth chart readings. Real astrology, zero filter, no subscription.</p>
-              <div className="slinks">
-                <a className="sl2" href="https://www.tiktok.com/@bluntchart" target="_blank" rel="noopener noreferrer">Tk</a>
-                <a className="sl2" href="https://www.instagram.com/bluntchart/" target="_blank" rel="noopener noreferrer">In</a>
-                <a className="sl2" href="https://www.youtube.com/@BluntChart" target="_blank" rel="noopener noreferrer">Yt</a>
-              </div>
-            </div>
-            <div className="fl">
-              <h4>Readings</h4>
-              <ul>
-                <li><a href="/#try-it">Birth Chart · $15</a></li>
-                <li><a href="/#waitlist">Compatibility · Coming Soon</a></li>
-                <li><a href="/#waitlist">Year Ahead · Coming Soon</a></li>
-              </ul>
-            </div>
-            <div className="fl">
-              <h4>Free Tools</h4>
-              <ul>
-                <li><a href="/free-birth-chart">Free Birth Chart</a></li>
-                <li><a href="/natal-chart">Natal Chart</a></li>
-                <li><a href="/big-three-calculator">Big Three Calculator</a></li>
-                <li><a href="/moon-sign-calculator">Moon Sign Calculator</a></li>
-                <li><a href="/rising-sign-calculator">Rising Sign Calculator</a></li>
-                <li><a href="/zodiac-signs">Zodiac Signs</a></li>
-                <li><a href="/mercury-retrograde-2026" style={{ color: "var(--gold)" }}>Mercury Retrograde 2026</a></li>
-                <li><a href="/is-mercury-retrograde" style={{ color: "var(--gold)" }}>Is Mercury Retrograde?</a></li>
-              </ul>
-            </div>
-            <div className="fl">
-              <h4>Legal</h4>
-              <ul>
-                <li><a href="/terms">Terms of Service</a></li>
-                <li><a href="/privacy">Privacy Policy</a></li>
-                <li><a href="/refunds">Refund Policy</a></li>
-              </ul>
-            </div>
-          </div>
-          <div className="fb2">
-            <p className="disc">
-              For entertainment purposes only. BluntChart readings are not a substitute for
-              medical, psychological, financial, or legal advice.
-            </p>
-            <p className="copy">© 2026 BluntChart. All rights reserved.</p>
-          </div>
-        </div>
-      </footer>
-    </>
+</>
   );
 }
 
