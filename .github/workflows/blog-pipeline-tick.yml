@@ -36,13 +36,13 @@ jobs:
     steps:
       - name: Call production /api/cron/blog-pipeline
         env:
-          CRON_SECRET: ${{ secrets.BLOG_CRON_SECRET }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
           ENDPOINT: https://bluntchart.com/api/cron/blog-pipeline
         run: |
           set -uo pipefail
 
           if [ -z "${CRON_SECRET:-}" ]; then
-            echo "::error::secrets.BLOG_CRON_SECRET is not set. Add it in Settings → Secrets and variables → Actions."
+            echo "::error::secrets.CRON_SECRET is not set. Add it in Settings → Secrets and variables → Actions."
             exit 1
           fi
 
@@ -76,7 +76,7 @@ jobs:
                 exit 0
                 ;;
               401|403)
-                echo "::error::auth rejected by production. verify secrets.BLOG_CRON_SECRET matches the CRON_SECRET env var on Vercel."
+                echo "::error::auth rejected by production. verify secrets.CRON_SECRET (GitHub) matches the CRON_SECRET env var on Vercel."
                 exit 1
                 ;;
               curl_error|000)
