@@ -1,0 +1,100 @@
+name: Blog pipeline tick
+
+# Fires the /api/cron/blog-pipeline endpoint every 15 minutes.
+#
+# Why GitHub Actions instead of Vercel Cron: this project runs on Vercel
+# Hobby, which limits cron schedules to once-per-day. GitHub Actions has
+# no such limit for scheduled workflows and is free on public repos.
+#
+# The endpoint is a single-tick idempotent state advancer — it does one
+# unit of work per invocation and no-ops if nothing is due. Missing a
+# tick is harmless; a subsequent tick catches up.
+on:
+  schedule:
+    # every 15 minutes.  Note: GitHub Actions cron drifts by 1-15 min
+    # under load, which is fine for this workload.
+    - cron: "*/15 * * * *"
+  # Manual trigger button in the Actions UI, useful for debugging or
+  # forcing a tick immediately after a deploy.
+  workflow_dispatch:
+
+# Never overlap two ticks. The endpoint is safe under concurrency but
+# overlap wastes Vercel invocations and clutters logs. `cancel-in-progress
+# false` means a slow run finishes before the next one starts.
+concurrency:
+  group: blog-cron-tick
+  cancel-in-progress: false
+
+# Read-only default — this workflow only makes an outbound HTTPS call.
+permissions:
+  contents: read
+
+jobs:
+  tick:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Call production /api/cron/blog-pipeline
+        env:
+          CRON_SECRET: ${{ secrets.BLOG_CRON_SECRET }}
+          ENDPOINT: https://bluntchart.com/api/cron/blog-pipeline
+        run: |
+          set -uo pipefail
+
+          if [ -z "${CRON_SECRET:-}" ]; then
+            echo "::error::secrets.BLOG_CRON_SECRET is not set. Add it in Settings → Secrets and variables → Actions."
+            exit 1
+          fi
+
+          MAX_ATTEMPTS=3
+
+          for attempt in $(seq 1 $MAX_ATTEMPTS); do
+            echo "── attempt $attempt/$MAX_ATTEMPTS at $(date -u '+%Y-%m-%d %H:%M:%SZ') ──"
+
+            # -sS: silent + show errors on network failure
+            # -w %{http_code}: capture status even on 4xx/5xx
+            # separate connect/max-time budgets: 15s to connect, 90s total
+            # (cron endpoint can take ~60s on stages that call Gemini)
+            http_code=$(curl -sS -o /tmp/response.json -w "%{http_code}" \
+              --connect-timeout 15 \
+              --max-time 90 \
+              -H "Authorization: Bearer $CRON_SECRET" \
+              -H "Accept: application/json" \
+              -H "User-Agent: github-actions-blog-cron" \
+              "$ENDPOINT" || echo "curl_error")
+
+            body=$(cat /tmp/response.json 2>/dev/null || echo "")
+            echo "  HTTP: $http_code"
+            echo "  body (first 500 chars):"
+            echo "  ${body:0:500}"
+
+            case "$http_code" in
+              200)
+                # Surface the stage the tick advanced, if the JSON has an `action` field.
+                action=$(printf "%s" "$body" | grep -oE '"action":"[^"]+"' | head -1 | cut -d'"' -f4)
+                echo "::notice title=cron ok::action=${action:-unknown}"
+                exit 0
+                ;;
+              401|403)
+                echo "::error::auth rejected by production. verify secrets.BLOG_CRON_SECRET matches the CRON_SECRET env var on Vercel."
+                exit 1
+                ;;
+              curl_error|000)
+                echo "::warning::network error, will retry"
+                ;;
+              *)
+                echo "::warning::non-2xx response ($http_code), will retry"
+                ;;
+            esac
+
+            if [ $attempt -lt $MAX_ATTEMPTS ]; then
+              # linear backoff: 10s, 20s. total worst-case latency stays
+              # inside the 5-minute job timeout.
+              sleep_for=$((attempt * 10))
+              echo "  sleeping ${sleep_for}s before retry"
+              sleep $sleep_for
+            fi
+          done
+
+          echo "::error title=cron tick failed::all $MAX_ATTEMPTS attempts to $ENDPOINT returned non-2xx"
+          exit 1
