@@ -424,7 +424,7 @@ export default function FreeBirthChartClient() {
       {/* ── SEO CONTENT ── */}
       <section style={{ padding:"80px 0", background:"#0d0d18",
         borderTop:"1px solid rgba(255,255,255,0.08)" }}>
-        <div className="fbc-c" style={{ maxWidth:760 }}>
+        <div className="fbc-c" style={{ maxWidth:900 }}>
           <h2 style={{ fontFamily:"var(--font-display)", fontSize:"clamp(1.6rem,3.5vw,2.4rem)",
             fontWeight:800, lineHeight:1.1, marginBottom:24 }}>
             How to read your <em style={{ fontStyle:"italic", background:"linear-gradient(135deg,#f0b84a,#d4537e)",
@@ -589,7 +589,7 @@ export default function FreeBirthChartClient() {
 
       {/* ── FAQ ── */}
       <section style={{ padding:"80px 0" }}>
-        <div className="fbc-c" style={{ maxWidth:760 }}>
+        <div className="fbc-c" style={{ maxWidth:900 }}>
           <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:14 }}>
             <span style={{ width:22, height:1, background:"#F0B84A" }} />
             <span style={{ fontSize:11, fontWeight:700, letterSpacing:"0.16em",

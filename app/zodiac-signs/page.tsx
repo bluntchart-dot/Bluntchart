@@ -228,7 +228,7 @@ export default function ZodiacSignsPage() {
             <span style={{ color:"rgba(232,228,240,0.5)" }}>Zodiac Signs</span>
           </div>
 
-          <div style={{ maxWidth:760, marginBottom:40 }}>
+          <div style={{ maxWidth:900, marginBottom:40 }}>
             <div style={{ display:"inline-flex", alignItems:"center", gap:8, fontSize:11, fontWeight:700, letterSpacing:"0.14em", textTransform:"uppercase" as const, color:"#F0B84A", padding:"5px 14px", border:"1px solid var(--gold-dim)", borderRadius:100, background:"rgba(240,184,74,0.06)", marginBottom:24 }}>✦ Complete zodiac guide · All 12 signs</div>
             <h1 style={{ fontFamily:"var(--font-display)", fontSize:"clamp(2.4rem,6vw,4rem)", fontWeight:900, lineHeight:1.06, letterSpacing:"-0.02em", marginBottom:16 }}>
               The 12 Zodiac Signs:<br/>Traits, Dates &amp; <em style={{ fontStyle:"italic", background:"linear-gradient(135deg,#f0b84a,#d4537e)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", backgroundClip:"text" }}>Personality</em>
@@ -248,7 +248,7 @@ export default function ZodiacSignsPage() {
           </div>
 
           {/* SUMMARY BOX */}
-          <div style={{ background:"var(--card)", border:"1px solid rgba(240,184,74,0.15)", borderRadius:16, padding:"28px 28px 24px", maxWidth:760, marginBottom:48 }}>
+          <div style={{ background:"var(--card)", border:"1px solid rgba(240,184,74,0.15)", borderRadius:16, padding:"28px 28px 24px", maxWidth:900, marginBottom:48 }}>
             <h2 style={{ fontFamily:"var(--font-display)", fontSize:18, fontWeight:700, color:"#F0B84A", marginBottom:14 }}>Quick reference: All 12 zodiac signs</h2>
             <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"6px 24px" }}>
               {SIGNS.map((sign) => (
@@ -349,7 +349,7 @@ export default function ZodiacSignsPage() {
 
       {/* SEO CONTENT */}
       <section style={{ padding:"80px 0" }}>
-        <div className="zs-c" style={{ maxWidth:760 }}>
+        <div className="zs-c" style={{ maxWidth:900 }}>
           <h2 style={{ fontFamily:"var(--font-display)", fontSize:"clamp(1.6rem,3.5vw,2.4rem)", fontWeight:800, lineHeight:1.1, marginBottom:24 }}>
             Understanding the <em style={{ fontStyle:"italic", background:"linear-gradient(135deg,#f0b84a,#d4537e)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", backgroundClip:"text" }}>zodiac</em>
           </h2>
@@ -440,7 +440,7 @@ export default function ZodiacSignsPage() {
 
       {/* FAQ */}
       <section style={{ padding:"80px 0", background:"#0d0d18", borderTop:"1px solid var(--border)" }}>
-        <div className="zs-c" style={{ maxWidth:760 }}>
+        <div className="zs-c" style={{ maxWidth:900 }}>
           <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:14 }}><span style={{ width:22, height:1, background:"#F0B84A" }}/><span style={{ fontSize:11, fontWeight:700, letterSpacing:"0.16em", textTransform:"uppercase" as const, color:"#F0B84A" }}>Common questions</span></div>
           <h2 style={{ fontFamily:"var(--font-display)", fontSize:"clamp(1.6rem,3.5vw,2.4rem)", fontWeight:800, lineHeight:1.1, marginBottom:32 }}>
             Zodiac signs <em style={{ fontStyle:"italic", background:"linear-gradient(135deg,#f0b84a,#d4537e)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", backgroundClip:"text" }}>FAQ</em>

@@ -391,7 +391,7 @@ export default function MercuryRetrograde2026Page() {
         .prose{font-size:1rem;color:rgba(232,228,240,0.78);line-height:1.82}
         .prose p{margin-bottom:22px}
         .prose strong{color:var(--white);font-weight:600}
-        .prose a{color:var(--gold);text-decoration:underline;text-decoration-color:rgba(240,184,74,.3);transition:text-decoration-color .2s}
+        .prose a{color:var(--gold);text-decoration:underline;text-decoration-color:rgba(240,184,74,.3);transition:text-decoration-color .2s}.prose a.bp,.prose a.bs{color:#fff;text-decoration:none}
         .prose a:hover{text-decoration-color:var(--gold)}
         .prose h2{font-family:var(--font-display);font-size:clamp(1.5rem,3vw,2rem);font-weight:800;line-height:1.15;letter-spacing:-.01em;margin:56px 0 18px;color:var(--white)}
         .prose h2 em{font-style:italic;background:linear-gradient(135deg,#f0b84a,#d4537e);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
