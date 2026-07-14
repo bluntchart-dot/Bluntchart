@@ -76,11 +76,7 @@ export default async function PostDetailPage({ params }: PageProps) {
         />
       </Grid>
 
-      {post.qa_score && (
-        <Section title="QA rubric">
-          <pre style={preStyle}>{JSON.stringify(post.qa_score, null, 2)}</pre>
-        </Section>
-      )}
+      {post.qa_score && <QaGatesRender qa_score={post.qa_score} />}
 
       {post.faq_data && Array.isArray(post.faq_data) && post.faq_data.length > 0 && (
         <Section title={`FAQ (${post.faq_data.length})`}>
@@ -191,3 +187,171 @@ const preStyle: React.CSSProperties = {
   maxHeight: 400,
   overflow: "auto",
 };
+
+/**
+ * Render the QA outcome. Handles both:
+ *  - New shape: { publishing_gate, brand_quality }
+ *  - Legacy flat shape from before the split (verdict, rubric_scores, ...)
+ */
+function QaGatesRender({ qa_score }: { qa_score: unknown }) {
+  const s = qa_score as Record<string, unknown> | null;
+  if (!s || typeof s !== "object") return null;
+
+  const rawPublishing = s.publishing_gate as
+    | {
+        verdict?: string;
+        recoverable?: boolean;
+        hard_rule_violations?: string[];
+        banned_matches?: string[];
+        disallowed_links?: string[];
+        competitor_matches?: string[];
+        missing_fields?: string[];
+        word_count?: number;
+      }
+    | undefined;
+  // Legacy fallback: pre-split rows kept these fields flat on the outcome.
+  // Reconstruct a Publishing-Gate-shaped view so legacy rows render the
+  // same UI. verdict comes from `recoverable` + array presence.
+  const legacyHardRules = (s.hard_rule_violations as string[]) ?? [];
+  const legacyBanned = (s.banned_matches as string[]) ?? [];
+  const legacyDisallowed = (s.disallowed_links as string[]) ?? [];
+  const legacyCompetitors = (s.competitor_matches as string[]) ?? [];
+  const publishing =
+    rawPublishing ??
+    (typeof s.recoverable === "boolean" || legacyBanned.length > 0 || legacyDisallowed.length > 0
+      ? {
+          verdict:
+            legacyHardRules.length + legacyBanned.length + legacyDisallowed.length + legacyCompetitors.length === 0
+              ? "PASS"
+              : "FAIL",
+          recoverable: s.recoverable as boolean | undefined,
+          hard_rule_violations: legacyHardRules,
+          banned_matches: legacyBanned,
+          disallowed_links: legacyDisallowed,
+          competitor_matches: legacyCompetitors,
+          missing_fields: [],
+          word_count: typeof s.word_count === "number" ? s.word_count : undefined,
+        }
+      : undefined);
+  const brand = s.brand_quality as
+    | {
+        verdict?: string;
+        overall_score?: number;
+        rubric_scores?: Record<string, number>;
+        feedback?: string;
+      }
+    | undefined;
+
+  // Fallback: legacy pre-split shape stored the flat fields at the top level.
+  const legacyOverall = typeof s.overall_score === "number" ? s.overall_score : undefined;
+  const legacyRubric = s.rubric_scores as Record<string, number> | undefined;
+  const legacyFeedback = typeof s.feedback === "string" ? s.feedback : undefined;
+  const legacyVerdict = typeof s.verdict === "string" ? s.verdict : undefined;
+
+  return (
+    <>
+      {publishing && (
+        <Section title="Publishing Gate (blocks publishing)">
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "auto 1fr",
+              gap: "6px 16px",
+              background: "#0f131c",
+              border: "1px solid #1a1e28",
+              borderRadius: 8,
+              padding: 14,
+              fontSize: 13,
+            }}
+          >
+            <div style={{ opacity: 0.65 }}>Verdict</div>
+            <div style={{ color: publishing.verdict === "PASS" ? "#22c55e" : "#ef4444", fontWeight: 600 }}>
+              {publishing.verdict}
+              {publishing.verdict === "FAIL" && ` (recoverable: ${publishing.recoverable ? "yes" : "no"})`}
+            </div>
+            <div style={{ opacity: 0.65 }}>Word count</div>
+            <div>{publishing.word_count ?? "—"}</div>
+            {publishing.missing_fields && publishing.missing_fields.length > 0 && (
+              <>
+                <div style={{ opacity: 0.65 }}>Missing fields</div>
+                <div>{publishing.missing_fields.join(", ")}</div>
+              </>
+            )}
+            {publishing.hard_rule_violations && publishing.hard_rule_violations.length > 0 && (
+              <>
+                <div style={{ opacity: 0.65 }}>Hard rule violations</div>
+                <div>{publishing.hard_rule_violations.join("; ")}</div>
+              </>
+            )}
+            {publishing.banned_matches && publishing.banned_matches.length > 0 && (
+              <>
+                <div style={{ opacity: 0.65 }}>Banned matches</div>
+                <div>{publishing.banned_matches.join(", ")}</div>
+              </>
+            )}
+            {publishing.disallowed_links && publishing.disallowed_links.length > 0 && (
+              <>
+                <div style={{ opacity: 0.65 }}>Disallowed links</div>
+                <div>{publishing.disallowed_links.join(", ")}</div>
+              </>
+            )}
+            {publishing.competitor_matches && publishing.competitor_matches.length > 0 && (
+              <>
+                <div style={{ opacity: 0.65 }}>Competitor mentions</div>
+                <div>{publishing.competitor_matches.join(", ")}</div>
+              </>
+            )}
+          </div>
+        </Section>
+      )}
+
+      {(brand || legacyOverall !== undefined) && (
+        <Section title="Brand Quality Score (informational — does not gate publishing)">
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "auto 1fr",
+              gap: "6px 16px",
+              background: "#0f131c",
+              border: "1px solid #1a1e28",
+              borderRadius: 8,
+              padding: 14,
+              fontSize: 13,
+              marginBottom: 10,
+            }}
+          >
+            <div style={{ opacity: 0.65 }}>Overall score</div>
+            <div style={{ fontWeight: 600 }}>{brand?.overall_score ?? legacyOverall ?? "—"} / 10</div>
+            <div style={{ opacity: 0.65 }}>Rubric verdict</div>
+            <div>{brand?.verdict ?? legacyVerdict ?? "—"}</div>
+            <div style={{ opacity: 0.65 }}>Rubric scores</div>
+            <div>
+              {Object.entries(brand?.rubric_scores ?? legacyRubric ?? {}).map(([k, v]) => (
+                <div key={k}>
+                  <span style={{ opacity: 0.6 }}>{k}:</span> {String(v)}
+                </div>
+              ))}
+            </div>
+          </div>
+          {(brand?.feedback ?? legacyFeedback) && (
+            <details>
+              <summary style={{ fontSize: 12, opacity: 0.7, cursor: "pointer", marginBottom: 4 }}>
+                Rubric feedback
+              </summary>
+              <pre style={preStyle}>{brand?.feedback ?? legacyFeedback}</pre>
+            </details>
+          )}
+        </Section>
+      )}
+
+      <Section title="qa_score (raw)">
+        <details>
+          <summary style={{ fontSize: 12, opacity: 0.7, cursor: "pointer", marginBottom: 4 }}>
+            Show raw JSON
+          </summary>
+          <pre style={preStyle}>{JSON.stringify(qa_score, null, 2)}</pre>
+        </details>
+      </Section>
+    </>
+  );
+}

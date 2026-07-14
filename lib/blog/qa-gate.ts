@@ -24,25 +24,49 @@ interface RubricScores {
   factual_grounding: number;
 }
 
-export interface QaOutcome {
-  verdict: Verdict;
-  rubric_scores: RubricScores;
-  overall_score: number;
-  feedback: string;
+/**
+ * Two independent gates.
+ *
+ * PublishingGate is objective and deterministic — it decides whether an
+ * article is safe to ship. Only banned phrases, disallowed URLs, script/
+ * iframe injection, missing structural fields, competitor mentions, and
+ * word-count bounds count here. A PASS means the SEO/safety contract
+ * holds; a FAIL means we must not publish.
+ *
+ * BrandQuality is subjective and model-scored — the existing 6-dim
+ * rubric that judges register, recognition, CTA feel. It NEVER blocks
+ * publishing. It is persisted so we can see aggregate trends and tune
+ * prompts, but a low score does not stop an SEO-safe article from
+ * shipping. The article's job is to rank, educate, create curiosity,
+ * and convert — not to sound exactly like the paid reading.
+ */
+export interface PublishingGate {
+  verdict: "PASS" | "FAIL";
+  /** True iff the FAIL signals could plausibly be fixed by regenerating
+   *  the article. False iff they include a terminal violation (invented
+   *  URL, script/iframe injection, Claude/Anthropic leak, missing
+   *  structural field) that another Gemini call would not reliably fix. */
+  recoverable: boolean;
   hard_rule_violations: string[];
   banned_matches: string[];
   disallowed_links: string[];
   competitor_matches: string[];
+  /** Any of: title, slug, meta_description, article_html — empty or missing. */
+  missing_fields: string[];
   word_count: number;
-  /**
-   * True when every failure signal in this outcome is writer-correctable
-   * (editorial/register/format issue), false when at least one signal is
-   * a security/integrity/contract violation the revision path cannot
-   * safely operate on. Independent of verdict — a PASS is trivially
-   * recoverable=true. The revision loop uses this to allow a single
-   * auto-revision for FAIL when every failure is writer-correctable.
-   */
-  recoverable: boolean;
+}
+
+export interface BrandQuality {
+  /** Informational only — never gates publishing. */
+  verdict: Verdict;
+  overall_score: number;
+  rubric_scores: RubricScores;
+  feedback: string;
+}
+
+export interface QaOutcome {
+  publishing_gate: PublishingGate;
+  brand_quality: BrandQuality;
 }
 
 /**
@@ -325,37 +349,62 @@ function assessDeterministic(
   };
 }
 
-function combineOutcome(
-  det: ReturnType<typeof assessDeterministic>,
-  model: { rubric_scores: RubricScores; verdict: Verdict; feedback: string }
-): QaOutcome {
-  const overall = overallScore(model.rubric_scores);
-  let verdict: Verdict = model.verdict;
+function checkMissingFields(post: BlogPostRow): string[] {
+  const missing: string[] = [];
+  if (!post.title || !post.title.trim()) missing.push("title");
+  if (!post.slug || !post.slug.trim()) missing.push("slug");
+  if (!post.meta_description || !post.meta_description.trim())
+    missing.push("meta_description");
+  if (!post.article_html || !post.article_html.trim())
+    missing.push("article_html");
+  return missing;
+}
 
-  const hasHardFail =
+function computePublishingGate(
+  post: BlogPostRow,
+  det: ReturnType<typeof assessDeterministic>
+): PublishingGate {
+  const missing_fields = checkMissingFields(post);
+
+  // Objective failure signals — anything here means we must not publish.
+  const hasAnyFailure =
     det.hard_rule_violations.length > 0 ||
     det.banned_matches.length > 0 ||
     det.disallowed_links.length > 0 ||
-    det.competitor_matches.length > 0;
+    det.competitor_matches.length > 0 ||
+    missing_fields.length > 0;
 
-  if (hasHardFail) {
-    // Hard-fail items are fixable in a revision (rewrite the CTA, drop the bad link).
-    // Only downgrade REVISE→FAIL if the model already said FAIL.
-    verdict = verdict === "PASS" ? "REVISE" : verdict;
-  }
-
-  const recoverable = isRecoverableFailure({
-    disallowed_links: det.disallowed_links,
-    hard_rule_violations: det.hard_rule_violations,
-  });
+  // Terminal: structural or security failures a Gemini rewrite can't safely fix.
+  const terminalFromHardRules = det.hard_rule_violations.some((v) =>
+    TERMINAL_HARD_RULE_PATTERNS.some((re) => re.test(v))
+  );
+  const isTerminal =
+    det.disallowed_links.length > 0 ||
+    missing_fields.length > 0 ||
+    terminalFromHardRules;
 
   return {
-    verdict,
+    verdict: hasAnyFailure ? "FAIL" : "PASS",
+    recoverable: hasAnyFailure && !isTerminal,
+    hard_rule_violations: det.hard_rule_violations,
+    banned_matches: det.banned_matches,
+    disallowed_links: det.disallowed_links,
+    competitor_matches: det.competitor_matches,
+    missing_fields,
+    word_count: det.word_count,
+  };
+}
+
+function computeBrandQuality(model: {
+  rubric_scores: RubricScores;
+  verdict: Verdict;
+  feedback: string;
+}): BrandQuality {
+  return {
+    verdict: model.verdict,
+    overall_score: Number(overallScore(model.rubric_scores).toFixed(2)),
     rubric_scores: model.rubric_scores,
-    overall_score: Number(overall.toFixed(2)),
     feedback: model.feedback,
-    ...det,
-    recoverable,
   };
 }
 
@@ -393,35 +442,38 @@ export async function runQaGate(
     return { ok: false, dryRun, errorCode: model1.errorCode, errorMessage: model1.errorMessage };
   }
 
-  let outcome = combineOutcome(det1, model1);
+  let publishing = computePublishingGate(post, det1);
+  let brand = computeBrandQuality(model1);
   let revised = false;
-  let currentHtml = post.article_html;
   let currentPost = post;
 
-  // Revision eligibility: REVISE always, plus FAIL when every failure
-  // signal is writer-correctable (see isRecoverableFailure). Preserves
-  // MAX_QA_REVISIONS = 1 — a hard editorial FAIL still gets at most one
-  // shot, and terminal/security violations get zero.
+  // Revision fires ONLY when the Publishing Gate fails on recoverable
+  // signals — never for a low Brand Quality score. Brand quality is
+  // reporting-only. SEO throughput > register polish.
   const revisionEligible =
     !dryRun &&
     (post.revision_count ?? 0) < MAX_QA_REVISIONS &&
-    (outcome.verdict === "REVISE" ||
-      (outcome.verdict === "FAIL" && outcome.recoverable));
+    publishing.verdict === "FAIL" &&
+    publishing.recoverable;
 
   if (revisionEligible) {
+    // Bundle both objective violations (must-fix) and the subjective brand
+    // feedback (nice-to-fix while we're regenerating). If the revision helps
+    // brand quality too, great; if not, the Publishing Gate still decides
+    // whether to publish.
     const feedbackBundle = [
-      outcome.feedback,
-      ...(outcome.hard_rule_violations.length
-        ? [`Hard rules to fix: ${outcome.hard_rule_violations.join("; ")}`]
+      brand.feedback,
+      ...(publishing.hard_rule_violations.length
+        ? [`Hard rules to fix: ${publishing.hard_rule_violations.join("; ")}`]
         : []),
-      ...(outcome.banned_matches.length
-        ? [`Remove banned phrases: ${outcome.banned_matches.join("; ")}`]
+      ...(publishing.banned_matches.length
+        ? [`Remove banned phrases: ${publishing.banned_matches.join("; ")}`]
         : []),
-      ...(outcome.disallowed_links.length
-        ? [`Remove/replace these links: ${outcome.disallowed_links.join("; ")}`]
+      ...(publishing.disallowed_links.length
+        ? [`Remove/replace these links: ${publishing.disallowed_links.join("; ")}`]
         : []),
-      ...(outcome.competitor_matches.length
-        ? [`Remove all mentions of competing astrology brands/products: ${outcome.competitor_matches.join("; ")}. Do NOT name any competitor.`]
+      ...(publishing.competitor_matches.length
+        ? [`Remove all mentions of competing astrology brands/products: ${publishing.competitor_matches.join("; ")}. Do NOT name any competitor.`]
         : []),
     ].join("\n");
 
@@ -432,7 +484,6 @@ export async function runQaGate(
 
     if (rewritten.ok && rewritten.article) {
       revised = true;
-      currentHtml = rewritten.article.article_html;
       currentPost = {
         ...currentPost,
         article_html: rewritten.article.article_html,
@@ -443,15 +494,17 @@ export async function runQaGate(
         revision_count: (currentPost.revision_count ?? 0) + 1,
       };
 
-      const det2 = assessDeterministic(currentHtml, brief);
-      const model2 = await scoreWithModel(brief, currentHtml);
-      if (model2.ok) {
-        outcome = combineOutcome(det2, model2);
-      }
+      const det2 = assessDeterministic(currentPost.article_html!, brief);
+      const model2 = await scoreWithModel(brief, currentPost.article_html!);
+      publishing = computePublishingGate(currentPost, det2);
+      if (model2.ok) brand = computeBrandQuality(model2);
+      // If model2 fails, brand stays as first-pass — better than nothing.
     }
   }
 
-  const finalStage = outcome.verdict === "PASS" ? "QA_PASSED" : "QA_FAILED";
+  // Publish decision uses ONLY the Publishing Gate.
+  const finalStage = publishing.verdict === "PASS" ? "QA_PASSED" : "QA_FAILED";
+  const outcome: QaOutcome = { publishing_gate: publishing, brand_quality: brand };
 
   if (dryRun) {
     return { ok: true, dryRun: true, outcome, revised, finalStage };
@@ -462,13 +515,13 @@ export async function runQaGate(
     .update({
       qa_model: MODELS.qaGate,
       qa_score: outcome,
-      qa_feedback: outcome.feedback,
+      qa_feedback: brand.feedback,
       pipeline_stage: finalStage,
-      last_error_code: outcome.verdict === "PASS" ? null : ERROR_CODES.QA_FAILED,
+      last_error_code: publishing.verdict === "PASS" ? null : ERROR_CODES.QA_FAILED,
       last_error_message:
-        outcome.verdict === "PASS"
+        publishing.verdict === "PASS"
           ? null
-          : outcome.feedback.slice(0, 500),
+          : describePublishingFailure(publishing).slice(0, 500),
       updated_at: new Date().toISOString(),
     })
     .eq("id", currentPost.id)
@@ -484,4 +537,23 @@ export async function runQaGate(
   }
 
   return { ok: true, dryRun: false, outcome, revised, finalStage };
+}
+
+/**
+ * Short, human-readable reason a Publishing Gate FAIL happened —
+ * written to last_error_message so the dashboard can surface it.
+ */
+function describePublishingFailure(pg: PublishingGate): string {
+  const parts: string[] = [];
+  if (pg.missing_fields.length)
+    parts.push(`missing_fields: ${pg.missing_fields.join(", ")}`);
+  if (pg.disallowed_links.length)
+    parts.push(`disallowed_links: ${pg.disallowed_links.join(", ")}`);
+  if (pg.hard_rule_violations.length)
+    parts.push(`hard_rules: ${pg.hard_rule_violations.join("; ")}`);
+  if (pg.banned_matches.length)
+    parts.push(`banned: ${pg.banned_matches.join(", ")}`);
+  if (pg.competitor_matches.length)
+    parts.push(`competitors: ${pg.competitor_matches.join(", ")}`);
+  return parts.join(" | ") || "unknown publishing gate failure";
 }

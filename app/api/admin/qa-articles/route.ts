@@ -62,22 +62,32 @@ export async function POST(req: NextRequest) {
     const r = await runQaGate(supabase, post, { dryRun });
 
     if (r.ok && r.outcome) {
+      const pg = r.outcome.publishing_gate;
+      const bq = r.outcome.brand_quality;
       results.push({
         ok: true,
         postId: post.id,
         primary_keyword: post.primary_keyword,
-        verdict: r.outcome.verdict,
         finalStage: r.finalStage,
         revised: r.revised ?? false,
-        recoverable: r.outcome.recoverable,
-        overall_score: r.outcome.overall_score,
-        rubric_scores: r.outcome.rubric_scores,
-        word_count: r.outcome.word_count,
-        hard_rule_violations: r.outcome.hard_rule_violations,
-        banned_matches: r.outcome.banned_matches,
-        disallowed_links: r.outcome.disallowed_links,
-        competitor_matches: r.outcome.competitor_matches,
-        feedback: r.outcome.feedback,
+        // Publishing Gate — the actual publish decision
+        publishing_gate: {
+          verdict: pg.verdict,
+          recoverable: pg.recoverable,
+          hard_rule_violations: pg.hard_rule_violations,
+          banned_matches: pg.banned_matches,
+          disallowed_links: pg.disallowed_links,
+          competitor_matches: pg.competitor_matches,
+          missing_fields: pg.missing_fields,
+          word_count: pg.word_count,
+        },
+        // Brand Quality Score — informational only, does NOT gate publishing
+        brand_quality: {
+          verdict: bq.verdict,
+          overall_score: bq.overall_score,
+          rubric_scores: bq.rubric_scores,
+          feedback: bq.feedback,
+        },
       });
     } else {
       results.push({

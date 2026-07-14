@@ -324,11 +324,12 @@ async function stageQa(
   return {
     postId: target.id,
     ok: true,
-    verdict: res.outcome?.verdict,
     finalStage: res.finalStage,
     revised: res.revised,
-    recoverable: res.outcome?.recoverable,
-    overall_score: res.outcome?.overall_score,
+    publishing_verdict: res.outcome?.publishing_gate.verdict,
+    publishing_recoverable: res.outcome?.publishing_gate.recoverable,
+    brand_score: res.outcome?.brand_quality.overall_score,
+    brand_verdict: res.outcome?.brand_quality.verdict,
   };
 }
 

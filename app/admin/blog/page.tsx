@@ -170,6 +170,7 @@ export default async function AdminBlogPage() {
                     <Th>Cluster / Product</Th>
                     <Th>Stage</Th>
                     <Th>Words</Th>
+                    <Th>Brand</Th>
                     <Th>Publish</Th>
                     <Th></Th>
                   </tr>
@@ -215,6 +216,7 @@ export default async function AdminBlogPage() {
                         </span>
                       </Td>
                       <Td>{wordCount(p.article_html)}</Td>
+                      <Td>{brandScore(p.qa_score)}</Td>
                       <Td>
                         {p.blogger_url ? (
                           <a href={p.blogger_url} target="_blank" rel="noopener noreferrer" style={{ color: "#60a5fa" }}>
@@ -312,6 +314,19 @@ function wordCount(html: string | null | undefined): string {
     .split(" ")
     .filter(Boolean).length;
   return n.toString();
+}
+
+/**
+ * Pluck the Brand Quality overall score from qa_score, handling both the
+ * new two-gate shape and legacy flat blobs. Returns a compact "X.X/10"
+ * string, or "—" when no score exists.
+ */
+function brandScore(qa: unknown): string {
+  if (!qa || typeof qa !== "object") return "—";
+  const s = qa as Record<string, unknown>;
+  const bq = s.brand_quality as { overall_score?: number } | undefined;
+  const score = typeof bq?.overall_score === "number" ? bq.overall_score : typeof s.overall_score === "number" ? s.overall_score : null;
+  return score === null ? "—" : `${score.toFixed(1)}/10`;
 }
 
 const tableStyle: React.CSSProperties = {
