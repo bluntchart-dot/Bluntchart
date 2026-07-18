@@ -186,6 +186,14 @@ export default function SiteFooter() {
           </div>
 
           <div className="bcf-col">
+            <h4>Company</h4>
+            <ul>
+              <li><Link href="/about">About BluntChart</Link></li>
+              <li><Link href="/founder">Meet the Founder</Link></li>
+            </ul>
+          </div>
+
+          <div className="bcf-col">
             <h4>Legal</h4>
             <ul>
               <li><Link href="/terms">Terms of Service</Link></li>

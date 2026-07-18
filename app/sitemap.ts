@@ -203,6 +203,20 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.8,
     },
 
+    // ── About ──
+    {
+      url: `${BASE_URL}/about`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.7,
+    },
+    {
+      url: `${BASE_URL}/founder`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.65,
+    },
+
     // ── Legal ──
     {
       url: `${BASE_URL}/terms`,
