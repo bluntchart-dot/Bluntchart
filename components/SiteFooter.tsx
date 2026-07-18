@@ -21,13 +21,12 @@ export default function SiteFooter() {
           color: #e8e4f0;
           font-family: var(--font-body), 'DM Sans', system-ui, sans-serif;
         }
-        .bcf-c { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+        .bcf-c { max-width: 1180px; margin: 0 auto; padding: 0 24px; }
         .bcf-grid {
-          display: flex;
+          display: grid;
+          grid-template-columns: minmax(200px, 1.4fr) repeat(5, minmax(0, 1fr));
           align-items: flex-start;
-          justify-content: space-between;
-          gap: 36px;
-          flex-wrap: wrap;
+          gap: 28px;
           margin-bottom: 36px;
         }
         .bcf-brand { max-width: 240px; }
@@ -118,9 +117,20 @@ export default function SiteFooter() {
           color: rgba(232,228,240,0.2);
           margin: 0;
         }
+        @media (max-width: 1100px) {
+          .bcf-grid { grid-template-columns: minmax(200px, 1.2fr) repeat(3, minmax(0, 1fr)); }
+          .bcf-grid > .bcf-col:nth-child(5),
+          .bcf-grid > .bcf-col:nth-child(6) { grid-column: span 2; }
+        }
         @media (max-width: 768px) {
-          .bcf-grid { flex-direction: column; gap: 28px; }
+          .bcf-grid { grid-template-columns: 1fr 1fr; gap: 28px; }
+          .bcf-grid > .bcf-brand { grid-column: 1 / -1; max-width: 100%; }
+          .bcf-grid > .bcf-col:nth-child(5),
+          .bcf-grid > .bcf-col:nth-child(6) { grid-column: auto; }
           .bcf-bottom { flex-direction: column; align-items: flex-start; }
+        }
+        @media (max-width: 480px) {
+          .bcf-grid { grid-template-columns: 1fr; }
         }
       `}</style>
       <div className="bcf-c">
