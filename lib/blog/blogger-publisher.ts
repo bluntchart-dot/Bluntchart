@@ -69,47 +69,62 @@ export function chooseLabels(post: BlogPostRow): string[] {
 
 // ── Scheduling ───────────────────────────────────────────────────────
 //
-// Given today's UTC PUBLISH_HOURS and the number of posts already
-// scheduled/published for today, pick the next slot. If today's slots
-// are exhausted, roll to tomorrow.
+// Walk day-by-day starting at `now`. For each day, count how many slots
+// are already claimed (BLOGGER_SCHEDULED or PUBLISHED rows landing in
+// that day's window), then pick the first PUBLISH_HOURS_UTC slot that is
+// (a) after `now` and (b) not already claimed. Bounded by SCHEDULING_HORIZON_DAYS
+// so a misconfigured queue can't spin forever.
+//
+// Correctness note: the previous version stubbed tomorrow's count to 0
+// and rolled every subsequent publish to `tomorrow at PUBLISH_HOURS_UTC[0]`,
+// so a burst of publishes all clustered on the same 08:00 UTC slot.
+
+const SCHEDULING_HORIZON_DAYS = 14;
 
 export async function computeScheduledPublishAt(
   supabase: SupabaseClient,
   now: Date = new Date()
 ): Promise<{ at: Date; alreadyDueSlot: boolean }> {
-  const publishedToday = await countPublishesForDate(supabase, now);
-  const publishedTomorrow = 0; // fresh day
-
-  const todaySlots = PUBLISH_HOURS_UTC.slice(publishedToday);
-  for (const hour of todaySlots) {
-    const candidate = new Date(
+  for (let dayOffset = 0; dayOffset < SCHEDULING_HORIZON_DAYS; dayOffset++) {
+    const day = new Date(
       Date.UTC(
         now.getUTCFullYear(),
         now.getUTCMonth(),
-        now.getUTCDate(),
-        hour,
-        0,
-        0
+        now.getUTCDate() + dayOffset
       )
     );
-    if (candidate.getTime() > now.getTime()) {
-      return { at: candidate, alreadyDueSlot: false };
+    const claimed = await countPublishesForDate(supabase, day);
+    const remainingSlots = PUBLISH_HOURS_UTC.slice(claimed);
+    for (const hour of remainingSlots) {
+      const candidate = new Date(
+        Date.UTC(
+          day.getUTCFullYear(),
+          day.getUTCMonth(),
+          day.getUTCDate(),
+          hour,
+          0,
+          0
+        )
+      );
+      if (candidate.getTime() > now.getTime()) {
+        return { at: candidate, alreadyDueSlot: false };
+      }
     }
   }
 
-  // All of today's slots are in the past (or filled). Roll to tomorrow.
-  void publishedTomorrow;
-  const tomorrow = new Date(
+  // Safety fallback — shouldn't hit unless SCHEDULING_HORIZON_DAYS × MAX_POSTS_PER_DAY
+  // rows are already scheduled ahead. Land at the last horizon day's first slot.
+  const fallback = new Date(
     Date.UTC(
       now.getUTCFullYear(),
       now.getUTCMonth(),
-      now.getUTCDate() + 1,
+      now.getUTCDate() + SCHEDULING_HORIZON_DAYS,
       PUBLISH_HOURS_UTC[0],
       0,
       0
     )
   );
-  return { at: tomorrow, alreadyDueSlot: false };
+  return { at: fallback, alreadyDueSlot: false };
 }
 
 async function countPublishesForDate(
