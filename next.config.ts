@@ -12,6 +12,26 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  async headers() {
+    return [
+      // Defence-in-depth for the hidden internal surfaces. robots.ts already
+      // disallows crawling and the page carries noindex metadata; this header
+      // covers the API routes (which have no HTML meta at all) and any edge
+      // case where a crawler ignores the meta tag.
+      {
+        source: "/internal/:path*",
+        headers: [
+          { key: "X-Robots-Tag", value: "noindex, nofollow, noarchive" },
+        ],
+      },
+      {
+        source: "/api/internal/:path*",
+        headers: [
+          { key: "X-Robots-Tag", value: "noindex, nofollow, noarchive" },
+        ],
+      },
+    ];
+  },
 };
 
 export default nextConfig;

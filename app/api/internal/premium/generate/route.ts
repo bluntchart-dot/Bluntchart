@@ -3,26 +3,34 @@
  *
  * Internal-only endpoint for the hidden Premium Reading Engine.
  * Authorised by the `premium_dev_ok` cookie set at
- * /api/internal/premium/dev-login. Any request without a valid cookie is
- * rejected with 401 — there is no public entry point yet.
+ * /api/internal/premium/dev-login.
  *
  * Body:
  *   {
  *     name, dob, birth_time, city,
- *     email?, birth_lat?, birth_lng?, timezone?, focus_area?
+ *     email?, birth_lat?, birth_lng?, timezone?, focus_area?,
+ *     model?    // "mock" | "haiku-4-5" | "sonnet-5" | "opus-4-8"
  *   }
  *
+ * If `model` is "mock" (or missing and no ANTHROPIC_API_KEY is set),
+ * returns the in-voice mock reading. Otherwise routes to the AI
+ * generator with the requested model.
+ *
  * Response:
- *   { ok: true, reading }
- * The reading is NOT persisted anywhere — this route exists purely so the
- * internal playground can iterate on the prompt without any DB side-effects.
+ *   { ok: true, reading: PremiumReading, telemetry?: AiTelemetry }
  */
 
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { isDevAuthorized } from "@/lib/premium/dev-auth";
-import { generatePremiumReading } from "@/lib/premium/generate-premium-reading";
-import type { PremiumBirthDetails } from "@/lib/premium/generate-premium-reading";
+import { buildMockPremiumReading } from "@/lib/premium/build-mock-reading";
+import type { PremiumBirthDetails } from "@/lib/premium/build-mock-reading";
+import { generateAiReading } from "@/lib/premium/generate-ai-reading";
+import {
+  DEFAULT_MODEL,
+  IMPLEMENTED_MODEL_IDS,
+} from "@/lib/premium/ai/models";
+import type { AiModelId } from "@/lib/premium/ai/types";
 
 interface Body {
   name?: string;
@@ -34,11 +42,26 @@ interface Body {
   birth_lng?: number;
   timezone?: string;
   focus_area?: string;
+  model?: string; // "mock" | AiModelId
 }
 
 const isValidDate  = (s: string) => /^\d{4}-\d{2}-\d{2}$/.test(s);
 const isValidTime  = (s: string) => /^\d{2}:\d{2}$/.test(s);
 const isValidEmail = (s: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s);
+
+function resolveModel(raw: string | undefined): "mock" | AiModelId {
+  const val = (raw ?? "").trim();
+  if (val === "mock") return "mock";
+  if (!val) {
+    // Empty → prefer AI when the key is configured, otherwise mock.
+    return process.env.ANTHROPIC_API_KEY ? DEFAULT_MODEL : "mock";
+  }
+  if ((IMPLEMENTED_MODEL_IDS as readonly string[]).includes(val)) {
+    return val as AiModelId;
+  }
+  // Unknown model id → mock (safe default).
+  return "mock";
+}
 
 export async function POST(req: NextRequest) {
   const cookieStore = await cookies();
@@ -109,9 +132,36 @@ export async function POST(req: NextRequest) {
     focus_area: focusArea,
   };
 
-  const result = await generatePremiumReading(birth);
-  if (!result.ok) {
-    return NextResponse.json({ ok: false, error: result.error }, { status: 500 });
+  const model = resolveModel(body.model);
+
+  if (model === "mock") {
+    const result = await buildMockPremiumReading(birth);
+    if (!result.ok) {
+      return NextResponse.json({ ok: false, error: result.error }, { status: 500 });
+    }
+    return NextResponse.json({ ok: true, reading: result.reading, source: "mock" });
   }
-  return NextResponse.json({ ok: true, reading: result.reading });
+
+  if (!process.env.ANTHROPIC_API_KEY) {
+    return NextResponse.json(
+      { ok: false, error: "ANTHROPIC_API_KEY is not configured on this server." },
+      { status: 503 }
+    );
+  }
+
+  const result = await generateAiReading(birth, { modelId: model });
+  if (!result.ok) {
+    console.error("[premium/generate] AI failed:", result.error);
+    return NextResponse.json(
+      { ok: false, error: result.error, telemetry: result.telemetry },
+      { status: 500 }
+    );
+  }
+
+  return NextResponse.json({
+    ok: true,
+    reading: result.reading,
+    telemetry: result.telemetry,
+    source: model,
+  });
 }

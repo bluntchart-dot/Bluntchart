@@ -29,35 +29,43 @@ const PLANET_SYMBOLS: Record<string, string> = {
 const FAQS = [
   {
     q: "What is a birth chart?",
-    a: "A birth chart (also called a natal chart) is a map of exactly where every planet was at the moment you were born. It's calculated from your birth date, exact birth time, and birth location. Unlike a simple horoscope that only uses your Sun sign, a birth chart shows the positions of the Sun, Moon, Mercury, Venus, Mars, Jupiter, Saturn, Uranus, Neptune, and Pluto across the 12 zodiac signs and 12 astrological houses. No two birth charts are the same — yours is as unique as a fingerprint.",
+    a: "A birth chart (natal chart) is a map of exactly where every planet was at the moment you were born. It's calculated from your birth date, exact birth time, and birth location. Unlike a horoscope that only uses your Sun sign, a birth chart shows the positions of the Sun, Moon, Mercury, Venus, Mars, Jupiter, Saturn, Uranus, Neptune, and Pluto across the 12 zodiac signs and 12 houses. No two are the same — yours is as unique as a fingerprint.",
   },
   {
-    q: "Do I need my exact birth time?",
-    a: "Your exact birth time is critical for two things: your Rising sign (Ascendant) and your house placements. The Rising sign changes roughly every 2 hours, so even a 30-minute difference can shift it to a different zodiac sign. Without your birth time, we can still calculate your Sun, Moon, and planetary signs accurately — but your Rising sign and house positions may be off. Your birth certificate almost always has the time listed.",
+    q: "Can I get a birth chart without my birth time?",
+    a: "Yes, partially. Your Sun, Mercury, Venus, Mars, Jupiter, Saturn and outer planet signs will be accurate. What you lose is your Rising sign, all twelve house placements, the Midheaven, and — if the Moon changed signs that day — your Moon sign. Run your chart at noon to get everything else, and check your birth certificate long-form (the short form usually omits time).",
   },
   {
-    q: "What is a Rising sign (Ascendant)?",
-    a: "Your Rising sign, also called the Ascendant, is the zodiac sign that was rising on the eastern horizon at the exact moment and location of your birth. It's often called the 'mask' you wear — the first impression you give to others. While your Sun sign represents your core identity and your Moon sign your emotional inner world, your Rising sign shapes how you appear to the outside world. It also determines the layout of all 12 houses in your chart.",
+    q: "What house system does this calculator use?",
+    a: "BluntChart uses Equal House from the Ascendant. Astronomical calculations for planets, the Ascendant degree and all aspects match professional tools to arc-second precision. Only the house cusps differ from a Placidus chart, which usually means one or two planets landing in an adjacent house. No house system has been demonstrated to be more correct than another — Placidus, Whole Sign, Equal and Koch are all legitimate.",
   },
   {
-    q: "What are the 'Big Three' in astrology?",
-    a: "The Big Three refers to your Sun sign, Moon sign, and Rising sign. Your Sun sign is your core identity — the essence of who you are. Your Moon sign is your emotional nature — how you process feelings, what you need to feel safe. Your Rising sign is your outward personality — how people perceive you before they really know you. Together, these three placements give a much more complete picture than your Sun sign alone.",
+    q: "Is a birth chart the same as a natal chart?",
+    a: "Yes — birth chart and natal chart are two names for the same thing. 'Natal' is the technical term; 'birth chart' is more common. There is no difference in calculation, accuracy or meaning. A horoscope, by contrast, is not the same thing: it's a forecast comparing current planetary positions against your birth chart, and a daily horoscope uses only your Sun sign.",
   },
   {
     q: "How accurate is this birth chart calculator?",
-    a: "This calculator uses astronomy-engine, a high-precision astronomical computation library. It calculates geocentric planetary positions (as seen from Earth), which is the standard for Western astrology. Planet longitudes are accurate to arc-second precision. House cusps are calculated using the Equal house system from the Ascendant. The results match professional-grade ephemeris tools like the Swiss Ephemeris.",
+    a: "The calculator uses astronomy-engine, a high-precision astronomical library. Planetary longitudes are accurate to arc-second and match the Swiss Ephemeris used by professional astrologers. The Ascendant is computed from the historical timezone for your birth date and location. You can check any placement against an independent source and it will agree — the only variable is house system.",
   },
   {
-    q: "What is the difference between a birth chart and a daily horoscope?",
-    a: "A birth chart is a permanent, one-time calculation unique to your exact moment of birth. A daily horoscope is a general forecast based only on your Sun sign — one of 12 possibilities — and applies to roughly 600 million people at once. Your birth chart contains dozens of data points (planet positions, house placements, aspects between planets) that make it specific to you alone.",
+    q: "What is a chart ruler?",
+    a: "Your chart ruler is the planet that rules your Rising sign — Aries Rising is ruled by Mars, Taurus and Libra Rising by Venus, and so on. Wherever that planet sits in your chart describes the overall direction and flavour of your life. Two people with the same Rising sign can have completely different lives if their chart ruler sits in different houses.",
   },
   {
-    q: "What do the houses mean in a birth chart?",
-    a: "The 12 houses in a birth chart represent different areas of life. The 1st house is self and appearance. The 7th house is partnerships and relationships. The 10th house is career and public reputation. Each planet falls in a specific house, showing where its energy plays out in your life. For example, Venus in the 7th house suggests love and partnership are central themes, while Venus in the 10th house might mean your career involves beauty, art, or diplomacy.",
+    q: "What is a stellium?",
+    a: "A stellium is three or more planets in the same sign or the same house. When you have one, that area of your chart dominates you. A Capricorn stellium makes ambition and structure the water you swim in; a 5th-house stellium makes creativity and romance the organising principle of your life. Stelliums are also why some people don't relate to their Sun sign — the stellium is louder.",
   },
   {
     q: "What are aspects in astrology?",
-    a: "Aspects are the angles between planets in your birth chart. They show how different parts of your personality interact. The five major aspects are: conjunction (0°, planets merged), sextile (60°, harmonious), square (90°, tension), trine (120°, flowing ease), and opposition (180°, push-pull). Tighter aspects (smaller orb) are stronger. Your chart's aspect pattern reveals your internal dynamics — where you flow easily and where you face friction.",
+    a: "Aspects are the angles between planets in your chart, showing how different parts of your personality interact. The five major aspects are conjunction (0°, merged), sextile (60°, opportunity), square (90°, tension), trine (120°, ease), and opposition (180°, push-pull). Tighter orbs are stronger. Squares are the aspects most productive achievers have plenty of — tension is what makes people build things.",
+  },
+  {
+    q: "Can AI read my birth chart?",
+    a: "Increasingly, yes — but the calculation still has to come from a real ephemeris, not from the language model. A well-built AI reading works from your whole chart at once and can register that your Venus in Scorpio sits in the 8th house, squares Saturn, and is ruled by a Pluto conjunct your Ascendant. That synthesis is what template reports have never managed. Ask a general chatbot to compute a chart and it will often invent placements and interpret them confidently.",
+  },
+  {
+    q: "What is the difference between a birth chart and a daily horoscope?",
+    a: "A birth chart is a permanent, one-time calculation unique to your exact moment of birth. A daily horoscope is a general forecast based only on your Sun sign — one of 12 possibilities — applied to roughly one twelfth of the human population at once. Your birth chart contains dozens of data points that make it specific to you alone.",
   },
 ];
 
@@ -175,7 +183,8 @@ export default function FreeBirthChartClient() {
         body{background:var(--bg);color:var(--white);font-family:var(--font-body);-webkit-font-smoothing:antialiased;overflow-x:hidden}
         .fbc-nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:18px 0;transition:all .3s}
         .fbc-nav.on{background:rgba(9,9,15,.92);border-bottom:1px solid var(--border);backdrop-filter:blur(16px)}
-        .fbc-c{max-width:1100px;margin:0 auto;padding:0 24px}
+        .fbc-c{max-width:1280px;margin:0 auto;padding:0 40px}
+        @media(max-width:768px){.fbc-c{padding:0 20px}}
         .fbc-logo{font-family:var(--font-display);font-size:1.3rem;font-weight:700;text-decoration:none;display:flex;align-items:center;gap:10px}
         .fbc-logo .g{background:linear-gradient(135deg,#f0b84a,#d4537e,#6b2fd4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
         .fbc-inp{width:100%;background:rgba(255,255,255,0.04);border:0.5px solid rgba(255,255,255,0.1);border-radius:10px;padding:13px 14px;font-size:14px;color:#e8e4f0;font-family:inherit;outline:none}
@@ -421,79 +430,151 @@ export default function FreeBirthChartClient() {
       )}
 
 
-      {/* ── SEO CONTENT ── */}
+      {/* ── SEO LONG-FORM GUIDE ── */}
       <section style={{ padding:"80px 0", background:"#0d0d18",
         borderTop:"1px solid rgba(255,255,255,0.08)" }}>
-        <div className="fbc-c" style={{ maxWidth:900 }}>
-          <h2 style={{ fontFamily:"var(--font-display)", fontSize:"clamp(1.6rem,3.5vw,2.4rem)",
-            fontWeight:800, lineHeight:1.1, marginBottom:24 }}>
-            How to read your <em style={{ fontStyle:"italic", background:"linear-gradient(135deg,#f0b84a,#d4537e)",
-              WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", backgroundClip:"text" }}>
-              birth chart</em>
-          </h2>
+        <div className="fbc-c" style={{ maxWidth:1080 }}>
 
-          <div style={{ fontSize:15, color:"rgba(232,228,240,0.6)", lineHeight:1.78 }}>
-            <p style={{ marginBottom:20 }}>
-              Your birth chart is a map of the sky at the exact moment you took your first breath. It captures
-              the positions of the Sun, Moon, and every planet in our solar system — placed across the
-              twelve zodiac signs and twelve astrological houses. Each placement means something different
-              about your personality, emotional patterns, relationships, career drive, and the challenges
-              you're likely to face.
-            </p>
+          <style>{`
+            .fbc-h2{font-family:var(--font-display);font-size:clamp(1.5rem,3.2vw,2rem);font-weight:800;line-height:1.15;letter-spacing:-0.01em;color:#e8e4f0;margin:0 0 14px}
+            .fbc-h2 em{font-style:italic;background:linear-gradient(135deg,#f0b84a,#d4537e);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+            .fbc-h3{font-family:var(--font-display);font-size:18px;font-weight:700;color:#e8e4f0;margin:28px 0 12px}
+            .fbc-p{font-size:15px;color:rgba(232,228,240,0.65);line-height:1.78;margin-bottom:16px}
+            .fbc-p a{color:#F0B84A;text-decoration:underline;text-decoration-color:rgba(240,184,74,0.35);text-underline-offset:3px}
+            .fbc-p a:hover{text-decoration-color:#F0B84A}
+            .fbc-tldr{background:rgba(240,184,74,0.06);border-left:3px solid #F0B84A;border-radius:0 10px 10px 0;padding:16px 20px;margin:0 0 24px}
+            .fbc-tldr-l{font-size:10px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:#F0B84A;margin-bottom:6px;display:block}
+            .fbc-tldr-t{font-size:15px;color:#e8e4f0;line-height:1.65}
+            .fbc-block{margin-bottom:56px}
+            .fbc-list{margin:0 0 16px 0;padding-left:22px}
+            .fbc-list li{font-size:15px;color:rgba(232,228,240,0.65);line-height:1.7;margin-bottom:8px}
+            .fbc-list li strong{color:#e8e4f0;font-weight:600}
+          `}</style>
 
-            <h3 style={{ fontFamily:"var(--font-display)", fontSize:20, fontWeight:700,
-              color:"#e8e4f0", marginBottom:12 }}>
-              The planets in your natal chart
-            </h3>
-            <p style={{ marginBottom:20 }}>
-              Each planet represents a different dimension of who you are. The Sun is your core identity — your
-              ego and sense of self. The Moon is your emotional nature — what makes you feel safe and what
-              triggers you. Mercury governs how you think and communicate. Venus shows how you love and what
-              you find beautiful. Mars reveals your drive, ambition, and how you handle conflict. Jupiter
-              points to where you experience luck and growth. Saturn reveals your greatest challenges and the
-              lessons you're here to learn. Uranus, Neptune, and Pluto are generational planets that shape
-              broader patterns in your psyche.
-            </p>
+          {/* Block: How to read the chart */}
+          <div className="fbc-block">
+            <h2 className="fbc-h2">What does your <em>birth chart actually show</em> you?</h2>
+            <div className="fbc-tldr">
+              <span className="fbc-tldr-l">Short answer</span>
+              <p className="fbc-tldr-t">Your birth chart is the sky as seen from your exact birthplace at your exact minute of birth. The outer ring is the twelve zodiac signs, the inner divisions are the twelve houses, and the glyphs are the planets at their real positions. The lines crossing the middle are aspects — the geometric relationships between planets.</p>
+            </div>
+            <p className="fbc-p">Most free birth chart calculators hand you a wheel and walk away. Here is what every part of the chart you just generated is telling you, so the wheel stops being decoration and starts being readable.</p>
+            <p className="fbc-p"><strong style={{ color:"#e8e4f0" }}>Read it in this order and it stops being overwhelming:</strong></p>
+            <ol className="fbc-list">
+              <li><strong>Find the Ascendant</strong> — the point on the left horizontal edge, at the nine o&apos;clock position. That&apos;s your Rising sign and the start of your 1st house.</li>
+              <li><strong>Find the Sun, Moon and Ascendant glyphs.</strong> That&apos;s your <Link href="/big-three-calculator">Big Three</Link>, done.</li>
+              <li><strong>Look at which houses are crowded.</strong> Empty houses aren&apos;t bad; crowded houses tell you where your life happens.</li>
+              <li><strong>Look at the lines.</strong> Red and blue lines mean different things — tension and ease respectively.</li>
+              <li><strong>Only then</strong> start reading individual placements.</li>
+            </ol>
 
-            <h3 style={{ fontFamily:"var(--font-display)", fontSize:20, fontWeight:700,
-              color:"#e8e4f0", marginBottom:12 }}>
-              The twelve houses
-            </h3>
-            <p style={{ marginBottom:20 }}>
-              The houses are like a stage — they show where in your life each planet's energy expresses itself.
-              The 1st house is self and identity. The 2nd house governs money and values. The 4th house is
-              home and family. The 7th house rules partnerships and marriage. The 10th house shapes your
-              career and public reputation. The 12th house holds your subconscious, hidden fears, and
-              spiritual nature. When a planet falls in a specific house, that area of life becomes a major
-              theme for you.
-            </p>
+            <h3 className="fbc-h3">The four angles</h3>
+            <p className="fbc-p">Four points in your chart carry more weight than everything else. They&apos;re determined entirely by your birth time and place, which is why the time matters so much.</p>
+            <ul className="fbc-list">
+              <li><strong>Ascendant (AC)</strong> — 1st house cusp, eastern horizon. How you show up.</li>
+              <li><strong>Descendant (DC)</strong> — 7th house cusp, directly opposite. What you look for in a partner.</li>
+              <li><strong>Midheaven (MC)</strong> — 10th house cusp, highest point in the sky. Your public identity, career direction, reputation.</li>
+              <li><strong>Imum Coeli (IC)</strong> — 4th house cusp, lowest point. Home, roots, family, private self.</li>
+            </ul>
+            <p className="fbc-p">If a planet sits within a few degrees of any of these four points, it becomes one of the loudest voices in your chart. A conjunct-Midheaven planet is something everyone notices about you. A conjunct-IC planet is something almost nobody sees.</p>
 
-            <h3 style={{ fontFamily:"var(--font-display)", fontSize:20, fontWeight:700,
-              color:"#e8e4f0", marginBottom:12 }}>
-              Why your birth time matters
-            </h3>
-            <p style={{ marginBottom:20 }}>
-              Your birth time determines your Rising sign (Ascendant), which changes approximately every
-              two hours. The Rising sign sets the entire house system of your chart — meaning a difference
-              of even 30 minutes can shift planets into different houses and change the interpretation
-              significantly. This is why professional astrologers always ask for your exact birth time, and
-              why a chart calculated without one is incomplete. Check your birth certificate — the time is
-              almost always recorded there.
-            </p>
+            <h3 className="fbc-h3">Your chart ruler</h3>
+            <p className="fbc-p">Here&apos;s a placement most free calculators never mention, and it&apos;s one of the most useful in the entire chart.</p>
+            <p className="fbc-p">Your <strong style={{ color:"#e8e4f0" }}>chart ruler</strong> is the planet that rules your Rising sign. Aries Rising is ruled by Mars. Taurus and Libra Rising by Venus. Gemini and Virgo by Mercury. Cancer by the Moon. Leo by the Sun. Scorpio by Pluto (Mars in traditional astrology). Sagittarius by Jupiter. Capricorn and Aquarius by Saturn (Aquarius by Uranus in modern). Pisces by Neptune (Jupiter traditionally).</p>
+            <p className="fbc-p">Wherever that planet sits — its sign, its house, its aspects — describes the overall direction and flavour of your life. A Virgo Rising with Mercury in the 10th house builds a life around communicating publicly. The same Virgo Rising with Mercury in the 12th builds a life around private, internal, behind-the-scenes thinking. Same Rising sign, completely different life.</p>
 
-            <h3 style={{ fontFamily:"var(--font-display)", fontSize:20, fontWeight:700,
-              color:"#e8e4f0", marginBottom:12 }}>
-              About this calculator
-            </h3>
-            <p>
-              This free birth chart calculator uses astronomy-engine, a high-precision astronomical
-              computation library. It calculates geocentric planetary positions (the standard for
-              Western astrology), uses the Equal house system from the Ascendant, and computes all five
-              major aspects (conjunction, sextile, square, trine, opposition) between planets. The
-              chart wheel above displays the zodiac signs, house cusps, planet glyphs at their exact
-              ecliptic positions, and aspect lines color-coded by type.
-            </p>
+            <h3 className="fbc-h3">Stelliums, nodes, and the parts nobody teaches you</h3>
+            <p className="fbc-p">A <strong style={{ color:"#e8e4f0" }}>stellium</strong> is three or more planets in the same sign or house. When you have one, that area of your chart dominates you. A 5th house stellium makes creativity and romance the organising principle of your whole life. A Capricorn stellium makes ambition and structure the water you swim in, whether you enjoy it or not. Stelliums are also why people sometimes read their <Link href="/zodiac-signs">Sun sign description</Link> and feel nothing — a Gemini Sun with four planets in Cancer is functionally a Cancer with a Gemini job title.</p>
+            <p className="fbc-p">The <strong style={{ color:"#e8e4f0" }}>North Node and South Node</strong> aren&apos;t planets — they&apos;re the points where the Moon&apos;s orbit crosses the Sun&apos;s apparent path, read as a directional axis. The South Node describes what comes easily to you — patterns so familiar they&apos;re almost automatic. The North Node describes the direction that feels awkward, unnatural and slightly terrifying, and which is where growth actually lives. Most people spend their twenties living entirely at their South Node and wondering why nothing feels meaningful.</p>
           </div>
+
+          {/* Block: Without birth time */}
+          <div className="fbc-block">
+            <h2 className="fbc-h2">How do I read my birth chart <em>without a birth time?</em></h2>
+            <div className="fbc-tldr">
+              <span className="fbc-tldr-l">Short answer</span>
+              <p className="fbc-tldr-t">You&apos;re not locked out — you&apos;re working with a partial chart. Your Sun, Mercury, Venus, Mars and the outer planets stay accurate. Your Rising sign, all house placements, the Midheaven, and sometimes your Moon become unreliable or impossible. Run it at noon and know which parts to trust.</p>
+            </div>
+            <p className="fbc-p"><strong style={{ color:"#e8e4f0" }}>Still accurate without a birth time:</strong></p>
+            <ul className="fbc-list">
+              <li>Your Sun sign — always.</li>
+              <li>Mercury, Venus, Mars, Jupiter, Saturn, Uranus, Neptune and Pluto by sign. These move slowly enough that a 24-hour window rarely changes anything.</li>
+              <li>Most aspects between the slower planets.</li>
+            </ul>
+            <p className="fbc-p"><strong style={{ color:"#e8e4f0" }}>Unreliable or impossible without a birth time:</strong></p>
+            <ul className="fbc-list">
+              <li>Your <Link href="/rising-sign-calculator">Rising sign</Link>. It changes roughly every two hours, so an unknown time means twelve possible answers.</li>
+              <li>All twelve house placements — because the houses are built from the Ascendant.</li>
+              <li>The Midheaven and IC.</li>
+              <li>Your <Link href="/moon-sign-calculator">Moon sign</Link> <em>if</em> the Moon changed signs on your birth date. The Moon moves through a sign in about 2.5 days, so roughly one birthday in three falls near a boundary.</li>
+            </ul>
+            <h3 className="fbc-h3">How to find your birth time</h3>
+            <ol className="fbc-list">
+              <li><strong>Your birth certificate.</strong> In the US, most states record it — but note that the <em>short-form</em> certificate often omits it while the <em>long-form</em> includes it. Request the long form.</li>
+              <li><strong>Your mother, or anyone who was there.</strong> &ldquo;Before or after lunch&rdquo; narrows twelve possible Rising signs down to about four.</li>
+              <li><strong>Hospital records.</strong> In the UK, Ireland, Australia, New Zealand and most of the EU, birth time isn&apos;t printed on the standard certificate — but the hospital&apos;s maternity register usually holds it, and records departments will search on request.</li>
+              <li><strong>Baby books, birth announcements, newspaper listings.</strong> More reliable than people expect.</li>
+            </ol>
+            <p className="fbc-p">If you get nowhere, run your chart with a noon birth time. You&apos;ll get everything except your Rising sign and houses, and you&apos;ll know which planets to trust. Some astrologers offer <strong style={{ color:"#e8e4f0" }}>birth time rectification</strong>, which works backwards from known life events to estimate a time — it&apos;s interpretive rather than astronomical, so treat the output as a strong hypothesis rather than a fact.</p>
+          </div>
+
+          {/* Block: Which house system */}
+          <div className="fbc-block">
+            <h2 className="fbc-h2">Which house system do we use, <em>and why might your chart look different elsewhere?</em></h2>
+            <div className="fbc-tldr">
+              <span className="fbc-tldr-l">Short answer</span>
+              <p className="fbc-tldr-t">BluntChart uses Equal House from the Ascendant. Astro-Seek, Cafe Astrology and Astrodienst default to Placidus. Planet positions are identical everywhere to the arc-second — it&apos;s the house <em>cusps</em> that differ, which usually means one or two planets landing in an adjacent house. No system has been demonstrated to be more correct than another.</p>
+            </div>
+            <p className="fbc-p">If you&apos;ve generated a chart on another site and the house placements don&apos;t match ours, you haven&apos;t found an error. You&apos;ve found a house system disagreement, and it&apos;s the most common source of confusion in beginner astrology.</p>
+            <p className="fbc-p">The planets&apos; positions are astronomy — they&apos;re identical everywhere. The <strong style={{ color:"#e8e4f0" }}>houses</strong> are a convention, and astrologers have argued about the right convention for two thousand years.</p>
+            <ul className="fbc-list">
+              <li><strong>Placidus</strong> divides the houses by time. It&apos;s the default on most Western sites and apps. Produces houses of very unequal size and breaks down above ~66° latitude.</li>
+              <li><strong>Whole Sign</strong> gives each house one entire zodiac sign, starting with your Rising sign as the 1st house. Oldest system, standard in Hellenistic astrology, revived in the last decade.</li>
+              <li><strong>Equal House</strong> starts at the Ascendant degree and cuts twelve equal 30° segments from there. Mathematically clean, works at any latitude.</li>
+              <li><strong>Koch, Campanus, Regiomontanus</strong> — each has advocates.</li>
+            </ul>
+            <p className="fbc-p">The honest position: no house system has been demonstrated to be more correct than another, because none of them are testable. Astrologers pick one and stay consistent. If your Placidus chart from another site feels more accurate to you, that&apos;s a legitimate reason to prefer it, and we&apos;d rather tell you that than pretend the question is settled.</p>
+          </div>
+
+          {/* Block: birth chart vs natal vs horoscope */}
+          <div className="fbc-block">
+            <h2 className="fbc-h2">Birth chart, natal chart, horoscope — <em>what&apos;s actually different?</em></h2>
+            <div className="fbc-tldr">
+              <span className="fbc-tldr-l">Short answer</span>
+              <p className="fbc-tldr-t">Birth chart and natal chart are the same thing — two names, one object. A horoscope is not the same thing: it&apos;s a forecast made by comparing current planetary positions against your birth chart. A daily horoscope in a magazine uses only your Sun sign, which is why it feels either uncannily accurate or completely wrong.</p>
+            </div>
+            <p className="fbc-p">These get used interchangeably and it causes real confusion.</p>
+            <p className="fbc-p"><strong style={{ color:"#e8e4f0" }}>Birth chart and natal chart are the same thing.</strong> &ldquo;Natal&rdquo; is the more technical term; &ldquo;birth chart&rdquo; is the more common one. There&apos;s no difference in the calculation, the accuracy or the meaning. If a site charges more for a &ldquo;natal chart&rdquo; than a &ldquo;birth chart,&rdquo; that&apos;s pricing, not astronomy. See the <Link href="/natal-chart">full natal chart guide</Link>.</p>
+            <p className="fbc-p"><strong style={{ color:"#e8e4f0" }}>A horoscope is not the same thing.</strong> Your birth chart is fixed — one calculation, done once, never changes. A horoscope is a forecast made by comparing <em>current</em> planetary positions against your birth chart. The daily horoscope in a magazine uses only your Sun sign, which means it&apos;s written for roughly one twelfth of the human population at once.</p>
+            <p className="fbc-p"><strong style={{ color:"#e8e4f0" }}>A transit chart</strong> shows where the planets are right now, layered over your birth chart. That&apos;s what a genuine forecast is built from.</p>
+          </div>
+
+          {/* Block: How accurate */}
+          <div className="fbc-block">
+            <h2 className="fbc-h2">How accurate is a <em>birth chart reading?</em></h2>
+            <div className="fbc-tldr">
+              <span className="fbc-tldr-l">Short answer</span>
+              <p className="fbc-tldr-t">The astronomy is exact and independently verifiable. The interpretation is a framework, not a measurement. Anyone claiming certainty about interpretation is overselling. A good reading is one specific enough to be uncomfortable rather than vague enough to be universally agreeable — which is the entire reason BluntChart exists.</p>
+            </div>
+            <p className="fbc-p">Two separate questions get bundled together here, and separating them is the honest answer.</p>
+            <p className="fbc-p"><strong style={{ color:"#e8e4f0" }}>Is the calculation accurate?</strong> Yes, and this is verifiable. BluntChart uses a high-precision astronomical ephemeris. Planetary longitudes are accurate to arc-seconds and match the Swiss Ephemeris. You can check any placement against an independent source and it will agree.</p>
+            <p className="fbc-p"><strong style={{ color:"#e8e4f0" }}>Is the interpretation accurate?</strong> That&apos;s a different kind of claim, and anyone selling you certainty here is selling you something. Astrology has no accepted mechanism and no controlled study has demonstrated predictive validity. What it demonstrably <em>is</em> good at is providing structured, specific language for patterns in personality and behaviour — a vocabulary for things people often struggle to articulate.</p>
+            <p className="fbc-p">Our position is straightforward: the astronomy is exact, the interpretation is a framework, and a good reading is one that describes you specifically enough to be uncomfortable rather than vaguely enough to be universally agreeable. That second part is where most astrology fails, and it&apos;s the entire reason BluntChart exists.</p>
+          </div>
+
+          {/* Block: AI + astrology */}
+          <div className="fbc-block">
+            <h2 className="fbc-h2">Can AI read a <em>birth chart?</em></h2>
+            <div className="fbc-tldr">
+              <span className="fbc-tldr-l">Short answer</span>
+              <p className="fbc-tldr-t">Increasingly, yes. Calculating a chart has never required AI — that&apos;s deterministic astronomy. What AI changes is the interpretation layer: a well-built AI reading works from the whole chart at once and can synthesize interactions between placements that template reports never could. The catch: the calculation must come from a real ephemeris, not from the language model.</p>
+            </div>
+            <p className="fbc-p">A traditional automated report works by looking up pre-written paragraphs: Venus in Scorpio returns paragraph 47, Moon in the 8th returns paragraph 112, and they&apos;re stapled together. The result reads disjointed because it <em>is</em> disjointed — nothing in it accounts for how those two placements interact.</p>
+            <p className="fbc-p">A well-built AI reading works from the whole chart at once. It can register that your Venus in Scorpio sits in the 8th house, squares Saturn, and is ruled by a Pluto that&apos;s conjunct your Ascendant — and describe what that combination does to how you attach to people. That synthesis is what a human astrologer does and what template reports have never managed.</p>
+            <p className="fbc-p">The limitation is equally real. AI will not tell you it doesn&apos;t know. Ask a general-purpose chatbot to read your chart and it will frequently calculate the placements incorrectly and then interpret the wrong chart with total confidence. The calculation has to come from a real ephemeris, not from the language model.</p>
+            <p className="fbc-p">That&apos;s how BluntChart is built: exact astronomical calculation first, then interpretation over the complete chart. And it&apos;s written to say the thing a paid astrologer would soften. <Link href="/#try-it">Your chart is above — what it actually means is a different question →</Link></p>
+          </div>
+
         </div>
       </section>
 

@@ -196,7 +196,8 @@ export default function ZodiacSignsPage() {
         *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
         :root{--font-display:'Playfair Display',Georgia,serif;--font-body:'DM Sans',system-ui,sans-serif;--bg:#09090f;--card:#0e0e1a;--border:rgba(255,255,255,0.08);--white:#e8e4f0;--dim:rgba(232,228,240,0.55);--gold:#F0B84A;--gold-dim:rgba(240,184,74,0.18);--purple:#6b2fd4;--rose:#d4537e;--teal:#5dcaa5}
         html{scroll-behavior:smooth}body{background:var(--bg);color:var(--white);font-family:var(--font-body);-webkit-font-smoothing:antialiased;overflow-x:hidden}
-        .zs-c{max-width:1100px;margin:0 auto;padding:0 24px}
+        .zs-c{max-width:1280px;margin:0 auto;padding:0 40px}
+        @media(max-width:768px){.zs-c{padding:0 20px}}
         .zs-nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:18px 0;transition:all .3s}
         .zs-nav.on{background:rgba(9,9,15,.92);border-bottom:1px solid var(--border);backdrop-filter:blur(16px)}
         .zs-logo{font-family:var(--font-display);font-size:1.3rem;font-weight:700;text-decoration:none;display:flex;align-items:center;gap:10px}
@@ -347,20 +348,167 @@ export default function ZodiacSignsPage() {
         </div>
       </section>
 
-      {/* SEO CONTENT */}
+      {/* SEO LONG-FORM GUIDE */}
       <section style={{ padding:"80px 0" }}>
-        <div className="zs-c" style={{ maxWidth:900 }}>
-          <h2 style={{ fontFamily:"var(--font-display)", fontSize:"clamp(1.6rem,3.5vw,2.4rem)", fontWeight:800, lineHeight:1.1, marginBottom:24 }}>
-            Understanding the <em style={{ fontStyle:"italic", background:"linear-gradient(135deg,#f0b84a,#d4537e)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", backgroundClip:"text" }}>zodiac</em>
-          </h2>
-          <div style={{ fontSize:15, color:"rgba(232,228,240,0.6)", lineHeight:1.78 }}>
-            <h3 style={{ fontFamily:"var(--font-display)", fontSize:20, fontWeight:700, color:"#e8e4f0", marginBottom:12 }}>What are the zodiac signs?</h3>
-            <p style={{ marginBottom:20 }}>The zodiac is a belt of the sky divided into twelve equal sections of 30 degrees each. In Western astrology, each section is named after a constellation and carries a distinct set of personality traits, emotional tendencies, and behavioral patterns. Your zodiac sign — also called your Sun sign or star sign — is determined by the Sun&apos;s position at the time of your birth. It represents your core identity: the fundamental energy you express, the traits you develop over time, and the qualities that define your conscious self.</p>
-            <h3 style={{ fontFamily:"var(--font-display)", fontSize:20, fontWeight:700, color:"#e8e4f0", marginBottom:12 }}>How do elements and qualities work?</h3>
-            <p style={{ marginBottom:20 }}>Each sign belongs to one of four elements (Fire, Earth, Air, Water) and one of three qualities (Cardinal, Fixed, Mutable). Elements describe the fundamental nature of the sign&apos;s energy. Qualities describe how that energy operates. Cardinal signs (Aries, Cancer, Libra, Capricorn) initiate and lead. Fixed signs (Taurus, Leo, Scorpio, Aquarius) sustain and persist. Mutable signs (Gemini, Virgo, Sagittarius, Pisces) adapt and transform. Understanding your sign&apos;s element-quality combination reveals why certain patterns repeat in your life.</p>
-            <h3 style={{ fontFamily:"var(--font-display)", fontSize:20, fontWeight:700, color:"#e8e4f0", marginBottom:12 }}>Is your Sun sign the full picture?</h3>
-            <p>No. Your Sun sign is the most widely known placement, but it&apos;s one of dozens in your complete birth chart. Your Moon sign governs your emotional nature. Your Rising sign (Ascendant) shapes how others perceive you. Venus reveals your love style. Mars drives your ambition and conflict approach. Saturn highlights your deepest challenges. A full natal chart reading analyzes all of these placements together — which is why two people with the same Sun sign can have completely different personalities. If you want the full picture, get your <Link href="/free-birth-chart" style={{ color:"#F0B84A", textDecoration:"underline" }}>free birth chart</Link> or try a <Link href="/#try-it" style={{ color:"#F0B84A", textDecoration:"underline" }}>BluntChart full reading</Link>.</p>
+        <div className="zs-c" style={{ maxWidth:1080 }}>
+
+          <style>{`
+            .zs-h2{font-family:var(--font-display);font-size:clamp(1.5rem,3.2vw,2rem);font-weight:800;line-height:1.15;letter-spacing:-0.01em;color:#e8e4f0;margin:0 0 14px}
+            .zs-h2 em{font-style:italic;background:linear-gradient(135deg,#f0b84a,#d4537e);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+            .zs-h3{font-family:var(--font-display);font-size:18px;font-weight:700;color:#e8e4f0;margin:24px 0 10px}
+            .zs-p{font-size:15px;color:rgba(232,228,240,0.65);line-height:1.78;margin-bottom:16px}
+            .zs-p a{color:#F0B84A;text-decoration:underline;text-decoration-color:rgba(240,184,74,0.35);text-underline-offset:3px}
+            .zs-p a:hover{text-decoration-color:#F0B84A}
+            .zs-tldr{background:rgba(240,184,74,0.06);border-left:3px solid #F0B84A;border-radius:0 10px 10px 0;padding:16px 20px;margin:0 0 24px}
+            .zs-tldr-l{font-size:10px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:#F0B84A;margin-bottom:6px;display:block}
+            .zs-tldr-t{font-size:15px;color:#e8e4f0;line-height:1.65}
+            .zs-block{margin-bottom:56px}
+            .zs-list{margin:0 0 16px 0;padding-left:22px}
+            .zs-list li{font-size:15px;color:rgba(232,228,240,0.65);line-height:1.7;margin-bottom:8px}
+            .zs-list li strong{color:#e8e4f0;font-weight:600}
+            .zs-table-wrap{overflow-x:auto;margin:8px 0 24px;-webkit-overflow-scrolling:touch}
+            .zs-table{width:100%;border-collapse:collapse;font-size:14px;min-width:460px}
+            .zs-table th,.zs-table td{padding:10px 14px;text-align:left;border-bottom:0.5px solid rgba(255,255,255,0.06);color:rgba(232,228,240,0.7);line-height:1.5}
+            .zs-table th{color:#F0B84A;font-weight:700;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;background:rgba(255,255,255,0.02)}
+            .zs-table td:first-child{color:#e8e4f0;font-weight:600;white-space:nowrap}
+          `}</style>
+
+          {/* Zodiac dates & cusp */}
+          <div className="zs-block">
+            <h2 className="zs-h2">Zodiac dates, <em>and why they shift by a day</em></h2>
+            <div className="zs-tldr">
+              <span className="zs-tldr-l">Short answer</span>
+              <p className="zs-tldr-t">The dates for each zodiac sign shift by up to about 18 hours from year to year because the Sun&apos;s entry into each sign is an astronomical event, not a calendar convention. If you were born on a cusp date (roughly the 19th–23rd of any month), your birth date alone isn&apos;t enough — you need year and possibly time.</p>
+            </div>
+            <p className="zs-p">The dates listed above are the standard ranges, and they&apos;re accurate for most years. But you&apos;ll find sites listing March 20 for the start of Aries and others listing March 21, and neither is a typo.</p>
+            <p className="zs-p">The Sun&apos;s entry into each sign is an astronomical event. Aries begins at the exact moment of the vernal equinox — when the Sun crosses the celestial equator going north. That moment drifts by up to about 18 hours from year to year, because the tropical year is 365.2422 days long and our calendar rounds. The leap year cycle pulls it back every four years.</p>
+            <p className="zs-p"><strong style={{ color:"#e8e4f0" }}>If you were born on a cusp date</strong> — roughly the 19th to the 23rd of any month — your birth <em>date</em> is not enough to determine your Sun sign. You need your birth year and, if it&apos;s close, your birth time. The calculator on our <Link href="/free-birth-chart">free birth chart page</Link> resolves it exactly.</p>
+            <p className="zs-p"><strong style={{ color:"#e8e4f0" }}>And to be clear: there is no such thing as being &ldquo;on the cusp&rdquo; of two signs in the sense of being both.</strong> The Sun is in one sign or the other at any given instant. It doesn&apos;t blend. What&apos;s true is that people born in the first or last couple of degrees of a sign often have several other planets in the neighbouring sign — Mercury and Venus never stray far from the Sun — which produces a genuinely mixed chart. That&apos;s a real effect with a real explanation, and it&apos;s not cusp magic.</p>
           </div>
+
+          {/* Modalities */}
+          <div className="zs-block">
+            <h2 className="zs-h2">What are the <em>zodiac modalities?</em></h2>
+            <div className="zs-tldr">
+              <span className="zs-tldr-l">Short answer</span>
+              <p className="zs-tldr-t">Every sign combines one of four elements (Fire, Earth, Air, Water) with one of three modalities (Cardinal, Fixed, Mutable). Cardinal signs initiate. Fixed signs sustain and hold. Mutable signs adapt and translate. Modality often explains behaviour better than element does — a Cardinal Water sign (Cancer) and a Fixed Water sign (Scorpio) are both deeply emotional, but Cancer acts on emotion and Scorpio holds it.</p>
+            </div>
+            <p className="zs-p"><strong style={{ color:"#e8e4f0" }}>Cardinal — Aries, Cancer, Libra, Capricorn.</strong> These four begin the seasons. Cardinal signs initiate. They start things, take charge, and create momentum from nothing. Their weakness is follow-through: starting is the part they&apos;re good at.</p>
+            <p className="zs-p"><strong style={{ color:"#e8e4f0" }}>Fixed — Taurus, Leo, Scorpio, Aquarius.</strong> These sit at the height of each season. Fixed signs sustain, hold, and refuse to move. They&apos;re the most reliable and the most stubborn signs in the zodiac, and they will defend a position long after they&apos;ve stopped believing in it.</p>
+            <p className="zs-p"><strong style={{ color:"#e8e4f0" }}>Mutable — Gemini, Virgo, Sagittarius, Pisces.</strong> These end each season and hand over to the next. Mutable signs adapt, translate, and dissolve boundaries. They&apos;re the most flexible signs and the least anchored — they can become whatever the situation requires, which sometimes means they don&apos;t know what they are.</p>
+            <div className="zs-table-wrap">
+              <table className="zs-table">
+                <thead><tr><th></th><th>Fire</th><th>Earth</th><th>Air</th><th>Water</th></tr></thead>
+                <tbody>
+                  <tr><td>Cardinal</td><td>Aries</td><td>Capricorn</td><td>Libra</td><td>Cancer</td></tr>
+                  <tr><td>Fixed</td><td>Leo</td><td>Taurus</td><td>Aquarius</td><td>Scorpio</td></tr>
+                  <tr><td>Mutable</td><td>Sagittarius</td><td>Virgo</td><td>Gemini</td><td>Pisces</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* Polarity */}
+          <div className="zs-block">
+            <h2 className="zs-h2">What is <em>zodiac sign polarity?</em></h2>
+            <div className="zs-tldr">
+              <span className="zs-tldr-l">Short answer</span>
+              <p className="zs-tldr-t">Each sign is either positive/masculine/yang (Fire and Air) or negative/feminine/yin (Earth and Water). These alternate around the wheel. The terminology is ancient and has nothing to do with gender — it describes the direction of energy: outward-projecting versus inward-receiving.</p>
+            </div>
+            <p className="zs-p">A chart heavily weighted toward one polarity produces a recognisable pattern. Heavy positive polarity: someone who processes by expressing, who thinks out loud, whose first instinct is to act. Heavy negative polarity: someone who processes internally, who needs to sit with things, whose first instinct is to absorb and assess.</p>
+          </div>
+
+          {/* Ruling planets */}
+          <div className="zs-block">
+            <h2 className="zs-h2">What is the <em>ruling planet of each zodiac sign?</em></h2>
+            <div className="zs-tldr">
+              <span className="zs-tldr-l">Short answer</span>
+              <p className="zs-tldr-t">Each sign is governed by a planet, and the planet&apos;s nature explains the sign&apos;s behaviour more directly than any adjective list. Modern astrology uses Pluto for Scorpio, Uranus for Aquarius and Neptune for Pisces; traditional astrology uses Mars, Saturn and Jupiter respectively — and the traditional readings are often sharper.</p>
+            </div>
+            <div className="zs-table-wrap">
+              <table className="zs-table">
+                <thead><tr><th>Sign</th><th>Modern ruler</th><th>Traditional</th><th>Meaning</th></tr></thead>
+                <tbody>
+                  <tr><td>Aries</td><td>Mars</td><td>Mars</td><td>Drive, aggression, initiative</td></tr>
+                  <tr><td>Taurus</td><td>Venus</td><td>Venus</td><td>Pleasure, value, physical comfort</td></tr>
+                  <tr><td>Gemini</td><td>Mercury</td><td>Mercury</td><td>Information, exchange, speed</td></tr>
+                  <tr><td>Cancer</td><td>Moon</td><td>Moon</td><td>Emotion, memory, protection</td></tr>
+                  <tr><td>Leo</td><td>Sun</td><td>Sun</td><td>Identity, radiance, vitality</td></tr>
+                  <tr><td>Virgo</td><td>Mercury</td><td>Mercury</td><td>Analysis, discrimination, refinement</td></tr>
+                  <tr><td>Libra</td><td>Venus</td><td>Venus</td><td>Harmony, aesthetics, relation</td></tr>
+                  <tr><td>Scorpio</td><td>Pluto</td><td>Mars</td><td>Depth, power, transformation</td></tr>
+                  <tr><td>Sagittarius</td><td>Jupiter</td><td>Jupiter</td><td>Expansion, meaning, faith</td></tr>
+                  <tr><td>Capricorn</td><td>Saturn</td><td>Saturn</td><td>Structure, time, consequence</td></tr>
+                  <tr><td>Aquarius</td><td>Uranus</td><td>Saturn</td><td>Disruption, systems, detachment</td></tr>
+                  <tr><td>Pisces</td><td>Neptune</td><td>Jupiter</td><td>Dissolution, imagination, compassion</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p className="zs-p">Mercury and Venus each rule two signs, expressed through different elements — Mercury as Air (Gemini: ideas moving between people) and as Earth (Virgo: ideas applied to matter). Same planet, opposite output. The dual rulership of Scorpio, Aquarius and Pisces reflects a genuine split in modern astrology — Aquarius as Saturn-ruled explains its coldness and rigidity far better than Uranus does.</p>
+          </div>
+
+          {/* Compatibility */}
+          <div className="zs-block">
+            <h2 className="zs-h2">Zodiac sign compatibility, <em>honestly</em></h2>
+            <div className="zs-tldr">
+              <span className="zs-tldr-l">Short answer</span>
+              <p className="zs-tldr-t">The compatibility charts everywhere reduce to a rule: same element = harmony, complementary element = attraction, square or opposite = friction. It&apos;s a very crude instrument — Sun sign compatibility compares one placement in each chart out of dozens. Moon sign compatibility is more predictive of long-term relationships; Venus and Mars matter more for romantic chemistry.</p>
+            </div>
+            <ul className="zs-list">
+              <li><strong>Fire + Fire</strong> — high energy, high ego, mutual understanding, competitive.</li>
+              <li><strong>Fire + Air</strong> — Air feeds Fire. Stimulating, fast, sometimes exhausting.</li>
+              <li><strong>Earth + Earth</strong> — stable, practical, quietly deep, risk of stagnation.</li>
+              <li><strong>Earth + Water</strong> — Water nourishes Earth. Grounded emotional security.</li>
+              <li><strong>Air + Air</strong> — endless conversation, mental rapport, emotional avoidance.</li>
+              <li><strong>Water + Water</strong> — profound intimacy, no need for explanation, no exit from the mood.</li>
+              <li><strong>Fire + Water</strong> — steam. Intense, and one of them is always getting hurt.</li>
+              <li><strong>Fire + Earth</strong> — Earth smothers Fire, Fire scorches Earth. Workable, effortful.</li>
+              <li><strong>Air + Water</strong> — Air rationalises, Water feels. Chronic mutual mistranslation.</li>
+              <li><strong>Air + Earth</strong> — abstraction meets pragmatism. Respectful, rarely passionate.</li>
+            </ul>
+            <p className="zs-p"><strong style={{ color:"#e8e4f0" }}>And now the honest part: this is a very crude instrument.</strong> Sun sign compatibility compares one placement in each chart against one placement in the other, out of dozens available. It ignores the <Link href="/moon-sign-calculator">Moon</Link>, which is far more predictive of whether a relationship survives. It ignores Venus and Mars, which govern romantic attraction and conflict style directly. It ignores the <Link href="/rising-sign-calculator">Ascendant</Link>, which governs whether there&apos;s chemistry in the first place. Two people with &ldquo;incompatible&rdquo; Sun signs and harmonious Moons and Venuses will do fine. Use the element grid as a rough first pass — then read the actual charts.</p>
+          </div>
+
+          {/* Which sign gets angry etc */}
+          <div className="zs-block">
+            <h2 className="zs-h2">Which zodiac sign <em>gets angry easily?</em> And other honest answers</h2>
+            <div className="zs-tldr">
+              <span className="zs-tldr-l">Short answer</span>
+              <p className="zs-tldr-t">Fastest to anger: Aries (arrives at full volume, gone in twenty minutes). Stays angry longest: Scorpio and Taurus. There isn&apos;t a &ldquo;fakest&rdquo; sign — but Libra and Pisces are most likely to tell you what you want to hear, for different reasons. No sign is unloyal. A sign is not a moral category.</p>
+            </div>
+            <p className="zs-p"><strong style={{ color:"#e8e4f0" }}>Which sign gets angry fastest?</strong> Aries. Ruled by Mars, cardinal fire — anger is the first response, arrives at full volume, and is completely gone twenty minutes later. Aries anger is loud and short. But &ldquo;fastest&rdquo; isn&apos;t the interesting question. <strong style={{ color:"#e8e4f0" }}>Which sign stays angry longest? Scorpio and Taurus</strong> — the fixed signs. Scorpio anger goes underground and waits. Taurus anger takes weeks to arrive and then simply never leaves.</p>
+            <p className="zs-p"><strong style={{ color:"#e8e4f0" }}>Which is the &ldquo;fakest&rdquo; zodiac sign?</strong> There isn&apos;t one, and this question is really asking something else. What&apos;s true: Libra and Pisces are the signs most likely to tell you what you want to hear — Libra because conflict is genuinely painful to it, Pisces because it absorbs the emotional shape of whoever it&apos;s with. Gemini gets accused of fakeness constantly for a different reason: it&apos;s genuinely different with different people, not out of deceit but because it&apos;s mutable Air and adapts to the room by nature. None of that is fakeness. It&apos;s conflict-avoidance, empathy, and adaptability respectively.</p>
+            <p className="zs-p"><strong style={{ color:"#e8e4f0" }}>Which sign is most unloyal?</strong> No sign is unloyal. Sagittarius and Aquarius are the signs most likely to leave, which is different — both need autonomy at a level that reads as detachment to signs that don&apos;t. Fixed signs — Taurus, Leo, Scorpio, Aquarius — are the ones most likely to stay far too long in something that has clearly ended, which causes at least as much damage.</p>
+            <p className="zs-p"><strong style={{ color:"#e8e4f0" }}>Which is the luckiest?</strong> Sagittarius, by tradition, as the sign ruled by Jupiter — the classical greater benefic. Take it with the appropriate scepticism: luck isn&apos;t distributed by birth month, and a well-placed Jupiter anywhere in a chart does more than a Sagittarius Sun with a badly-placed one.</p>
+            <p className="zs-p"><strong style={{ color:"#e8e4f0" }}>Which is rarest?</strong> Births aren&apos;t evenly distributed across the year. In the US and much of Europe, Virgo and Libra are relatively common; February births are the fewest, making Aquarius and Pisces relatively uncommon. In the southern hemisphere the pattern differs. Any article giving a single global answer isn&apos;t using data.</p>
+          </div>
+
+          {/* Ophiuchus */}
+          <div className="zs-block">
+            <h2 className="zs-h2">Did NASA <em>change the zodiac signs?</em> The Ophiuchus story, settled</h2>
+            <div className="zs-tldr">
+              <span className="zs-tldr-l">Short answer</span>
+              <p className="zs-tldr-t">No. Ophiuchus is a real constellation and the Sun does pass in front of it for about 18 days a year — this has been true for thousands of years, and the Babylonians knew about it. The confusion is between constellations (irregular patterns of stars) and signs (twelve equal 30-degree divisions of a circle used as a coordinate system). Astrology has used twelve equal divisions for 2,500 years and was never anchored to which constellation the Sun is visually in front of.</p>
+            </div>
+            <p className="zs-p">Every couple of years a story goes viral claiming astronomers have discovered a 13th zodiac sign, that all the dates have shifted, and that you&apos;re not the sign you thought you were. It reliably causes a small internet panic. Here is what&apos;s actually going on.</p>
+            <p className="zs-p"><strong style={{ color:"#e8e4f0" }}>Ophiuchus is a real constellation, and this is not new.</strong> The Sun does pass in front of it for about eighteen days each year, roughly November 29 to December 18. This has been true for thousands of years. The Babylonians knew about it. Nobody discovered anything.</p>
+            <p className="zs-p"><strong style={{ color:"#e8e4f0" }}>The confusion is between constellations and signs, which are two different things.</strong></p>
+            <p className="zs-p"><em>Constellations</em> are irregular patterns of stars. They&apos;re different sizes, different shapes, and they overlap messily. Virgo sprawls across about 44 degrees of sky; Scorpius covers barely 7. They&apos;re a map of what&apos;s visible.</p>
+            <p className="zs-p"><em>Signs</em> are twelve equal 30-degree divisions of a circle. They&apos;re a coordinate system, not a star map. The zodiac was standardised into twelve equal segments by the Babylonians around 500 BCE precisely <em>because</em> the constellations are uneven and unusable as a measurement system. Astrology has used the twelve equal divisions for two and a half thousand years. It has never been based on which star pattern the Sun happens to be visually in front of.</p>
+            <p className="zs-p"><strong style={{ color:"#e8e4f0" }}>There&apos;s a second layer to it.</strong> Western astrology uses the tropical zodiac, which is anchored to the seasons rather than the stars. 0° Aries is defined as the moment of the spring equinox. Because the Earth&apos;s axis wobbles slowly (precession, a roughly 26,000-year cycle), the seasonal anchor and the visible constellations have drifted apart by about 24 degrees over the past two millennia. This is well documented, entirely expected, and has no effect whatsoever on a system that was never anchored to the constellations in the first place.</p>
+            <p className="zs-p"><strong style={{ color:"#e8e4f0" }}>So: your sign hasn&apos;t changed, the dates haven&apos;t moved, and NASA hasn&apos;t updated anything.</strong> NASA has in fact published an explainer pointing out that they teach astronomy, not astrology. If you want a genuinely more accurate picture of yourself than your Sun sign gives you, the answer isn&apos;t a thirteenth sign. It&apos;s the other nine placements in your <Link href="/free-birth-chart">chart</Link> that nobody ever told you about.</p>
+          </div>
+
+          {/* Sun sign not the full picture */}
+          <div className="zs-block">
+            <h2 className="zs-h2">Is your <em>Sun sign the full picture?</em></h2>
+            <div className="zs-tldr">
+              <span className="zs-tldr-l">Short answer</span>
+              <p className="zs-tldr-t">No. Your Sun sign — also called your star sign in the UK, Ireland and Australia — is the most widely known placement, but it&apos;s one of dozens in your complete birth chart. Your Moon sign governs your emotional nature; your Rising sign shapes how others perceive you; Venus reveals your love style; Mars drives your ambition and conflict approach. A full natal chart reading analyses all of these together.</p>
+            </div>
+            <p className="zs-p">Two people with the same Sun sign can have completely different personalities. If you want the full picture, get your <Link href="/free-birth-chart">free birth chart</Link>, find your <Link href="/big-three-calculator">Big Three</Link>, or try a <Link href="/#try-it">BluntChart full reading</Link> — a written interpretation of your entire natal chart in plain language.</p>
+          </div>
+
         </div>
       </section>
 
@@ -446,13 +594,16 @@ export default function ZodiacSignsPage() {
             Zodiac signs <em style={{ fontStyle:"italic", background:"linear-gradient(135deg,#f0b84a,#d4537e)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", backgroundClip:"text" }}>FAQ</em>
           </h2>
           {[
-            { q:"What are the 12 zodiac signs in order?", a:"The 12 zodiac signs in order are: Aries (March 21 – April 19), Taurus (April 20 – May 20), Gemini (May 21 – June 20), Cancer (June 21 – July 22), Leo (July 23 – August 22), Virgo (August 23 – September 22), Libra (September 23 – October 22), Scorpio (October 23 – November 21), Sagittarius (November 22 – December 21), Capricorn (December 22 – January 19), Aquarius (January 20 – February 18), and Pisces (February 19 – March 20)." },
-            { q:"What zodiac sign am I?", a:"Your zodiac sign (Sun sign) is determined by your birth date. Find your birthday in the date ranges above to identify your sign. For example, if you were born on April 5, you're an Aries. If you were born on November 15, you're a Scorpio. For a complete astrological profile including your Moon and Rising signs, use our free birth chart calculator." },
-            { q:"What are the zodiac elements?", a:"The four zodiac elements are Fire (Aries, Leo, Sagittarius), Earth (Taurus, Virgo, Capricorn), Air (Gemini, Libra, Aquarius), and Water (Cancer, Scorpio, Pisces). Fire signs are passionate and energetic. Earth signs are practical and grounded. Air signs are intellectual and communicative. Water signs are emotional and intuitive. Your element shapes the fundamental energy of your personality." },
-            { q:"Which zodiac signs are most compatible?", a:"Generally, signs of the same element get along well: Fire with Fire, Earth with Earth, and so on. Complementary elements also work: Fire and Air fuel each other, while Earth and Water ground each other. However, true compatibility depends on your full birth chart — not just Sun signs. Moon sign compatibility often matters more for emotional connection, while Venus signs predict romantic chemistry." },
-            { q:"Why don't I relate to my zodiac sign?", a:"If your Sun sign description doesn't fit, it's likely because other placements in your birth chart are more dominant. A Libra Sun with an Aries Moon and Scorpio Rising will act nothing like a typical Libra description. Your Moon sign (emotions), Rising sign (outward personality), and other planets all shape who you are. A full birth chart reading reveals the complete picture." },
-            { q:"What is the difference between Sun sign and star sign?", a:"They're the same thing. 'Sun sign' is the astrological term — it refers to which zodiac sign the Sun was in when you were born. 'Star sign' is the popular/colloquial term for the same placement. Both refer to the sign determined by your birth date, which represents your core identity and conscious self." },
-            { q:"Can my zodiac sign change?", a:"No. Your zodiac sign is determined by the Sun's position at your exact moment of birth and it never changes. However, you may see slightly different date ranges on different websites because the Sun's transition between signs shifts by a day or two each year. If you were born on a 'cusp' date (the transition day), your exact birth time determines which sign the Sun was actually in." },
+            { q:"What are the 12 zodiac signs in order?", a:"Aries (March 21 – April 19), Taurus (April 20 – May 20), Gemini (May 21 – June 20), Cancer (June 21 – July 22), Leo (July 23 – August 22), Virgo (August 23 – September 22), Libra (September 23 – October 22), Scorpio (October 23 – November 21), Sagittarius (November 22 – December 21), Capricorn (December 22 – January 19), Aquarius (January 20 – February 18), and Pisces (February 19 – March 20). Dates shift by up to a day between years." },
+            { q:"What are the zodiac modalities?", a:"Every sign combines an element with a modality. Cardinal signs (Aries, Cancer, Libra, Capricorn) initiate. Fixed signs (Taurus, Leo, Scorpio, Aquarius) sustain and hold. Mutable signs (Gemini, Virgo, Sagittarius, Pisces) adapt and translate. Modality often explains behaviour better than element — Cardinal Water (Cancer) and Fixed Water (Scorpio) are both deeply emotional, but Cancer acts on emotion and Scorpio holds it." },
+            { q:"What are the ruling planets of each zodiac sign?", a:"Aries: Mars. Taurus: Venus. Gemini and Virgo: Mercury. Cancer: Moon. Leo: Sun. Libra: Venus. Scorpio: Pluto (Mars traditionally). Sagittarius: Jupiter. Capricorn: Saturn. Aquarius: Uranus (Saturn traditionally). Pisces: Neptune (Jupiter traditionally). The planet's nature explains the sign's behaviour more directly than any adjective list." },
+            { q:"Am I born 'on the cusp' of two signs?", a:"No — there is no such thing as being on the cusp in the sense of being both signs. The Sun is in one sign or the other at any given instant, and it doesn't blend. What's true is that people born in the first or last couple of degrees often have several other planets in the neighbouring sign, which produces a genuinely mixed chart. That's not cusp magic." },
+            { q:"Which zodiac signs are most compatible?", a:"Same element = harmony, complementary element = attraction, square or opposite = friction. This is a very crude instrument. Sun sign compatibility compares one placement out of dozens. Moon sign compatibility is more predictive of long-term relationships; Venus and Mars matter more for romantic chemistry. Use the element grid as a rough first pass, then read the actual charts." },
+            { q:"Which zodiac sign gets angry easily?", a:"Aries gets angry fastest — anger arrives at full volume and is gone twenty minutes later. Scorpio and Taurus stay angry the longest — Scorpio's goes underground and waits; Taurus's takes weeks to arrive and never leaves. Cancer's anger comes out sideways as hurt rather than forward as rage, which is harder to resolve." },
+            { q:"Which zodiac sign is the luckiest?", a:"Sagittarius, by tradition — ruled by Jupiter, the classical greater benefic associated with expansion and fortune. Take it with scepticism: luck isn't distributed by birth month, and a well-placed Jupiter anywhere in a chart does more than a Sagittarius Sun with a badly-placed one." },
+            { q:"Did NASA change the zodiac signs? Is there a 13th sign?", a:"No. Ophiuchus is a real constellation the Sun does pass in front of for about 18 days a year, and this has been true for thousands of years — the Babylonians knew. Constellations are irregular star patterns; zodiac signs are twelve equal 30-degree divisions of a circle, a coordinate system. Astrology has used the twelve equal divisions for 2,500 years and was never anchored to which star pattern the Sun is visually in front of." },
+            { q:"Why don't I relate to my zodiac sign?", a:"Your Sun sign is one of dozens of placements in your chart. A Libra Sun with an Aries Moon and Scorpio Rising will act nothing like a typical Libra description. If you have a stellium in another sign, that sign dominates — a Gemini Sun with four planets in Cancer is functionally a Cancer with a Gemini job title." },
+            { q:"What is the difference between Sun sign and star sign?", a:"They're the same thing. 'Sun sign' is the astrological term — the sign the Sun was in when you were born. 'Star sign' is the popular term, dominant in the UK, Ireland and Australia. Both refer to the sign determined by your birth date." },
           ].map((f, i) => (
             <details key={i} style={{ borderBottom:"0.5px solid rgba(255,255,255,0.08)" }}>
               <summary style={{ padding:"20px 0", fontSize:15, fontWeight:600, color:"#e8e4f0", cursor:"pointer", listStyle:"none", display:"flex", alignItems:"center", justifyContent:"space-between" }}>

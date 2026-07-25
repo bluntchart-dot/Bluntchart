@@ -55,13 +55,14 @@ const COMPARISON = [
 
 /* ── FAQ ── */
 const FAQS = [
-  { q: "What are the Big Three in astrology?", a: "The Big Three refers to your Sun sign, Moon sign, and Rising sign — the three most important placements in your birth chart. Your Sun is your core identity (who you are). Your Moon is your emotional nature (how you feel). Your Rising is your outward personality (how the world sees you). Together, they create a far more accurate and personal picture than your Sun sign alone." },
-  { q: "How do I find my Big Three?", a: "You need your birth date, your exact birth time (check your birth certificate), and your birth city. Enter these into the calculator above. Your Sun sign is determined by your birth date. Your Moon sign requires date and time. Your Rising sign requires exact time and location — it changes every 2 hours." },
-  { q: "Why do I relate more to my Rising sign than my Sun sign?", a: "This is extremely common. Your Rising sign governs your day-to-day social behavior — how you interact with strangers, react in new situations, and present yourself. Since most of your daily life engages Rising sign energy, it often feels more 'you' than your Sun sign, which represents your deeper core that only emerges with people you trust." },
-  { q: "Can I find my Big Three without my birth time?", a: "Partially. Your Sun sign only requires your birth date. Your Moon sign is usually accurate with just the date (though it changes signs every 2.5 days, so births near a sign change need the time). Your Rising sign absolutely requires your exact birth time — it changes signs every ~2 hours." },
-  { q: "What if my Sun, Moon, and Rising are all the same sign?", a: "This is called a 'stellium' in that sign and it's quite rare. It means that sign's energy dominates your personality intensely — you are very much that sign, inside and out. There's less internal conflict between different energies, but also less range. You are who you are, unapologetically." },
-  { q: "How is this different from reading my daily horoscope?", a: "A daily horoscope is based only on your Sun sign — one of 12 options, shared with ~600 million people. Your Big Three narrows that to thousands of unique combinations. A full BluntChart reading goes even further, analyzing Venus, Mars, Saturn, houses, and aspects to create insights specific to you alone." },
-  { q: "What does each Big Three placement control?", a: "Sun = your ego, life purpose, conscious identity, and how you express your core self. Moon = your emotions, instincts, comfort needs, childhood patterns, and what you need to feel safe. Rising = your social mask, first impressions, physical appearance, and how you navigate the external world." },
+  { q: "What are the Big Three in astrology?", a: "The Big Three refers to your Sun sign, Moon sign, and Rising sign — the three most important placements in your birth chart. Sun is core identity, Moon is emotional nature, Rising is social interface. Together they give a far more accurate picture than your Sun sign alone. Your Sun is the film, your Moon is the audience reaction, your Rising is the poster." },
+  { q: "Which of the Big Three is most important?", a: "There isn't a single answer — anyone who gives one is picking a tradition without telling you. Modern Western astrology treats the Sun as primary. Traditional astrology treats the Ascendant as primary. Psychological astrology tends to weight the Moon most heavily. The practical answer: read the Rising for first impressions, the Moon for intimacy, the Sun for long-term direction." },
+  { q: "Can I find my Big Three without my birth time?", a: "Partially. Your Sun sign is always available from your birth date. Your Moon sign is usually available, though roughly one birthday in three falls near an ingress and needs a time. Your Rising sign is genuinely not available — the Ascendant moves through all twelve signs in 24 hours. Anyone offering a 'Rising sign without birth time' calculator is guessing." },
+  { q: "Why don't I relate to my Sun sign?", a: "Usually because your Rising and Moon are doing more visible work. The Rising governs day-to-day social behaviour and often feels more 'you' than the Sun. If you have a stellium in another sign, that sign dominates — a Gemini Sun with four planets in Cancer is functionally a Cancer with a Gemini job title." },
+  { q: "What if my Sun and Rising are the same sign?", a: "You were born near sunrise — the Sun was on the eastern horizon, so it was rising as you were. What you see is what you get: very little gap between internal identity and external presentation. The trade-off is a lack of range — you can't easily code-switch. If all three are the same sign, that's a stellium: enormous consistency and almost no built-in counterweight to that sign's shadow." },
+  { q: "Which Big Three combinations are rarest?", a: "There are 1,728 possible combinations, and Rising sign distribution is very uneven — it depends on your latitude. In the northern hemisphere at mid-latitudes, Pisces and Aries Rising are genuinely uncommon, and Libra or Scorpio Rising are over-represented. The effect reverses in the southern hemisphere. Claims about a single 'rarest' combination without reference to latitude are meaningless." },
+  { q: "Does Big Three compatibility predict relationships?", a: "Each placement predicts something different. Sun–Sun compatibility predicts whether you admire each other. Moon–Moon predicts whether you feel safe — the most predictive of the three for long-term relationships. Rising–Rising predicts initial attraction and says almost nothing about month six. For romantic compatibility specifically, Venus and Mars matter more than any of the Big Three." },
+  { q: "What is the Big Six?", a: "The Big Six is your Big Three plus Mercury (how you think), Venus (what you love) and Mars (what drives you). It covers all five personal planets plus the Ascendant — the complete set of fast-moving, genuinely individual placements in a chart. Everything beyond it is increasingly shared with everyone born around the same time as you." },
 ];
 
 export default function BigThreeClient() {
@@ -125,7 +126,8 @@ export default function BigThreeClient() {
         *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
         :root{--font-display:'Playfair Display',Georgia,serif;--font-body:'DM Sans',system-ui,sans-serif;--bg:#09090f;--card:#12121e;--border:rgba(255,255,255,0.08);--white:#e8e4f0;--dim:rgba(232,228,240,0.55);--gold:#F0B84A;--gold-dim:rgba(240,184,74,0.18);--purple:#6b2fd4;--rose:#d4537e;--teal:#5dcaa5}
         html{scroll-behavior:smooth}body{background:var(--bg);color:var(--white);font-family:var(--font-body);-webkit-font-smoothing:antialiased;overflow-x:hidden}
-        .b3-c{max-width:1100px;margin:0 auto;padding:0 24px}
+        .b3-c{max-width:1280px;margin:0 auto;padding:0 40px}
+        @media(max-width:768px){.b3-c{padding:0 20px}}
         .b3-nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:18px 0;transition:all .3s}
         .b3-nav.on{background:rgba(9,9,15,.92);border-bottom:1px solid var(--border);backdrop-filter:blur(16px)}
         .b3-logo{font-family:var(--font-display);font-size:1.3rem;font-weight:700;text-decoration:none;display:flex;align-items:center;gap:10px}
@@ -264,25 +266,158 @@ export default function BigThreeClient() {
       )}
 
 
-      {/* SEO CONTENT */}
+      {/* SEO LONG-FORM GUIDE */}
       <section style={{ padding:"80px 0", background:"#0d0d18", borderTop:"1px solid var(--border)" }}>
-        <div className="b3-c" style={{ maxWidth:900 }}>
-          <h2 style={{ fontFamily:"var(--font-display)", fontSize:"clamp(1.6rem,3.5vw,2.4rem)", fontWeight:800, lineHeight:1.1, marginBottom:24 }}>
-            Understanding your <em style={{ fontStyle:"italic", background:"linear-gradient(135deg,#f0b84a,#d4537e)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", backgroundClip:"text" }}>Big Three</em>
-          </h2>
-          <div style={{ fontSize:15, color:"rgba(232,228,240,0.6)", lineHeight:1.78 }}>
-            <p style={{ marginBottom:20 }}>In astrology, the Big Three — your Sun sign, Moon sign, and Rising sign — are the three most important placements in your birth chart. While there are ten planets, twelve houses, and dozens of aspects that create the full picture, the Big Three captures the essence of who you are in three distinct dimensions: identity, emotion, and presentation.</p>
-            <h3 style={{ fontFamily:"var(--font-display)", fontSize:20, fontWeight:700, color:"#e8e4f0", marginBottom:12 }}>Sun sign: your core identity</h3>
-            <p style={{ marginBottom:20 }}>Your Sun sign is determined by your birth date and represents your conscious self — your ego, your life purpose, and the energy you're growing into throughout your life. It's the sign most people know because it only requires a birth date. When someone says "I'm a Leo" or "I'm a Capricorn," they're referring to their Sun sign. But the Sun sign is just one piece of a much larger puzzle.</p>
-            <h3 style={{ fontFamily:"var(--font-display)", fontSize:20, fontWeight:700, color:"#e8e4f0", marginBottom:12 }}>Moon sign: your emotional blueprint</h3>
-            <p style={{ marginBottom:20 }}>Your Moon sign reveals how you process emotions, what you need to feel safe, and the patterns that run beneath the surface of your personality. The Moon changes zodiac signs every 2.5 days, which is why it requires your birth date and approximate time. Your Moon sign often explains the parts of yourself that surprise you — the emotional reactions that don't match your Sun sign, the needs you can't articulate, the triggers that seem disproportionate.</p>
-            <h3 style={{ fontFamily:"var(--font-display)", fontSize:20, fontWeight:700, color:"#e8e4f0", marginBottom:12 }}>Rising sign: your social self</h3>
-            <p style={{ marginBottom:20 }}>Your Rising sign (Ascendant) is the zodiac sign that was on the eastern horizon at your exact moment and location of birth. It changes signs every two hours, making it the most time-sensitive of the Big Three. Your Rising sign shapes your outward personality, your physical appearance, your social behavior, and the first impression you make. Many people identify more with their Rising sign than their Sun sign because it governs day-to-day interactions.</p>
-            <h3 style={{ fontFamily:"var(--font-display)", fontSize:20, fontWeight:700, color:"#e8e4f0", marginBottom:12 }}>Why the Big Three matters more than your Sun sign</h3>
-            <p style={{ marginBottom:20 }}>Reading only your Sun sign horoscope is like describing a painting by its frame. The Big Three gives you the full canvas. It explains why two people with the same Sun sign can be completely different — a Scorpio Sun with a Pisces Moon and Cancer Rising will navigate the world entirely differently than a Scorpio Sun with an Aries Moon and Capricorn Rising. The combinations are what make you unique.</p>
-            <h3 style={{ fontFamily:"var(--font-display)", fontSize:20, fontWeight:700, color:"#e8e4f0", marginBottom:12 }}>Beyond the Big Three</h3>
-            <p>Your Big Three is the foundation, but your full birth chart contains far more. Venus reveals how you love. Mars shows how you fight and what drives you. Saturn points to your deepest challenges. The houses show which areas of life are most emphasized. A full BluntChart reading analyzes all of these placements and tells you what they mean — in plain language, no vague horoscope speak. If your Big Three is the headline, the full reading is the article.</p>
+        <div className="b3-c" style={{ maxWidth:1080 }}>
+
+          <style>{`
+            .b3-h2{font-family:var(--font-display);font-size:clamp(1.5rem,3.2vw,2rem);font-weight:800;line-height:1.15;letter-spacing:-0.01em;color:#e8e4f0;margin:0 0 14px}
+            .b3-h2 em{font-style:italic;background:linear-gradient(135deg,#f0b84a,#d4537e);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+            .b3-h3{font-family:var(--font-display);font-size:18px;font-weight:700;color:#e8e4f0;margin:24px 0 10px}
+            .b3-p{font-size:15px;color:rgba(232,228,240,0.65);line-height:1.78;margin-bottom:16px}
+            .b3-p a{color:#F0B84A;text-decoration:underline;text-decoration-color:rgba(240,184,74,0.35);text-underline-offset:3px}
+            .b3-p a:hover{text-decoration-color:#F0B84A}
+            .b3-tldr{background:rgba(240,184,74,0.06);border-left:3px solid #F0B84A;border-radius:0 10px 10px 0;padding:16px 20px;margin:0 0 24px}
+            .b3-tldr-l{font-size:10px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:#F0B84A;margin-bottom:6px;display:block}
+            .b3-tldr-t{font-size:15px;color:#e8e4f0;line-height:1.65}
+            .b3-block{margin-bottom:56px}
+            .b3-list{margin:0 0 16px 0;padding-left:22px}
+            .b3-list li{font-size:15px;color:rgba(232,228,240,0.65);line-height:1.7;margin-bottom:8px}
+            .b3-list li strong{color:#e8e4f0;font-weight:600}
+            .b3-table-wrap{overflow-x:auto;margin:8px 0 24px;-webkit-overflow-scrolling:touch}
+            .b3-table{width:100%;border-collapse:collapse;font-size:13.5px;min-width:520px}
+            .b3-table th,.b3-table td{padding:10px 12px;text-align:left;border-bottom:0.5px solid rgba(255,255,255,0.06);color:rgba(232,228,240,0.7);line-height:1.5;vertical-align:top}
+            .b3-table th{color:#F0B84A;font-weight:700;font-size:11px;letter-spacing:0.06em;text-transform:uppercase;background:rgba(255,255,255,0.02)}
+            .b3-table td:first-child,.b3-table th:first-child{color:#e8e4f0;font-weight:600}
+          `}</style>
+
+          {/* Sun vs Moon vs Rising */}
+          <div className="b3-block">
+            <h2 className="b3-h2">Sun vs Moon vs Rising: <em>what&apos;s the difference?</em></h2>
+            <div className="b3-tldr">
+              <span className="b3-tldr-l">Short answer</span>
+              <p className="b3-tldr-t">Your Sun is the film, your Moon is the audience reaction, your Rising is the poster. Sun = core identity, seen by people who know you well. Moon = emotional nature, seen by people who live with you. Rising = social interface, seen by everyone immediately.</p>
+            </div>
+            <div className="b3-table-wrap">
+              <table className="b3-table">
+                <thead><tr><th></th><th>Sun</th><th>Moon</th><th>Rising</th></tr></thead>
+                <tbody>
+                  <tr><td>What it is</td><td>Core identity</td><td>Emotional nature</td><td>Social interface</td></tr>
+                  <tr><td>Determined by</td><td>Birth date</td><td>Date + time</td><td>Time + place</td></tr>
+                  <tr><td>Changes every</td><td>~30 days</td><td>~2.5 days</td><td>~2 hours</td></tr>
+                  <tr><td>Who sees it</td><td>People who know you well</td><td>People who live with you</td><td>Everyone, immediately</td></tr>
+                  <tr><td>Shows up when</td><td>You&apos;re yourself on purpose</td><td>You&apos;re tired, stressed, in love</td><td>You walk into a room</td></tr>
+                  <tr><td>The question it answers</td><td>What am I here to do?</td><td>What do I need to feel safe?</td><td>What do people meet first?</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p className="b3-p">The Big Three get explained badly more often than almost anything in astrology. The cleanest way to hold the difference: <strong style={{ color:"#e8e4f0" }}>your Sun is the film, your Moon is the audience reaction, your Rising is the poster.</strong></p>
           </div>
+
+          {/* Which is most important */}
+          <div className="b3-block">
+            <h2 className="b3-h2">Which of the Big Three is <em>most important?</em></h2>
+            <div className="b3-tldr">
+              <span className="b3-tldr-l">Short answer</span>
+              <p className="b3-tldr-t">There isn&apos;t one — anyone who gives a single answer is picking a tradition without telling you. Read the Rising for first impressions, the Moon for intimacy, the Sun for long-term direction. If your Sun sign has never felt like you, it&apos;s usually because your Rising and Moon are doing more visible work.</p>
+            </div>
+            <p className="b3-p"><strong style={{ color:"#e8e4f0" }}>Modern Western astrology</strong> treats the Sun as primary. It&apos;s the identity placement, the one horoscopes are written for, and the one that describes your conscious direction.</p>
+            <p className="b3-p"><strong style={{ color:"#e8e4f0" }}>Traditional and Hellenistic astrology</strong> treats the Ascendant as primary. The Rising sign sets the entire house structure of the chart — change the Ascendant and every planet lands in a different house. In this framework the Sun is one planet among seven, and the Ascendant is the chart&apos;s foundation.</p>
+            <p className="b3-p"><strong style={{ color:"#e8e4f0" }}>Psychological and evolutionary astrology</strong> — the strand most modern readings draw from — tends to weight the Moon most heavily, on the reasoning that emotional conditioning drives more behaviour than conscious identity does.</p>
+            <p className="b3-p"><strong style={{ color:"#e8e4f0" }}>The practical answer:</strong> if you want to know how someone comes across, read the <Link href="/rising-sign-calculator">Rising</Link>. If you want to know what they need in a relationship, read the <Link href="/moon-sign-calculator">Moon</Link>. If you want to know what they&apos;re building toward, read the Sun.</p>
+          </div>
+
+          {/* Without birth time */}
+          <div className="b3-block">
+            <h2 className="b3-h2">Can you find your Big Three <em>without a birth time?</em></h2>
+            <div className="b3-tldr">
+              <span className="b3-tldr-l">Short answer</span>
+              <p className="b3-tldr-t">Partially. Sun is always available from your date. Moon is usually available (but roughly one birthday in three falls near an ingress and needs a time). Rising is genuinely not available — the Ascendant moves through all twelve signs in 24 hours. Anyone offering a &ldquo;rising sign without birth time&rdquo; calculator is guessing or running a personality quiz.</p>
+            </div>
+            <p className="b3-p"><strong style={{ color:"#e8e4f0" }}>Sun sign — always available.</strong> Your birth date is enough. Only edge case: cusp dates (roughly the 19th–23rd of any month), when the Sun changes signs mid-day and you need a time to be certain.</p>
+            <p className="b3-p"><strong style={{ color:"#e8e4f0" }}>Moon sign — usually available, sometimes not.</strong> The Moon spends about 2.5 days in a sign, so on most birthdays it was in one sign the entire day. Roughly one birthday in three falls near an ingress — then the birth time decides. Our calculator will tell you when your date lands near a boundary rather than silently guessing.</p>
+            <p className="b3-p"><strong style={{ color:"#e8e4f0" }}>Rising sign — genuinely not available.</strong> The Ascendant moves through all twelve signs in 24 hours. Without a birth time you have twelve candidates and no way to narrow them astronomically. Anyone offering you a &ldquo;rising sign without birth time&rdquo; calculator is either guessing or asking you personality questions and reverse-engineering an answer, which is a personality quiz wearing astrology&apos;s clothes.</p>
+            <p className="b3-p"><strong style={{ color:"#e8e4f0" }}>What you can actually do:</strong> get a rough window from someone who was there (&ldquo;morning&rdquo; cuts twelve options to about four); request the long-form birth certificate; contact the hospital records department; or if you&apos;re within a two-hour window, run the chart at both ends — if the Rising sign is the same at both, you have your answer regardless.</p>
+          </div>
+
+          {/* Sun and Rising same */}
+          <div className="b3-block">
+            <h2 className="b3-h2">What if my Sun and Rising are <em>the same sign?</em></h2>
+            <div className="b3-tldr">
+              <span className="b3-tldr-l">Short answer</span>
+              <p className="b3-tldr-t">You were born near sunrise — the Sun was literally on the eastern horizon, so it was rising as you were. It&apos;s sometimes called a &ldquo;sunrise chart&rdquo; or a double placement. What you see is what you get: very little gap between internal identity and external presentation. The trade-off is a lack of range.</p>
+            </div>
+            <p className="b3-p">People describe you accurately on first meeting. You don&apos;t have a social mask that differs from your core, so you can&apos;t easily code-switch, and you can come across as intense or one-note in situations that call for adaptability.</p>
+            <p className="b3-p">If all three are the same sign, that&apos;s rarer still and functions as a <strong style={{ color:"#e8e4f0" }}>stellium</strong>. That sign&apos;s energy runs everything: identity, emotion, and presentation all singing the same note. Enormous consistency, minimal internal contradiction, and almost no built-in counterweight to that sign&apos;s shadow. A triple Scorpio has no light setting.</p>
+          </div>
+
+          {/* Rare combinations */}
+          <div className="b3-block">
+            <h2 className="b3-h2">Which Big Three combinations are <em>the rarest?</em></h2>
+            <div className="b3-tldr">
+              <span className="b3-tldr-l">Short answer</span>
+              <p className="b3-tldr-t">There are 12 × 12 × 12 = 1,728 possible combinations, and they aren&apos;t evenly distributed. Rising sign distribution is very uneven and depends on your latitude — Pisces and Aries Rising are genuinely uncommon in Europe or North America, and Libra/Scorpio Rising are over-represented. The effect reverses in the southern hemisphere.</p>
+            </div>
+            <p className="b3-p">The Sun spends unequal time in each sign — the Earth&apos;s orbit is elliptical, so the Sun moves faster through some signs. It spends about 30.5 days in Cancer and about 29.5 days in Capricorn. Small, but real.</p>
+            <p className="b3-p">The <strong style={{ color:"#e8e4f0" }}>Rising sign distribution</strong> is much more uneven, and this is the part almost nobody explains. The rate at which signs rise depends on your latitude. In the northern hemisphere at mid-latitudes, signs from Cancer through Sagittarius rise slowly (they&apos;re &ldquo;long ascension&rdquo;) and Capricorn through Gemini rise quickly (&ldquo;short ascension&rdquo;). That means in Europe or North America, Pisces and Aries Rising are genuinely uncommon, and Libra or Scorpio Rising are over-represented. The effect reverses in the southern hemisphere.</p>
+            <p className="b3-p">Add birth-rate seasonality — births are not evenly distributed across the year — and the distribution skews further. Claims that a specific combination is &ldquo;the rarest&rdquo; are usually made without reference to latitude or hemisphere, which makes them close to meaningless. Rarity also isn&apos;t a ranking — a rare combination isn&apos;t a better one.</p>
+          </div>
+
+          {/* Compatibility */}
+          <div className="b3-block">
+            <h2 className="b3-h2">Big Three compatibility: <em>what each placement predicts</em></h2>
+            <div className="b3-tldr">
+              <span className="b3-tldr-l">Short answer</span>
+              <p className="b3-tldr-t">Sun–Sun compatibility predicts whether you admire each other. Moon–Moon predicts whether you feel safe — the most predictive for long-term relationships. Rising–Rising predicts initial attraction and says almost nothing about month six. For romantic compatibility specifically, Venus and Mars matter more than any of the Big Three.</p>
+            </div>
+            <p className="b3-p"><strong style={{ color:"#e8e4f0" }}>Sun–Sun compatibility</strong> predicts whether you <em>admire</em> each other. Same-element Suns tend to recognise each other&apos;s direction and priorities. This matters for long-term respect, and it&apos;s largely irrelevant to whether you&apos;ll actually get along day to day.</p>
+            <p className="b3-p"><strong style={{ color:"#e8e4f0" }}>Moon–Moon compatibility</strong> predicts whether you feel <em>safe</em> with each other, and it&apos;s the most predictive of the three for long-term relationships. Compatible Moons mean your instinctive reactions to stress don&apos;t wound each other. Two people with clashing Suns and harmonious Moons usually last. The reverse usually doesn&apos;t.</p>
+            <p className="b3-p"><strong style={{ color:"#e8e4f0" }}>Rising–Rising compatibility</strong> predicts <em>initial attraction</em>. It governs first impressions, physical presence, and whether there&apos;s chemistry in the first ten minutes. It says almost nothing about month six.</p>
+            <p className="b3-p">The cross-aspects matter more than the like-for-like. Your Moon conjunct their Sun is one of the strongest indicators of a durable bond in synastry — one person&apos;s emotional needs align directly with the other&apos;s core identity. Your Rising conjunct their Descendant is the classic &ldquo;I felt like I&apos;d known them already&rdquo; signature.</p>
+            <p className="b3-p">And none of this beats Venus and Mars for romantic compatibility specifically. Venus describes what you&apos;re drawn to; Mars describes how you pursue and how you fight. The Big Three tells you who two people are. Venus and Mars tell you what happens when they&apos;re alone together.</p>
+          </div>
+
+          {/* Big Three vs Big Six */}
+          <div className="b3-block">
+            <h2 className="b3-h2">Big Three vs Big Six: <em>what comes next?</em></h2>
+            <div className="b3-tldr">
+              <span className="b3-tldr-l">Short answer</span>
+              <p className="b3-tldr-t">The Big Six is your Big Three plus Mercury (how you think), Venus (what you love) and Mars (what drives you). It covers all five personal planets plus the Ascendant — the complete set of fast-moving, genuinely individual placements in a chart. Everything beyond it is increasingly shared with everyone born around the same time as you.</p>
+            </div>
+            <ul className="b3-list">
+              <li><strong>Mercury</strong> — how you think, process information and communicate. Explains why some people need to talk through a decision and others need silence to reach the same conclusion.</li>
+              <li><strong>Venus</strong> — what you find beautiful, what you value, and how you love and want to be loved.</li>
+              <li><strong>Mars</strong> — your drive, your anger, your sex drive, and your conflict style.</li>
+            </ul>
+            <p className="b3-p">If the Big Three is a headline, the Big Six is the article. Your <Link href="/free-birth-chart">full chart</Link> is the book.</p>
+          </div>
+
+          {/* Read others */}
+          <div className="b3-block">
+            <h2 className="b3-h2">How do you read <em>someone else&apos;s Big Three?</em></h2>
+            <div className="b3-tldr">
+              <span className="b3-tldr-l">Short answer</span>
+              <p className="b3-tldr-t">When they surprise you, check the Moon. When your first impression turns out to be wrong, that&apos;s the Rising. When they seem to be pulling in two directions, look for a Sun–Moon square or opposition. When someone tells you their sign and nothing lines up, ask for their birth time — you&apos;re reading a Sun sign for someone whose Rising and Moon are running the show.</p>
+            </div>
+            <p className="b3-p"><strong style={{ color:"#e8e4f0" }}>When they surprise you</strong>, check the Moon. Behaviour that seems out of character for their Sun sign is almost always a Moon sign expression — it surfaces under stress, in intimacy, and when they&apos;re exhausted.</p>
+            <p className="b3-p"><strong style={{ color:"#e8e4f0" }}>When your first impression turns out to be wrong</strong>, that&apos;s the Rising sign. You met the interface, not the operating system. A Capricorn Rising with a Leo Sun reads as reserved and serious for three months and then turns out to be the loudest person in the group.</p>
+            <p className="b3-p"><strong style={{ color:"#e8e4f0" }}>When they seem to be pulling in two directions at once</strong>, look for a Sun–Moon square or opposition. That&apos;s a genuine internal conflict: what they want and what they need are not the same thing, and they know it.</p>
+            <p className="b3-p"><strong style={{ color:"#e8e4f0" }}>When someone tells you their sign and you feel nothing lines up</strong>, ask for their birth time. Nine times out of ten the mismatch is because you&apos;re reading a Sun sign description for someone whose Rising and Moon are running the show.</p>
+          </div>
+
+          {/* Next steps */}
+          <div className="b3-block">
+            <h2 className="b3-h2">Next <em>steps</em></h2>
+            <ul className="b3-list">
+              <li><Link href="/rising-sign-calculator"><strong>Rising sign calculator</strong></Link> — your Ascendant plus your chart ruler.</li>
+              <li><Link href="/moon-sign-calculator"><strong>Moon sign calculator</strong></Link> — your emotional baseline, and what each of the twelve Moon signs actually means.</li>
+              <li><Link href="/free-birth-chart"><strong>Free birth chart</strong></Link> — the full wheel with houses and aspects.</li>
+              <li><Link href="/natal-chart"><strong>How to read a natal chart</strong></Link> — the step-by-step guide.</li>
+              <li><Link href="/zodiac-signs"><strong>All 12 zodiac signs</strong></Link> — traits, dates, elements and rulers.</li>
+            </ul>
+            <p className="b3-p"><Link href="/#try-it"><strong>Or skip the learning curve — get your Big Three read out loud →</strong></Link></p>
+          </div>
+
         </div>
       </section>
 

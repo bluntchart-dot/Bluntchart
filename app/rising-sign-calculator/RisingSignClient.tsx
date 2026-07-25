@@ -97,14 +97,14 @@ const RISING_DESCRIPTIONS: Record<string, { vibe: string; first: string; shadow:
 
 /* ── FAQ ── */
 const FAQS = [
-  { q: "What is a Rising sign?", a: "Your Rising sign (also called the Ascendant) is the zodiac sign that was rising on the eastern horizon at the exact moment you were born. It determines how others perceive you, your outward personality, your physical appearance, and the first impression you make. It also sets the entire house system of your birth chart, making it one of the most important placements in astrology." },
-  { q: "How do I find my Rising sign?", a: "You need three things: your birth date, your exact birth time (from your birth certificate), and your birth city. Enter these into the calculator above and it will determine which zodiac sign was on the eastern horizon at your moment of birth. Without your birth time, the Rising sign cannot be accurately calculated." },
-  { q: "Can I find my Rising sign without my birth time?", a: "No. The Rising sign changes zodiac signs approximately every 2 hours throughout the day. Even a 30-minute difference in birth time can shift your Ascendant to a completely different sign. Your birth certificate almost always has your birth time recorded — check there first." },
-  { q: "What's the difference between Sun sign and Rising sign?", a: "Your Sun sign is your core identity — determined by your birth date alone. Your Rising sign is your outward personality — determined by your birth time and location. Think of it this way: your Sun sign is who you are. Your Rising sign is who people think you are when they first meet you. Many people identify more strongly with their Rising sign than their Sun sign." },
-  { q: "Why do I relate more to my Rising sign than my Sun sign?", a: "This is extremely common. Your Rising sign governs your outward behavior, social interactions, and how you navigate the world day-to-day. Since most social situations engage your Rising sign energy, it often feels more 'you' than your Sun sign, which represents your deeper core identity that may only show up in private or with people you trust." },
-  { q: "Does my Rising sign affect my appearance?", a: "Traditional astrology holds that the Rising sign influences physical appearance and mannerisms. Aries Rising people often have sharp features and an athletic build. Taurus Rising tends toward softer, more sensual features. Leo Rising frequently has notable hair. While this isn't scientifically proven, many astrologers and enthusiasts notice consistent patterns." },
-  { q: "How accurate is this Rising sign calculator?", a: "This calculator uses astronomy-engine, a high-precision astronomical computation library. It calculates the exact ecliptic longitude of the eastern horizon point (Ascendant) based on your birth time, date, and geographic coordinates. The accuracy matches professional-grade ephemeris tools like the Swiss Ephemeris." },
-  { q: "What are the Big Three in astrology?", a: "The Big Three refers to your Sun sign, Moon sign, and Rising sign — the three most important placements in your birth chart. Your Sun is your core identity. Your Moon is your emotional nature. Your Rising is your outward personality. Together, they give a far more complete picture than your Sun sign alone. This calculator shows you all three." },
+  { q: "Is your birthday sign your Rising sign?", a: "No. Your birthday sign is your Sun sign, determined by date alone. Your Rising sign is determined by the time and place you were born. They're two entirely different measurements — the Sun's position tells you where Earth is in its orbit; the Ascendant tells you which direction your birthplace was facing at that minute. They coincide only if you were born close to sunrise (roughly 1 in 12 people)." },
+  { q: "How do you calculate your Ascendant manually?", a: "The traditional method uses a Table of Houses: convert your birth time to Local Mean Time (correcting for historical daylight saving), find Sidereal Time at Greenwich for noon on your birth date from an ephemeris, adjust for elapsed time and longitude to get Local Sidereal Time, then look up LST and your latitude in the table. The underlying formula is trigonometric. The calculator above resolves it from a high-precision ephemeris." },
+  { q: "Can I find my Rising sign without my birth time?", a: "No — this is the one placement that genuinely cannot be derived without a time. The Ascendant changes signs every 2 hours, so an unknown time means twelve candidates. Anyone offering a Rising sign without birth time is guessing or running a personality quiz. Request the long-form birth certificate; the hospital maternity register often has the time; a rough window from someone present narrows twelve to about four." },
+  { q: "What is a chart ruler?", a: "Your chart ruler is the planet that rules your Rising sign — Aries Rising is ruled by Mars, Taurus and Libra by Venus, Cancer by the Moon, Leo by the Sun, Sagittarius by Jupiter, and so on. Its sign, house, and aspects describe the overall trajectory of your life more accurately than almost any single placement." },
+  { q: "What is my Descendant sign?", a: "Your Descendant is the sign opposite your Rising — always 180° away, on the western horizon. It's the cusp of your 7th house of partnership, and describes the quality you don't experience as your own and therefore keep meeting in other people. The pattern 'I always attract the same type' is very often the Descendant." },
+  { q: "Does my Rising sign affect my appearance?", a: "Traditional astrology says yes; controlled evidence for it doesn't exist. Appearance is genetics. What likely happens is that the Rising sign genuinely governs presentation — posture, expression, mannerism, eye contact — and those things change how a face reads. It's a reasonable framework for the part of appearance that's actually behaviour, not for bone structure." },
+  { q: "Which Rising sign is rarest?", a: "It depends on your latitude. Signs don't rise at equal rates: at mid-northern latitudes, Aries, Pisces, Aquarius and Capricorn Rising are genuinely less common, while Libra, Scorpio and Virgo Rising are over-represented. The effect intensifies further north and reverses in the southern hemisphere. Articles claiming a single 'rarest' answer haven't accounted for latitude." },
+  { q: "Is any Rising sign the luckiest?", a: "No. The Ascendant alone carries no fortune. Sagittarius and Pisces Rising are Jupiter-ruled by tradition, which is why some claim it — but a Sagittarius Rising with Jupiter in fall in Capricorn, buried in the 12th, is not having an easier life than a Capricorn Rising with a well-placed Saturn. What matters is the condition of your chart ruler." },
 ];
 
 export default function RisingSignClient() {
@@ -199,7 +199,8 @@ export default function RisingSignClient() {
         :root{--font-display:'Playfair Display',Georgia,serif;--font-body:'DM Sans',system-ui,sans-serif;--bg:#09090f;--card:#12121e;--border:rgba(255,255,255,0.08);--white:#e8e4f0;--dim:rgba(232,228,240,0.55);--gold:#F0B84A;--gold-dim:rgba(240,184,74,0.18);--purple:#6b2fd4;--rose:#d4537e;--teal:#5dcaa5}
         html{scroll-behavior:smooth}
         body{background:var(--bg);color:var(--white);font-family:var(--font-body);-webkit-font-smoothing:antialiased;overflow-x:hidden}
-        .rs-c{max-width:1100px;margin:0 auto;padding:0 24px}
+        .rs-c{max-width:1280px;margin:0 auto;padding:0 40px}
+        @media(max-width:768px){.rs-c{padding:0 20px}}
         .rs-nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:18px 0;transition:all .3s}
         .rs-nav.on{background:rgba(9,9,15,.92);border-bottom:1px solid var(--border);backdrop-filter:blur(16px)}
         .rs-logo{font-family:var(--font-display);font-size:1.3rem;font-weight:700;text-decoration:none;display:flex;align-items:center;gap:10px}
@@ -422,63 +423,168 @@ export default function RisingSignClient() {
       )}
 
 
-      {/* SEO CONTENT */}
+      {/* SEO LONG-FORM GUIDE */}
       <section style={{ padding:"80px 0", background:"#0d0d18", borderTop:"1px solid rgba(255,255,255,0.08)" }}>
-        <div className="rs-c" style={{ maxWidth:900 }}>
-          <h2 style={{ fontFamily:"var(--font-display)", fontSize:"clamp(1.6rem,3.5vw,2.4rem)", fontWeight:800, lineHeight:1.1, marginBottom:24 }}>
-            What is a <em style={{ fontStyle:"italic", background:"linear-gradient(135deg,#f0b84a,#d4537e)",
-              WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", backgroundClip:"text" }}>Rising sign?</em>
-          </h2>
-          <div style={{ fontSize:15, color:"rgba(232,228,240,0.6)", lineHeight:1.78 }}>
-            <p style={{ marginBottom:20 }}>
-              Your Rising sign — also called the Ascendant — is the zodiac sign that was ascending on the eastern
-              horizon at the exact moment and location of your birth. While your Sun sign represents your core
-              identity and your Moon sign reveals your emotional nature, your Rising sign shapes how the world
-              perceives you. It governs your outward personality, physical appearance, social behavior, and the
-              first impression you make on others.
-            </p>
-            <h3 style={{ fontFamily:"var(--font-display)", fontSize:20, fontWeight:700, color:"#e8e4f0", marginBottom:12 }}>
-              Why your birth time is essential
-            </h3>
-            <p style={{ marginBottom:20 }}>
-              The Rising sign changes zodiac signs approximately every two hours as the Earth rotates. This means
-              someone born at 6 AM and someone born at 10 AM on the same day in the same city will have completely
-              different Rising signs — and therefore different house placements across their entire chart. This is
-              why astrologers always ask for your exact birth time, and why a chart without one is considered incomplete.
-              Your birth certificate almost always records the time of birth.
-            </p>
-            <h3 style={{ fontFamily:"var(--font-display)", fontSize:20, fontWeight:700, color:"#e8e4f0", marginBottom:12 }}>
-              Rising sign vs Sun sign
-            </h3>
-            <p style={{ marginBottom:20 }}>
-              Many people find they relate more to their Rising sign than their Sun sign. This makes sense: your
-              Rising sign governs how you interact with the world on a daily basis — your social behavior, your
-              reactions in new situations, the energy you project in conversations. Your Sun sign represents your
-              deeper core self, which may only emerge in private or with people you deeply trust. If you have ever
-              read your horoscope and thought &ldquo;that doesn&apos;t sound like me at all,&rdquo; try reading for your
-              Rising sign instead.
-            </p>
-            <h3 style={{ fontFamily:"var(--font-display)", fontSize:20, fontWeight:700, color:"#e8e4f0", marginBottom:12 }}>
-              The Big Three: Sun, Moon, and Rising
-            </h3>
-            <p style={{ marginBottom:20 }}>
-              Together, your Sun, Moon, and Rising signs form your &ldquo;Big Three&rdquo; — the three most important
-              placements in your birth chart. Your Sun is who you are. Your Moon is how you feel. Your Rising is how
-              you appear. When someone asks &ldquo;what&apos;s your sign?&rdquo; they mean your Sun sign. But astrologers
-              know that your Rising sign often tells a more accurate story about how you actually move through the world.
-            </p>
-            <h3 style={{ fontFamily:"var(--font-display)", fontSize:20, fontWeight:700, color:"#e8e4f0", marginBottom:12 }}>
-              About this calculator
-            </h3>
-            <p>
-              This free Rising sign calculator uses astronomy-engine, a high-precision astronomical computation
-              library. It determines the exact ecliptic longitude of the Ascendant point — the intersection of the
-              ecliptic with the eastern horizon — based on your birth date, time, and geographic coordinates. The
-              result matches professional-grade tools like the Swiss Ephemeris. In addition to your Rising sign,
-              this calculator also shows your complete Big Three (Sun, Moon, Rising) and generates a full natal
-              chart wheel with all planetary positions, houses, and aspects.
-            </p>
+        <div className="rs-c" style={{ maxWidth:1080 }}>
+
+          <style>{`
+            .rs-h2{font-family:var(--font-display);font-size:clamp(1.5rem,3.2vw,2rem);font-weight:800;line-height:1.15;letter-spacing:-0.01em;color:#e8e4f0;margin:0 0 14px}
+            .rs-h2 em{font-style:italic;background:linear-gradient(135deg,#f0b84a,#d4537e);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+            .rs-h3{font-family:var(--font-display);font-size:18px;font-weight:700;color:#e8e4f0;margin:24px 0 10px}
+            .rs-p{font-size:15px;color:rgba(232,228,240,0.65);line-height:1.78;margin-bottom:16px}
+            .rs-p a{color:#F0B84A;text-decoration:underline;text-decoration-color:rgba(240,184,74,0.35);text-underline-offset:3px}
+            .rs-p a:hover{text-decoration-color:#F0B84A}
+            .rs-tldr{background:rgba(240,184,74,0.06);border-left:3px solid #F0B84A;border-radius:0 10px 10px 0;padding:16px 20px;margin:0 0 24px}
+            .rs-tldr-l{font-size:10px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:#F0B84A;margin-bottom:6px;display:block}
+            .rs-tldr-t{font-size:15px;color:#e8e4f0;line-height:1.65}
+            .rs-block{margin-bottom:56px}
+            .rs-list{margin:0 0 16px 0;padding-left:22px}
+            .rs-list li{font-size:15px;color:rgba(232,228,240,0.65);line-height:1.7;margin-bottom:8px}
+            .rs-list li strong{color:#e8e4f0;font-weight:600}
+            .rs-table-wrap{overflow-x:auto;margin:8px 0 24px;-webkit-overflow-scrolling:touch}
+            .rs-table{width:100%;border-collapse:collapse;font-size:14px;min-width:420px}
+            .rs-table th,.rs-table td{padding:10px 14px;text-align:left;border-bottom:0.5px solid rgba(255,255,255,0.06);color:rgba(232,228,240,0.7);line-height:1.5}
+            .rs-table th{color:#F0B84A;font-weight:700;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;background:rgba(255,255,255,0.02)}
+            .rs-table td:first-child{color:#e8e4f0;font-weight:600;white-space:nowrap}
+            .rs-formula{background:rgba(255,255,255,0.03);border-left:2px solid rgba(240,184,74,0.4);padding:14px 18px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;color:rgba(232,228,240,0.7);line-height:1.7;border-radius:0 6px 6px 0;margin-bottom:14px;overflow-x:auto}
+          `}</style>
+
+          {/* Is birthday sign my Rising sign */}
+          <div className="rs-block">
+            <h2 className="rs-h2">Is your birthday sign <em>your Rising sign?</em></h2>
+            <div className="rs-tldr">
+              <span className="rs-tldr-l">Short answer</span>
+              <p className="rs-tldr-t">No. Your birthday sign is your Sun sign, determined by date alone. Your Rising sign is determined by the time and place you were born — it&apos;s the zodiac sign that was climbing over the eastern horizon at that exact moment. They&apos;re two entirely different measurements. Two people born on the same day in the same hospital, four hours apart, share a Sun sign and have completely different Rising signs.</p>
+            </div>
+            <p className="rs-p">This is the most common misunderstanding in beginner astrology, so it&apos;s worth being precise about it.</p>
+            <p className="rs-p">Your <strong style={{ color:"#e8e4f0" }}>birthday sign</strong> is your Sun sign. It&apos;s determined by the date alone, because the Sun takes about a month to move through each zodiac sign. When someone asks &ldquo;what&apos;s your sign?&rdquo;, this is what they mean.</p>
+            <p className="rs-p">Your <strong style={{ color:"#e8e4f0" }}>Rising sign</strong> is determined by the time and place you were born, not the date. It&apos;s the zodiac sign that was climbing over the eastern horizon at that exact moment.</p>
+            <p className="rs-p">They&apos;re two entirely different measurements. The Sun&apos;s position tells you where Earth is in its orbit. The Ascendant tells you which direction your birthplace was facing at that minute. Two people born on the same day in the same hospital, four hours apart, share a Sun sign and have completely different Rising signs — and therefore completely different house structures across their entire charts. They coincide only if you were born close to sunrise, which puts the Sun on the eastern horizon by definition. That&apos;s roughly 1 in 12 people.</p>
           </div>
+
+          {/* How to calculate Ascendant manually */}
+          <div className="rs-block">
+            <h2 className="rs-h2">How do you calculate your <em>Ascendant manually?</em></h2>
+            <div className="rs-tldr">
+              <span className="rs-tldr-l">Short answer</span>
+              <p className="rs-tldr-t">You don&apos;t need to, but the mechanism is worth understanding. Your Ascendant is the degree of the ecliptic crossing the eastern horizon at your birth moment, seen from your birth coordinates. The traditional method uses a Table of Houses with Local Sidereal Time and latitude; the underlying formula is trigonometric. The calculator above resolves it directly from a high-precision ephemeris.</p>
+            </div>
+            <p className="rs-p"><strong style={{ color:"#e8e4f0" }}>The concept.</strong> The ecliptic — the Sun&apos;s apparent annual path, which is also the line the zodiac sits on — is tilted about 23.4° relative to Earth&apos;s equator. As Earth rotates once every 24 hours, that tilted circle appears to sweep past your local horizon. Your Ascendant is simply the degree of the ecliptic that is crossing the eastern horizon at your birth moment, seen from your birth coordinates. Because the whole zodiac passes over in 24 hours, all twelve signs rise in a single day — roughly two hours each.</p>
+            <h3 className="rs-h3">The traditional manual method (Table of Houses)</h3>
+            <ol className="rs-list">
+              <li><strong>Convert your birth time to Local Mean Time</strong>, correcting for time zone and any daylight saving in force on that date.</li>
+              <li><strong>Find the Sidereal Time at Greenwich</strong> for noon on your birth date, from an ephemeris.</li>
+              <li><strong>Adjust for your birth time</strong> — add roughly 10 seconds of sidereal time per hour elapsed.</li>
+              <li><strong>Adjust for your longitude</strong> — 4 minutes of time per degree east or west of Greenwich.</li>
+              <li>That gives you <strong>Local Sidereal Time (LST)</strong>.</li>
+              <li><strong>Look up your LST and your latitude</strong> in a Table of Houses. The intersection gives you the Ascendant degree and sign.</li>
+            </ol>
+            <h3 className="rs-h3">The underlying formula</h3>
+            <div className="rs-formula">tan(ASC) = cos(LST) / −(sin(LST) × cos(ε) + tan(φ) × sin(ε))<br/><br/>where LST = Local Sidereal Time, ε = obliquity of the ecliptic (~23.44°), φ = geographic latitude.</div>
+            <p className="rs-p"><strong style={{ color:"#e8e4f0" }}>Why we don&apos;t ask you to do this:</strong> the table method requires interpolation between latitude bands and small errors compound quickly. The formula is exact but needs the correct historical time zone offset, which is where most manual attempts go wrong — daylight saving rules have changed repeatedly, and using today&apos;s offset for a 1987 birth produces a systematically wrong answer.</p>
+            <p className="rs-p">The calculator above resolves the ecliptic longitude of the ascending point directly from a high-precision ephemeris, using the historical offset for your specific birth date and location. But the mechanism is exactly the one described here — no black box, just arithmetic done properly.</p>
+          </div>
+
+          {/* Chart ruler */}
+          <div className="rs-block">
+            <h2 className="rs-h2">What is your <em>chart ruler?</em></h2>
+            <div className="rs-tldr">
+              <span className="rs-tldr-l">Short answer</span>
+              <p className="rs-tldr-t">Your chart ruler is the planet that rules your Rising sign — it&apos;s the most useful thing your Rising sign gives you and almost no free calculator mentions it. Wherever that planet sits — its sign, its house, its aspects — describes the overall trajectory of your life more accurately than almost any single placement.</p>
+            </div>
+            <div className="rs-table-wrap">
+              <table className="rs-table">
+                <thead><tr><th>Rising sign</th><th>Chart ruler (modern)</th><th>Traditional ruler</th></tr></thead>
+                <tbody>
+                  <tr><td>Aries</td><td>Mars</td><td>Mars</td></tr>
+                  <tr><td>Taurus</td><td>Venus</td><td>Venus</td></tr>
+                  <tr><td>Gemini</td><td>Mercury</td><td>Mercury</td></tr>
+                  <tr><td>Cancer</td><td>Moon</td><td>Moon</td></tr>
+                  <tr><td>Leo</td><td>Sun</td><td>Sun</td></tr>
+                  <tr><td>Virgo</td><td>Mercury</td><td>Mercury</td></tr>
+                  <tr><td>Libra</td><td>Venus</td><td>Venus</td></tr>
+                  <tr><td>Scorpio</td><td>Pluto</td><td>Mars</td></tr>
+                  <tr><td>Sagittarius</td><td>Jupiter</td><td>Jupiter</td></tr>
+                  <tr><td>Capricorn</td><td>Saturn</td><td>Saturn</td></tr>
+                  <tr><td>Aquarius</td><td>Uranus</td><td>Saturn</td></tr>
+                  <tr><td>Pisces</td><td>Neptune</td><td>Jupiter</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p className="rs-p"><strong style={{ color:"#e8e4f0" }}>How to use it:</strong> find your chart ruler in your <Link href="/free-birth-chart">birth chart</Link>, and read the house it&apos;s in. That house is where your life story concentrates.</p>
+            <p className="rs-p">Scorpio Rising with Mars in the 9th house builds a life around travel, belief, or the pursuit of meaning — usually confrontationally. Scorpio Rising with Mars in the 4th builds it around family and home, often around a conflict there that took decades to resolve. Same Rising sign, same intensity, entirely different life.</p>
+          </div>
+
+          {/* Descendant */}
+          <div className="rs-block">
+            <h2 className="rs-h2">What is the <em>Descendant sign?</em></h2>
+            <div className="rs-tldr">
+              <span className="rs-tldr-l">Short answer</span>
+              <p className="rs-tldr-t">Your Descendant is your Ascendant&apos;s opposite point — 180° away, on the western horizon, the cusp of your 7th house of partnership. It describes the quality you don&apos;t experience as your own, and therefore keep meeting in other people. The pattern &ldquo;I always attract the same type&rdquo; is very often the Descendant.</p>
+            </div>
+            <p className="rs-p">Your Descendant sign is always the sign opposite your Rising sign: Aries Rising has a Libra Descendant, Taurus Rising has Scorpio, and so on.</p>
+            <p className="rs-p">What it describes is the quality you don&apos;t experience as your own, and therefore keep meeting in other people. Aries Rising — direct, self-starting, impatient — has a Libra Descendant and repeatedly ends up with diplomatic, balance-seeking, indecisive partners. Capricorn Rising, guarded and self-sufficient, has a Cancer Descendant and keeps attracting people who want emotional closeness they find difficult to reciprocate.</p>
+            <p className="rs-p">The pattern people describe as &ldquo;I always attract the same type&rdquo; is very often the Descendant. It&apos;s not a curse. It&apos;s the half of the axis you outsourced. If that pattern rings true, the full breakdown is here: <Link href="/why-you-attract-the-wrong-person">why do I attract emotionally unavailable people?</Link></p>
+          </div>
+
+          {/* Appearance */}
+          <div className="rs-block">
+            <h2 className="rs-h2">Does your Rising sign <em>affect your appearance?</em></h2>
+            <div className="rs-tldr">
+              <span className="rs-tldr-l">Short answer</span>
+              <p className="rs-tldr-t">Traditional astrology says yes; the honest assessment is that there&apos;s no controlled evidence for it, and appearance is genetics. What is likely happening is that the Rising sign genuinely governs presentation — posture, expression, mannerism, eye contact — and those things change how a face reads. The Rising sign probably doesn&apos;t determine your bone structure. It&apos;s a reasonable framework for the part of appearance that&apos;s actually behaviour.</p>
+            </div>
+            <p className="rs-p">The traditional attributions are consistent across centuries of texts: Aries Rising with sharp features and a forward-leaning posture; Taurus Rising with a fuller, softer face and a distinctive voice; Leo Rising with notable hair and an upright carriage; Scorpio Rising with an intense, fixed gaze; Pisces Rising with soft, slightly unfocused eyes.</p>
+            <p className="rs-p"><strong style={{ color:"#e8e4f0" }}>The honest assessment: there is no controlled evidence for this, and the mechanism by which it would work doesn&apos;t exist.</strong> Appearance is genetics. Studies looking for correlations between birth data and physical traits haven&apos;t found them.</p>
+            <p className="rs-p">What is likely happening is a combination of two things. First, these descriptions are loose enough to fit a wide range of faces — &ldquo;sharp features&rdquo; applies to a lot of people. Second, and more interestingly, the Rising sign is genuinely about <em>presentation</em> — posture, expression, mannerism, how much space you take up, how quickly you make eye contact. Those things are behavioural, they&apos;re highly visible, and they change how a face reads. Someone who carries themselves with Leo Rising confidence looks different from someone who doesn&apos;t, and no genetics are required for that.</p>
+          </div>
+
+          {/* Rarest / luckiest */}
+          <div className="rs-block">
+            <h2 className="rs-h2">Which Rising sign is <em>rarest? And which is luckiest?</em></h2>
+            <div className="rs-tldr">
+              <span className="rs-tldr-l">Short answer</span>
+              <p className="rs-tldr-t">On rarity: signs don&apos;t rise at equal rates, and the effect depends on your latitude. In the northern hemisphere, Aries, Pisces, Aquarius and Capricorn Rising are genuinely less common; Libra, Scorpio and Virgo Rising are over-represented. The effect reverses in the southern hemisphere. On luck: there isn&apos;t a luckiest Rising sign — the Ascendant alone carries no fortune. What matters is the condition of your chart ruler.</p>
+            </div>
+            <p className="rs-p"><strong style={{ color:"#e8e4f0" }}>On rarity — there&apos;s a real astronomical answer, and it&apos;s more interesting than the usual one.</strong> Signs do not rise at equal rates. Because the ecliptic is tilted relative to the celestial equator, some signs cross the horizon quickly and others slowly, and the effect depends entirely on your latitude.</p>
+            <p className="rs-p">At mid-northern latitudes, the signs from Cancer through Sagittarius are signs of <em>long ascension</em>: they take considerably more than two hours to rise. Capricorn through Gemini are signs of <em>short ascension</em> and rise fast. At 50°N, Libra can take over three hours to clear the horizon while Aries takes barely one.</p>
+            <p className="rs-p">The practical consequence: at northern latitudes, <strong style={{ color:"#e8e4f0" }}>Aries, Pisces, Aquarius and Capricorn Rising are genuinely less common</strong>, and Libra, Scorpio and Virgo Rising are over-represented. The effect intensifies further north and reverses in the southern hemisphere. In Australia or Argentina the rare Rising signs are the opposite set.</p>
+            <p className="rs-p">So the honest answer to &ldquo;what&apos;s the rarest Rising sign&rdquo; is: it depends where you were born, and most articles claiming to answer it have not accounted for that at all.</p>
+            <p className="rs-p"><strong style={{ color:"#e8e4f0" }}>On luck — there isn&apos;t a luckiest Rising sign.</strong> The traditional idea is that Sagittarius and Pisces Rising are Jupiter-ruled, and Jupiter is the classical benefic associated with expansion and good fortune. But the Ascendant on its own carries no fortune. What matters is the condition of your chart ruler — is it well-placed in a sign it functions well in, angular, and receiving supportive aspects? A Sagittarius Rising with Jupiter in Capricorn (its sign of fall), buried in the 12th house and squared by Saturn, is not having an easier life than a Capricorn Rising with a well-placed Saturn.</p>
+          </div>
+
+          {/* Without birth time */}
+          <div className="rs-block">
+            <h2 className="rs-h2">What if your birth time is <em>wrong or unknown?</em></h2>
+            <div className="rs-tldr">
+              <span className="rs-tldr-l">Short answer</span>
+              <p className="rs-tldr-t">The Rising sign is the one placement that genuinely cannot be derived without a time. Request the long-form birth certificate; ask the hospital records department; ask anyone who was present for a rough window. If you have an approximate time, run the calculator at both ends — if the Rising sign is the same at both, you have your answer with certainty regardless of the imprecision.</p>
+            </div>
+            <p className="rs-p"><strong style={{ color:"#e8e4f0" }}>If you have no time at all:</strong></p>
+            <ul className="rs-list">
+              <li>Request the <strong>long-form</strong> birth certificate. Short-form versions usually omit the time; long-form usually includes it.</li>
+              <li>Outside the US, the certificate often won&apos;t have it — but the <strong>hospital maternity register</strong> frequently does. Records departments will usually search on request.</li>
+              <li>Ask anyone who was present. A rough window is enormously useful: &ldquo;before breakfast&rdquo; reduces twelve possibilities to about two.</li>
+              <li>Check baby books, birth announcements, and local newspaper birth listings.</li>
+            </ul>
+            <p className="rs-p"><strong style={{ color:"#e8e4f0" }}>If you have an approximate time:</strong> run the calculator at both ends of your window. If the Rising sign is the same at both, you have your answer with certainty regardless of the imprecision. If it differs, you have two candidates and you can read both.</p>
+            <p className="rs-p"><strong style={{ color:"#e8e4f0" }}>If your recorded time might be wrong:</strong> hospital-recorded times are often rounded to the nearest five or fifteen minutes, and occasionally record the time the paperwork was completed rather than the birth. A five-minute error is almost never material. It matters only if your Ascendant sits within a degree or two of a sign boundary — and the calculator above will show you your exact Ascendant degree, so you can check.</p>
+            <p className="rs-p"><strong style={{ color:"#e8e4f0" }}>A note on rectification:</strong> birth time rectification works backwards from documented life events to estimate an unknown time. It&apos;s legitimate but interpretive, not astronomical — treat the result as a well-reasoned hypothesis, not a fact.</p>
+          </div>
+
+          {/* Next steps */}
+          <div className="rs-block">
+            <h2 className="rs-h2">Next <em>steps</em></h2>
+            <ul className="rs-list">
+              <li><Link href="/moon-sign-calculator"><strong>Moon sign calculator</strong></Link> — how you feel, versus how you appear.</li>
+              <li><Link href="/big-three-calculator"><strong>Big Three calculator</strong></Link> — Sun, Moon and Rising together.</li>
+              <li><Link href="/free-birth-chart"><strong>Free birth chart</strong></Link> — the full wheel, including your chart ruler&apos;s house.</li>
+              <li><Link href="/natal-chart"><strong>How to read a natal chart</strong></Link> — the complete step-by-step guide.</li>
+              <li><Link href="/zodiac-signs"><strong>All 12 zodiac signs</strong></Link> — traits for every Rising sign.</li>
+            </ul>
+            <p className="rs-p"><Link href="/#try-it"><strong>Your Rising sign is the mask. A full reading shows the face behind it →</strong></Link></p>
+          </div>
+
         </div>
       </section>
 

@@ -170,11 +170,68 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly",
       priority: 0.8,
     },
+    // ── Patterns cluster (/why-*) ──
     {
       url: `${BASE_URL}/why-you-attract-the-wrong-person`,
       lastModified: now,
       changeFrequency: "monthly",
-      priority: 0.75,
+      priority: 0.85,
+    },
+    {
+      url: `${BASE_URL}/why-do-i-push-people-away`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.85,
+    },
+    {
+      url: `${BASE_URL}/why-do-i-self-sabotage`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.85,
+    },
+    {
+      url: `${BASE_URL}/why-am-i-so-hard-on-myself`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.85,
+    },
+
+    // ── Alternatives cluster ──
+    {
+      url: `${BASE_URL}/astrology-app-alternatives`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.9,
+    },
+    {
+      url: `${BASE_URL}/co-star-alternative`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.9,
+    },
+    {
+      url: `${BASE_URL}/the-pattern-alternative`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.9,
+    },
+    {
+      url: `${BASE_URL}/chani-alternative`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.9,
+    },
+    {
+      url: `${BASE_URL}/sanctuary-alternative`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.9,
+    },
+    {
+      url: `${BASE_URL}/nebula-alternative`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.9,
     },
 
     // ── Quizzes / calculators ──

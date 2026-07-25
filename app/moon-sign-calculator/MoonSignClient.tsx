@@ -103,13 +103,14 @@ const REVIEWS = [
 
 /* ── FAQ ── */
 const FAQS = [
-  { q: "What is a Moon sign?", a: "Your Moon sign is the zodiac sign the Moon occupied at the exact moment of your birth. It represents your emotional core — how you process feelings, what you need to feel secure, your instinctive reactions, and the parts of yourself that only emerge in private or under stress. It's considered one of the three most important placements in your birth chart, alongside your Sun and Rising signs." },
-  { q: "How do I find my Moon sign?", a: "Enter your birth date, birth time, and birth city into the calculator above. The Moon changes signs every 2 to 2.5 days. If you were born in the middle of a lunar transit, your date alone is enough. If you were born near a sign change, your birth time is needed for accuracy." },
-  { q: "Do I need my birth time for my Moon sign?", a: "Not always. The Moon stays in each zodiac sign for about 2.5 days. If the Moon was in the same sign all day on your birthday, the date alone is sufficient. But if the Moon changed signs on your birthday, your birth time determines which side of the change you fall on. Using your birth time always gives the most accurate result." },
-  { q: "Why do I feel more like my Moon sign than my Sun sign?", a: "This is very common. Your Moon sign governs your emotional baseline — the feelings, needs, and reactions that run beneath your conscious personality. In intimate relationships, under stress, or when you're alone, your Moon sign energy dominates. Your Sun sign is who you're becoming; your Moon sign is who you already are underneath." },
-  { q: "Does my Moon sign affect my relationships?", a: "Significantly. Your Moon sign determines what you need emotionally in a relationship — how you want to be loved, what triggers your insecurities, and how you nurture others. Moon sign compatibility often predicts relationship satisfaction more accurately than Sun sign compatibility, because it governs the emotional undercurrent of the partnership." },
-  { q: "How accurate is this Moon sign calculator?", a: "This calculator uses astronomy-engine, a high-precision astronomical computation library. It calculates the Moon's geocentric ecliptic longitude at your exact moment of birth, accurate to arc-second precision. The result matches professional ephemeris tools. For births near a lunar sign change, providing your exact birth time ensures accuracy." },
-  { q: "What's the difference between Moon sign and Rising sign?", a: "Your Moon sign is your inner emotional world — private, instinctive, often hidden. Your Rising sign is your outer social personality — public, visible, and the first impression you give. Moon is how you feel; Rising is how you appear. Both require birth time for accuracy, but they reveal completely different dimensions of your personality." },
+  { q: "What is a Moon sign?", a: "Your Moon sign is the zodiac sign the Moon occupied at the moment of your birth. It represents your emotional core — how you process feelings, what you need to feel secure, your instinctive reactions, and the parts of yourself that only emerge in private or under stress. Alongside your Sun and Rising, it's one of the three most important placements in your chart." },
+  { q: "Why is my Moon sign different on different websites?", a: "One of four things happened: your birth time crossed a lunar ingress; the site handled your historical time zone incorrectly (daylight saving rules have changed repeatedly); one site defaulted to noon without telling you; or they use the sidereal zodiac instead of tropical (sidereal will usually give you the previous sign). Only one of those is actually an error." },
+  { q: "Can I find my Moon sign without a birth time?", a: "Usually yes. The Moon spends about 2 days 5 hours in each sign, so on roughly two thirds of birthdays it was in a single sign for the whole day. If your date lands near a boundary, run the calculator at 00:01 and 23:59 — if both return the same sign, you're safe. If they differ, read both descriptions; they don't feel the same." },
+  { q: "Does Moon sign compatibility matter more than Sun sign compatibility?", a: "Yes, for whether you can actually live with someone. Sun sign compatibility predicts whether you admire each other. Moon sign compatibility predicts whether your instinctive stress reactions wound or soothe each other, and whether 'being cared for' means the same thing to both of you. The single strongest indicator in synastry is one person's Moon conjunct the other's Sun." },
+  { q: "What Moon phase was I born under?", a: "Your Moon sign is where the Moon was. Your natal lunar phase is the angular relationship between the Moon and Sun at birth — a separate layer. New Moon (0–45°), Crescent, First Quarter, Gibbous, Full Moon, Disseminating, Last Quarter, and Balsamic. Balsamic Moon people often describe feeling like they arrived at the end of something rather than the start." },
+  { q: "Which Moon sign is the rarest?", a: "None of them, meaningfully. The Moon spends roughly equal time in each sign over any long period. Small variations exist from orbital speed and birth-rate seasonality — a few percentage points — but nothing makes any Moon sign genuinely rare. Anyone claiming otherwise is repeating a claim without data. Certain aspect combinations are rare; the Moon signs themselves are not." },
+  { q: "Which Moon sign is the luckiest?", a: "There isn't one. Traditional astrology considers the Moon exalted in Taurus, in domicile in Cancer (least friction), in fall in Scorpio, and in detriment in Capricorn (works against its own nature). That's about ease of expression, not fortune. A Scorpio Moon is harder to live inside — and also the placement most likely to see straight through someone." },
+  { q: "How accurate is this Moon sign calculator?", a: "The calculator computes the Moon's geocentric ecliptic longitude at your exact moment of birth from a high-precision astronomical ephemeris, in the tropical zodiac, using the historical time zone offset for your birth location and date. Accurate to arc-second precision. If your Moon was within a few degrees of a sign boundary, we'll tell you rather than hiding it." },
 ];
 
 export default function MoonSignClient() {
@@ -162,7 +163,8 @@ export default function MoonSignClient() {
         *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
         :root{--font-display:'Playfair Display',Georgia,serif;--font-body:'DM Sans',system-ui,sans-serif;--bg:#09090f;--card:#12121e;--border:rgba(255,255,255,0.08);--white:#e8e4f0;--dim:rgba(232,228,240,0.55);--gold:#F0B84A;--gold-dim:rgba(240,184,74,0.18);--purple:#6b2fd4;--rose:#d4537e;--teal:#5dcaa5;--moon:#c4a8ff}
         html{scroll-behavior:smooth}body{background:var(--bg);color:var(--white);font-family:var(--font-body);-webkit-font-smoothing:antialiased;overflow-x:hidden}
-        .ms-c{max-width:1100px;margin:0 auto;padding:0 24px}
+        .ms-c{max-width:1280px;margin:0 auto;padding:0 40px}
+        @media(max-width:768px){.ms-c{padding:0 20px}}
         .ms-nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:18px 0;transition:all .3s}
         .ms-nav.on{background:rgba(9,9,15,.92);border-bottom:1px solid var(--border);backdrop-filter:blur(16px)}
         .ms-logo{font-family:var(--font-display);font-size:1.3rem;font-weight:700;text-decoration:none;display:flex;align-items:center;gap:10px}
@@ -292,23 +294,143 @@ export default function MoonSignClient() {
         </section>
       )}
 
-      {/* SEO CONTENT */}
+      {/* SEO LONG-FORM GUIDE */}
       <section style={{ padding:"80px 0", background:"#0d0d18", borderTop:"1px solid var(--border)" }}>
-        <div className="ms-c" style={{ maxWidth:900 }}>
-          <h2 style={{ fontFamily:"var(--font-display)", fontSize:"clamp(1.6rem,3.5vw,2.4rem)", fontWeight:800, lineHeight:1.1, marginBottom:24 }}>
-            Understanding your <em style={{ fontStyle:"italic", background:"linear-gradient(135deg,#c4a8ff,#d4537e)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", backgroundClip:"text" }}>Moon sign</em>
-          </h2>
-          <div style={{ fontSize:15, color:"rgba(232,228,240,0.6)", lineHeight:1.78 }}>
-            <p style={{ marginBottom:20 }}>In astrology, your Moon sign is the zodiac sign the Moon occupied at the moment you were born. While your Sun sign represents your conscious identity — the self you project — your Moon sign reveals the emotional undercurrent running beneath everything you do. It governs your instincts, your comfort needs, your childhood conditioning, and the way you experience intimacy.</p>
-            <h3 style={{ fontFamily:"var(--font-display)", fontSize:20, fontWeight:700, color:"#e8e4f0", marginBottom:12 }}>Why the Moon sign matters</h3>
-            <p style={{ marginBottom:20 }}>The Moon moves through all twelve zodiac signs in approximately 28 days, spending about 2.5 days in each sign. This rapid movement is why two people born just days apart can have completely different emotional makeups. Your Moon sign is the private you — the version that surfaces when you're tired, stressed, in love, or alone. It's the part of you that your partner, your family, and your therapist know best, even if the rest of the world only sees your Sun sign.</p>
-            <h3 style={{ fontFamily:"var(--font-display)", fontSize:20, fontWeight:700, color:"#e8e4f0", marginBottom:12 }}>Moon sign vs Sun sign</h3>
-            <p style={{ marginBottom:20 }}>Your Sun sign is who you're becoming — your life purpose, your ego, the identity you grow into over time. Your Moon sign is who you already are underneath — the emotional patterns established in childhood that you carry through life. If your Sun sign is your resume, your Moon sign is your diary. Many people relate more to their Moon sign than their Sun sign because it describes their internal experience with uncanny accuracy.</p>
-            <h3 style={{ fontFamily:"var(--font-display)", fontSize:20, fontWeight:700, color:"#e8e4f0", marginBottom:12 }}>Moon signs in relationships</h3>
-            <p style={{ marginBottom:20 }}>In relationship astrology, Moon sign compatibility is often more predictive of long-term happiness than Sun sign compatibility. Your Moon sign determines what makes you feel loved, what triggers your deepest insecurities, and how you behave in emotional conflict. Two people with compatible Moon signs tend to feel emotionally "at home" with each other, even if their Sun signs suggest tension.</p>
-            <h3 style={{ fontFamily:"var(--font-display)", fontSize:20, fontWeight:700, color:"#e8e4f0", marginBottom:12 }}>About this calculator</h3>
-            <p>This free Moon sign calculator uses astronomy-engine, a high-precision astronomical library that computes the Moon's geocentric ecliptic longitude at your exact moment of birth. The Moon's position is accurate to arc-second precision. If you don't know your exact birth time, the calculator defaults to noon, which is accurate for most births — but if the Moon changed signs on your birthday, your birth time may affect the result.</p>
+        <div className="ms-c" style={{ maxWidth:1080 }}>
+
+          <style>{`
+            .ms-h2{font-family:var(--font-display);font-size:clamp(1.5rem,3.2vw,2rem);font-weight:800;line-height:1.15;letter-spacing:-0.01em;color:#e8e4f0;margin:0 0 14px}
+            .ms-h2 em{font-style:italic;background:linear-gradient(135deg,#c4a8ff,#d4537e);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+            .ms-h3{font-family:var(--font-display);font-size:18px;font-weight:700;color:#e8e4f0;margin:24px 0 10px}
+            .ms-p{font-size:15px;color:rgba(232,228,240,0.65);line-height:1.78;margin-bottom:16px}
+            .ms-p a{color:var(--moon);text-decoration:underline;text-decoration-color:rgba(196,168,255,0.35);text-underline-offset:3px}
+            .ms-p a:hover{text-decoration-color:var(--moon)}
+            .ms-tldr{background:rgba(196,168,255,0.06);border-left:3px solid var(--moon);border-radius:0 10px 10px 0;padding:16px 20px;margin:0 0 24px}
+            .ms-tldr-l{font-size:10px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--moon);margin-bottom:6px;display:block}
+            .ms-tldr-t{font-size:15px;color:#e8e4f0;line-height:1.65}
+            .ms-block{margin-bottom:56px}
+            .ms-list{margin:0 0 16px 0;padding-left:22px}
+            .ms-list li{font-size:15px;color:rgba(232,228,240,0.65);line-height:1.7;margin-bottom:8px}
+            .ms-list li strong{color:#e8e4f0;font-weight:600}
+            .ms-signs{display:grid;gap:14px;margin:8px 0 8px}
+            .ms-sign{background:rgba(255,255,255,0.02);border:0.5px solid rgba(196,168,255,0.15);border-radius:12px;padding:16px 18px}
+            .ms-sign h4{font-family:var(--font-display);font-size:17px;font-weight:700;color:var(--moon);margin:0 0 6px;letter-spacing:-0.01em}
+            .ms-sign p{font-size:14px;color:rgba(232,228,240,0.7);line-height:1.65;margin:0}
+          `}</style>
+
+          {/* Per-sign meanings */}
+          <div className="ms-block">
+            <h2 className="ms-h2">What does each <em>Moon sign actually mean?</em></h2>
+            <div className="ms-tldr">
+              <span className="ms-tldr-l">Short answer</span>
+              <p className="ms-tldr-t">Your Moon sign describes your emotional operating system: what you need to feel safe, how you behave when you&apos;re hurt, and what you look like with nobody watching. Here&apos;s each one, without the greeting-card version.</p>
+            </div>
+
+            <div className="ms-signs">
+              <div className="ms-sign"><h4>Aries Moon</h4><p>Feels everything at maximum volume for about four minutes. Anger arrives instantly and leaves just as fast, which the people around you find much harder to process than you do. You need action when you&apos;re upset, not comfort. Independence isn&apos;t a preference; it&apos;s a safety requirement.</p></div>
+              <div className="ms-sign"><h4>Taurus Moon</h4><p>The most emotionally stable Moon, and the slowest to change. You need physical comfort, routine and predictability, and you&apos;re calmer under pressure than almost anyone. The cost is that you&apos;ll stay in something that stopped working years ago because leaving is more disruptive than enduring.</p></div>
+              <div className="ms-sign"><h4>Gemini Moon</h4><p>You process feelings by talking about them, and if you can&apos;t talk you&apos;ll intellectualise instead. Emotions get named, analysed and filed rather than felt — efficient right up until something too big to explain arrives. You need mental stimulation to feel emotionally well.</p></div>
+              <div className="ms-sign"><h4>Cancer Moon</h4><p>The Moon rules Cancer, so this is the placement at full strength. You feel everything, including things happening to other people, and your emotional memory is total. You need closeness and reassurance. The shadow is that hurt goes inward and comes out sideways.</p></div>
+              <div className="ms-sign"><h4>Leo Moon</h4><p>You need to be seen, and being ignored genuinely wounds you in a way you&apos;d rather not admit. Warmth and generosity come naturally. You&apos;re dramatic when hurt because the alternative — being quietly upset and unnoticed — feels worse than the argument.</p></div>
+              <div className="ms-sign"><h4>Virgo Moon</h4><p>You handle feelings by fixing something. Emotional discomfort converts almost immediately into a task, a plan, or a critique. You show love through usefulness and struggle to accept it any other way. The inner critic is brutal and constant.</p></div>
+              <div className="ms-sign"><h4>Libra Moon</h4><p>Conflict is physically uncomfortable, so you&apos;ll concede a position you actually held to keep the room calm. You need harmony to feel settled, and you&apos;re genuinely skilled at making other people feel at ease. The problem is that a decade of small concessions produces resentment you never gave yourself permission to feel.</p></div>
+              <div className="ms-sign"><h4>Scorpio Moon</h4><p>The Moon is in fall here, which is the technical way of saying this placement is hard to carry. You feel at a depth most people don&apos;t visit and you show almost none of it. Trust is given in increments and revoked permanently. You can read a room&apos;s undercurrents instantly.</p></div>
+              <div className="ms-sign"><h4>Sagittarius Moon</h4><p>You need freedom, movement and the sense that there&apos;s an exit. Optimism is real, not performed, and you&apos;ll find the lesson in almost any disaster. What you won&apos;t do is sit inside a painful feeling long enough to finish it — restlessness is your escape route.</p></div>
+              <div className="ms-sign"><h4>Capricorn Moon</h4><p>The Moon is in detriment here. You handle emotion by managing it, and often by not having it until a more convenient time that never arrives. Competence became your safety strategy early. You&apos;re the most reliable person anyone knows and the least likely to ask for anything.</p></div>
+              <div className="ms-sign"><h4>Aquarius Moon</h4><p>You observe your own feelings from a slight distance, as though they belong to someone you&apos;re studying. Detachment isn&apos;t coldness — it&apos;s how you stay functional — but people close to you experience it as absence. You care enormously about people in general and find individual emotional demands claustrophobic.</p></div>
+              <div className="ms-sign"><h4>Pisces Moon</h4><p>You absorb the emotional state of whatever room you&apos;re in and frequently can&apos;t tell which feelings started as yours. Empathy is close to involuntary. Boundaries are the lifelong project. You need solitude and something to escape into — art, water, sleep, fiction.</p></div>
+            </div>
+            <p className="ms-p">If yours landed uncomfortably close, that&apos;s the point. The <Link href="/#try-it">full reading</Link> takes your Moon sign, the house it sits in, and every aspect to it, and tells you where the pattern came from. If Scorpio, Capricorn or Aquarius Moon landed particularly close, the withdrawal side of it has its own page: <Link href="/why-do-i-push-people-away">why do I push people away when I get close?</Link></p>
           </div>
+
+          {/* Why Moon sign differs between sites */}
+          <div className="ms-block">
+            <h2 className="ms-h2">Why is my Moon sign <em>different on different websites?</em></h2>
+            <div className="ms-tldr">
+              <span className="ms-tldr-l">Short answer</span>
+              <p className="ms-tldr-t">One of four things happened: your birth time crossed a lunar ingress; the sites handled your historical time zone differently; one site defaulted to noon without telling you; or they use a different zodiac reference frame (sidereal vs tropical). All four are common, and only one of them is actually an error.</p>
+            </div>
+            <p className="ms-p"><strong style={{ color:"#e8e4f0" }}>1. Your birth time crossed a lunar ingress.</strong> The Moon changes signs every 2.2 to 2.5 days, so roughly one birthday in three falls near a boundary. If yours did, a site defaulting to noon and a site using your actual 9 PM birth time will disagree — and only the one with your real time is right for you.</p>
+            <p className="ms-p"><strong style={{ color:"#e8e4f0" }}>2. Time zone handling.</strong> This is the sneaky one, and the most common genuine error. Daylight saving rules have changed repeatedly across the US, UK, EU and Australia, and several regions have shifted zones outright. A calculator applying today&apos;s offset to a 1987 birth will be an hour or more out.</p>
+            <p className="ms-p"><strong style={{ color:"#e8e4f0" }}>3. One site defaulted to noon and didn&apos;t tell you.</strong> Many free calculators silently substitute 12:00 when you leave the time blank, then present the result as definitive. If you were born in the evening and the Moon changed signs at 3 PM, that site has given you the wrong sign with total confidence.</p>
+            <p className="ms-p"><strong style={{ color:"#e8e4f0" }}>4. A different zodiac reference frame.</strong> All Western astrology is calculated in the tropical zodiac, anchored to the seasons. A small number of calculators use the sidereal zodiac instead, anchored to the fixed stars. The two have drifted about 24° apart, so a sidereal calculator will usually give you the previous sign. Not an error, just a different system.</p>
+            <p className="ms-p"><strong style={{ color:"#e8e4f0" }}>What BluntChart does:</strong> we compute the Moon&apos;s geocentric ecliptic longitude from a high-precision ephemeris, in the tropical zodiac, using the historical time zone offset for your birth location and date. If your Moon was within a few degrees of a sign boundary, we&apos;ll tell you rather than hiding it.</p>
+          </div>
+
+          {/* Without birth time */}
+          <div className="ms-block">
+            <h2 className="ms-h2">Can I find my Moon sign <em>without a birth time?</em></h2>
+            <div className="ms-tldr">
+              <span className="ms-tldr-l">Short answer</span>
+              <p className="ms-tldr-t">Usually yes. The Moon spends roughly 2 days 5 hours in each sign, so on about two thirds of birthdays the Moon was in a single sign for the whole 24-hour period. On the remaining third, run the calculator at 00:01 and 23:59 on your birth date — if both return the same sign, you&apos;re safe.</p>
+            </div>
+            <ol className="ms-list">
+              <li><strong>Run the calculator with noon.</strong> If the Moon was mid-sign, you&apos;re done and the time is irrelevant.</li>
+              <li><strong>If the result lands near a boundary</strong>, run it twice more — at 00:01 and 23:59 on your birth date. If both return the same sign, you&apos;re safe.</li>
+              <li><strong>With two candidates, read both descriptions.</strong> This is the one place where subjective recognition is genuinely diagnostic. A Capricorn Moon and an Aquarius Moon do not describe the same person, and people rarely mistake one for the other once they read both properly.</li>
+              <li><strong>Ask about the circumstances of your birth.</strong> Even &ldquo;it was late at night&rdquo; or &ldquo;she went into labour after breakfast&rdquo; usually resolves it.</li>
+            </ol>
+          </div>
+
+          {/* Compatibility */}
+          <div className="ms-block">
+            <h2 className="ms-h2">Why does <em>Moon sign compatibility</em> beat Sun sign compatibility?</h2>
+            <div className="ms-tldr">
+              <span className="ms-tldr-l">Short answer</span>
+              <p className="ms-tldr-t">Sun sign compatibility is what magazines print. Moon sign compatibility is what actually predicts whether you can live with someone. Your Sun sign describes what you&apos;re building toward; your Moon describes what you do when you&apos;re upset at 11pm on a Wednesday. Only one of those is load-bearing in a relationship.</p>
+            </div>
+            <p className="ms-p"><strong style={{ color:"#e8e4f0" }}>What Moon compatibility actually governs:</strong> whether your instinctive stress reactions wound each other or soothe each other; whether you need the same things to feel safe; how you each behave when you feel rejected — which is where most relationships actually break; whether &ldquo;being cared for&rdquo; means the same thing to both of you.</p>
+            <p className="ms-p"><strong style={{ color:"#e8e4f0" }}>A worked example:</strong> a Cancer Moon under stress wants proximity, reassurance and to talk it through. An Aquarius Moon under stress wants distance, space and time alone to process. Neither is wrong. But the Cancer Moon reads the Aquarius Moon&apos;s withdrawal as abandonment, and the Aquarius Moon reads the Cancer Moon&apos;s pursuit as suffocation. Both people are trying to feel better and both are making the other feel worse. That&apos;s a Moon sign incompatibility, and no amount of shared Sun-sign values fixes it.</p>
+            <p className="ms-p"><strong style={{ color:"#e8e4f0" }}>General patterns:</strong> Moons in the same element usually understand each other without explanation. Moons in compatible elements (Fire/Air, Earth/Water) tend to complement. Moons in square or opposition require translation — which is workable, but it has to be conscious.</p>
+            <p className="ms-p">The single strongest indicator in synastry is one person&apos;s <strong style={{ color:"#e8e4f0" }}>Moon conjunct the other&apos;s Sun</strong>. What one of them fundamentally is, the other instinctively needs.</p>
+          </div>
+
+          {/* Moon phase */}
+          <div className="ms-block">
+            <h2 className="ms-h2">What Moon phase were you <em>born under?</em></h2>
+            <div className="ms-tldr">
+              <span className="ms-tldr-l">Short answer</span>
+              <p className="ms-tldr-t">Your Moon sign is where the Moon was. Your natal lunar phase is the angular relationship between the Moon and Sun at your birth, and it&apos;s a separate layer most calculators skip. It shapes whether you move like a beginner, a builder, a critic, an integrator, a teacher or someone finishing something.</p>
+            </div>
+            <ul className="ms-list">
+              <li><strong>New Moon (0–45°)</strong> — beginnings, instinct, acting without a map. Often people who don&apos;t look back.</li>
+              <li><strong>Crescent (45–90°)</strong> — struggle against inertia, pushing away from origins.</li>
+              <li><strong>First Quarter (90–135°)</strong> — crisis in action. Builders and breakers of structures.</li>
+              <li><strong>Gibbous (135–180°)</strong> — refinement, analysis, perfectionism, the drive to improve.</li>
+              <li><strong>Full Moon (180–225°)</strong> — awareness through relationship. Everything is understood by contrast with someone else.</li>
+              <li><strong>Disseminating (225–270°)</strong> — teaching, sharing, distributing what&apos;s been learned.</li>
+              <li><strong>Last Quarter (270–315°)</strong> — crisis in consciousness. Dismantling beliefs that no longer hold.</li>
+              <li><strong>Balsamic (315–360°)</strong> — the dark moon before the new. Endings, release, a sense of living slightly outside your own time.</li>
+            </ul>
+            <p className="ms-p">Balsamic Moon people in particular often describe feeling like they arrived at the end of something rather than the start.</p>
+            <h3 className="ms-h3">Void of course</h3>
+            <p className="ms-p">A Moon is <strong style={{ color:"#e8e4f0" }}>void of course</strong> when it has completed its last major aspect in a sign and hasn&apos;t yet entered the next one. Traditional readings say a void-of-course natal Moon produces a slightly detached emotional quality — feeling somewhat outside the emotional currents everyone else seems caught in, and an unusual difficulty in being manipulated. It&apos;s not a defect. It&apos;s roughly a self-contained emotional system.</p>
+          </div>
+
+          {/* Rarest / luckiest */}
+          <div className="ms-block">
+            <h2 className="ms-h2">Which Moon sign is the <em>rarest? The luckiest?</em></h2>
+            <div className="ms-tldr">
+              <span className="ms-tldr-l">Short answer</span>
+              <p className="ms-tldr-t">Neither question has a real answer. The Moon spends roughly equal time in each sign over any long period, so the twelve Moon signs are close to evenly distributed. Anyone telling you a specific Moon sign is &ldquo;the rarest&rdquo; is repeating a claim without data. Same for &ldquo;luckiest&rdquo; — the Moon is exalted in Taurus and in fall in Scorpio, which is about ease of expression, not fortune.</p>
+            </div>
+            <p className="ms-p">The Moon completes a full circuit of the zodiac every 27.3 days. Small variations exist — the orbit is elliptical, its speed varies from 12° to 15° per day, and birth-rate seasonality produces a few percentage points of variation. Nothing that makes any Moon sign genuinely rare.</p>
+            <p className="ms-p">What is true is that certain <em>combinations</em> are uncommon — a Moon sign in hard aspect to both Saturn and Pluto, for instance, is unusual and meaningfully harder to carry.</p>
+            <p className="ms-p">The same applies to &ldquo;luckiest Moon sign.&rdquo; Traditional astrology considers the Moon exalted in Taurus and in domicile in Cancer — meaning it functions with the least friction there — and in fall in Scorpio and detriment in Capricorn, meaning it works against its own nature. That&apos;s a statement about ease of expression, not fortune. A Scorpio Moon is harder to live inside. It&apos;s also the placement most likely to see straight through someone.</p>
+          </div>
+
+          {/* Next steps */}
+          <div className="ms-block">
+            <h2 className="ms-h2">Next <em>steps</em></h2>
+            <ul className="ms-list">
+              <li><Link href="/rising-sign-calculator"><strong>Rising sign calculator</strong></Link> — how you appear, versus how you feel.</li>
+              <li><Link href="/big-three-calculator"><strong>Big Three calculator</strong></Link> — Sun, Moon and Rising together.</li>
+              <li><Link href="/free-birth-chart"><strong>Free birth chart</strong></Link> — the full wheel, houses and aspects.</li>
+              <li><Link href="/natal-chart"><strong>How to read a natal chart</strong></Link> — including what your Moon&apos;s house placement means.</li>
+            </ul>
+            <p className="ms-p"><Link href="/#try-it"><strong>Your Moon sign is how you feel. A full reading tells you why →</strong></Link></p>
+          </div>
+
         </div>
       </section>
 

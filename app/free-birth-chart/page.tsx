@@ -3,28 +3,13 @@ import FreeBirthChartClient from "./FreeBirthChartClient";
 
 /* ── SEO Metadata ────────────────────────────────────────────────────────── */
 export const metadata: Metadata = {
-  title: "Free Birth Chart Calculator — Natal Chart with Exact Planetary Positions | BluntChart",
+  title: "Free Birth Chart Calculator: Instant Natal Chart | BluntChart",
   description:
-    "Generate your free birth chart instantly using high-precision ephemeris. Enter your birth date, time, and place to see your Sun, Moon, Rising sign, all planetary placements, houses, and aspects. No signup required.",
-  keywords: [
-    "free birth chart",
-    "natal chart calculator",
-    "birth chart free",
-    "free natal chart",
-    "birth chart calculator",
-    "astrology chart",
-    "free astrology chart",
-    "natal chart free online",
-    "rising sign calculator",
-    "sun moon rising",
-    "birth chart with houses",
-    "planetary positions birth chart",
-    "free horoscope chart",
-  ],
+    "Get your free birth chart in seconds. Exact Sun, Moon, Rising, all planets, houses and aspects from a precision ephemeris. No signup, no subscription.",
   openGraph: {
     title: "Free Birth Chart Calculator | BluntChart",
     description:
-      "Generate your free natal chart with exact planetary positions. Sun, Moon, Rising, Venus, Mars, and more — calculated from high-precision ephemeris.",
+      "Get your free natal chart in seconds. Exact Sun, Moon, Rising, all planets, houses and aspects. No signup.",
     url: "https://bluntchart.com/free-birth-chart",
     siteName: "BluntChart",
     type: "website",
@@ -33,7 +18,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Free Birth Chart Calculator | BluntChart",
     description:
-      "Your exact natal chart — Sun, Moon, Rising, all planets, houses, and aspects. Free, instant, no signup.",
+      "Your exact natal chart — Sun, Moon, Rising, all planets, houses and aspects. Free, instant, no signup.",
   },
   alternates: {
     canonical: "https://bluntchart.com/free-birth-chart",
@@ -61,46 +46,15 @@ const jsonLd = {
     {
       "@type": "FAQPage",
       mainEntity: [
-        {
-          "@type": "Question",
-          name: "What is a birth chart?",
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: "A birth chart (natal chart) is a map of exactly where every planet was at the exact moment you were born. It shows your Sun sign, Moon sign, Rising sign (Ascendant), and the positions of Mercury, Venus, Mars, Jupiter, Saturn, Uranus, Neptune, and Pluto across the 12 zodiac signs and 12 houses.",
-          },
-        },
-        {
-          "@type": "Question",
-          name: "Do I need my exact birth time for a birth chart?",
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: "Your birth time is essential for calculating your Rising sign (Ascendant) and house placements. Without it, your Sun, Moon, and planetary signs will still be accurate, but house positions and the Rising sign may be off. Check your birth certificate for the exact time.",
-          },
-        },
-        {
-          "@type": "Question",
-          name: "What is a Rising sign?",
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: "Your Rising sign (Ascendant) is the zodiac sign that was rising on the eastern horizon at the exact moment of your birth. It determines how others perceive you and your outward personality. It requires your exact birth time and location to calculate.",
-          },
-        },
-        {
-          "@type": "Question",
-          name: "How accurate is this birth chart calculator?",
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: "This calculator uses astronomy-engine, a high-precision astronomical library that computes geocentric planetary positions. Planet positions are accurate to arc-second precision, matching professional-grade ephemeris tools.",
-          },
-        },
-        {
-          "@type": "Question",
-          name: "What is the difference between a birth chart and a horoscope?",
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: "A birth chart is a precise map of the sky at your exact moment of birth, unique to you. A horoscope is a general forecast based only on your Sun sign, shared with roughly 1/12th of the population. Birth charts are far more specific and personal.",
-          },
-        },
+        { "@type": "Question", name: "What is a birth chart?", acceptedAnswer: { "@type": "Answer", text: "A birth chart (natal chart) is a map of exactly where every planet was at the moment you were born, calculated from your birth date, exact birth time and birth location. It shows the Sun, Moon, Mercury, Venus, Mars, Jupiter, Saturn, Uranus, Neptune and Pluto across the 12 zodiac signs and 12 houses." } },
+        { "@type": "Question", name: "Can I get a birth chart without my birth time?", acceptedAnswer: { "@type": "Answer", text: "Yes, partially. Your Sun, Mercury, Venus, Mars, Jupiter, Saturn and outer planet signs will be accurate. What you lose is your Rising sign, all twelve house placements, the Midheaven, and — if the Moon changed signs that day — your Moon sign. Run the chart at noon to get everything else." } },
+        { "@type": "Question", name: "What house system does this calculator use?", acceptedAnswer: { "@type": "Answer", text: "BluntChart uses Equal House from the Ascendant. Planet positions, the Ascendant degree and all aspects match professional tools to arc-second precision. Only house cusps differ from a Placidus chart, which usually means one or two planets landing in an adjacent house." } },
+        { "@type": "Question", name: "Is a birth chart the same as a natal chart?", acceptedAnswer: { "@type": "Answer", text: "Yes — birth chart and natal chart are two names for the same thing. 'Natal' is the technical term; 'birth chart' is more common. There is no difference in calculation, accuracy or meaning." } },
+        { "@type": "Question", name: "How accurate is this birth chart calculator?", acceptedAnswer: { "@type": "Answer", text: "The calculator uses astronomy-engine, a high-precision astronomical library. Planetary longitudes are accurate to arc-second and match the Swiss Ephemeris used by professional astrologers. The only variable between sites is house system." } },
+        { "@type": "Question", name: "What is a chart ruler?", acceptedAnswer: { "@type": "Answer", text: "Your chart ruler is the planet that rules your Rising sign — Aries Rising is ruled by Mars, Taurus and Libra Rising by Venus, and so on. Wherever that planet sits in your chart describes the overall direction and flavour of your life." } },
+        { "@type": "Question", name: "What is a stellium?", acceptedAnswer: { "@type": "Answer", text: "A stellium is three or more planets in the same sign or the same house. When you have one, that area of your chart dominates you. Stelliums are also why some people don't relate to their Sun sign — the stellium is louder." } },
+        { "@type": "Question", name: "Can AI read my birth chart?", acceptedAnswer: { "@type": "Answer", text: "Yes, but the calculation must come from a real ephemeris rather than the language model. A well-built AI reading works from the whole chart at once and synthesizes how placements interact — which is what template reports have never managed. Ask a general chatbot to compute a chart and it will often invent placements." } },
+        { "@type": "Question", name: "What is the difference between a birth chart and a horoscope?", acceptedAnswer: { "@type": "Answer", text: "A birth chart is a permanent, one-time calculation unique to your exact moment of birth. A daily horoscope is a general forecast based only on your Sun sign, shared with roughly one twelfth of the population." } },
       ],
     },
     {

@@ -2,25 +2,9 @@ import type { Metadata } from "next";
 import BigThreeClient from "./BigThreeClient";
 
 export const metadata: Metadata = {
-  title: "Big Three Calculator — Sun, Moon & Rising Sign Free | BluntChart",
+  title: "Big Three Calculator: Sun, Moon & Rising Signs | BluntChart",
   description:
-    "Find your Big Three — Sun, Moon, and Rising signs — free with our astrology calculator. Discover how your core identity, emotional nature, and outward personality work together. High-precision ephemeris. No signup.",
-  keywords: [
-    "big three astrology",
-    "sun moon rising calculator",
-    "big three calculator",
-    "what are my big three",
-    "sun moon rising sign",
-    "big 3 astrology",
-    "whats my big three",
-    "big three signs",
-    "sun moon rising sign calculator",
-    "my big three astrology",
-    "find my big three",
-    "astrology big 3 calculator",
-    "sun moon ascendant calculator",
-    "big three zodiac",
-  ],
+    "Find your Big 3 free — Sun, Moon and Rising signs from your exact birth time. See what each one actually means for you. Instant result, no signup.",
   openGraph: {
     title: "Free Big Three Calculator — Sun, Moon & Rising | BluntChart",
     description: "Find your Big Three astrology signs free. Sun = who you are. Moon = how you feel. Rising = how the world sees you.",
@@ -51,11 +35,14 @@ const jsonLd = {
     {
       "@type": "FAQPage",
       mainEntity: [
-        { "@type": "Question", name: "What are the Big Three in astrology?", acceptedAnswer: { "@type": "Answer", text: "The Big Three refers to your Sun sign, Moon sign, and Rising sign (Ascendant) — the three most important placements in your birth chart. Your Sun sign is your core identity. Your Moon sign is your emotional nature and inner world. Your Rising sign is how others perceive you and your outward personality. Together they give a far more complete picture than your Sun sign alone." } },
-        { "@type": "Question", name: "How do I find my Big Three?", acceptedAnswer: { "@type": "Answer", text: "To find your Big Three, you need your birth date, exact birth time (from your birth certificate), and birth city. Enter these into a Big Three calculator. Your Sun sign is determined by your birth date. Your Moon sign requires the date and approximate time. Your Rising sign requires the exact time and location." } },
-        { "@type": "Question", name: "Why are the Big Three important?", acceptedAnswer: { "@type": "Answer", text: "The Big Three are important because they capture the three most fundamental dimensions of your personality. Sun = your ego and conscious identity. Moon = your emotions, instincts, and subconscious needs. Rising = your social mask, first impressions, and physical appearance. Most people identify with their Big Three far more than their Sun sign alone." } },
-        { "@type": "Question", name: "Can two people have the same Big Three?", acceptedAnswer: { "@type": "Answer", text: "It's extremely rare. While many people share a Sun sign, the Moon changes signs every 2.5 days and the Rising sign changes every 2 hours. For two people to share all three, they would need to be born on the same day, around the same time, in a similar geographic location. Even then, the exact degrees would differ." } },
-        { "@type": "Question", name: "Which is more important — Sun sign or Rising sign?", acceptedAnswer: { "@type": "Answer", text: "Neither is objectively more important — they represent different things. Your Sun sign is your core self that emerges over time. Your Rising sign is your day-to-day personality that others interact with. Many astrologers recommend reading horoscopes for both your Sun and Rising signs for the most accurate picture." } },
+        { "@type": "Question", name: "What are the Big Three in astrology?", acceptedAnswer: { "@type": "Answer", text: "The Big Three refers to your Sun sign, Moon sign, and Rising sign — the three most important placements in your birth chart. Sun is core identity, Moon is emotional nature, Rising is social interface. Your Sun is the film, your Moon is the audience reaction, your Rising is the poster." } },
+        { "@type": "Question", name: "Which of the Big Three is most important?", acceptedAnswer: { "@type": "Answer", text: "There isn't a single answer — anyone who gives one is picking a tradition without telling you. Modern Western astrology treats the Sun as primary; traditional astrology treats the Ascendant as primary; psychological astrology tends to weight the Moon most heavily. Read the Rising for first impressions, the Moon for intimacy, the Sun for long-term direction." } },
+        { "@type": "Question", name: "Can I find my Big Three without a birth time?", acceptedAnswer: { "@type": "Answer", text: "Partially. Sun is always available from your birth date. Moon is usually available, though roughly one birthday in three falls near an ingress and needs a time. Rising is genuinely not available — the Ascendant moves through all twelve signs in 24 hours." } },
+        { "@type": "Question", name: "Why don't I relate to my Sun sign?", acceptedAnswer: { "@type": "Answer", text: "Usually because your Rising and Moon are doing more visible work. The Rising governs day-to-day behaviour and often feels more 'you' than the Sun. If you have a stellium in another sign, that sign dominates — a Gemini Sun with four planets in Cancer is functionally a Cancer with a Gemini job title." } },
+        { "@type": "Question", name: "What if my Sun and Rising are the same sign?", acceptedAnswer: { "@type": "Answer", text: "You were born near sunrise. What you see is what you get — very little gap between internal identity and external presentation. The trade-off is a lack of range. If all three match, that's a stellium: enormous consistency and almost no built-in counterweight to that sign's shadow." } },
+        { "@type": "Question", name: "Which Big Three combinations are rarest?", acceptedAnswer: { "@type": "Answer", text: "There are 1,728 possible combinations, and Rising sign distribution is uneven — it depends on your latitude. In the northern hemisphere at mid-latitudes, Pisces and Aries Rising are genuinely uncommon; Libra or Scorpio Rising are over-represented. The effect reverses in the southern hemisphere." } },
+        { "@type": "Question", name: "Does Big Three compatibility predict relationships?", acceptedAnswer: { "@type": "Answer", text: "Each placement predicts something different. Sun–Sun predicts whether you admire each other. Moon–Moon predicts whether you feel safe — the most predictive for long-term relationships. Rising–Rising predicts initial attraction. For romantic compatibility specifically, Venus and Mars matter more than any of the Big Three." } },
+        { "@type": "Question", name: "What is the Big Six?", acceptedAnswer: { "@type": "Answer", text: "The Big Six is your Big Three plus Mercury (how you think), Venus (what you love) and Mars (what drives you). It covers all five personal planets plus the Ascendant — the complete set of fast-moving, individual placements in a chart." } },
       ],
     },
     {

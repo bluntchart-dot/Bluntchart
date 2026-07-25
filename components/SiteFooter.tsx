@@ -24,7 +24,7 @@ export default function SiteFooter() {
         .bcf-c { max-width: 1180px; margin: 0 auto; padding: 0 24px; }
         .bcf-grid {
           display: grid;
-          grid-template-columns: minmax(200px, 1.4fr) repeat(5, minmax(0, 1fr));
+          grid-template-columns: minmax(200px, 1.4fr) repeat(7, minmax(0, 1fr));
           align-items: flex-start;
           gap: 28px;
           margin-bottom: 36px;
@@ -120,13 +120,17 @@ export default function SiteFooter() {
         @media (max-width: 1100px) {
           .bcf-grid { grid-template-columns: minmax(200px, 1.2fr) repeat(3, minmax(0, 1fr)); }
           .bcf-grid > .bcf-col:nth-child(5),
-          .bcf-grid > .bcf-col:nth-child(6) { grid-column: span 2; }
+          .bcf-grid > .bcf-col:nth-child(6),
+          .bcf-grid > .bcf-col:nth-child(7),
+          .bcf-grid > .bcf-col:nth-child(8) { grid-column: span 1; }
         }
         @media (max-width: 768px) {
           .bcf-grid { grid-template-columns: 1fr 1fr; gap: 28px; }
           .bcf-grid > .bcf-brand { grid-column: 1 / -1; max-width: 100%; }
           .bcf-grid > .bcf-col:nth-child(5),
-          .bcf-grid > .bcf-col:nth-child(6) { grid-column: auto; }
+          .bcf-grid > .bcf-col:nth-child(6),
+          .bcf-grid > .bcf-col:nth-child(7),
+          .bcf-grid > .bcf-col:nth-child(8) { grid-column: auto; }
           .bcf-bottom { flex-direction: column; align-items: flex-start; }
         }
         @media (max-width: 480px) {
@@ -187,11 +191,32 @@ export default function SiteFooter() {
               <li><Link href="/mercury-retrograde-in-scorpio-2026">Mercury Retrograde in Scorpio</Link></li>
               <li><Link href="/venus-retrograde-2026">Venus Retrograde 2026</Link></li>
               <li><Link href="/saturn-return-calculator">Saturn Return Calculator</Link></li>
-              <li><Link href="/why-you-attract-the-wrong-person">Why You Attract the Wrong Person</Link></li>
               <li><Link href="/relationship-red-flags-birth-chart">Relationship Red Flags Test</Link></li>
               <li><Link href="/career-strength-birth-chart">Career Strength by Chart</Link></li>
               <li><Link href="/love-language-birth-chart">Love Language by Chart</Link></li>
               <li><Link href="/how-toxic-are-you-quiz">How Toxic Are You Quiz</Link></li>
+            </ul>
+          </div>
+
+          <div className="bcf-col">
+            <h4>Patterns</h4>
+            <ul>
+              <li><Link href="/why-you-attract-the-wrong-person">Why I Attract the Wrong People</Link></li>
+              <li><Link href="/why-do-i-push-people-away">Why I Push People Away</Link></li>
+              <li><Link href="/why-do-i-self-sabotage">Why I Self-Sabotage</Link></li>
+              <li><Link href="/why-am-i-so-hard-on-myself">Why I&apos;m So Hard on Myself</Link></li>
+            </ul>
+          </div>
+
+          <div className="bcf-col">
+            <h4>Alternatives</h4>
+            <ul>
+              <li><Link href="/astrology-app-alternatives">All astrology apps</Link></li>
+              <li><Link href="/co-star-alternative">Co-Star Alternative</Link></li>
+              <li><Link href="/the-pattern-alternative">The Pattern Alternative</Link></li>
+              <li><Link href="/chani-alternative">CHANI Alternative</Link></li>
+              <li><Link href="/sanctuary-alternative">Sanctuary Alternative</Link></li>
+              <li><Link href="/nebula-alternative">Nebula Alternative</Link></li>
             </ul>
           </div>
 
