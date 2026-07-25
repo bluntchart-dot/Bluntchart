@@ -24,6 +24,7 @@ import {
   READING_VERSION,
   type BlueprintSection,
   type BuiltUsingItem,
+  type ChartInput,
   type PremiumReading,
   type ReadingProduct,
   type RenderedSection,
@@ -92,7 +93,7 @@ async function resolveGeo(
 function renderSection(
   section: BlueprintSection,
   mockBodies: Partial<Record<BlueprintSection["id"], string>>,
-  builtUsingFor: (inputs: readonly BlueprintSection["chartInputs"] extends readonly (infer T)[] | undefined ? T : never) => BuiltUsingItem[]
+  builtUsingFor: (inputs: readonly ChartInput[]) => BuiltUsingItem[]
 ): RenderedSection {
   const body =
     section.pageType === "chapter"
@@ -182,7 +183,7 @@ export async function buildMockPremiumReading(
 
   const sections: RenderedSection[] = def.activeSections.map((section) =>
     renderSection(section, def.mockBodies, (inputs) =>
-      buildBuiltUsing(chart, inputs as readonly Parameters<typeof buildBuiltUsing>[1][number][])
+      buildBuiltUsing(chart, inputs)
     )
   );
 

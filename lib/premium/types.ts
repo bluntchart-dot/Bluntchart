@@ -42,6 +42,7 @@ export type ReadingProduct =
 export type SectionId =
   // Part I — static intro
   | "cover"
+  | "part-one-title"
   | "welcome"
   | "natal-chart"
   | "how-we-read-your-chart"
@@ -60,6 +61,7 @@ export type SectionId =
   | "safe-place"
   | "life-story"
   // Part II — declared for future transit engine, NOT rendered today
+  | "part-two-title"
   | "transition-part-two"
   | "transit-intro"
   | "transit-why-different"
@@ -72,7 +74,10 @@ export type SectionId =
   | "transit-opportunity"
   | "transit-mistake"
   | "transit-timing"
+  | "transit-season"
+  | "transit-life-areas"
   // Closer
+  | "farewell"
   | "final-note";
 
 /**

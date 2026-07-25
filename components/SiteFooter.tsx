@@ -3,10 +3,11 @@ import Link from "next/link";
 
 /**
  * Single source of truth for the site footer.
- * Any change made here is reflected on every page.
+ * Renders on every page via app/layout.tsx.
  *
- * Scoped class names (bcf-*) + literal color values so the footer
- * renders identically regardless of the host page's CSS vars.
+ * Layout: brand column + 4 wider topical columns, each stacking 2 sections.
+ * Wider columns = no link text wrapping onto multiple lines.
+ * Scoped class names (bcf-*) + literal color values.
  */
 export default function SiteFooter() {
   return (
@@ -14,27 +15,27 @@ export default function SiteFooter() {
       <style>{`
         .bcf {
           border-top: 1px solid rgba(255,255,255,0.08);
-          padding: 48px 0 30px;
+          padding: 52px 0 30px;
           position: relative;
           z-index: 1;
           background: #09090f;
           color: #e8e4f0;
           font-family: var(--font-body), 'DM Sans', system-ui, sans-serif;
         }
-        .bcf-c { max-width: 1180px; margin: 0 auto; padding: 0 24px; }
+        .bcf-c { max-width: 1280px; margin: 0 auto; padding: 0 40px; }
         .bcf-grid {
           display: grid;
-          grid-template-columns: minmax(200px, 1.4fr) repeat(7, minmax(0, 1fr));
+          grid-template-columns: minmax(240px, 1.15fr) repeat(4, minmax(0, 1fr));
           align-items: flex-start;
-          gap: 28px;
-          margin-bottom: 36px;
+          gap: 40px 32px;
+          margin-bottom: 40px;
         }
-        .bcf-brand { max-width: 240px; }
+        .bcf-brand { max-width: 280px; }
         .bcf-brand p {
-          font-size: .82rem;
+          font-size: .86rem;
           color: rgba(232,228,240,0.55);
           line-height: 1.6;
-          margin-top: 8px;
+          margin-top: 10px;
         }
         .bcf-logo {
           display: inline-flex;
@@ -53,7 +54,7 @@ export default function SiteFooter() {
           -webkit-text-fill-color: transparent;
           background-clip: text;
         }
-        .bcf-social { display: flex; gap: 10px; margin-top: 14px; }
+        .bcf-social { display: flex; gap: 10px; margin-top: 16px; }
         .bcf-social a {
           display: flex;
           align-items: center;
@@ -73,15 +74,18 @@ export default function SiteFooter() {
           color: #F0B84A;
           background: rgba(107,47,212,0.1);
         }
-        .bcf-col h4 {
+
+        /* One column can hold multiple stacked sections */
+        .bcf-col { display: flex; flex-direction: column; gap: 26px; min-width: 0; }
+        .bcf-sec h4 {
           font-size: .7rem;
           font-weight: 700;
-          letter-spacing: .12em;
+          letter-spacing: .14em;
           text-transform: uppercase;
           color: rgba(232,228,240,0.55);
           margin-bottom: 14px;
         }
-        .bcf-col ul {
+        .bcf-sec ul {
           list-style: none;
           display: flex;
           flex-direction: column;
@@ -89,65 +93,68 @@ export default function SiteFooter() {
           padding: 0;
           margin: 0;
         }
-        .bcf-col a {
-          font-size: .83rem;
-          color: rgba(232,228,240,0.35);
+        .bcf-sec a {
+          font-size: .85rem;
+          color: rgba(232,228,240,0.55);
           text-decoration: none;
-          transition: color .2s;
+          transition: color .15s;
+          line-height: 1.4;
+          display: inline-block;
         }
-        .bcf-col a:hover { color: #e8e4f0; }
+        .bcf-sec a:hover { color: #e8e4f0; }
+        .bcf-sec a.hl { color: #F0B84A; font-weight: 600; }
+        .bcf-sec a.hl:hover { color: #ffcf70; }
+
         .bcf-bottom {
           border-top: 1px solid rgba(255,255,255,0.08);
-          padding-top: 22px;
+          padding-top: 24px;
           display: flex;
           align-items: center;
           justify-content: space-between;
           flex-wrap: wrap;
-          gap: 10px;
+          gap: 14px;
         }
         .bcf-disc {
           font-size: .73rem;
-          color: rgba(232,228,240,0.25);
-          max-width: 520px;
+          color: rgba(232,228,240,0.28);
+          max-width: 640px;
           line-height: 1.55;
           margin: 0;
         }
         .bcf-copy {
           font-size: .73rem;
-          color: rgba(232,228,240,0.2);
+          color: rgba(232,228,240,0.22);
           margin: 0;
         }
-        @media (max-width: 1100px) {
-          .bcf-grid { grid-template-columns: minmax(200px, 1.2fr) repeat(3, minmax(0, 1fr)); }
-          .bcf-grid > .bcf-col:nth-child(5),
-          .bcf-grid > .bcf-col:nth-child(6),
-          .bcf-grid > .bcf-col:nth-child(7),
-          .bcf-grid > .bcf-col:nth-child(8) { grid-column: span 1; }
+
+        /* Responsive collapse — never squeeze columns tight enough to wrap link text */
+        @media (max-width: 1180px) {
+          .bcf-grid {
+            grid-template-columns: minmax(240px, 1fr) repeat(2, minmax(0, 1fr));
+          }
+          .bcf-grid > .bcf-col:nth-child(4) { grid-column: 2; }
+          .bcf-grid > .bcf-col:nth-child(5) { grid-column: 3; }
         }
         @media (max-width: 768px) {
-          .bcf-grid { grid-template-columns: 1fr 1fr; gap: 28px; }
+          .bcf-c { padding: 0 24px; }
+          .bcf-grid { grid-template-columns: 1fr 1fr; gap: 32px 24px; }
           .bcf-grid > .bcf-brand { grid-column: 1 / -1; max-width: 100%; }
-          .bcf-grid > .bcf-col:nth-child(5),
-          .bcf-grid > .bcf-col:nth-child(6),
-          .bcf-grid > .bcf-col:nth-child(7),
-          .bcf-grid > .bcf-col:nth-child(8) { grid-column: auto; }
+          .bcf-grid > .bcf-col:nth-child(4),
+          .bcf-grid > .bcf-col:nth-child(5) { grid-column: auto; }
           .bcf-bottom { flex-direction: column; align-items: flex-start; }
         }
         @media (max-width: 480px) {
           .bcf-grid { grid-template-columns: 1fr; }
         }
       `}</style>
+
       <div className="bcf-c">
         <div className="bcf-grid">
+
+          {/* ─── COL 1 · Brand ─── */}
           <div className="bcf-brand">
             <Link href="/" className="bcf-logo">
-              <Image
-                src="/mascot.png"
-                alt="BluntChart mascot"
-                width={34}
-                height={34}
-                style={{ borderRadius: "50%" }}
-              />
+              <Image src="/mascot.png" alt="BluntChart mascot" width={34} height={34} style={{ borderRadius: "50%" }} />
               <span className="bcf-logo-g">BluntChart</span>
             </Link>
             <p>Brutally honest birth chart readings. Real astrology, zero filter, no subscription.</p>
@@ -158,84 +165,104 @@ export default function SiteFooter() {
             </div>
           </div>
 
+          {/* ─── COL 2 · Product (Readings + Free Tools) ─── */}
           <div className="bcf-col">
-            <h4>Readings</h4>
-            <ul>
-              <li><Link href="/#try-it">Birth Chart · $15</Link></li>
-              <li><Link href="/#waitlist">Compatibility · Coming Soon</Link></li>
-              <li><Link href="/#waitlist">Year Ahead · Coming Soon</Link></li>
-              <li><Link href="/#waitlist">Gift a Reading · Coming Soon</Link></li>
-            </ul>
+            <div className="bcf-sec">
+              <h4>Readings</h4>
+              <ul>
+                <li><Link href="/#try-it" className="hl">Birth Chart · $15</Link></li>
+                <li><Link href="/#waitlist">Compatibility · Soon</Link></li>
+                <li><Link href="/#waitlist">Year Ahead · Soon</Link></li>
+                <li><Link href="/#waitlist">Gift a Reading · Soon</Link></li>
+              </ul>
+            </div>
+            <div className="bcf-sec">
+              <h4>Free Tools</h4>
+              <ul>
+                <li><Link href="/free-birth-chart">Free Birth Chart</Link></li>
+                <li><Link href="/natal-chart">Natal Chart</Link></li>
+                <li><Link href="/big-three-calculator">Big Three</Link></li>
+                <li><Link href="/moon-sign-calculator">Moon Sign</Link></li>
+                <li><Link href="/rising-sign-calculator">Rising Sign</Link></li>
+                <li><Link href="/zodiac-signs">Zodiac Signs</Link></li>
+              </ul>
+            </div>
           </div>
 
+          {/* ─── COL 3 · Alternatives (+ Company) ─── */}
           <div className="bcf-col">
-            <h4>Free Tools</h4>
-            <ul>
-              <li><Link href="/free-birth-chart">Free Birth Chart</Link></li>
-              <li><Link href="/natal-chart">Natal Chart</Link></li>
-              <li><Link href="/big-three-calculator">Big Three Calculator</Link></li>
-              <li><Link href="/moon-sign-calculator">Moon Sign Calculator</Link></li>
-              <li><Link href="/rising-sign-calculator">Rising Sign Calculator</Link></li>
-              <li><Link href="/zodiac-signs">Zodiac Signs</Link></li>
-            </ul>
+            <div className="bcf-sec">
+              <h4>Alternatives</h4>
+              <ul>
+                <li><Link href="/astrology-app-alternatives" className="hl">All astrology apps</Link></li>
+                <li><Link href="/co-star-alternative">Co-Star Alternative</Link></li>
+                <li><Link href="/the-pattern-alternative">The Pattern Alternative</Link></li>
+                <li><Link href="/chani-alternative">CHANI Alternative</Link></li>
+                <li><Link href="/sanctuary-alternative">Sanctuary Alternative</Link></li>
+                <li><Link href="/nebula-alternative">Nebula Alternative</Link></li>
+              </ul>
+            </div>
+            <div className="bcf-sec">
+              <h4>Company</h4>
+              <ul>
+                <li><Link href="/about">About</Link></li>
+                <li><Link href="/founder">Meet the Founder</Link></li>
+              </ul>
+            </div>
           </div>
 
+          {/* ─── COL 4 · Patterns + Quizzes ─── */}
           <div className="bcf-col">
-            <h4>Learn</h4>
-            <ul>
-              <li><a href="https://blog.bluntchart.com" rel="noopener">Astrology Blog</a></li>
-              <li><Link href="/free-birth-chart-readings">How Birth Chart Readings Work</Link></li>
-              <li><Link href="/is-mercury-retrograde">Is Mercury Retrograde?</Link></li>
-              <li><Link href="/mercury-retrograde-2026">Mercury Retrograde 2026</Link></li>
-              <li><Link href="/mercury-retrograde-in-cancer-2026">Mercury Retrograde in Cancer</Link></li>
-              <li><Link href="/mercury-retrograde-in-scorpio-2026">Mercury Retrograde in Scorpio</Link></li>
-              <li><Link href="/venus-retrograde-2026">Venus Retrograde 2026</Link></li>
-              <li><Link href="/saturn-return-calculator">Saturn Return Calculator</Link></li>
-              <li><Link href="/relationship-red-flags-birth-chart">Relationship Red Flags Test</Link></li>
-              <li><Link href="/career-strength-birth-chart">Career Strength by Chart</Link></li>
-              <li><Link href="/love-language-birth-chart">Love Language by Chart</Link></li>
-              <li><Link href="/how-toxic-are-you-quiz">How Toxic Are You Quiz</Link></li>
-            </ul>
+            <div className="bcf-sec">
+              <h4>Patterns</h4>
+              <ul>
+                <li><Link href="/why-you-attract-the-wrong-person">Why I Attract the Wrong People</Link></li>
+                <li><Link href="/why-do-i-push-people-away">Why I Push People Away</Link></li>
+                <li><Link href="/why-do-i-self-sabotage">Why I Self-Sabotage</Link></li>
+                <li><Link href="/why-am-i-so-hard-on-myself">Why I&apos;m So Hard on Myself</Link></li>
+              </ul>
+            </div>
+            <div className="bcf-sec">
+              <h4>Quizzes</h4>
+              <ul>
+                <li><Link href="/relationship-red-flags-birth-chart">Relationship Red Flags</Link></li>
+                <li><Link href="/love-language-birth-chart">Love Language by Chart</Link></li>
+                <li><Link href="/career-strength-birth-chart">Career Strength by Chart</Link></li>
+                <li><Link href="/how-toxic-are-you-quiz">How Toxic Are You Quiz</Link></li>
+              </ul>
+            </div>
           </div>
 
+          {/* ─── COL 5 · Retrograde tracker + Guides + Legal ─── */}
           <div className="bcf-col">
-            <h4>Patterns</h4>
-            <ul>
-              <li><Link href="/why-you-attract-the-wrong-person">Why I Attract the Wrong People</Link></li>
-              <li><Link href="/why-do-i-push-people-away">Why I Push People Away</Link></li>
-              <li><Link href="/why-do-i-self-sabotage">Why I Self-Sabotage</Link></li>
-              <li><Link href="/why-am-i-so-hard-on-myself">Why I&apos;m So Hard on Myself</Link></li>
-            </ul>
+            <div className="bcf-sec">
+              <h4>Retrograde Tracker</h4>
+              <ul>
+                <li><Link href="/is-mercury-retrograde">Is Mercury Retrograde?</Link></li>
+                <li><Link href="/mercury-retrograde-2026">Mercury Retro 2026</Link></li>
+                <li><Link href="/mercury-retrograde-in-cancer-2026">Mercury Retro in Cancer</Link></li>
+                <li><Link href="/mercury-retrograde-in-scorpio-2026">Mercury Retro in Scorpio</Link></li>
+                <li><Link href="/venus-retrograde-2026">Venus Retro 2026</Link></li>
+              </ul>
+            </div>
+            <div className="bcf-sec">
+              <h4>Guides</h4>
+              <ul>
+                <li><a href="https://blog.bluntchart.com" rel="noopener">Astrology Blog</a></li>
+                <li><Link href="/free-birth-chart-readings">How Readings Work</Link></li>
+                <li><Link href="/saturn-return-calculator">Saturn Return</Link></li>
+              </ul>
+            </div>
+            <div className="bcf-sec">
+              <h4>Legal</h4>
+              <ul>
+                <li><Link href="/terms">Terms</Link></li>
+                <li><Link href="/privacy">Privacy</Link></li>
+                <li><Link href="/refunds">Refunds</Link></li>
+              </ul>
+            </div>
           </div>
 
-          <div className="bcf-col">
-            <h4>Alternatives</h4>
-            <ul>
-              <li><Link href="/astrology-app-alternatives">All astrology apps</Link></li>
-              <li><Link href="/co-star-alternative">Co-Star Alternative</Link></li>
-              <li><Link href="/the-pattern-alternative">The Pattern Alternative</Link></li>
-              <li><Link href="/chani-alternative">CHANI Alternative</Link></li>
-              <li><Link href="/sanctuary-alternative">Sanctuary Alternative</Link></li>
-              <li><Link href="/nebula-alternative">Nebula Alternative</Link></li>
-            </ul>
-          </div>
-
-          <div className="bcf-col">
-            <h4>Company</h4>
-            <ul>
-              <li><Link href="/about">About BluntChart</Link></li>
-              <li><Link href="/founder">Meet the Founder</Link></li>
-            </ul>
-          </div>
-
-          <div className="bcf-col">
-            <h4>Legal</h4>
-            <ul>
-              <li><Link href="/terms">Terms of Service</Link></li>
-              <li><Link href="/privacy">Privacy Policy</Link></li>
-              <li><Link href="/refunds">Refund Policy</Link></li>
-            </ul>
-          </div>
         </div>
 
         <div className="bcf-bottom">

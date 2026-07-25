@@ -871,7 +871,7 @@ export default function HomePage() {
 <li><a href="/free-birth-chart-readings">How It Works</a></li>
 <li><a href="#reveals">What We Reveal</a></li>
 <li><a href="/zodiac-signs">Zodiac Signs</a></li>
-<li><a href="#compare">vs Co&#8209;Star</a></li>
+<li><a href="/astrology-app-alternatives">Alternatives</a></li>
 <li><a className="ncta" href="#try-it">Get Reading $15</a></li>
           </ul>
         </div>
@@ -1077,6 +1077,60 @@ export default function HomePage() {
                 Try BluntChart Free ✨
               </a>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── ALTERNATIVES CLUSTER (5 competitor cards) ── */}
+      <section className="sec" id="alternatives">
+        <div className="c">
+          <div className="sl"><span>Switching from another app?</span></div>
+          <h2>The alternative to<br/><em>every astrology app.</em></h2>
+          <p className="sub">Same accurate sky, completely different job. One deep, honest reading — flat one-time $15, no subscription, nothing to cancel. Pick the app you&apos;re leaving.</p>
+
+          <style>{`
+            .alt-hp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;max-width:1120px;margin:32px auto 0}
+            .alt-hp-card{display:flex;flex-direction:column;background:linear-gradient(165deg,#171130,#12121e);border:1px solid rgba(255,255,255,0.08);border-radius:18px;padding:22px 20px 18px;text-decoration:none;color:inherit;transition:transform .2s,border-color .2s,box-shadow .2s;height:100%}
+            .alt-hp-card:hover{transform:translateY(-3px);border-color:rgba(199,184,255,.4);box-shadow:0 30px 60px -30px rgba(139,92,246,.35)}
+            .alt-hp-head{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+            .alt-hp-img{width:44px;height:44px;border-radius:10px;background:rgba(255,255,255,0.04);padding:5px;flex:none;border:1px solid rgba(255,255,255,0.08);object-fit:contain}
+            .alt-hp-name{font-family:var(--font-display, 'Playfair Display',serif);font-size:1.05rem;font-weight:700;color:#e8e4f0;line-height:1.2;margin:0}
+            .alt-hp-sub{font-size:11px;color:#a78bfa;font-weight:600;letter-spacing:.06em;text-transform:uppercase;margin-top:2px}
+            .alt-hp-pill{display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#F0B84A;background:rgba(240,184,74,.09);padding:4px 9px;border-radius:999px;margin-bottom:10px}
+            .alt-hp-hook{font-size:13.5px;color:rgba(232,228,240,0.66);line-height:1.55;margin:0 0 12px}
+            .alt-hp-link{margin-top:auto;padding-top:10px;border-top:0.5px solid rgba(255,255,255,0.06);color:#c9b8ff;font-size:12.5px;font-weight:600;display:flex;justify-content:space-between;align-items:center}
+            .alt-hp-link::after{content:"→";transition:transform .2s}
+            .alt-hp-card:hover .alt-hp-link::after{transform:translateX(4px)}
+            .alt-hp-hub{text-align:center;margin-top:26px}
+            .alt-hp-hub a{display:inline-flex;align-items:center;gap:8px;padding:12px 22px;background:linear-gradient(135deg,#6b2fd4,#a78bfa);color:#fff;text-decoration:none;border-radius:999px;font-weight:600;font-size:14px}
+            .alt-hp-hub a:hover{opacity:.9}
+          `}</style>
+
+          <div className="alt-hp-grid">
+            {[
+              { slug:"co-star", name:"Co-Star", img:"/co-star.png", alt:"Co-Star astrology app logo — Co-Star alternative on BluntChart", angle:"Depth, not a notification", hook:"One deep reading of your whole chart — not a daily push notification." },
+              { slug:"the-pattern", name:"The Pattern", img:"/The pattern.png", alt:"The Pattern astrology app logo — The Pattern alternative on BluntChart", angle:"Names the placement", hook:"Shows the astrology behind each pattern, not just the vibe." },
+              { slug:"chani", name:"CHANI", img:"/chani.png", alt:"CHANI astrology app logo — CHANI app alternative on BluntChart", angle:"A mirror, not a hug", hook:"No affirmations, no monthly anything. The unvarnished version." },
+              { slug:"sanctuary", name:"Sanctuary", img:"/Sanctuary.png", alt:"Sanctuary astrology app logo — Sanctuary alternative on BluntChart", angle:"No per-minute meter", hook:"Depth of a real reading. Flat $15. No clock running." },
+              { slug:"nebula", name:"Nebula", img:"/Nebula.png", alt:"Nebula astrology app logo — Nebula alternative on BluntChart", angle:"No subscription trap", hook:"Flat one-time $15. No auto-renewal. Nothing to cancel." },
+            ].map(c => (
+              <a key={c.slug} href={`/${c.slug}-alternative`} className="alt-hp-card">
+                <div className="alt-hp-head">
+                  <Image src={c.img} alt={c.alt} width={44} height={44} className="alt-hp-img" />
+                  <div>
+                    <div className="alt-hp-sub">Alternative to</div>
+                    <h3 className="alt-hp-name">{c.name}</h3>
+                  </div>
+                </div>
+                <span className="alt-hp-pill">{c.angle}</span>
+                <p className="alt-hp-hook">{c.hook}</p>
+                <span className="alt-hp-link">Read the comparison <span/></span>
+              </a>
+            ))}
+          </div>
+
+          <div className="alt-hp-hub">
+            <a href="/astrology-app-alternatives">See all 5 side by side →</a>
           </div>
         </div>
       </section>

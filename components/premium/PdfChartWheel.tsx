@@ -309,8 +309,8 @@ export default function PdfChartWheel({ chart, size = 260 }: Props) {
       {zodiacSlices.map((s) => (
         <Text key={`zl-${s.name}`}
           x={s.labelPos.x} y={s.labelPos.y + 3}
-          fontSize={7.5} fill={ZODIAC_LABEL}
-          textAnchor="middle" fontFamily="Helvetica-Bold"
+          textAnchor="middle"
+          style={{ fontSize: 7.5, fill: ZODIAC_LABEL, fontFamily: "Helvetica-Bold" }}
         >
           {s.name}
         </Text>
@@ -329,8 +329,8 @@ export default function PdfChartWheel({ chart, size = 260 }: Props) {
       {houseLabels.map((h) => (
         <Text key={`hn-${h.n}`}
           x={h.pos.x} y={h.pos.y + 2.8}
-          fontSize={7} fill={HOUSE_LABEL}
-          textAnchor="middle" fontFamily="Helvetica"
+          textAnchor="middle"
+          style={{ fontSize: 7, fill: HOUSE_LABEL, fontFamily: "Helvetica" }}
         >
           {h.n}
         </Text>
@@ -353,9 +353,8 @@ export default function PdfChartWheel({ chart, size = 260 }: Props) {
           <Text
             x={a.pos.x + LABEL_OFFSET_X(a.pos.x)}
             y={a.pos.y + LABEL_OFFSET_Y(a.pos.y)}
-            fontSize={7.5} fill={ANGLE_LABEL}
             textAnchor={a.pos.x < CX ? "end" : "start"}
-            fontFamily="Helvetica-Bold"
+            style={{ fontSize: 7.5, fill: ANGLE_LABEL, fontFamily: "Helvetica-Bold" }}
           >
             {a.label}
           </Text>
@@ -370,14 +369,14 @@ export default function PdfChartWheel({ chart, size = 260 }: Props) {
           <G key={p.name}>
             <Circle cx={pos.x} cy={pos.y} r={9} fill={PLANET_FILL} stroke={tint} strokeWidth={0.8} />
             <Text x={pos.x} y={pos.y - 0.4}
-              fontSize={6.5} fill={INK}
-              textAnchor="middle" fontFamily="Helvetica-Bold"
+              textAnchor="middle"
+              style={{ fontSize: 6.5, fill: INK, fontFamily: "Helvetica-Bold" }}
             >
               {PLANET_CODE[p.name]}
             </Text>
             <Text x={pos.x} y={pos.y + 6}
-              fontSize={5.2} fill={tint}
-              textAnchor="middle" fontFamily="Helvetica"
+              textAnchor="middle"
+              style={{ fontSize: 5.2, fill: tint, fontFamily: "Helvetica" }}
             >
               {p.degreeInSign}°
             </Text>
@@ -387,7 +386,8 @@ export default function PdfChartWheel({ chart, size = 260 }: Props) {
 
       {/* Central star */}
       <Text x={CX} y={CY + 3}
-        fontSize={8} fill={ZODIAC_LABEL} textAnchor="middle"
+        textAnchor="middle"
+        style={{ fontSize: 8, fill: ZODIAC_LABEL }}
       >
         ✦
       </Text>
