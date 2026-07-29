@@ -481,6 +481,15 @@ export async function GET(req: NextRequest) {
             elapsed_ms: Date.now() - stageStarted,
             ...result,
           });
+          // Only "reconcile" is cheap enough to safely stack with another
+          // stage in the same invocation. Every other stage does a real
+          // Gemini/Cloudflare/Blogger call; chaining several of those in
+          // one tick is what pushed invocations past the platform's actual
+          // execution limit (all ticks failed from 2026-07-14 10:45 UTC
+          // onward once this loop stopped stopping). Do at most one heavy
+          // stage per tick and let the next tick pick up where this left
+          // off — still downstream-first, so nothing starves.
+          if (s.name !== "reconcile") break;
         }
       } catch (err) {
         console.error(
@@ -493,6 +502,7 @@ export async function GET(req: NextRequest) {
           elapsed_ms: Date.now() - stageStarted,
           error: (err instanceof Error ? err.message : String(err)).slice(0, 200),
         });
+        if (s.name !== "reconcile") break;
       }
     }
 
