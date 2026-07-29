@@ -70,9 +70,16 @@ jobs:
 
             case "$http_code" in
               200)
-                # Surface the stage the tick advanced, if the JSON has an `action` field.
-                action=$(printf "%s" "$body" | grep -oE '"action":"[^"]+"' | head -1 | cut -d'"' -f4)
-                echo "::notice title=cron ok::action=${action:-unknown}"
+                # Surface the stage(s) the tick advanced, if the JSON has a `stage` field.
+                # The `|| true` matters: under `set -o pipefail` (and the -e GitHub Actions
+                # already runs this shell with), a grep that finds zero matches exits 1 and
+                # would silently kill this whole step even though the HTTP call succeeded.
+                # That's exactly what happened for every run from 2026-07-14 through
+                # 2026-07-29: the response shape changed from a single "action" field to an
+                # "actions":[...] array, the old pattern stopped matching, and every 200 got
+                # reported as a failure.
+                stages=$(printf "%s" "$body" | grep -oE '"stage":"[^"]+"' | cut -d'"' -f4 | paste -sd, - || true)
+                echo "::notice title=cron ok::stages=${stages:-none}"
                 exit 0
                 ;;
               401|403)
