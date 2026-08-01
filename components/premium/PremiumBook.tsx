@@ -210,7 +210,21 @@ export default function PremiumBook({ reading, onClose }: Props) {
         .premium-book-scroller::-webkit-scrollbar { display:none; }
         .premium-book-slot { flex:0 0 100%; width:100%; height:100%; scroll-snap-align:center; scroll-snap-stop:always; overflow-y:auto; overflow-x:hidden; -webkit-overflow-scrolling:touch; overscroll-behavior:contain; }
         .premium-book-page { min-height:100%; display:flex; align-items:flex-start; justify-content:center; padding:36px 24px 96px; }
-        .premium-page-inner { width:100%; max-width:640px; }
+        /* Interior page frame — book-page feel with subtle gold border + spine */
+        .premium-page-inner {
+          width:100%; max-width:640px;
+          padding:40px 34px 44px;
+          background:rgba(13,13,13,0.55);
+          border:1px solid rgba(191,151,90,0.35);
+          border-radius:4px 14px 14px 4px;
+          position:relative;
+          box-shadow:-5px 0 0 rgba(191,151,90,0.10), 24px 24px 60px rgba(0,0,0,0.55);
+        }
+        .premium-page-inner::before {
+          content:''; position:absolute; left:0; top:0; bottom:0; width:5px;
+          background:linear-gradient(90deg, rgba(191,151,90,0.5), rgba(191,151,90,0.12));
+          border-radius:4px 0 0 4px; pointer-events:none;
+        }
         .premium-page-eyebrow { font-size:10px; letter-spacing:0.24em; text-transform:uppercase; color:var(--pb-accent); margin-bottom:14px; opacity:0.85; }
         .premium-page-title { font-family:var(--pb-serif); font-weight:700; font-size:clamp(2rem, 5vw, 2.8rem); line-height:1.1; letter-spacing:-0.01em; color:var(--pb-fg); margin:0 0 12px; }
         .premium-page-subtitle { font-size:15px; line-height:1.6; color:var(--pb-fg-dim); margin:0 0 28px; }
@@ -218,21 +232,35 @@ export default function PremiumBook({ reading, onClose }: Props) {
         .premium-page-body { font-size:16.5px; line-height:1.78; color:var(--pb-fg); }
         .premium-page-body p { margin:0 0 18px; }
         .premium-page-body p:last-child { margin-bottom:0; }
-        .premium-page-cta { margin-top:40px; padding-top:20px; border-top:1px solid rgba(255,255,255,0.06); }
-        /* Cover */
-        .premium-page-cover { min-height:100%; padding:0; display:flex; align-items:center; justify-content:center; background:radial-gradient(ellipse 90% 60% at 50% 0%, rgba(107,47,212,0.18), transparent 55%), radial-gradient(ellipse 60% 50% at 50% 100%, rgba(212,83,126,0.12), transparent 55%), #0a0910; }
-        .premium-cover-inner { width:100%; max-width:520px; padding:60px 28px; text-align:center; display:flex; flex-direction:column; align-items:center; gap:44px; }
-        .premium-cover-brand { font-size:11px; letter-spacing:0.38em; color:rgba(240,184,74,0.75); font-weight:600; }
-        .premium-cover-title-block { display:flex; flex-direction:column; gap:18px; }
-        .premium-cover-title { font-family:var(--pb-serif); font-weight:900; font-size:clamp(3.4rem, 10vw, 5.2rem); line-height:1; letter-spacing:-0.02em; margin:0; background:linear-gradient(180deg, #ffe9c6 0%, #f5c99e 55%, #d4a8ff 100%); -webkit-background-clip:text; background-clip:text; color:transparent; }
-        .premium-cover-subtitle { font-family:var(--pb-serif); font-style:italic; font-size:17px; line-height:1.55; color:rgba(239,233,220,0.7); margin:0; }
+        .premium-page-cta { margin-top:40px; padding-top:20px; border-top:1px solid rgba(191,151,90,0.18); }
+        /* Cover — book mockup styling matches /in-depth-birth-chart */
+        .premium-page-cover { min-height:100%; padding:32px 20px; display:flex; align-items:center; justify-content:center; background:#09090c; }
+        .premium-cover-inner {
+          width:100%; max-width:440px; min-height:min(78vh,720px);
+          padding:56px 34px 44px;
+          text-align:center; display:flex; flex-direction:column; align-items:center; justify-content:space-between;
+          background:#0D0D0D;
+          border:1px solid rgba(191,151,90,0.35);
+          border-radius:4px 14px 14px 4px;
+          box-shadow:-5px 0 0 rgba(191,151,90,0.12), 32px 32px 90px rgba(0,0,0,0.75);
+          position:relative; gap:40px;
+        }
+        .premium-cover-inner::before {
+          content:''; position:absolute; left:0; top:0; bottom:0; width:5px;
+          background:linear-gradient(90deg, rgba(191,151,90,0.55), rgba(191,151,90,0.15));
+          border-radius:4px 0 0 4px; pointer-events:none;
+        }
+        .premium-cover-brand { font-size:10px; letter-spacing:0.32em; color:#BF975A; font-weight:600; }
+        .premium-cover-title-block { display:flex; flex-direction:column; gap:16px; }
+        .premium-cover-title { font-family:var(--pb-serif); font-weight:700; font-size:clamp(2.6rem, 8vw, 3.4rem); line-height:1.08; letter-spacing:-0.01em; margin:0; color:#BF975A; background:none; -webkit-background-clip:initial; background-clip:initial; }
+        .premium-cover-subtitle { font-family:var(--pb-serif); font-style:italic; font-size:14px; line-height:1.65; color:rgba(239,233,220,0.55); margin:0; }
         .premium-cover-prepared { display:flex; flex-direction:column; gap:6px; }
-        .premium-cover-prepared-label { font-size:10px; letter-spacing:0.28em; text-transform:uppercase; color:var(--pb-fg-faint); }
-        .premium-cover-prepared-name { font-family:var(--pb-serif); font-size:22px; color:var(--pb-fg); }
-        .premium-cover-actions { display:flex; flex-direction:column; gap:14px; align-items:center; margin-top:8px; }
-        .premium-cover-begin { background:linear-gradient(135deg, #f5c99e 0%, #d4a8ff 100%); color:#1a0a2a; border:none; border-radius:100px; padding:15px 34px; font-size:14px; font-weight:700; font-family:inherit; letter-spacing:0.06em; cursor:pointer; box-shadow:0 20px 60px -20px rgba(212,168,255,0.5); transition:transform 0.2s, box-shadow 0.2s; }
-        .premium-cover-begin:hover { transform:translateY(-1px); box-shadow:0 24px 60px -18px rgba(212,168,255,0.6); }
-        .premium-cover-time { font-size:12px; letter-spacing:0.12em; color:var(--pb-fg-faint); }
+        .premium-cover-prepared-label { font-size:9px; letter-spacing:0.25em; text-transform:uppercase; color:rgba(239,233,220,0.35); }
+        .premium-cover-prepared-name { font-family:var(--pb-serif); font-size:20px; color:var(--pb-fg); }
+        .premium-cover-actions { display:flex; flex-direction:column; gap:12px; align-items:center; margin-top:4px; }
+        .premium-cover-begin { background:#BF975A; color:#0B0B0B; border:none; border-radius:100px; padding:14px 30px; font-size:13px; font-weight:700; font-family:inherit; letter-spacing:0.06em; cursor:pointer; box-shadow:0 20px 60px -20px rgba(191,151,90,0.5); transition:transform 0.2s, box-shadow 0.2s, background 0.2s; }
+        .premium-cover-begin:hover { background:#D4B07A; transform:translateY(-1px); box-shadow:0 24px 60px -18px rgba(191,151,90,0.6); }
+        .premium-cover-time { font-size:11px; letter-spacing:0.12em; color:rgba(239,233,220,0.35); }
         /* Chart page */
         .premium-chart-wrap { margin:22px 0 24px; display:flex; justify-content:center; }
         .premium-chart-meta { display:flex; gap:32px; flex-wrap:wrap; padding-top:18px; border-top:1px solid rgba(255,255,255,0.06); font-size:13px; }
@@ -306,9 +334,10 @@ export default function PremiumBook({ reading, onClose }: Props) {
         .premium-book-dots { font-size:11px; letter-spacing:0.14em; color:var(--pb-fg-faint); min-width:70px; text-align:center; }
         @media (max-width: 640px) {
           .premium-book-topbar { padding:12px 16px 8px; font-size:10px; }
-          .premium-book-page { padding:24px 20px 88px; }
+          .premium-book-page { padding:22px 16px 88px; }
           .premium-page-body { font-size:15.5px; line-height:1.72; }
-          .premium-cover-inner { gap:36px; padding:40px 22px; }
+          .premium-page-inner { padding:32px 22px 36px; }
+          .premium-cover-inner { gap:32px; padding:44px 26px 36px; min-height:min(82vh,680px); }
         }
       `}</style>
 

@@ -14,6 +14,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 1.0,
     },
 
+    // ── Paid products ──
+    {
+      url: `${BASE_URL}/in-depth-birth-chart`,
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.95,
+    },
+
     // ── Free tool pages ──
     {
       url: `${BASE_URL}/free-birth-chart`,

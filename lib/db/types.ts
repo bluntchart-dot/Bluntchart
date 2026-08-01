@@ -1,5 +1,7 @@
 /** Row shapes aligned with your Supabase schema (see dashboard ERD). */
 
+export type ProductType = "reading" | "birth-chart-book" | "compatibility" | "transit";
+
 export type CheckoutStep =
   | "form_submitted"
   | "preview_generated"
@@ -22,6 +24,7 @@ export interface PaymentRow {
   payment_provider: string | null;
   access_token: string | null;
   user_id: string | null;
+  product_type: ProductType;
   created_at?: string;
   updated_at?: string;
 }
@@ -68,6 +71,7 @@ export interface ReadingRow {
   timezone: string | null;
   reading_json: Record<string, unknown> | null;
   reading_status: string | null;
+  product_type: ProductType;
   created_at?: string;
 }
 
@@ -81,6 +85,7 @@ export interface CheckoutStartPayload {
   birth_lat?: number;
   birth_lng?: number;
   focus_area?: string;
+  product_type?: ProductType;
   step_reached?: CheckoutStep;
   utm_source?: string;
 }

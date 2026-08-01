@@ -50,6 +50,23 @@ const CAPTURE_SCALE = 3;
 const CARD_RADIUS_PX = 16;
 
 async function captureCard(el: HTMLDivElement): Promise<HTMLCanvasElement> {
+  // html2canvas cannot evaluate clamp() / vw-based font sizes — it
+  // silently falls back to a wrong value, shifting the entire layout.
+  // Snapshot every computed style that uses clamp() in its inline form,
+  // replace with the browser-resolved px value, capture, then restore.
+  const saved: { node: HTMLElement; prop: string; orig: string }[] = [];
+  const PROPS = ["fontSize"] as const;
+  el.querySelectorAll("*").forEach((child) => {
+    const h = child as HTMLElement;
+    for (const p of PROPS) {
+      const v = h.style[p];
+      if (v && v.includes("clamp")) {
+        saved.push({ node: h, prop: p, orig: v });
+        h.style[p] = getComputedStyle(h)[p];
+      }
+    }
+  });
+
   const { default: html2canvas } = await import("html2canvas");
   const raw = await html2canvas(el, {
     scale: CAPTURE_SCALE,
@@ -57,6 +74,10 @@ async function captureCard(el: HTMLDivElement): Promise<HTMLCanvasElement> {
     logging: false,
     useCORS: true,
     allowTaint: true,
+  });
+
+  saved.forEach(({ node, prop, orig }) => {
+    (node.style as unknown as Record<string, string>)[prop] = orig;
   });
 
   // html2canvas does not reliably apply the captured element's own
@@ -199,19 +220,18 @@ export default function ShareCard(props: ShareCardData) {
           border: "1px solid rgba(196,168,255,0.15)",
         }}
       >
-        {/* Subtle top-left purple glow */}
+        {/* Glow divs kept within card bounds (no negative offsets) so
+            html2canvas clips them identically to the browser. */}
         <div style={{
-          position: "absolute", top: "-20%", left: "-15%",
+          position: "absolute", top: 0, left: 0,
           width: "55%", height: "50%",
-          background: "radial-gradient(circle, rgba(107,47,212,0.12) 0%, transparent 65%)",
+          background: "radial-gradient(circle, rgba(107,47,212,0.15) 0%, transparent 70%)",
           pointerEvents: "none",
         }} />
-
-        {/* Subtle bottom-right amber glow */}
         <div style={{
-          position: "absolute", bottom: "-15%", right: "-10%",
+          position: "absolute", bottom: 0, right: 0,
           width: "55%", height: "45%",
-          background: "radial-gradient(circle, rgba(245,158,11,0.06) 0%, transparent 60%)",
+          background: "radial-gradient(circle, rgba(245,158,11,0.07) 0%, transparent 65%)",
           pointerEvents: "none",
         }} />
 

@@ -24,7 +24,7 @@ export async function GET(req: NextRequest) {
 
   try {
     const supabase = createSupabaseAdmin();
-    const { reading, birth_time, birth_place, error } =
+    const { reading, birth_time, birth_place, product_type, error } =
       await loadReadingByAccessToken(supabase, token);
 
     if (error || !reading) {
@@ -101,6 +101,7 @@ export async function GET(req: NextRequest) {
       reading,
       birth_time,
       birth_place,
+      product_type,
     });
   } catch (err) {
     dbError(scope, "unexpected", err);

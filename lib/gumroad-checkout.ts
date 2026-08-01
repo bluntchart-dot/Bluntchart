@@ -1,48 +1,28 @@
 import { SITE_URL } from "@/lib/db/checkout-flow";
+import { buildCheckoutUrl, getProduct } from "@/lib/products";
 
-/** Gumroad product permalink — direct checkout, not the public product listing. */
-export const GUMROAD_CHECKOUT_BASE =
-  process.env.NEXT_PUBLIC_GUMROAD_CHECKOUT_URL ??
-  "https://bluntchart.gumroad.com/l/bluntchart-reading";
+export const GUMROAD_CHECKOUT_BASE = getProduct("reading").gumroadCheckoutUrl;
 
 export interface GumroadCheckoutParams {
   email: string;
   sessionId?: string | null;
 }
 
-/**
- * Build a Gumroad URL that opens the payment form directly (`wanted=true`).
- * Passes purchaser email and session_id via supported URL parameters.
- */
 export function buildGumroadCheckoutUrl(params: GumroadCheckoutParams): string {
-  const url = new URL(GUMROAD_CHECKOUT_BASE);
-
-  // Skip product listing / description page — land on checkout form
-  url.searchParams.set("wanted", "true");
-
-  const email = params.email.trim().toLowerCase();
-  if (email) {
-    url.searchParams.set("email", email);
-  }
-
   const sessionId = params.sessionId?.trim();
   if (sessionId) {
-    // Gumroad echoes custom_fields in the sale webhook when configured on the product
-    url.searchParams.set("custom_fields[session_id]", sessionId);
-    // Also pass as plain query param for products that surface it without custom field UI
-    url.searchParams.set("session_id", sessionId);
-
-    // Gumroad may ignore these — also set redirect in Gumroad product settings:
-    // Content → After purchase → https://bluntchart.com/checkout/complete
-    const returnUrl = `${SITE_URL}/checkout/complete?session_id=${encodeURIComponent(sessionId)}`;
-    url.searchParams.set("redirect_url", returnUrl);
-    url.searchParams.set("return_url", returnUrl);
+    return buildCheckoutUrl("reading", {
+      email: params.email,
+      sessionId,
+    });
   }
-
+  const url = new URL(GUMROAD_CHECKOUT_BASE);
+  url.searchParams.set("wanted", "true");
+  const email = params.email.trim().toLowerCase();
+  if (email) url.searchParams.set("email", email);
   return url.toString();
 }
 
-/** URL buyers should land on after payment (also set in Gumroad product settings). */
 export function checkoutCompleteUrl(sessionId?: string | null): string {
   const base = `${SITE_URL}/checkout/complete`;
   if (!sessionId?.trim()) return base;

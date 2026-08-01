@@ -42,7 +42,6 @@ export interface PremiumBirthDetails {
   birth_lat: number | null;
   birth_lng: number | null;
   timezone: string | null;
-  focus_area: string | null;
 }
 
 export type BuildResult =

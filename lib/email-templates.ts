@@ -274,3 +274,340 @@ xx bluntchart`;
 
   return { subject, text, html };
 }
+
+/* ─── BIRTH CHART BOOK — shared styling ─── */
+
+const bookWrap = (body: string) => `
+  <div style="background:#0B0B0B;padding:32px 16px;font-family:'Helvetica Neue',Arial,sans-serif;color:#F0E9DC;">
+    <div style="max-width:640px;margin:0 auto;background:#161616;border:1px solid rgba(191,151,90,0.15);border-radius:18px;padding:32px;">
+      <div style="font-size:12px;letter-spacing:3px;text-transform:uppercase;color:#BF975A;margin-bottom:20px;font-weight:700;">
+        BluntChart
+      </div>
+      ${body}
+      <div style="margin-top:28px;padding-top:18px;border-top:1px solid rgba(191,151,90,0.12);font-size:12px;color:rgba(240,233,220,0.35);line-height:1.7;">
+        bluntchart.com
+      </div>
+    </div>
+  </div>
+`;
+
+const bookButton = (href: string, label: string) => `
+  <a href="${esc(href)}"
+     style="display:inline-block;background:#BF975A;color:#0B0B0B;text-decoration:none;
+     padding:14px 28px;border-radius:100px;font-weight:700;font-size:15px;margin-top:18px;">
+    ${esc(label)}
+  </a>
+`;
+
+const bookPreheader = (text: string) =>
+  `<div style="display:none;font-size:1px;color:#0B0B0B;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;">${esc(text)}&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;</div>`;
+
+const bP = (text: string) =>
+  `<p style="font-size:16px;line-height:1.8;margin:0 0 14px;color:rgba(240,233,220,0.75);">${text}</p>`;
+const bHi = (name: string) =>
+  `<p style="font-size:20px;line-height:1.7;margin:0 0 16px;color:#F0E9DC;">Hey ${esc(name)},</p>`;
+const bBold = (text: string) => `<strong style="color:#F0E9DC;">${esc(text)}</strong>`;
+const bGold = (text: string) => `<strong style="color:#BF975A;">${text}</strong>`;
+
+const bookSignOff = () => `
+  <p style="font-size:14px;line-height:1.8;margin:24px 0 4px;color:rgba(240,233,220,0.65);">— The BluntChart Team</p>
+  <p style="font-size:13px;line-height:1.6;margin:0;color:rgba(240,233,220,0.35);font-style:italic;">Still reading people's emotional baggage so they don't have to.</p>
+`;
+
+const textSignOff = `— The BluntChart Team
+Still reading people's emotional baggage so they don't have to.`;
+
+/* ─── BIRTH CHART BOOK — abandoned cart sequence ─── */
+
+export function bookAbandonedPreviewMail({ firstName, readingUrl }: BaseVars): EmailTemplate {
+  const subject = "your birth chart is waiting...";
+
+  const text = `You were one step away.
+
+Your birth details are already saved.
+
+All that's left is completing checkout.
+
+We'll keep everything ready for you.
+
+${readingUrl ?? "https://bluntchart.com/in-depth-birth-chart"}
+
+${textSignOff}`;
+
+  const html = bookPreheader("and honestly... it's judging your commitment issues.") + bookWrap(`
+    ${bP("You were one step away.")}
+    ${bP("Your birth details are already saved.")}
+    ${bP("All that's left is completing checkout.")}
+    ${bP("We'll keep everything ready for you.")}
+    ${bookButton(readingUrl ?? "https://bluntchart.com/in-depth-birth-chart", "Continue Where I Left Off")}
+    ${bookSignOff()}
+  `);
+
+  return { subject, text, html };
+}
+
+export function bookAbandonedOneMail({ firstName, readingUrl }: BaseVars): EmailTemplate {
+  const subject = "you keep wondering why you do certain things...";
+
+  const text = `Yesterday you almost started your Birth Chart Book.
+
+Then life happened.
+
+Whenever you're ready...
+
+your chart will still be here.
+
+${readingUrl ?? "https://bluntchart.com/in-depth-birth-chart"}
+
+${textSignOff}`;
+
+  const html = bookPreheader("this was supposed to answer that.") + bookWrap(`
+    ${bP("Yesterday you almost started your Birth Chart Book.")}
+    ${bP("Then life happened.")}
+    ${bP("Whenever you're ready...")}
+    ${bP("your chart will still be here.")}
+    ${bookButton(readingUrl ?? "https://bluntchart.com/in-depth-birth-chart", "Finish My Book")}
+    ${bookSignOff()}
+  `);
+
+  return { subject, text, html };
+}
+
+export function bookAbandonedTwoMail({ firstName, readingUrl }: BaseVars): EmailTemplate {
+  const subject = "curiosity usually doesn't disappear...";
+
+  const text = `Most people who come back tell us the same thing.
+
+"I wish I'd read this sooner."
+
+No pressure.
+
+Just leaving this here...
+
+${readingUrl ?? "https://bluntchart.com/in-depth-birth-chart"}
+
+${textSignOff}`;
+
+  const html = bookPreheader("it just gets postponed.") + bookWrap(`
+    ${bP("Most people who come back tell us the same thing.")}
+    ${bP(`<em style="color:#F0E9DC;">"I wish I'd read this sooner."</em>`)}
+    ${bP("No pressure.")}
+    ${bP("Just leaving this here...")}
+    ${bookButton(readingUrl ?? "https://bluntchart.com/in-depth-birth-chart", "Complete My Purchase")}
+    ${bookSignOff()}
+  `);
+
+  return { subject, text, html };
+}
+
+export function bookAbandonedThreeMail({ firstName, readingUrl }: BaseVars): EmailTemplate {
+  const subject = "this is the last reminder... promise.";
+
+  const text = `We'll stop sending reminders after this email.
+
+If you're still curious about what your birth chart actually says...
+
+your saved details are waiting.
+
+If not...
+
+no hard feelings.
+
+Either way, thanks for giving BluntChart a chance.
+
+${readingUrl ?? "https://bluntchart.com/in-depth-birth-chart"}
+
+${textSignOff}`;
+
+  const html = bookPreheader("after this we'll stop bothering you.") + bookWrap(`
+    ${bP("We'll stop sending reminders after this email.")}
+    ${bP("If you're still curious about what your birth chart actually says...")}
+    ${bP("your saved details are waiting.")}
+    ${bP("If not...")}
+    ${bP("no hard feelings.")}
+    ${bP("Either way, thanks for giving BluntChart a chance.")}
+    ${bookButton(readingUrl ?? "https://bluntchart.com/in-depth-birth-chart", "Read My Birth Chart")}
+    ${bookSignOff()}
+  `);
+
+  return { subject, text, html };
+}
+
+/* ─── BIRTH CHART BOOK — post-purchase sequence ─── */
+
+export function bookConfirmationMail({ firstName, birthDate }: BaseVars): EmailTemplate {
+  const subject = "we kidnapped your birth chart...";
+
+  const text = `Hey ${firstName},
+
+We just received your order.
+
+Right now we're turning your exact birth chart into a personalized book... not a generic horoscope, not a template with your zodiac sign pasted into it.
+
+Every chapter is generated from your birth date, birth time and birthplace, so it takes a few minutes to put everything together.
+
+Give us around 5-10 minutes.
+
+You'll receive another email the moment it's ready.
+
+Until then...
+
+Try not to overthink why you bought an entire book about yourself.
+
+(Actually... that's probably one of the chapters.)
+
+${textSignOff}`;
+
+  const html = bookPreheader("don't worry... we'll return it in about 5–10 minutes.") + bookWrap(`
+    ${bHi(firstName)}
+    ${bP("We just received your order.")}
+    ${bP("Right now we're turning your exact birth chart into a personalized book... not a generic horoscope, not a template with your zodiac sign pasted into it.")}
+    ${bP(`Every chapter is generated from your ${bBold("birth date")}, ${bBold("birth time")} and ${bBold("birthplace")}, so it takes a few minutes to put everything together.`)}
+    ${bP(`Give us around ${bGold("5–10 minutes")}.`)}
+    ${bP("You'll receive another email the moment it's ready.")}
+    ${bP("Until then...")}
+    ${bP("Try not to overthink why you bought an entire book about yourself.")}
+    ${bP(`<em style="color:rgba(240,233,220,0.5);">(Actually... that's probably one of the chapters.)</em>`)}
+    ${bookButton("https://bluntchart.com/in-depth-birth-chart", "I'll Patiently Pretend Not To Refresh My Inbox")}
+    ${bookSignOff()}
+  `);
+
+  return { subject, text, html };
+}
+
+export function bookDeliveryMail({ firstName, readingUrl }: BaseVars): EmailTemplate {
+  const subject = "it's here... try not to feel too called out.";
+
+  const text = `Hey ${firstName},
+
+Your book is ready.
+
+Inside you'll find 14 chapters built entirely from your birth chart... your relationships, career, emotional patterns, strengths, blind spots and the habits you probably thought nobody noticed.
+
+Some pages will feel validating.
+
+Some might make you close the tab for a minute.
+
+Both are normal.
+
+Open Your Book:
+${readingUrl ?? "https://bluntchart.com"}
+
+You can also download it as a PDF anytime.
+
+One small warning...
+
+Most people think they'll read one chapter.
+
+Then accidentally finish the whole thing.
+
+Enjoy.
+
+${textSignOff}`;
+
+  const html = bookPreheader("your birth chart book is officially ready.") + bookWrap(`
+    ${bHi(firstName)}
+    ${bP("Your book is ready.")}
+    ${bP(`Inside you'll find ${bBold("14 chapters")} built entirely from your birth chart... your relationships, career, emotional patterns, strengths, blind spots and the habits you probably thought nobody noticed.`)}
+    ${bP("Some pages will feel validating.")}
+    ${bP("Some might make you close the tab for a minute.")}
+    ${bP("Both are normal.")}
+    ${bookButton(readingUrl ?? "https://bluntchart.com", "Open My Book")}
+    ${bP("You can also download it as a PDF anytime.")}
+    <p style="font-size:16px;line-height:1.8;margin:20px 0 8px;color:rgba(240,233,220,0.75);"><em>One small warning...</em></p>
+    ${bP("Most people think they'll read one chapter.")}
+    ${bP("Then accidentally finish the whole thing.")}
+    ${bP("Enjoy.")}
+    ${bookSignOff()}
+  `);
+
+  return { subject, text, html };
+}
+
+export function bookReviewMail({ firstName }: BaseVars): EmailTemplate {
+  const subject = "okay... which chapter exposed you?";
+
+  const text = `Hey ${firstName},
+
+By now you've probably finished your book...
+
+or at least skipped straight to the chapters you were secretly most curious about.
+
+We're genuinely curious.
+
+Which chapter made you stop for a second and think...
+
+"Okay... that's annoyingly accurate."
+
+Hit reply and tell us.
+
+We read every response.
+
+Some of our best improvements have come from people telling us exactly what landed... and what didn't.
+
+This product gets better every time someone is brutally honest with us.
+
+Seems fair.
+
+${textSignOff}`;
+
+  const html = bookPreheader("be honest.") + bookWrap(`
+    ${bHi(firstName)}
+    ${bP("By now you've probably finished your book...")}
+    ${bP("or at least skipped straight to the chapters you were secretly most curious about.")}
+    ${bP("We're genuinely curious.")}
+    ${bP("Which chapter made you stop for a second and think...")}
+    ${bP(`<em style="color:#F0E9DC;">"Okay... that's annoyingly accurate."</em>`)}
+    ${bP("Hit reply and tell us.")}
+    ${bP("We read every response.")}
+    ${bP("Some of our best improvements have come from people telling us exactly what landed... and what didn't.")}
+    ${bP("This product gets better every time someone is brutally honest with us.")}
+    ${bP("Seems fair.")}
+    ${bookSignOff()}
+  `);
+
+  return { subject, text, html };
+}
+
+export function bookSocialProofMail({ firstName, cardUrl }: BaseVars): EmailTemplate {
+  const subject = "one tiny favour...";
+
+  const text = `Hey ${firstName},
+
+If your Birth Chart Book made you see yourself differently...
+
+would you mind helping the next person who's sitting on the fence?
+
+A quick review genuinely helps more people discover BluntChart than any advertisement ever could.
+
+Whether you loved it...
+
+or whether one chapter absolutely humbled you...
+
+we'd love to hear it.
+
+Leave your review here:
+${cardUrl ?? "https://bluntchart.com/in-depth-birth-chart"}
+
+Thanks for trusting us with something this personal.
+
+It genuinely means a lot.
+
+${textSignOff}`;
+
+  const html = bookPreheader("it'll take less than a minute.") + bookWrap(`
+    ${bHi(firstName)}
+    ${bP("If your Birth Chart Book made you see yourself differently...")}
+    ${bP("would you mind helping the next person who's sitting on the fence?")}
+    ${bP("A quick review genuinely helps more people discover BluntChart than any advertisement ever could.")}
+    ${bP("Whether you loved it...")}
+    ${bP("or whether one chapter absolutely humbled you...")}
+    ${bP("we'd love to hear it.")}
+    ${bookButton(cardUrl ?? "https://bluntchart.com/in-depth-birth-chart", "Leave A Review")}
+    ${bP("Thanks for trusting us with something this personal.")}
+    ${bP("It genuinely means a lot.")}
+    ${bookSignOff()}
+  `);
+
+  return { subject, text, html };
+}

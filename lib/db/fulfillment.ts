@@ -4,6 +4,7 @@ import { dbError, dbLog } from "./log";
 import { DB } from "./tables";
 import { ensureUser } from "./users";
 import type { BirthLead } from "./checkout-flow";
+import type { ProductType } from "./types";
 
 /**
  * After Gumroad payment: attach reading to payments + readings, issue access_token.
@@ -15,6 +16,7 @@ export async function fulfillPaidOrder(
     gumroadPaymentId: string;
     amountCents: number;
     sessionId?: string;
+    productType: ProductType;
     lead: BirthLead;
     readingJson: Record<string, unknown>;
   }
@@ -62,6 +64,8 @@ export async function fulfillPaidOrder(
     paymentId = pendingRows?.[0]?.id ?? null;
   }
 
+  const productType = params.productType;
+
   const paymentPatch = {
     email,
     user_id: userId,
@@ -70,6 +74,7 @@ export async function fulfillPaidOrder(
     payment_status: "paid",
     payment_provider: "gumroad",
     access_token: accessToken,
+    product_type: productType,
     session_id: params.sessionId ?? undefined,
     updated_at: new Date().toISOString(),
   };
@@ -130,6 +135,7 @@ export async function fulfillPaidOrder(
         timezone: params.lead.timezone,
         reading_json: readingPayload,
         reading_status: "complete",
+        product_type: productType,
       },
     ])
     .select("id")
@@ -204,18 +210,19 @@ export async function loadReadingByAccessToken(
   reading: Record<string, unknown> | null;
   birth_time: string | null;
   birth_place: string | null;
+  product_type: ProductType;
   error: string | null;
 }> {
   const { data: payment, error: payError } = await supabase
     .from(DB.payments)
-    .select("id, payment_status, access_token")
+    .select("id, payment_status, access_token, product_type")
     .eq("access_token", accessToken)
     .in("payment_status", ["paid", "completed"])
     .maybeSingle();
 
   if (payError) {
     dbError("fulfillment", "payment lookup by token failed", payError);
-    return { reading: null, birth_time: null, birth_place: null, error: payError.message };
+    return { reading: null, birth_time: null, birth_place: null, product_type: "reading", error: payError.message };
   }
 
   if (!payment) {
@@ -223,9 +230,12 @@ export async function loadReadingByAccessToken(
       reading: null,
       birth_time: null,
       birth_place: null,
+      product_type: "reading",
       error: "Invalid or expired link",
     };
   }
+
+  const productType: ProductType = (payment.product_type as ProductType) ?? "reading";
 
   const { data: readingRow, error: readError } = await supabase
     .from(DB.readings)
@@ -241,6 +251,7 @@ export async function loadReadingByAccessToken(
       reading: null,
       birth_time: null,
       birth_place: null,
+      product_type: productType,
       error: readError.message,
     };
   }
@@ -250,6 +261,7 @@ export async function loadReadingByAccessToken(
       reading: null,
       birth_time: null,
       birth_place: null,
+      product_type: productType,
       error: "Reading not found for this payment",
     };
   }
@@ -258,6 +270,7 @@ export async function loadReadingByAccessToken(
     reading: readingRow.reading_json as Record<string, unknown>,
     birth_time: readingRow.birth_time,
     birth_place: readingRow.birth_place,
+    product_type: productType,
     error: null,
   };
 }

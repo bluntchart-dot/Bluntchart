@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createSupabaseAdmin } from "@/lib/supabase-admin";
-import { readingAccessUrl } from "@/lib/db/checkout-flow";
+import type { ProductType } from "@/lib/db/types";
+import { accessUrl } from "@/lib/products";
 import { dbError, dbLog } from "@/lib/db/log";
 import { DB } from "@/lib/db/tables";
 
@@ -35,12 +36,13 @@ export async function GET(req: NextRequest) {
       id: string;
       payment_status: string | null;
       access_token: string | null;
+      product_type?: string | null;
     } | null = null;
 
     if (sessionId) {
       const { data, error } = await supabase
         .from(DB.payments)
-        .select("id, payment_status, access_token")
+        .select("id, payment_status, access_token, product_type")
         .eq("session_id", sessionId)
         .maybeSingle();
 
@@ -57,7 +59,7 @@ export async function GET(req: NextRequest) {
     if (!payment && email) {
       const { data, error } = await supabase
         .from(DB.payments)
-        .select("id, payment_status, access_token")
+        .select("id, payment_status, access_token, product_type")
         .eq("email", email)
         .order("created_at", { ascending: false })
         .limit(1)
@@ -110,13 +112,14 @@ export async function GET(req: NextRequest) {
       }
 
       if (readingRow?.id) {
-        const accessUrl = readingAccessUrl(payment.access_token);
-        dbLog(scope, "reading ready", { sessionId, email, accessUrl });
+        const pt: ProductType = (payment.product_type as ProductType) ?? "reading";
+        const url = accessUrl(payment.access_token, pt);
+        dbLog(scope, "reading ready", { sessionId, email, accessUrl: url });
         return NextResponse.json({
           success: true,
           status: "ready",
           accessToken: payment.access_token,
-          accessUrl,
+          accessUrl: url,
         });
       }
     }

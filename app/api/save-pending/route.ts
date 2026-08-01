@@ -8,7 +8,15 @@ import {
 } from "@/lib/db/checkout-flow";
 import { formatDbError } from "@/lib/db/errors";
 import { dbError, dbLog } from "@/lib/db/log";
-import { previewMail, abandonedOneMail, abandonedTwoMail } from "@/lib/email-templates";
+import {
+  previewMail,
+  abandonedOneMail,
+  abandonedTwoMail,
+  bookAbandonedPreviewMail,
+  bookAbandonedOneMail,
+  bookAbandonedTwoMail,
+  bookAbandonedThreeMail,
+} from "@/lib/email-templates";
 import { sendEmail, cancelScheduledEmail } from "@/lib/send-email";
 import { DELAY_MS, scheduledIso } from "@/lib/email-timing";
 
@@ -55,6 +63,8 @@ const birth_lng =
     : undefined;
     const focus_area =
   typeof body.focus_area === "string" ? body.focus_area.trim() : undefined;
+    const product_type =
+      typeof body.product_type === "string" ? body.product_type.trim() : undefined;
 
     if (!name || !email || !dob || !birth_time || !birth_place) {
       dbError(scope, "validation failed", "missing fields", { email });
@@ -70,9 +80,9 @@ const birth_lng =
     // before startCheckout wipes the row that was tracking their ids.
     const staleIds = await loadAbandonedEmailIdsByEmail(supabase, email);
     if (staleIds) {
-      const { preview_email_id, abandoned_one_email_id, abandoned_two_email_id } = staleIds;
+      const { preview_email_id, abandoned_one_email_id, abandoned_two_email_id, abandoned_three_email_id } = staleIds;
       await Promise.all(
-        [preview_email_id, abandoned_one_email_id, abandoned_two_email_id]
+        [preview_email_id, abandoned_one_email_id, abandoned_two_email_id, abandoned_three_email_id]
           .filter((id): id is string => !!id)
           .map((id) => cancelScheduledEmail(id))
       );
@@ -88,6 +98,7 @@ const birth_lng =
       birth_lat,   /* NEW: pass coordinates to startCheckout */
       birth_lng,   /* NEW: pass coordinates to startCheckout */
       focus_area,
+      product_type: product_type as import("@/lib/db/types").ProductType | undefined,
       step_reached: "form_submitted",
     });
 
@@ -114,33 +125,70 @@ const birth_lng =
     let emailScheduled = false;
     try {
       const firstName = name.split(" ")[0] || name;
-      const readingUrl = `${SITE_URL}#try-it`;
+      const isBook = product_type === "birth-chart-book";
+      const readingUrl = isBook
+        ? `${SITE_URL}/in-depth-birth-chart`
+        : `${SITE_URL}#try-it`;
 
-      const [preview, abandonedOne, abandonedTwo] = await Promise.all([
-        sendEmail({
-          to: email,
-          ...previewMail({ firstName, birthDate: dob, readingUrl }),
-          scheduledAt: scheduledIso(DELAY_MS.preview),
-        }),
-        sendEmail({
-          to: email,
-          ...abandonedOneMail({ firstName, birthDate: dob, readingUrl }),
-          scheduledAt: scheduledIso(DELAY_MS.abandonedOne),
-        }),
-        sendEmail({
-          to: email,
-          ...abandonedTwoMail({ firstName, readingUrl }),
-          scheduledAt: scheduledIso(DELAY_MS.abandonedTwo),
-        }),
-      ]);
+      if (isBook) {
+        const [preview, abandonedOne, abandonedTwo, abandonedThree] = await Promise.all([
+          sendEmail({
+            to: email,
+            ...bookAbandonedPreviewMail({ firstName, readingUrl }),
+            scheduledAt: scheduledIso(DELAY_MS.bookAbandonedPreview),
+          }),
+          sendEmail({
+            to: email,
+            ...bookAbandonedOneMail({ firstName, readingUrl }),
+            scheduledAt: scheduledIso(DELAY_MS.bookAbandonedOne),
+          }),
+          sendEmail({
+            to: email,
+            ...bookAbandonedTwoMail({ firstName, readingUrl }),
+            scheduledAt: scheduledIso(DELAY_MS.bookAbandonedTwo),
+          }),
+          sendEmail({
+            to: email,
+            ...bookAbandonedThreeMail({ firstName, readingUrl }),
+            scheduledAt: scheduledIso(DELAY_MS.bookAbandonedThree),
+          }),
+        ]);
 
-      await saveAbandonedEmailIds(supabase, email, {
-        previewEmailId: preview.id,
-        abandonedOneEmailId: abandonedOne.id,
-        abandonedTwoEmailId: abandonedTwo.id,
-      });
+        await saveAbandonedEmailIds(supabase, email, {
+          previewEmailId: preview.id,
+          abandonedOneEmailId: abandonedOne.id,
+          abandonedTwoEmailId: abandonedTwo.id,
+          abandonedThreeEmailId: abandonedThree.id,
+        });
 
-      emailScheduled = preview.ok && abandonedOne.ok && abandonedTwo.ok;
+        emailScheduled = preview.ok && abandonedOne.ok && abandonedTwo.ok && abandonedThree.ok;
+      } else {
+        const [preview, abandonedOne, abandonedTwo] = await Promise.all([
+          sendEmail({
+            to: email,
+            ...previewMail({ firstName, birthDate: dob, readingUrl }),
+            scheduledAt: scheduledIso(DELAY_MS.preview),
+          }),
+          sendEmail({
+            to: email,
+            ...abandonedOneMail({ firstName, birthDate: dob, readingUrl }),
+            scheduledAt: scheduledIso(DELAY_MS.abandonedOne),
+          }),
+          sendEmail({
+            to: email,
+            ...abandonedTwoMail({ firstName, readingUrl }),
+            scheduledAt: scheduledIso(DELAY_MS.abandonedTwo),
+          }),
+        ]);
+
+        await saveAbandonedEmailIds(supabase, email, {
+          previewEmailId: preview.id,
+          abandonedOneEmailId: abandonedOne.id,
+          abandonedTwoEmailId: abandonedTwo.id,
+        });
+
+        emailScheduled = preview.ok && abandonedOne.ok && abandonedTwo.ok;
+      }
     } catch (mailErr) {
       dbError(scope, "abandoned sequence scheduling failed (non-fatal)", mailErr, { email });
     }

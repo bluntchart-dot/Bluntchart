@@ -8,7 +8,7 @@
  * Body:
  *   {
  *     name, dob, birth_time, city,
- *     email?, birth_lat?, birth_lng?, timezone?, focus_area?,
+ *     email?, birth_lat?, birth_lng?, timezone?,
  *     model?    // "mock" | "haiku-4-5" | "sonnet-5" | "opus-4-8"
  *   }
  *
@@ -41,7 +41,6 @@ interface Body {
   birth_lat?: number;
   birth_lng?: number;
   timezone?: string;
-  focus_area?: string;
   model?: string; // "mock" | AiModelId
 }
 
@@ -87,8 +86,6 @@ export async function POST(req: NextRequest) {
   const birthTime  = (body.birth_time ?? "").trim();
   const birthPlace = (body.city ?? "").trim();
   const email      = (body.email ?? "").trim().toLowerCase();
-  const focusArea  = (body.focus_area ?? "").trim() || null;
-
   if (!name || !dob || !birthTime || !birthPlace) {
     return NextResponse.json(
       { ok: false, error: "Please fill in name, date of birth, time, and city." },
@@ -129,7 +126,6 @@ export async function POST(req: NextRequest) {
         ? body.birth_lng
         : null,
     timezone: body.timezone?.trim() || null,
-    focus_area: focusArea,
   };
 
   const model = resolveModel(body.model);

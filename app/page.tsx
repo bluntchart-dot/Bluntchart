@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
 import { PreviewReadingStage } from "@/components/PreviewReadingStage";
 import { calculateChart } from "@/lib/chart-calculator";
@@ -48,7 +49,7 @@ const REVEALS = [
 ];
 
 const UPCOMING = [
-  { badge: "Coming Soon", title: "Compatibility Reading", desc: "You and a partner, friend, or situationship. Brutally honest about the real tension points and why you keep having the same fight.", price: "$9" },
+  { badge: "Coming Soon", title: "Compatibility Reading", desc: "You and a partner, friend, or situationship. Brutally honest about the real tension points and why you keep having the same fight.", price: "$24" },
   { badge: "Coming Soon", title: "Year Ahead Reading", desc: "What your chart says about the next 12 months. Love, money, career, major turning points.", price: "$18" },
   { badge: "Coming Soon", title: "Gift a Reading", desc: "Buy for someone else. Birthday, bachelorette, just because. Delivered to their email with a gift message.", price: "$15" },
 ];
@@ -992,6 +993,24 @@ export default function HomePage() {
               <a className="bp" href="#try-it" style={{ display:"block", textAlign:"center", textDecoration:"none" }}>
                 Get My Free Preview First ✨
               </a>
+            </div>
+          </div>
+          <div className="price-main" style={{ maxWidth:560, marginTop:32 }}>
+            <div style={{ position:"relative", zIndex:1 }}>
+              <div className="price-badge-main" style={{ background:"linear-gradient(135deg, #6b2fd4, #d4537e)" }}>✦ NEW</div>
+              <div className="price-title">In-Depth Birth Chart Book</div>
+              <p className="price-desc">49 pages. 14 chapters. Every planet, every house, every aspect — written in the same brutally honest voice, but nothing left unsaid.</p>
+              <div className="price-num"><s style={{ opacity:0.4, fontSize:"0.6em" }}>$29</s> $24</div>
+              <p className="price-sub">One-time · Delivered in minutes · Yours forever</p>
+              <ul className="price-includes">
+                <li>14 chapters across your entire natal chart</li>
+                <li>Covers career, love, emotional patterns, purpose, current transits and more</li>
+                <li>Built from the same high-precision ephemeris engine</li>
+                <li>No account required</li>
+              </ul>
+              <Link href="/in-depth-birth-chart" className="bp" style={{ display:"block", textAlign:"center", textDecoration:"none" }}>
+                See the full breakdown →
+              </Link>
             </div>
           </div>
           <div style={{ marginTop:56 }}>
