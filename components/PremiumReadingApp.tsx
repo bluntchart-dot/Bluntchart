@@ -1,23 +1,28 @@
 "use client";
 
 /**
- * PremiumReadingApp — birth-details form → premium book preview.
+ * PremiumReadingApp — /internal/premium admin form.
  *
- * Used only by /internal/premium (internal playground). Authorization is
- * handled server-side via the `premium_dev_ok` cookie; this component
- * assumes it is already past the gate.
+ * Manual-fulfillment workflow. Runs the current V1.2 insight-map engine,
+ * persists the reading in Supabase with a real access token, and sends
+ * the customer email sequence (confirmation → delivery → scheduled
+ * review + social-proof). Behind the existing password gate.
  *
- * On submit, it POSTs to /api/internal/premium/generate which today
- * returns a mock PremiumReading (real chart + in-voice mock chapters).
- * The reading is handed to <PremiumBook /> for the full book experience.
+ * On success shows the admin panel: customer email, order source,
+ * payment/reading IDs, access token, full /my-book?token=... URL with
+ * copy button, and email delivery statuses.
  */
 
 import { useEffect, useState } from "react";
 import LocationPicker from "@/components/LocationPicker";
 import type { SelectedLocation } from "@/components/LocationPicker";
-import PremiumBook from "@/components/premium/PremiumBook";
-import type { PremiumReading } from "@/lib/premium/types";
+import {
+  INTERNAL_SELECTABLE_SOURCES,
+  ORDER_SOURCE_LABEL,
+  type OrderSource,
+} from "@/lib/premium/order-sources";
 
+/* ─── Small style tokens ─────────────────────────────────────────── */
 const inp: React.CSSProperties = {
   width: "100%",
   background: "rgba(255,255,255,0.04)",
@@ -39,27 +44,47 @@ const lbl: React.CSSProperties = {
   marginBottom: 6,
 };
 
-const FOCUS_AREAS = [
-  { value: "love",    label: "Love" },
-  { value: "career",  label: "Career" },
-  { value: "money",   label: "Money" },
-  { value: "purpose", label: "Purpose" },
+const LOADING_MSGS = [
+  "Calculating chart…",
+  "Extracting insight signals…",
+  "Interpreting with Claude…",
+  "Writing the book…",
+  "Running QA…",
+  "Saving to database…",
+  "Sending emails…",
 ];
 
-const LOADING_MSGS = [
-  "Calculating your chart…",
-  "Laying out your book…",
-  "Setting the type…",
-  "Almost there…",
-];
+/* ─── Shape of the /fulfill response the admin panel renders ─────── */
+interface EmailStatus {
+  sent: boolean;
+  id: string | null;
+  error: string | null;
+}
+interface FulfillmentResult {
+  ok: true;
+  customer: { name: string; email: string; firstName: string };
+  orderSource: OrderSource;
+  orderSourcePersisted: boolean;
+  accessToken: string;
+  readingUrl: string;
+  paymentId: string;
+  readingId: string;
+  model: string;
+  emailStatus: {
+    confirmation: EmailStatus;
+    delivery: EmailStatus;
+    reviewScheduled: EmailStatus;
+    socialProofScheduled: EmailStatus;
+  };
+}
 
 interface Props {
   eyebrow?: string;
 }
 
 export default function PremiumReadingApp({ eyebrow }: Props) {
-  const [screen, setScreen] = useState<"form" | "loading" | "book">("form");
-  const [reading, setReading] = useState<PremiumReading | null>(null);
+  const [screen, setScreen] = useState<"form" | "loading" | "done">("form");
+  const [result, setResult] = useState<FulfillmentResult | null>(null);
 
   const [fname,     setFname]     = useState("");
   const [email,     setEmail]     = useState("");
@@ -67,8 +92,8 @@ export default function PremiumReadingApp({ eyebrow }: Props) {
   const [btime,     setBtime]     = useState("");
   const [city,      setCity]      = useState("");
   const [cityGeo,   setCityGeo]   = useState<SelectedLocation | null>(null);
-  const [focusArea, setFocusArea] = useState<string>("");
-  const [model,     setModel]     = useState<string>("haiku-4-5");
+  const [orderSource, setOrderSource] = useState<OrderSource | "">("");
+  const [model,     setModel]     = useState<string>("sonnet-5");
   const [err,       setErr]       = useState("");
   const [loadMsg,   setLoadMsg]   = useState(LOADING_MSGS[0]);
 
@@ -78,17 +103,28 @@ export default function PremiumReadingApp({ eyebrow }: Props) {
     const t = setInterval(() => {
       i = (i + 1) % LOADING_MSGS.length;
       setLoadMsg(LOADING_MSGS[i]);
-    }, 1400);
+    }, 2200);
     return () => clearInterval(t);
   }, [screen]);
 
+  const reset = () => {
+    setScreen("form");
+    setResult(null);
+    setFname(""); setEmail(""); setDob(""); setBtime("");
+    setCity(""); setCityGeo(null); setOrderSource(""); setErr("");
+  };
+
   const submit = async () => {
-    if (!fname.trim() || !dob || !city.trim() || !btime) {
-      setErr("Please fill in name, date of birth, exact birth time, and city.");
+    if (!fname.trim() || !email.trim() || !dob || !btime || !city.trim()) {
+      setErr("Please fill in name, email, date of birth, exact birth time, and city.");
       return;
     }
-    if (email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
-      setErr("Please enter a valid email address (or leave it blank).");
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+      setErr("Please enter a valid email address.");
+      return;
+    }
+    if (!orderSource) {
+      setErr("Please choose an order source.");
       return;
     }
     setErr("");
@@ -97,13 +133,13 @@ export default function PremiumReadingApp({ eyebrow }: Props) {
     const browserTz = Intl.DateTimeFormat().resolvedOptions().timeZone ?? "";
     const payload: Record<string, unknown> = {
       name: fname.trim(),
-      email: email.trim() || undefined,
+      email: email.trim().toLowerCase(),
       dob,
       birth_time: btime,
       city: city.trim(),
       timezone: browserTz,
-      focus_area: focusArea || undefined,
       model,
+      order_source: orderSource,
     };
     if (cityGeo) {
       payload.birth_lat = cityGeo.lat;
@@ -111,7 +147,7 @@ export default function PremiumReadingApp({ eyebrow }: Props) {
     }
 
     try {
-      const res = await fetch("/api/internal/premium/generate", {
+      const res = await fetch("/api/internal/premium/fulfill", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -120,26 +156,13 @@ export default function PremiumReadingApp({ eyebrow }: Props) {
       if (!res.ok || !data.ok) {
         throw new Error(data.error ?? `Server error ${res.status}`);
       }
-      setReading(data.reading as PremiumReading);
-      setScreen("book");
+      setResult(data as FulfillmentResult);
+      setScreen("done");
     } catch (e) {
       setScreen("form");
       setErr(e instanceof Error ? e.message : "Something went wrong. Please try again.");
     }
   };
-
-  /* ── BOOK ─────────────────────────────────────────────────────── */
-  if (screen === "book" && reading) {
-    return (
-      <PremiumBook
-        reading={reading}
-        onClose={() => {
-          setScreen("form");
-          setReading(null);
-        }}
-      />
-    );
-  }
 
   /* ── LOADING ──────────────────────────────────────────────────── */
   if (screen === "loading") {
@@ -150,10 +173,15 @@ export default function PremiumReadingApp({ eyebrow }: Props) {
           {loadMsg}
         </div>
         <div style={{ fontSize: 13, color: "#4a4560" }}>
-          Building your book…
+          This can take 60–120 seconds.
         </div>
       </div>
     );
+  }
+
+  /* ── DONE / ADMIN RESULT PANEL ────────────────────────────────── */
+  if (screen === "done" && result) {
+    return <ResultPanel result={result} onNew={reset} />;
   }
 
   /* ── FORM ─────────────────────────────────────────────────────── */
@@ -177,19 +205,19 @@ export default function PremiumReadingApp({ eyebrow }: Props) {
         borderRadius: 18, padding: 32,
       }}>
         <div style={{ fontFamily: "var(--font-display)", fontSize: 22, marginBottom: 6, color: "#e8e4f0" }}>
-          Your birth details
+          Manual fulfillment
         </div>
         <div style={{ fontSize: 13, color: "#6b6585", lineHeight: 1.6, marginBottom: 28 }}>
-          The chart is real. The chapter bodies are in-voice placeholders until we wire the AI in.
+          Enter customer birth details. This will generate the reading with the current V1.2 engine, save it to Supabase, and send the customer confirmation + delivery emails.
         </div>
 
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 16 }}>
           <div>
-            <label style={lbl}>First name</label>
+            <label style={lbl}>Customer name</label>
             <input value={fname} onChange={e => setFname(e.target.value)} placeholder="e.g. Sarah" style={inp} />
           </div>
           <div>
-            <label style={lbl}>Email address (optional)</label>
+            <label style={lbl}>Customer email</label>
             <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="you@email.com" style={inp} />
           </div>
         </div>
@@ -200,7 +228,7 @@ export default function PremiumReadingApp({ eyebrow }: Props) {
             <input type="date" value={dob} onChange={e => setDob(e.target.value)} style={inp} />
           </div>
           <div>
-            <label style={lbl}>Time of birth</label>
+            <label style={lbl}>Exact birth time</label>
             <input type="time" value={btime} onChange={e => setBtime(e.target.value)} style={inp} />
             <small style={{ fontSize: 11, color: "#3a3858", marginTop: 4, display: "block" }}>
               From birth certificate
@@ -208,7 +236,7 @@ export default function PremiumReadingApp({ eyebrow }: Props) {
           </div>
         </div>
 
-        <div style={{ marginBottom: 24 }}>
+        <div style={{ marginBottom: 20 }}>
           <label style={lbl}>City &amp; country of birth</label>
           <LocationPicker
             value={city}
@@ -217,29 +245,24 @@ export default function PremiumReadingApp({ eyebrow }: Props) {
           />
         </div>
 
-        <div style={{ marginBottom: 24 }}>
-          <label style={lbl}>
-            What part of your life brought you here?{" "}
-            <span style={{ color: "#4a4560", fontWeight: 400, textTransform: "none", letterSpacing: 0 }}>
-              (optional)
-            </span>
-          </label>
+        <div style={{ marginBottom: 20 }}>
+          <label style={lbl}>Order source</label>
           <select
-            value={focusArea}
-            onChange={e => setFocusArea(e.target.value)}
-            style={{ ...inp, appearance: "none", cursor: "pointer", color: focusArea ? "#e8e4f0" : "rgba(232,228,240,0.4)" }}
+            value={orderSource}
+            onChange={e => setOrderSource(e.target.value as OrderSource | "")}
+            style={{ ...inp, appearance: "none", cursor: "pointer", color: orderSource ? "#e8e4f0" : "rgba(232,228,240,0.4)" }}
           >
-            <option value="" style={{ background: "#12121e" }}>Select one (optional)</option>
-            {FOCUS_AREAS.map(opt => (
-              <option key={opt.value} value={opt.value} style={{ background: "#12121e", color: "#e8e4f0" }}>
-                {opt.label}
+            <option value="" style={{ background: "#12121e" }}>Choose one…</option>
+            {INTERNAL_SELECTABLE_SOURCES.map(src => (
+              <option key={src} value={src} style={{ background: "#12121e", color: "#e8e4f0" }}>
+                {ORDER_SOURCE_LABEL[src]}
               </option>
             ))}
           </select>
         </div>
 
         <div style={{ marginBottom: 24 }}>
-          <label style={lbl}>Generator</label>
+          <label style={lbl}>Generator model</label>
           <select
             value={model}
             onChange={e => setModel(e.target.value)}
@@ -249,17 +272,14 @@ export default function PremiumReadingApp({ eyebrow }: Props) {
               Claude Haiku 4.5 (fast, cheap)
             </option>
             <option value="sonnet-5" style={{ background: "#12121e", color: "#e8e4f0" }}>
-              Claude Sonnet 5 (balanced)
+              Claude Sonnet 5 (matches Gumroad book)
             </option>
             <option value="opus-4-8" style={{ background: "#12121e", color: "#e8e4f0" }}>
-              Claude Opus 4.8 (highest quality, slowest)
-            </option>
-            <option value="mock" style={{ background: "#12121e", color: "#e8e4f0" }}>
-              Mock content (no AI call)
+              Claude Opus 4.8 (highest quality)
             </option>
           </select>
           <small style={{ fontSize: 11, color: "#3a3858", marginTop: 4, display: "block" }}>
-            Real AI can take 45–120 seconds. Mock is instant.
+            Sonnet 5 is what real paying customers get. Haiku is faster for internal tests.
           </small>
         </div>
 
@@ -271,12 +291,191 @@ export default function PremiumReadingApp({ eyebrow }: Props) {
           fontSize: 15, fontWeight: 600,
           fontFamily: "inherit", cursor: "pointer", letterSpacing: "0.2px",
         }}>
-          Preview my book ✦
+          Generate &amp; Send Book →
         </button>
       </div>
       <div style={{ fontSize: 11, color: "#2e2c3e", textAlign: "center", marginTop: 14 }}>
-        Internal preview · in-voice mock content · real chart data
+        Manual fulfillment · V1.2 engine · real Supabase persistence · real customer emails
       </div>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   Admin result panel — shown after a successful fulfillment. Displays
+   the access token and full URL so support can rebuild the link if
+   email ever fails.
+───────────────────────────────────────────────────────────────── */
+
+function StatusPill({ ok, label }: { ok: boolean; label: string }) {
+  return (
+    <span style={{
+      display: "inline-flex", alignItems: "center", gap: 6,
+      background: ok ? "rgba(122,214,153,0.10)" : "rgba(212,83,126,0.10)",
+      border: `0.5px solid ${ok ? "rgba(122,214,153,0.32)" : "rgba(212,83,126,0.32)"}`,
+      color: ok ? "#a7f0c1" : "#f0a0b8",
+      borderRadius: 100, padding: "3px 10px",
+      fontSize: 11, fontWeight: 600, letterSpacing: "0.06em",
+    }}>
+      {ok ? "✓" : "✗"} {label}
+    </span>
+  );
+}
+
+function ResultPanel({ result, onNew }: { result: FulfillmentResult; onNew: () => void }) {
+  const [copied, setCopied] = useState(false);
+  const copyUrl = async () => {
+    try {
+      await navigator.clipboard.writeText(result.readingUrl);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch { /* clipboard unavailable — user can select the field */ }
+  };
+
+  const row: React.CSSProperties = {
+    display: "grid",
+    gridTemplateColumns: "160px 1fr",
+    gap: 12,
+    padding: "11px 0",
+    borderBottom: "1px solid rgba(255,255,255,0.06)",
+    fontSize: 13,
+    alignItems: "center",
+  };
+  const rowLabel: React.CSSProperties = {
+    fontSize: 10.5,
+    letterSpacing: "0.18em",
+    textTransform: "uppercase",
+    color: "#6b6585",
+    fontWeight: 600,
+  };
+  const rowValue: React.CSSProperties = {
+    color: "#e8e4f0",
+    wordBreak: "break-all",
+  };
+  const tokenMono: React.CSSProperties = {
+    fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace",
+    fontSize: 12.5,
+    color: "#efe9dc",
+    background: "rgba(255,255,255,0.04)",
+    padding: "8px 10px",
+    borderRadius: 8,
+    border: "0.5px solid rgba(255,255,255,0.08)",
+    display: "block",
+  };
+
+  return (
+    <div style={{ maxWidth: 720, margin: "0 auto", width: "100%" }}>
+      <div style={{
+        background: "rgba(122,214,153,0.06)",
+        border: "0.5px solid rgba(122,214,153,0.28)",
+        borderRadius: 14, padding: "12px 16px",
+        color: "#a7f0c1", fontSize: 13, fontWeight: 600,
+        marginBottom: 20, letterSpacing: "0.02em",
+      }}>
+        ✓ Book generated and saved. Customer emails dispatched below.
+      </div>
+
+      <div style={{
+        background: "rgba(255,255,255,0.03)",
+        border: "0.5px solid rgba(255,255,255,0.08)",
+        borderRadius: 18, padding: 28,
+      }}>
+        <div style={{ fontFamily: "var(--font-display)", fontSize: 20, marginBottom: 14, color: "#e8e4f0" }}>
+          Fulfillment record
+        </div>
+
+        <div style={row}>
+          <span style={rowLabel}>Customer</span>
+          <span style={rowValue}>{result.customer.name} · {result.customer.email}</span>
+        </div>
+        <div style={row}>
+          <span style={rowLabel}>Order source</span>
+          <span style={rowValue}>
+            {ORDER_SOURCE_LABEL[result.orderSource]}
+            {!result.orderSourcePersisted && (
+              <span style={{ marginLeft: 10, fontSize: 11, color: "#f0a0b8" }}>
+                (⚠ not persisted — apply migration 20260803000000_order_source.sql)
+              </span>
+            )}
+          </span>
+        </div>
+        <div style={row}>
+          <span style={rowLabel}>Model</span>
+          <span style={rowValue}>{result.model}</span>
+        </div>
+        <div style={row}>
+          <span style={rowLabel}>Payment ID</span>
+          <span style={rowValue}>{result.paymentId}</span>
+        </div>
+        <div style={row}>
+          <span style={rowLabel}>Reading ID</span>
+          <span style={rowValue}>{result.readingId}</span>
+        </div>
+
+        <div style={{ ...row, borderBottom: "none", gridTemplateColumns: "160px 1fr", alignItems: "start" }}>
+          <span style={rowLabel}>Access token</span>
+          <span style={tokenMono}>{result.accessToken}</span>
+        </div>
+
+        <div style={{ marginTop: 18 }}>
+          <label style={lbl}>Full book URL (safe to send to customer)</label>
+          <div style={{ display: "flex", gap: 10 }}>
+            <input
+              readOnly
+              value={result.readingUrl}
+              onFocus={(e) => e.currentTarget.select()}
+              style={{ ...inp, fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace", fontSize: 12.5 }}
+            />
+            <button onClick={copyUrl} style={{
+              background: copied ? "#a7f0c1" : "linear-gradient(135deg,#6b2fd4,#d4537e)",
+              color: copied ? "#0b0b0b" : "#fff",
+              border: "none", borderRadius: 10, padding: "0 18px",
+              fontSize: 13, fontWeight: 600, whiteSpace: "nowrap",
+              cursor: "pointer", fontFamily: "inherit",
+            }}>
+              {copied ? "Copied" : "Copy Book Link"}
+            </button>
+          </div>
+        </div>
+
+        <div style={{ marginTop: 22 }}>
+          <label style={lbl}>Email delivery</label>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+            <StatusPill ok={result.emailStatus.confirmation.sent} label="confirmation" />
+            <StatusPill ok={result.emailStatus.delivery.sent} label="delivery" />
+            <StatusPill ok={result.emailStatus.reviewScheduled.sent} label="review scheduled" />
+            <StatusPill ok={result.emailStatus.socialProofScheduled.sent} label="social-proof scheduled" />
+          </div>
+          {(() => {
+            const errors: Array<[string, string]> = [];
+            const s = result.emailStatus;
+            if (s.confirmation.error) errors.push(["confirmation", s.confirmation.error]);
+            if (s.delivery.error) errors.push(["delivery", s.delivery.error]);
+            if (s.reviewScheduled.error) errors.push(["review", s.reviewScheduled.error]);
+            if (s.socialProofScheduled.error) errors.push(["social-proof", s.socialProofScheduled.error]);
+            if (errors.length === 0) return null;
+            return (
+              <div style={{ marginTop: 12, fontSize: 12, color: "#f0a0b8" }}>
+                {errors.map(([label, msg]) => (
+                  <div key={label}><b>{label}:</b> {msg}</div>
+                ))}
+              </div>
+            );
+          })()}
+        </div>
+      </div>
+
+      <button onClick={onNew} style={{
+        width: "100%",
+        background: "transparent",
+        border: "0.5px solid rgba(255,255,255,0.15)",
+        color: "#e8e4f0",
+        borderRadius: 12, padding: "14px 20px",
+        fontSize: 14, fontWeight: 500,
+        marginTop: 18, cursor: "pointer", fontFamily: "inherit",
+      }}>
+        Fulfill another order
+      </button>
     </div>
   );
 }

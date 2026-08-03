@@ -475,6 +475,47 @@ ${textSignOff}`;
   return { subject, text, html };
 }
 
+/**
+ * Manual-fulfillment confirmation email — used by /internal/premium when
+ * a book is prepared without a Gumroad payment (Personal / Test / Etsy /
+ * Other). Deliberately avoids "payment received", "your order", or any
+ * transaction language because no payment happened through us. Design
+ * matches the rest of the book sequence.
+ */
+export function manualBookConfirmationMail({ firstName, birthDate }: BaseVars): EmailTemplate {
+  void birthDate;
+  const subject = "your birth chart book is being prepared...";
+
+  const text = `Hey ${firstName},
+
+We've received your details and your personalized birth chart book is being prepared right now.
+
+Every chapter is generated from your exact birth date, birth time and birthplace... not a generic horoscope, not a template with your zodiac sign pasted into it.
+
+Give us around 5-10 minutes.
+
+You'll receive another email the moment it's ready.
+
+Until then... try not to overthink why you asked for an entire book about yourself.
+
+(Actually... that's probably one of the chapters.)
+
+${textSignOff}`;
+
+  const html = bookPreheader("your book is being prepared... we'll be in touch shortly.") + bookWrap(`
+    ${bHi(firstName)}
+    ${bP("We've received your details and your personalized birth chart book is being prepared right now.")}
+    ${bP(`Every chapter is generated from your ${bBold("birth date")}, ${bBold("birth time")} and ${bBold("birthplace")}... not a generic horoscope, not a template with your zodiac sign pasted into it.`)}
+    ${bP(`Give us around ${bGold("5–10 minutes")}.`)}
+    ${bP("You'll receive another email the moment it's ready.")}
+    ${bP("Until then... try not to overthink why you asked for an entire book about yourself.")}
+    ${bP(`<em style="color:rgba(240,233,220,0.5);">(Actually... that's probably one of the chapters.)</em>`)}
+    ${bookSignOff()}
+  `);
+
+  return { subject, text, html };
+}
+
 export function bookDeliveryMail({ firstName, readingUrl }: BaseVars): EmailTemplate {
   const subject = "it's here... try not to feel too called out.";
 
