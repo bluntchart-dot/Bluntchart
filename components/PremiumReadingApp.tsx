@@ -64,10 +64,8 @@ interface FulfillmentResult {
   ok: true;
   customer: { name: string; email: string; firstName: string };
   orderSource: OrderSource;
-  orderSourcePersisted: boolean;
   accessToken: string;
   readingUrl: string;
-  paymentId: string;
   readingId: string;
   model: string;
   emailStatus: {
@@ -390,22 +388,11 @@ function ResultPanel({ result, onNew }: { result: FulfillmentResult; onNew: () =
         </div>
         <div style={row}>
           <span style={rowLabel}>Order source</span>
-          <span style={rowValue}>
-            {ORDER_SOURCE_LABEL[result.orderSource]}
-            {!result.orderSourcePersisted && (
-              <span style={{ marginLeft: 10, fontSize: 11, color: "#f0a0b8" }}>
-                (⚠ not persisted — apply migration 20260803000000_order_source.sql)
-              </span>
-            )}
-          </span>
+          <span style={rowValue}>{ORDER_SOURCE_LABEL[result.orderSource]}</span>
         </div>
         <div style={row}>
           <span style={rowLabel}>Model</span>
           <span style={rowValue}>{result.model}</span>
-        </div>
-        <div style={row}>
-          <span style={rowLabel}>Payment ID</span>
-          <span style={rowValue}>{result.paymentId}</span>
         </div>
         <div style={row}>
           <span style={rowLabel}>Reading ID</span>

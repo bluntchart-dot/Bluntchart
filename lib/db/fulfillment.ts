@@ -226,6 +226,38 @@ export async function loadReadingByAccessToken(
   }
 
   if (!payment) {
+    // Fallback: manual fulfillment stores access_token on readings directly
+    // (no Payments row). The Gumroad path above always resolves first for
+    // legitimate paid tokens; this branch only runs for tokens that never
+    // had a Payments row.
+    const { data: manualReading, error: manualError } = await supabase
+      .from(DB.readings)
+      .select("reading_json, birth_time, birth_place, product_type, reading_status")
+      .eq("access_token", accessToken)
+      .eq("reading_status", "complete")
+      .maybeSingle();
+
+    if (manualError) {
+      dbError("fulfillment", "manual reading lookup by token failed", manualError);
+      return {
+        reading: null,
+        birth_time: null,
+        birth_place: null,
+        product_type: "reading",
+        error: manualError.message,
+      };
+    }
+
+    if (manualReading?.reading_json) {
+      return {
+        reading: manualReading.reading_json as Record<string, unknown>,
+        birth_time: manualReading.birth_time,
+        birth_place: manualReading.birth_place,
+        product_type: (manualReading.product_type as ProductType) ?? "birth-chart-book",
+        error: null,
+      };
+    }
+
     return {
       reading: null,
       birth_time: null,
