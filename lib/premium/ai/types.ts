@@ -67,6 +67,14 @@ export interface AiGenerationRequest {
   readonly readerName: string;
   readerOpener: string;              // 1–2 sentence "reader identity" block
   readonly sections: readonly AiSectionRequest[];
+  /**
+   * Optional extended per-chapter context (insight assignments, domain
+   * palette, ledger, bespoke scaffolding). Populated by generate-ai-reading
+   * for Part I chapters. Transit chapters omit this and fall back to the
+   * legacy chartContext field on AiSectionRequest.
+   * Consumed by prompt-builder's buildUserPromptV2.
+   */
+  chapterContexts?: Record<string, unknown>;
 }
 
 export interface AiGenerationBody {
@@ -92,6 +100,54 @@ export type AiGenerationResult =
 
 /* ─── Provider contract ───────────────────────────────────────────── */
 
+/**
+ * Generic structured tool-call request used for auxiliary AI work like
+ * the insight interpreter. Kept intentionally small — the main book
+ * generation still uses the dedicated `generate()` method above.
+ */
+export interface AiRawToolCall {
+  readonly systemPrompt: string;
+  readonly userPrompt: string;
+  readonly tool: {
+    readonly name: string;
+    readonly description: string;
+    readonly input_schema: Record<string, unknown>;
+  };
+  /** Force the model to call this specific tool. Default true. */
+  readonly forceTool?: boolean;
+  readonly maxTokens?: number;
+  /** Optional model id override; defaults to a cheap fast model chosen by the provider. */
+  readonly modelId?: AiModelId;
+}
+
+export type AiRawToolCallResult =
+  | {
+      ok: true;
+      /** Parsed JSON input the model passed to the tool. */
+      body: unknown;
+      telemetry: {
+        inputTokens: number;
+        outputTokens: number;
+        cacheReadTokens: number;
+        cacheCreationTokens: number;
+        wallMs: number;
+        finishReason: string | null;
+        upstreamId: string;
+      };
+    }
+  | {
+      ok: false;
+      error: string;
+      telemetry?: {
+        inputTokens?: number;
+        outputTokens?: number;
+        cacheReadTokens?: number;
+        cacheCreationTokens?: number;
+        wallMs?: number;
+        finishReason?: string | null;
+      };
+    };
+
 export interface AiProvider {
   readonly id: AiProviderId;
   /**
@@ -102,4 +158,11 @@ export interface AiProvider {
     request: AiGenerationRequest,
     model: AiModelConfig
   ): Promise<AiGenerationResult>;
+
+  /**
+   * One-shot structured tool call. Used for auxiliary work like the
+   * insight interpreter. Provider picks a sensible cheap-and-fast model
+   * unless one is specified.
+   */
+  rawToolCall(call: AiRawToolCall): Promise<AiRawToolCallResult>;
 }

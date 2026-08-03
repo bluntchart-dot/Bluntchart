@@ -294,10 +294,51 @@ export interface PremiumReadingMeta {
    * mock previews apart from real Claude generations.
    */
   readonly generationSource: "mock" | "haiku" | "sonnet" | "opus" | "unknown";
+
+  /* ─── V1.2 additions (all optional so old stored readings still parse) ─ */
+
+  /** Product code + semver, e.g. "birth-chart-1.1.0". */
+  readonly productVersion?: string;
+  /** Insight engine semver — bumped when insight extraction changes. */
+  readonly insightEngineVersion?: string;
+  /** Prompt hash — auto-changes if SYSTEM_PROMPT edits. */
+  readonly promptVersion?: string;
+  /** Blueprint hash — auto-changes if blueprint edits. */
+  readonly blueprintVersion?: string;
+  /** Model identifier used to write the book. */
+  readonly modelId?: string;
+  /** Provider identifier ("anthropic" today). */
+  readonly provider?: string;
+  /** Opaque idempotency key chosen by the caller. */
+  readonly generationRequestId?: string;
+  /**
+   * How the insight map came to exist. "fallback" is set when the AI
+   * interpreter failed and the deterministic rule-table was used.
+   */
+  readonly insightGenerationStatus?: "normal" | "retry_recovered" | "fallback";
+  /** Whether QA passed clean, regenerated, or shipped with warnings. */
+  readonly qaOutcome?: "clean" | "regenerated" | "shipped_with_warnings";
+}
+
+/**
+ * Debug metadata — never rendered in the UI. Persisted so a reading can
+ * be inspected later (customer support / quality audit) without needing
+ * to regenerate or reinterpret anything.
+ */
+export interface PremiumReadingDebug {
+  /** The insight map that fed generation. */
+  readonly insightMap?: unknown;
+  /** Chapter → insight IDs assigned. */
+  readonly chapterAssignments?: Record<string, string[]>;
+  /** QA flags produced during generation. */
+  readonly qaFlags?: unknown;
+  /** Full generation telemetry snapshot. */
+  readonly telemetry?: unknown;
 }
 
 export interface PremiumReading {
   readonly meta: PremiumReadingMeta;
   readonly chart: ChartData;
   readonly sections: readonly RenderedSection[];
+  readonly debug?: PremiumReadingDebug;
 }

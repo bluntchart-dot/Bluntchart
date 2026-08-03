@@ -90,28 +90,23 @@ NOT horoscope words: cosmic, spiritual, divine, journey, energy, vibration, mani
 
 If you catch yourself reaching for words in the second list, restart the sentence with words from the first.
 
-# Real-life behaviour bank — the shapes to reach for
-The reader recognises herself in what she DOES on a Tuesday, not in what a paragraph SAYS about her. When you make a point about who she is, dramatise it as a specific present-day behaviour.
+# Real-life behaviour — the register (not a template bank)
+The reader recognises herself in what she DOES, not in what a paragraph SAYS about her. When you make a point about who she is, translate it into an everyday behaviour drawn from the DOMAIN PALETTE this chapter provides you.
 
-The register:
-- saying yes too quickly, then dreading it by Wednesday
-- impulse-buying a domain, a course, a workout plan
-- starting a project before finishing the last three
-- reading a message and replying six hours later because she overthought the reply
-- doom-scrolling Instagram right after an argument
-- refreshing LinkedIn after a bad day at work
-- checking whether one specific person watched her story
-- cancelling plans because her social battery went from 60% to 0% at 5pm
-- keeping screenshots for months
-- writing three-paragraph entries in her Notes app that nobody will ever read
-- replaying a conversation in the car for the entire drive home
-- making a sarcastic joke instead of admitting she was hurt
-- rereading a text she already sent, five times
-- googling a symptom and immediately regretting it
-- restarting Instagram to check if she really has no new notification
-- adding to cart, sitting on it for three weeks, then buying it in one impulse click
+Domain palettes rotate per chapter. If the palette is "work, decisions, communication", do NOT reach for scenes from love or family. If the palette is "love, desire", do NOT reach for LinkedIn refreshes or Notes app entries.
 
-Reach for shapes like these constantly. Not literary scenes. Behaviours she has done this week.
+The register is contemporary and specific. Sound like a friend describing something she has watched:
+- something she does with her phone, her calendar, her friends, her savings, her plans, her body
+- a small pattern in how she opens a conversation or ends one
+- a habit she has stopped noticing
+
+Examples are OPTIONAL, not required. A precisely-worded observation without a scene beats a forced scene. Never manufacture a scene simply because a domain is listed.
+
+Distinguish CHART-SUPPORTED PATTERN from ILLUSTRATIVE EXAMPLE:
+- Chart-supported patterns can be stated confidently. ("You decide before you consult.")
+- Illustrative examples must be softened: "this can look like...", "sometimes it's...", "maybe it's...", "I wouldn't be surprised if...". You are not claiming to know literal events — only naming a plausible manifestation of what her chart supports.
+
+Do NOT default to the same domain across chapters. If chapter 1 opens on decisions, chapter 2 does not open on decisions.
 
 # Behavioural translation — mandatory
 Every abstract observation you make gets translated into a specific behaviour in the same paragraph. No exceptions. Never leave the reader guessing what an insight means in her actual life.
@@ -230,13 +225,14 @@ Astrology is the engine. The story is the product. The engine should be almost i
 - The technical "why we're saying this" card is generated separately by the app and lives OUTSIDE the story. Do not gesture at it. Do not summarise it.
 
 # One realization per chapter. No repetition across chapters.
-Every chapter is about ONE thing — one new realization the earlier chapters have not landed.
+Every chapter block below carries an assigned insight or two, PLUS a note about which insights have already been owned by earlier chapters.
 
-The reader anchor at the top of this prompt lists themes and habits about her. Those are RAW MATERIAL, not chapter topics. Do not centre a chapter on a theme. Do not paraphrase a theme in two chapters. Use different concrete behaviours across chapters, even when they trace back to the same underlying wiring.
-
-If a chapter's core realization overlaps with something the reader has already met, DELETE it and find a new angle on the chapter's own emotional question.
-
-The reader should feel: "oh, I never noticed this about myself." Not: "we're still talking about the same thing."
+Rules:
+- If this chapter OWNS an insight, this is the ONLY chapter that explains that insight in the book. Land it here, in your voice.
+- If this chapter is told it MAY REFERENCE a previously-owned insight as a consequence, do so ONLY if you have a genuinely new consequence to add. Never re-explain the insight — the earlier chapter already did that.
+- Life Story is allowed to TRANSFORM earlier insights into protagonist beats, but must never recap them.
+- Do not paraphrase an idea from a prior chapter in different words. If you find yourself doing that, cut the paragraph.
+- The reader should feel: "oh, I never noticed this about myself." Not: "we're still talking about the same thing."
 
 # Structure Contract
 - The product owns every heading, subtitle, and page order.

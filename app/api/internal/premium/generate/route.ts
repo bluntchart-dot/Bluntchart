@@ -20,6 +20,7 @@
  *   { ok: true, reading: PremiumReading, telemetry?: AiTelemetry }
  */
 
+import { randomUUID } from "node:crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { isDevAuthorized } from "@/lib/premium/dev-auth";
@@ -42,6 +43,13 @@ interface Body {
   birth_lng?: number;
   timezone?: string;
   model?: string; // "mock" | AiModelId
+  /**
+   * Opaque idempotency key. Client generates a UUID at the start of a
+   * generation request and reuses it across retries/reloads. Later the
+   * payment/order ID becomes this key. If missing, server mints a UUID
+   * for this single request.
+   */
+  generation_request_id?: string;
 }
 
 const isValidDate  = (s: string) => /^\d{4}-\d{2}-\d{2}$/.test(s);
@@ -145,11 +153,34 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const result = await generateAiReading(birth, { modelId: model });
+  const generationRequestId = body.generation_request_id?.trim() || randomUUID();
+  const result = await generateAiReading(birth, {
+    modelId: model,
+    generationRequestId,
+  });
   if (!result.ok) {
-    console.error("[premium/generate] AI failed:", result.error);
+    console.error("[premium/generate] AI failed:", result.error, result.errorCategory);
+    // Concurrent request for the same idempotency key.
+    if (result.errorCategory === "STORE_LOCK_HELD") {
+      return NextResponse.json(
+        { ok: false, error: result.error, errorCategory: result.errorCategory },
+        { status: 409 }
+      );
+    }
+    // Structural QA gate — refuse to deliver corrupted output.
+    if (result.errorCategory === "HARD_QA_FAILED") {
+      return NextResponse.json(
+        { ok: false, error: result.error, errorCategory: result.errorCategory },
+        { status: 502 }
+      );
+    }
     return NextResponse.json(
-      { ok: false, error: result.error, telemetry: result.telemetry },
+      {
+        ok: false,
+        error: result.error,
+        errorCategory: result.errorCategory,
+        telemetry: result.telemetry,
+      },
       { status: 500 }
     );
   }
@@ -159,5 +190,6 @@ export async function POST(req: NextRequest) {
     reading: result.reading,
     telemetry: result.telemetry,
     source: model,
+    generationRequestId,
   });
 }

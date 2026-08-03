@@ -25,9 +25,12 @@ import {
   AiGenerationResult,
   AiModelConfig,
   AiProvider,
+  AiRawToolCall,
+  AiRawToolCallResult,
   AiTelemetry,
 } from "./types";
 import { buildSystemPrompt, buildUserPrompt } from "./prompt-builder";
+import { getModelConfig } from "./models";
 
 const TOOL_NAME = "submit_birth_chart_reading";
 
@@ -162,6 +165,89 @@ export class AnthropicProvider implements AiProvider {
           provider: this.id,
           modelId: model.id,
           upstreamId: model.upstreamId,
+          wallMs: Date.now() - started,
+        },
+      };
+    }
+  }
+
+  /**
+   * One-shot structured tool call used by the insight interpreter and
+   * any other auxiliary AI work. Uses `messages.create` (not stream)
+   * because auxiliary payloads are small enough. Prompt-cached on both
+   * system and user blocks.
+   */
+  async rawToolCall(call: AiRawToolCall): Promise<AiRawToolCallResult> {
+    const started = Date.now();
+    // Default to the cheapest fast model for interpretation work.
+    const model = getModelConfig(call.modelId ?? "haiku-4-5");
+    try {
+      const response = await this.client.messages.create({
+        model: model.upstreamId,
+        max_tokens: call.maxTokens ?? 6000,
+        tools: [call.tool as unknown as Anthropic.Tool],
+        tool_choice:
+          call.forceTool === false
+            ? { type: "auto" }
+            : { type: "tool", name: call.tool.name },
+        system: [
+          {
+            type: "text",
+            text: call.systemPrompt,
+            cache_control: { type: "ephemeral" },
+          },
+        ],
+        messages: [
+          {
+            role: "user",
+            content: [
+              {
+                type: "text",
+                text: call.userPrompt,
+                cache_control: { type: "ephemeral" },
+              },
+            ],
+          },
+        ],
+      });
+
+      const wallMs = Date.now() - started;
+      const toolBlock = response.content.find((b) => b.type === "tool_use");
+      if (!toolBlock || toolBlock.type !== "tool_use") {
+        return {
+          ok: false,
+          error: `Model did not call tool ${call.tool.name}. finish_reason=${response.stop_reason}`,
+          telemetry: {
+            inputTokens: response.usage.input_tokens,
+            outputTokens: response.usage.output_tokens,
+            cacheReadTokens: response.usage.cache_read_input_tokens ?? 0,
+            cacheCreationTokens: response.usage.cache_creation_input_tokens ?? 0,
+            wallMs,
+            finishReason: String(response.stop_reason ?? "unknown"),
+          },
+        };
+      }
+
+      return {
+        ok: true,
+        body: toolBlock.input as unknown,
+        telemetry: {
+          inputTokens: response.usage.input_tokens,
+          outputTokens: response.usage.output_tokens,
+          cacheReadTokens: response.usage.cache_read_input_tokens ?? 0,
+          cacheCreationTokens: response.usage.cache_creation_input_tokens ?? 0,
+          wallMs,
+          finishReason: String(response.stop_reason ?? "unknown"),
+          upstreamId: model.upstreamId,
+        },
+      };
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      console.error("[ai/anthropic] rawToolCall failed:", msg);
+      return {
+        ok: false,
+        error: `Anthropic tool call failed: ${msg}`,
+        telemetry: {
           wallMs: Date.now() - started,
         },
       };
