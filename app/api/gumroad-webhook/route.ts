@@ -243,6 +243,38 @@ export async function POST(req: Request) {
         dbError(scope, "confirmation email failed (non-fatal)", mailErr, { email });
       }
 
+      // Trigger GitHub Actions generation for this specific payment.
+      // Non-fatal: if dispatch fails, the watchdog picks up the queued order.
+      try {
+        const ghRepo = process.env.GITHUB_REPO;
+        const ghPat = process.env.GITHUB_PAT;
+        if (ghRepo && ghPat) {
+          const dispatchRes = await fetch(
+            `https://api.github.com/repos/${ghRepo}/dispatches`,
+            {
+              method: "POST",
+              headers: {
+                Authorization: `Bearer ${ghPat}`,
+                Accept: "application/vnd.github+json",
+                "X-GitHub-Api-Version": "2022-11-28",
+              },
+              body: JSON.stringify({
+                event_type: "generate-book",
+                client_payload: { paymentId: ack.paymentId },
+              }),
+            }
+          );
+          dbLog(scope, "GitHub dispatch attempted", {
+            paymentId: ack.paymentId,
+            status: dispatchRes.status,
+          });
+        }
+      } catch (dispatchErr) {
+        dbError(scope, "GitHub dispatch failed (non-fatal, watchdog will recover)", dispatchErr, {
+          paymentId: ack.paymentId,
+        });
+      }
+
       return Response.json({
         success: true,
         paymentId: ack.paymentId,

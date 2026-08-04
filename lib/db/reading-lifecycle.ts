@@ -228,6 +228,21 @@ export async function resetStaleGenerating(
 }
 
 /* ─────────────────────────────────────────────────────────────────────
+   Worker: count currently generating book orders
+───────────────────────────────────────────────────────────────────── */
+
+export async function countGeneratingOrders(
+  supabase: SupabaseClient
+): Promise<number> {
+  const { count } = await supabase
+    .from(DB.payments)
+    .select("id", { count: "exact", head: true })
+    .eq("reading_status", "generating")
+    .eq("product_type", "birth-chart-book");
+  return count ?? 0;
+}
+
+/* ─────────────────────────────────────────────────────────────────────
    Worker: claim next queued order
 ───────────────────────────────────────────────────────────────────── */
 
@@ -292,6 +307,78 @@ export async function claimNextQueuedOrder(
 
   dbLog(scope, "order claimed for generation", {
     paymentId: row.id,
+    email: row.email,
+    attempt: row.generation_attempts + 1,
+  });
+
+  return {
+    id: row.id,
+    email: row.email,
+    productType: row.product_type,
+    birthInputs: row.birth_inputs as BirthInputs,
+    accessToken: row.access_token,
+    userId: row.user_id,
+    generationAttempts: row.generation_attempts + 1,
+  };
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+   Worker: claim a specific queued order by paymentId
+───────────────────────────────────────────────────────────────────── */
+
+export async function claimSpecificOrder(
+  supabase: SupabaseClient,
+  paymentId: string
+): Promise<ClaimedOrder | null> {
+  const scope = "reading-lifecycle";
+
+  const { data: row } = await supabase
+    .from(DB.payments)
+    .select("id, email, product_type, birth_inputs, access_token, user_id, generation_attempts")
+    .eq("id", paymentId)
+    .eq("payment_status", "paid")
+    .eq("reading_status", "queued")
+    .maybeSingle();
+
+  if (!row) {
+    dbLog(scope, "specific order not claimable (not queued or not found)", { paymentId });
+    return null;
+  }
+
+  if (!row.birth_inputs || !row.access_token) {
+    dbError(scope, "specific order missing birth_inputs or access_token", "", { paymentId });
+    await supabase
+      .from(DB.payments)
+      .update({
+        reading_status: "failed" as ReadingStatus,
+        generation_error: "Missing birth_inputs or access_token",
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", paymentId);
+    return null;
+  }
+
+  const { data: claimed } = await supabase
+    .from(DB.payments)
+    .update({
+      reading_status: "generating" as ReadingStatus,
+      generation_started_at: new Date().toISOString(),
+      generation_attempts: row.generation_attempts + 1,
+      generation_error: null,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", paymentId)
+    .eq("reading_status", "queued")
+    .select("id")
+    .maybeSingle();
+
+  if (!claimed) {
+    dbLog(scope, "specific claim race — another worker got it", { paymentId });
+    return null;
+  }
+
+  dbLog(scope, "specific order claimed for generation", {
+    paymentId,
     email: row.email,
     attempt: row.generation_attempts + 1,
   });
