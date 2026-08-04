@@ -14,6 +14,18 @@ export interface UserRow {
   created_at?: string;
 }
 
+export type ReadingStatus = "queued" | "generating" | "completed" | "failed";
+
+export interface BirthInputs {
+  name: string;
+  dob: string;
+  birth_time: string;
+  birth_place: string;
+  timezone: string | null;
+  birth_lat: number | null;
+  birth_lng: number | null;
+}
+
 export interface PaymentRow {
   id: string;
   session_id: string | null;
@@ -25,6 +37,13 @@ export interface PaymentRow {
   access_token: string | null;
   user_id: string | null;
   product_type: ProductType;
+  order_source: string | null;
+  reading_status: ReadingStatus | null;
+  birth_inputs: BirthInputs | null;
+  generation_started_at: string | null;
+  generation_attempts: number;
+  generation_error: string | null;
+  delivery_sent_at: string | null;
   created_at?: string;
   updated_at?: string;
 }

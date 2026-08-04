@@ -1,12 +1,12 @@
 import { createSupabaseAdmin } from "@/lib/supabase-admin";
 import { buildPaidReadingPayload } from "@/lib/build-paid-reading";
-import { buildBookReadingPayload } from "@/lib/premium/build-book-reading";
 import { loadBirthLeadByEmail } from "@/lib/db/checkout-flow";
 import { fulfillPaidOrder, markPaymentFailed } from "@/lib/db/fulfillment";
+import { acknowledgePayment } from "@/lib/db/reading-lifecycle";
 import { parseGumroadSessionId } from "@/lib/gumroad-checkout";
 import { dbError, dbLog } from "@/lib/db/log";
 import { DB } from "@/lib/db/tables";
-import type { ProductType } from "@/lib/db/types";
+import type { BirthInputs, ProductType } from "@/lib/db/types";
 import {
   accessUrl,
   detectProductByPermalink,
@@ -21,9 +21,6 @@ import {
   shareReminderOneMail,
   shareReminderTwoMail,
   bookConfirmationMail,
-  bookDeliveryMail,
-  bookReviewMail,
-  bookSocialProofMail,
 } from "@/lib/email-templates";
 
 function isPaidStatus(status: string | null | undefined): boolean {
@@ -50,7 +47,13 @@ function detectProductTypeFromWebhook(params: URLSearchParams): ProductType | nu
 /**
  * POST /api/gumroad-webhook
  *
- * Gumroad sale → load lead (Supabase) → generate reading/book → save → email private link.
+ * Gumroad sale → validate → route by product type:
+ *
+ *   birth-chart-book → mark paid + queue generation → return 200 fast
+ *                      (cron worker handles generation asynchronously)
+ *
+ *   all other products → legacy synchronous path
+ *                        (generate → persist → deliver → return 200)
  *
  * Product type resolution:
  *   1. Lead's product_type (set by the website form) is the SOURCE OF TRUTH.
@@ -104,27 +107,7 @@ export async function POST(req: Request) {
 
     const supabase = createSupabaseAdmin();
 
-    // ── Idempotent: already fulfilled for this sale ──
-    if (gumroadPaymentId) {
-      const { data: existingSale } = await supabase
-        .from(DB.payments)
-        .select("id, access_token, payment_status, product_type")
-        .eq("gumroad_payment_id", gumroadPaymentId)
-        .maybeSingle();
-
-      if (
-        existingSale &&
-        isPaidStatus(existingSale.payment_status) &&
-        existingSale.access_token
-      ) {
-        const pt = (existingSale.product_type as ProductType) ?? "reading";
-        const url = accessUrl(existingSale.access_token, pt);
-        dbLog(scope, "already fulfilled — duplicate webhook", { email, accessUrl: url });
-        return Response.json({ success: true, accessUrl: url, duplicate: true });
-      }
-    }
-
-    // ── Load lead from Supabase — this is where product_type lives ──
+    // ── Load lead from Supabase — this is where product_type + birth data live ──
     const { lead, error: leadError } = await loadBirthLeadByEmail(
       supabase,
       email,
@@ -166,7 +149,6 @@ export async function POST(req: Request) {
       );
     }
 
-    // Secondary validation: if webhook disagrees with DB, log the mismatch and stop
     if (webhookProductType && webhookProductType !== productType) {
       dbError(scope, "FULFILLMENT STOPPED — product type mismatch between DB and webhook", "", {
         email,
@@ -203,11 +185,98 @@ export async function POST(req: Request) {
 
     const firstName = lead.name.split(" ")[0] || lead.name;
 
-    // ── Confirmation email ──
+    // ═══════════════════════════════════════════════════════════════════
+    // BOOK PATH — async queue (new architecture)
+    // ═══════════════════════════════════════════════════════════════════
+    if (isBook) {
+      const birthInputs: BirthInputs = {
+        name: lead.name,
+        dob: lead.dob,
+        birth_time: lead.birth_time,
+        birth_place: lead.birth_place,
+        timezone: lead.timezone,
+        birth_lat: lead.birth_lat ?? null,
+        birth_lng: lead.birth_lng ?? null,
+      };
+
+      const ack = await acknowledgePayment(supabase, {
+        email,
+        sessionId,
+        gumroadPaymentId,
+        amountCents,
+        productType,
+        birthInputs,
+        orderSource: "gumroad",
+        userName: lead.name,
+      });
+
+      if (!ack.ok) {
+        dbError(scope, "acknowledgePayment failed", ack.error ?? "", { email });
+        return Response.json(
+          { error: ack.error ?? "Payment acknowledgement failed" },
+          { status: 500 }
+        );
+      }
+
+      if (ack.duplicate) {
+        dbLog(scope, "duplicate webhook — already processed", { email, gumroadPaymentId });
+        return Response.json({ success: true, duplicate: true });
+      }
+
+      dbLog(scope, "payment acknowledged + generation queued", {
+        email,
+        paymentId: ack.paymentId,
+        productType,
+      });
+
+      // Confirmation email (non-fatal)
+      try {
+        const paymentTemplate = bookConfirmationMail({ firstName, birthDate: lead.dob });
+        await sendEmail({
+          to: email,
+          subject: paymentTemplate.subject,
+          html: paymentTemplate.html,
+          text: paymentTemplate.text,
+        });
+        dbLog(scope, "confirmation email sent", { email, productType });
+      } catch (mailErr) {
+        dbError(scope, "confirmation email failed (non-fatal)", mailErr, { email });
+      }
+
+      return Response.json({
+        success: true,
+        paymentId: ack.paymentId,
+        readingStatus: "queued",
+      });
+    }
+
+    // ═══════════════════════════════════════════════════════════════════
+    // NON-BOOK PATH — legacy synchronous fulfillment (unchanged)
+    // ═══════════════════════════════════════════════════════════════════
+
+    // Idempotent: already fulfilled for this sale
+    if (gumroadPaymentId) {
+      const { data: existingSale } = await supabase
+        .from(DB.payments)
+        .select("id, access_token, payment_status, product_type")
+        .eq("gumroad_payment_id", gumroadPaymentId)
+        .maybeSingle();
+
+      if (
+        existingSale &&
+        isPaidStatus(existingSale.payment_status) &&
+        existingSale.access_token
+      ) {
+        const pt = (existingSale.product_type as ProductType) ?? "reading";
+        const url = accessUrl(existingSale.access_token, pt);
+        dbLog(scope, "already fulfilled — duplicate webhook", { email, accessUrl: url });
+        return Response.json({ success: true, accessUrl: url, duplicate: true });
+      }
+    }
+
+    // Confirmation email
     try {
-      const paymentTemplate = isBook
-        ? bookConfirmationMail({ firstName, birthDate: lead.dob })
-        : paidConfirmationMail({ firstName, birthDate: lead.dob });
+      const paymentTemplate = paidConfirmationMail({ firstName, birthDate: lead.dob });
       await sendEmail({
         to: email,
         subject: paymentTemplate.subject,
@@ -219,19 +288,10 @@ export async function POST(req: Request) {
       dbError(scope, "confirmation email failed (non-fatal)", mailErr, { email });
     }
 
-    // ── Generate reading ──
+    // Generate reading
     dbLog(scope, "generation started", { email, productType });
 
-    let readingJson: Record<string, unknown> | null = null;
-
-    if (isBook) {
-      const bookReading = await buildBookReadingPayload(lead);
-      if (bookReading) {
-        readingJson = bookReading as unknown as Record<string, unknown>;
-      }
-    } else {
-      readingJson = await buildPaidReadingPayload(lead, lead.focus_area);
-    }
+    const readingJson = await buildPaidReadingPayload(lead, lead.focus_area);
 
     if (!readingJson) {
       dbError(scope, "generation failed", "", { email, productType });
@@ -244,7 +304,7 @@ export async function POST(req: Request) {
 
     dbLog(scope, "generation success", { email, productType });
 
-    // ── Fulfill order ──
+    // Fulfill order
     const fulfilled = await fulfillPaidOrder(supabase, {
       email,
       gumroadPaymentId,
@@ -273,20 +333,14 @@ export async function POST(req: Request) {
       accessUrl: readingUrl,
     });
 
-    // ── Delivery email ──
+    // Delivery email
     try {
-      const deliveryTemplate = isBook
-        ? bookDeliveryMail({
-            firstName,
-            birthDate: lead.dob,
-            readingUrl,
-          })
-        : fullReadingDeliveryMail({
-            firstName,
-            birthDate: lead.dob,
-            readingUrl,
-            cardUrl: readingUrl,
-          });
+      const deliveryTemplate = fullReadingDeliveryMail({
+        firstName,
+        birthDate: lead.dob,
+        readingUrl,
+        cardUrl: readingUrl,
+      });
 
       await sendEmail({
         to: email,
@@ -300,37 +354,21 @@ export async function POST(req: Request) {
       dbError(scope, "delivery email failed (non-fatal)", mailErr, { email });
     }
 
-    // ── Post-delivery engagement ──
+    // Post-delivery engagement
     try {
-      if (isBook) {
-        await Promise.all([
-          sendEmail({
-            to: email,
-            ...bookReviewMail({ firstName }),
-            scheduledAt: scheduledIso(DELAY_MS.bookReview),
-          }),
-          sendEmail({
-            to: email,
-            ...bookSocialProofMail({ firstName, cardUrl: readingUrl }),
-            scheduledAt: scheduledIso(DELAY_MS.bookSocialProof),
-          }),
-        ]);
-        dbLog(scope, "book engagement sequence scheduled", { email });
-      } else {
-        await Promise.all([
-          sendEmail({
-            to: email,
-            ...shareReminderOneMail({ firstName, cardUrl: readingUrl }),
-            scheduledAt: scheduledIso(DELAY_MS.shareReminderOne),
-          }),
-          sendEmail({
-            to: email,
-            ...shareReminderTwoMail({ firstName, cardUrl: readingUrl }),
-            scheduledAt: scheduledIso(DELAY_MS.shareReminderTwo),
-          }),
-        ]);
-        dbLog(scope, "share reminders scheduled", { email });
-      }
+      await Promise.all([
+        sendEmail({
+          to: email,
+          ...shareReminderOneMail({ firstName, cardUrl: readingUrl }),
+          scheduledAt: scheduledIso(DELAY_MS.shareReminderOne),
+        }),
+        sendEmail({
+          to: email,
+          ...shareReminderTwoMail({ firstName, cardUrl: readingUrl }),
+          scheduledAt: scheduledIso(DELAY_MS.shareReminderTwo),
+        }),
+      ]);
+      dbLog(scope, "share reminders scheduled", { email });
     } catch (mailErr) {
       dbError(scope, "post-delivery sequence scheduling failed (non-fatal)", mailErr, { email });
     }
