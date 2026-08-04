@@ -76,6 +76,8 @@ interface QueryState {
   updateData?: Row;
   insertData?: Row[];
   deleteMode?: boolean;
+  countMode?: boolean;
+  headMode?: boolean;
 }
 
 function createMockQueryBuilder(db: MockDB, state: QueryState): any {
@@ -135,9 +137,12 @@ function createMockQueryBuilder(db: MockDB, state: QueryState): any {
     return { data: row ? projectRow(row, state.selectCols) : null, error: null };
   };
 
-  // For terminal operations without single/maybeSingle — returns array
-  builder.then = (resolve: (val: { data: Row[] | null; error: null }) => void) => {
-    if (state.updateData) {
+  // For terminal operations without single/maybeSingle — returns array or count
+  builder.then = (resolve: (val: any) => void) => {
+    if (state.headMode && state.countMode) {
+      const rows = getFilteredRows(db, state);
+      resolve({ count: rows.length, data: null, error: null });
+    } else if (state.updateData) {
       const result = executeUpdate(db, state);
       resolve(result);
     } else if (state.deleteMode) {
@@ -223,8 +228,10 @@ function createMockSupabase(db: MockDB): any {
     from: (table: string) => {
       const state: QueryState = { table, selectCols: "*", filters: [] };
       return {
-        select: (cols?: string) => {
+        select: (cols?: string, opts?: { count?: string; head?: boolean }) => {
           state.selectCols = cols ?? "*";
+          if (opts?.count === "exact") state.countMode = true;
+          if (opts?.head) state.headMode = true;
           return createMockQueryBuilder(db, state);
         },
         update: (data: Row) => {
@@ -1006,6 +1013,178 @@ async function runTests(): Promise<void> {
     // Non-book order untouched
     assert.equal(db.getRows("Payments")[0].reading_status, "queued");
     assert.equal(db.getRows("Payments")[0].product_type, "reading");
+  });
+
+  // ═══════════════════════════════════════════════════════════════════
+  // K. Global concurrency capacity
+  // ═══════════════════════════════════════════════════════════════════
+  console.log("\nK. Global concurrency capacity enforcement");
+
+  // Helper: simulates the capacity check from the cron worker's GET handler.
+  // Returns the number of available slots given a mock DB state.
+  async function getAvailableSlots(db: MockDB, concurrency: number): Promise<number> {
+    const supabase = createMockSupabase(db);
+    const { count } = await supabase
+      .from("Payments")
+      .select("id", { count: "exact", head: true })
+      .eq("reading_status", "generating")
+      .eq("product_type", "birth-chart-book");
+    const currentlyGenerating = count ?? 0;
+    return Math.max(0, concurrency - currentlyGenerating);
+  }
+
+  await testCase("0 generating → can claim up to 2", async () => {
+    const db = new MockDB();
+    db.seed("Payments", [
+      {
+        id: "pay-q1",
+        payment_status: "paid",
+        product_type: "birth-chart-book",
+        reading_status: "queued",
+        access_token: "tok-q1",
+        user_id: null,
+        birth_inputs: BIRTH_INPUTS,
+        generation_attempts: 0,
+        generation_started_at: null,
+        created_at: "2026-08-01T00:00:00Z",
+      },
+      {
+        id: "pay-q2",
+        payment_status: "paid",
+        product_type: "birth-chart-book",
+        reading_status: "queued",
+        access_token: "tok-q2",
+        user_id: null,
+        birth_inputs: BIRTH_INPUTS,
+        generation_attempts: 0,
+        generation_started_at: null,
+        created_at: "2026-08-01T01:00:00Z",
+      },
+    ]);
+
+    const slots = await getAvailableSlots(db, 2);
+    assert.equal(slots, 2);
+
+    const supabase = createMockSupabase(db);
+    const claim1 = await claimNextQueuedOrder(supabase, "birth-chart-book");
+    const claim2 = await claimNextQueuedOrder(supabase, "birth-chart-book");
+    assert.notEqual(claim1, null);
+    assert.notEqual(claim2, null);
+    assert.notEqual(claim1!.id, claim2!.id);
+  });
+
+  await testCase("1 generating → can claim only 1", async () => {
+    const db = new MockDB();
+    db.seed("Payments", [
+      {
+        id: "pay-active",
+        payment_status: "paid",
+        product_type: "birth-chart-book",
+        reading_status: "generating",
+        generation_started_at: new Date().toISOString(),
+        generation_attempts: 1,
+      },
+      {
+        id: "pay-waiting",
+        payment_status: "paid",
+        product_type: "birth-chart-book",
+        reading_status: "queued",
+        access_token: "tok-w",
+        user_id: null,
+        birth_inputs: BIRTH_INPUTS,
+        generation_attempts: 0,
+        generation_started_at: null,
+        created_at: "2026-08-01T00:00:00Z",
+      },
+      {
+        id: "pay-waiting2",
+        payment_status: "paid",
+        product_type: "birth-chart-book",
+        reading_status: "queued",
+        access_token: "tok-w2",
+        user_id: null,
+        birth_inputs: BIRTH_INPUTS,
+        generation_attempts: 0,
+        generation_started_at: null,
+        created_at: "2026-08-01T01:00:00Z",
+      },
+    ]);
+
+    const slots = await getAvailableSlots(db, 2);
+    assert.equal(slots, 1, "With 1 generating, only 1 slot should be available");
+  });
+
+  await testCase("2 generating → claims 0", async () => {
+    const db = new MockDB();
+    db.seed("Payments", [
+      {
+        id: "pay-gen-a",
+        payment_status: "paid",
+        product_type: "birth-chart-book",
+        reading_status: "generating",
+        generation_started_at: new Date().toISOString(),
+        generation_attempts: 1,
+      },
+      {
+        id: "pay-gen-b",
+        payment_status: "paid",
+        product_type: "birth-chart-book",
+        reading_status: "generating",
+        generation_started_at: new Date().toISOString(),
+        generation_attempts: 1,
+      },
+      {
+        id: "pay-queued-c",
+        payment_status: "paid",
+        product_type: "birth-chart-book",
+        reading_status: "queued",
+        access_token: "tok-c",
+        user_id: null,
+        birth_inputs: BIRTH_INPUTS,
+        generation_attempts: 0,
+        generation_started_at: null,
+        created_at: "2026-08-01T00:00:00Z",
+      },
+    ]);
+
+    const slots = await getAvailableSlots(db, 2);
+    assert.equal(slots, 0, "With 2 generating, 0 slots should be available");
+
+    // Queued order C must remain untouched
+    assert.equal(db.getRows("Payments")[2].reading_status, "queued");
+  });
+
+  await testCase("completed/failed/NULL rows do not count toward active concurrency", async () => {
+    const db = new MockDB();
+    db.seed("Payments", [
+      {
+        id: "pay-completed",
+        payment_status: "paid",
+        product_type: "birth-chart-book",
+        reading_status: "completed",
+      },
+      {
+        id: "pay-failed",
+        payment_status: "paid",
+        product_type: "birth-chart-book",
+        reading_status: "failed",
+      },
+      {
+        id: "pay-null",
+        payment_status: "paid",
+        product_type: "birth-chart-book",
+        reading_status: null,
+      },
+      {
+        id: "pay-reading-gen",
+        payment_status: "paid",
+        product_type: "reading",
+        reading_status: "generating",
+      },
+    ]);
+
+    const slots = await getAvailableSlots(db, 2);
+    assert.equal(slots, 2, "Only generating birth-chart-book rows count — completed/failed/NULL/other products do not");
   });
 
   // ═══════════════════════════════════════════════════════════════════

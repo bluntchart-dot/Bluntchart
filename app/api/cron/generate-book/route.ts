@@ -239,16 +239,31 @@ export async function GET(req: NextRequest) {
     dbLog(scope, "stale recovery", stale);
   }
 
-  // ── 2. Claim up to CONCURRENCY orders ──
+  // ── 2. Enforce global concurrency limit ──
+  const { count: generatingCount } = await supabase
+    .from(DB.payments)
+    .select("id", { count: "exact", head: true })
+    .eq("reading_status", "generating")
+    .eq("product_type", "birth-chart-book");
+
+  const currentlyGenerating = generatingCount ?? 0;
+  const availableSlots = Math.max(0, CONCURRENCY - currentlyGenerating);
+
+  if (availableSlots === 0) {
+    dbLog(scope, "no available slots", { currentlyGenerating, concurrency: CONCURRENCY });
+    return NextResponse.json({ ok: true, processed: 0, currentlyGenerating });
+  }
+
+  // ── 3. Claim up to availableSlots orders ──
   const claimed: ClaimedOrder[] = [];
-  for (let i = 0; i < CONCURRENCY; i++) {
+  for (let i = 0; i < availableSlots; i++) {
     const order = await claimNextQueuedOrder(supabase, "birth-chart-book");
     if (!order) break;
     claimed.push(order);
   }
 
   if (claimed.length === 0) {
-    return NextResponse.json({ ok: true, processed: 0 });
+    return NextResponse.json({ ok: true, processed: 0, currentlyGenerating });
   }
 
   dbLog(scope, `claimed ${claimed.length} order(s)`, {

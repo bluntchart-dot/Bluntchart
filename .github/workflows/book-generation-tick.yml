@@ -1,0 +1,93 @@
+name: Book generation tick
+
+# Fires the /api/cron/generate-book endpoint every 5 minutes.
+#
+# Why GitHub Actions instead of Vercel Cron: this project runs on Vercel
+# Hobby, which limits cron schedules to once-per-day. GitHub Actions has
+# no such limit for scheduled workflows and is free on public repos.
+#
+# The endpoint is idempotent — it checks global concurrency, claims up to
+# BOOK_GENERATION_CONCURRENCY queued birth-chart-book orders, generates
+# them, and delivers. Missing a tick is harmless; a subsequent tick
+# catches up.
+on:
+  schedule:
+    # every 5 minutes. GitHub Actions cron drifts by 1-15 min under load,
+    # which is acceptable — customers see "check your inbox" after checkout.
+    - cron: "*/5 * * * *"
+  # Manual trigger button in the Actions UI for testing or forcing a tick.
+  workflow_dispatch:
+
+# Never overlap two ticks. The concurrency group ensures only one tick
+# runs at a time, which together with the global concurrency COUNT in the
+# endpoint prevents exceeding BOOK_GENERATION_CONCURRENCY globally.
+concurrency:
+  group: book-generation-tick
+  cancel-in-progress: false
+
+# Read-only default — this workflow only makes an outbound HTTPS call.
+permissions:
+  contents: read
+
+jobs:
+  tick:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Call production /api/cron/generate-book
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+          ENDPOINT: https://bluntchart.com/api/cron/generate-book
+        run: |
+          set -uo pipefail
+
+          if [ -z "${CRON_SECRET:-}" ]; then
+            echo "::error::secrets.CRON_SECRET is not set. Add it in Settings → Secrets and variables → Actions."
+            exit 1
+          fi
+
+          MAX_ATTEMPTS=3
+
+          for attempt in $(seq 1 $MAX_ATTEMPTS); do
+            echo "── attempt $attempt/$MAX_ATTEMPTS at $(date -u '+%Y-%m-%d %H:%M:%SZ') ──"
+
+            http_code=$(curl -sS -o /tmp/response.json -w "%{http_code}" \
+              --connect-timeout 15 \
+              --max-time 310 \
+              -H "Authorization: Bearer $CRON_SECRET" \
+              -H "Accept: application/json" \
+              -H "User-Agent: github-actions-book-cron" \
+              "$ENDPOINT" || echo "curl_error")
+
+            body=$(cat /tmp/response.json 2>/dev/null || echo "")
+            echo "  HTTP: $http_code"
+            echo "  body (first 500 chars):"
+            echo "  ${body:0:500}"
+
+            case "$http_code" in
+              200)
+                processed=$(printf "%s" "$body" | grep -oE '"processed":[0-9]+' | cut -d: -f2 || true)
+                echo "::notice title=cron ok::processed=${processed:-0}"
+                exit 0
+                ;;
+              401|403)
+                echo "::error::auth rejected by production. verify secrets.CRON_SECRET (GitHub) matches the CRON_SECRET env var on Vercel."
+                exit 1
+                ;;
+              curl_error|000)
+                echo "::warning::network error, will retry"
+                ;;
+              *)
+                echo "::warning::non-2xx response ($http_code), will retry"
+                ;;
+            esac
+
+            if [ $attempt -lt $MAX_ATTEMPTS ]; then
+              sleep_for=$((attempt * 10))
+              echo "  sleeping ${sleep_for}s before retry"
+              sleep $sleep_for
+            fi
+          done
+
+          echo "::error title=cron tick failed::all $MAX_ATTEMPTS attempts to $ENDPOINT returned non-2xx"
+          exit 1
