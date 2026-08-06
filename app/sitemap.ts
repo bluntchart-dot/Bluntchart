@@ -135,6 +135,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
   changeFrequency: "monthly",
   priority: 0.8,
 },
+    // ── Sun Sign Pages ──
+    ...["aries","taurus","gemini","cancer","leo","virgo","libra","scorpio","sagittarius","capricorn","aquarius","pisces"].map(sign => ({
+      url: `${BASE_URL}/sun-in-${sign}`,
+      lastModified: now,
+      changeFrequency: "monthly" as const,
+      priority: 0.8,
+    })),
+
     // ── Learn / Editorial ──
     {
       url: `${BASE_URL}/free-birth-chart-readings`,
@@ -239,6 +247,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
       url: `${BASE_URL}/nebula-alternative`,
       lastModified: now,
       changeFrequency: "monthly",
+      priority: 0.9,
+    },
+
+    // ── Future Love Letter ──
+    {
+      url: `${BASE_URL}/future-love-letter`,
+      lastModified: now,
+      changeFrequency: "weekly",
       priority: 0.9,
     },
 

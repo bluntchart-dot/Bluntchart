@@ -188,6 +188,7 @@ export default function SiteFooter() {
                 <li><Link href="/zodiac-signs">Zodiac Signs</Link></li>
                 <li><Link href="/moon-phase-soulmate-calculator">Moon Phase Match</Link></li>
                 <li><Link href="/fight-card">The Fight Card</Link></li>
+                <li><Link href="/future-love-letter">Love-letter</Link></li>
               </ul>
             </div>
           </div>

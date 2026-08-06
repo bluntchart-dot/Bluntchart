@@ -872,6 +872,7 @@ export default function HomePage() {
 <li><a href="/free-birth-chart-readings">How It Works</a></li>
 <li><a href="#reveals">What We Reveal</a></li>
 <li><a href="/zodiac-signs">Zodiac Signs</a></li>
+<li><a href="/future-love-letter">Love-letter</a></li>
 <li><a href="/astrology-app-alternatives">Alternatives</a></li>
 <li><a className="ncta" href="#try-it">Get Reading $15</a></li>
           </ul>
