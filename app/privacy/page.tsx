@@ -56,7 +56,7 @@ export default function PrivacyPage() {
   return (
     <PageShell
       title="Privacy Policy"
-      updated="25 April 2026"
+      updated="7 August 2026"
       banner={
         <Banner text={<><strong style={{color:"#b8a0ff"}}>Short version:</strong> We collect only what we need to give you your reading. We do not sell your data. We do not share it with advertisers. You can request deletion at any time.</>} />
       }
@@ -84,6 +84,7 @@ export default function PrivacyPage() {
             <ul>
               <li>Calculate your natal birth chart</li>
               <li>Generate your personalised astrology reading via the Anthropic Claude API</li>
+              <li>Generate free AI-powered features (such as the Future Love Letter) &mdash; a structured summary derived from your birth chart is sent to an AI model to create your personalised content. Your raw birth data is not shared with the AI provider.</li>
               <li>Deliver your reading by email (via Resend)</li>
               <li>Process your payment (via Lemon Squeezy)</li>
               <li>Improve the Service through anonymised usage analytics</li>
@@ -97,6 +98,7 @@ export default function PrivacyPage() {
             <p style={{marginBottom:12}}>We use the following third-party services, each with their own privacy policies:</p>
             <ul>
               <li><strong style={{color:"#e8e4f0"}}>Anthropic (Claude API)</strong> &mdash; your birth data is sent to Anthropic&rsquo;s API to generate your reading. Anthropic&rsquo;s data handling is governed by their API usage policies.</li>
+              <li><strong style={{color:"#e8e4f0"}}>AI processing</strong> &mdash; for free features like the Future Love Letter, a structured summary derived from your birth chart (not your raw birth data) is processed by an AI model to generate personalised content.</li>
               <li><strong style={{color:"#e8e4f0"}}>Lemon Squeezy</strong> &mdash; payment processing. They receive your payment details and email address.</li>
               <li><strong style={{color:"#e8e4f0"}}>Supabase</strong> &mdash; database storage for readings. Hosted on infrastructure that meets industry security standards.</li>
               <li><strong style={{color:"#e8e4f0"}}>Resend</strong> &mdash; transactional email delivery.</li>
