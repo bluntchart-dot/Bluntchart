@@ -101,6 +101,7 @@ export default function FutureLoveLetterClient() {
   const [genMessageIdx, setGenMessageIdx] = useState(0);
   const [feedback, setFeedback] = useState<string | null>(null);
   const [feedbackText, setFeedbackText] = useState("");
+  const [feedbackSent, setFeedbackSent] = useState(false);
   const [selectedQuote, setSelectedQuote] = useState<number | null>(null);
   const [copiedQuote, setCopiedQuote] = useState<number | null>(null);
   const [formTouched, setFormTouched] = useState(false);
@@ -328,14 +329,14 @@ export default function FutureLoveLetterClient() {
                 </button>
               ))}
             </div>
-            {feedback && (
+            {feedback && !feedbackSent && (
               <div className="fll-feedback-text-wrap">
                 <p className="fll-feedback-prompt">
                   What line made you stop scrolling?
                 </p>
                 <textarea
                   className="fll-feedback-textarea"
-                  placeholder="Optional — but we're curious"
+                  placeholder="Paste the line that hit different..."
                   value={feedbackText}
                   onChange={(e) => setFeedbackText(e.target.value)}
                   rows={3}
@@ -343,14 +344,19 @@ export default function FutureLoveLetterClient() {
                 <button
                   className="fll-btn-secondary"
                   onClick={() => {
-                    if (feedbackText.trim())
+                    if (feedbackText.trim()) {
                       trackEvent("future_love_feedback_text_submitted");
+                    }
+                    setFeedbackSent(true);
                   }}
                   type="button"
                 >
-                  Send
+                  {feedbackText.trim() ? "Send" : "Skip"}
                 </button>
               </div>
+            )}
+            {feedbackSent && (
+              <p className="fll-feedback-thanks">Thanks. He&rsquo;ll try to keep it up.</p>
             )}
 
             {feedback && (
@@ -778,7 +784,6 @@ const styles = `
   font-size: 12px;
   color: rgba(232,228,240,0.3);
   margin-top: 14px;
-  text-align: center;
 }
 .fll-cta-ghost {
   display: inline-block;
@@ -1674,6 +1679,12 @@ const styles = `
 }
 .fll-feedback-textarea:focus {
   border-color: rgba(240,184,74,0.35);
+}
+.fll-feedback-thanks {
+  font-size: 14px;
+  color: rgba(240,184,74,0.6);
+  font-style: italic;
+  margin-top: 16px;
 }
 .fll-review-link {
   display: inline-block;

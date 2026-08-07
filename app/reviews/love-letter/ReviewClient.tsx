@@ -6,9 +6,9 @@ import Image from "next/image";
 
 const REACTIONS = [
   { value: "smiled", emoji: "😊", label: "Smiled" },
-  { value: "cried", emoji: "🥹", label: "Cried a little" },
+  { value: "impressed", emoji: "🤯", label: "Didn't expect it to be this good" },
   { value: "called-out", emoji: "😳", label: "Felt called out" },
-  { value: "butterflies", emoji: "🦋", label: "Butterflies" },
+  { value: "butterflies", emoji: "🦋", label: "Butterflies / Blushed" },
   { value: "all-of-it", emoji: "💀", label: "All of the above" },
 ];
 
@@ -165,15 +165,6 @@ export default function ReviewClient() {
                   </button>
                 ))}
               </div>
-              {rating > 0 && (
-                <p className="rv-star-label">
-                  {rating === 1 && "He needs work."}
-                  {rating === 2 && "Getting warmer."}
-                  {rating === 3 && "Okay, he's paying attention."}
-                  {rating === 4 && "Annoyingly accurate."}
-                  {rating === 5 && "I feel seen and slightly attacked."}
-                </p>
-              )}
               <div className="rv-step-btns">
                 <button className="rv-back-btn" onClick={() => setStep("best-line")} type="button">BACK</button>
                 <button
@@ -309,7 +300,7 @@ const styles = `
   background-clip: text;
 }
 .rv-container {
-  max-width: 580px;
+  max-width: 720px;
   margin: 0 auto;
   padding: 48px 24px 96px;
 }

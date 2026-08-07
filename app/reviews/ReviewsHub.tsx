@@ -18,9 +18,9 @@ interface Review {
 
 const REACTION_LABELS: Record<string, string> = {
   smiled: "😊 Smiled",
-  cried: "🥹 Cried a little",
+  impressed: "🤯 Didn't expect it to be this good",
   "called-out": "😳 Felt called out",
-  butterflies: "🦋 Butterflies",
+  butterflies: "🦋 Butterflies / Blushed",
   "all-of-it": "💀 All of the above",
 };
 
