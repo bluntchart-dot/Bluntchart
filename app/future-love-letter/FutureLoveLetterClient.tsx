@@ -89,6 +89,7 @@ export default function FutureLoveLetterClient() {
   );
   const [form, setForm] = useState({
     name: "",
+    email: "",
     dob: "",
     time: "",
     place: "",
@@ -101,6 +102,7 @@ export default function FutureLoveLetterClient() {
   const [feedback, setFeedback] = useState<string | null>(null);
   const [feedbackText, setFeedbackText] = useState("");
   const [selectedQuote, setSelectedQuote] = useState<number | null>(null);
+  const [copiedQuote, setCopiedQuote] = useState<number | null>(null);
   const [formTouched, setFormTouched] = useState(false);
   const [segment, setSegment] = useState<SegmentValue | null>(null);
 
@@ -132,6 +134,7 @@ export default function FutureLoveLetterClient() {
 
   const canSubmit =
     form.name.trim().length > 0 &&
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email) &&
     form.dob.length > 0 &&
     form.time.length > 0 &&
     form.lat !== undefined &&
@@ -161,6 +164,7 @@ export default function FutureLoveLetterClient() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: form.name.trim(),
+          email: form.email.trim(),
           date: form.dob,
           time: form.time,
           lat: form.lat,
@@ -348,6 +352,12 @@ export default function FutureLoveLetterClient() {
                 </button>
               </div>
             )}
+
+            {feedback && (
+              <Link href="/reviews/love-letter" className="fll-review-link">
+                Leave a review &rarr;
+              </Link>
+            )}
           </div>
 
           {/* Share */}
@@ -360,7 +370,7 @@ export default function FutureLoveLetterClient() {
                 You don&rsquo;t have to expose the entire emotional damage
                 report.
                 <br />
-                Pick one line.
+                Pick one line. Tap to copy.
               </p>
               <div className="fll-share-quotes">
                 {result.shareableQuotes.map((q, i) => (
@@ -370,6 +380,11 @@ export default function FutureLoveLetterClient() {
                     onClick={() => {
                       setSelectedQuote(i);
                       trackEvent("future_love_quote_selected");
+                      const text = `"${q}"\n\n— A Love Letter From My ${FUTURE_PERSON_LABEL}\nbluntchart.com/future-love-letter`;
+                      navigator.clipboard.writeText(text).then(() => {
+                        setCopiedQuote(i);
+                        setTimeout(() => setCopiedQuote(null), 2000);
+                      });
                     }}
                     type="button"
                   >
@@ -381,6 +396,9 @@ export default function FutureLoveLetterClient() {
                     </span>
                     <span className="fll-share-card-brand">
                       bluntchart.com
+                    </span>
+                    <span className="fll-share-card-copy">
+                      {copiedQuote === i ? "Copied!" : "Tap to copy"}
                     </span>
                   </button>
                 ))}
@@ -963,6 +981,12 @@ const styles = `
 }
 .fll-input:focus {
   border-color: rgba(240,184,74,0.45);
+}
+.fll-input-hint {
+  display: block;
+  margin-top: 5px;
+  font-size: 11px;
+  color: rgba(232,228,240,0.3);
 }
 .fll-time-info-btn {
   display: inline-block;
@@ -1651,6 +1675,16 @@ const styles = `
 .fll-feedback-textarea:focus {
   border-color: rgba(240,184,74,0.35);
 }
+.fll-review-link {
+  display: inline-block;
+  margin-top: 20px;
+  font-size: 13px;
+  color: #F0B84A;
+  text-decoration: none;
+  font-weight: 500;
+  transition: opacity 0.2s;
+}
+.fll-review-link:hover { opacity: 0.7; }
 .fll-btn-secondary {
   padding: 10px 28px;
   background: rgba(255,255,255,0.06);
@@ -1723,6 +1757,17 @@ const styles = `
   font-size: 10px;
   color: rgba(232,228,240,0.2);
 }
+.fll-share-card-copy {
+  display: block;
+  margin-top: 10px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: rgba(240,184,74,0.5);
+  transition: color 0.2s;
+}
+.fll-share-card:hover .fll-share-card-copy { color: rgba(240,184,74,0.8); }
+.fll-share-card.selected .fll-share-card-copy { color: #F0B84A; }
 
 /* ══════════════════════════════════════════════════════════════════════
    POST-LETTER SEGMENTATION

@@ -7,6 +7,7 @@ export const DB = {
   payments: "Payments",
   abandonedCheckouts: "abandoned_checkouts",
   readings: "readings",
+  reviews: "reviews",
   blogRuns: "blog_runs",
   blogPosts: "blog_posts",
 } as const;

@@ -284,6 +284,20 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.8,
     },
 
+    // ── Reviews ──
+    {
+      url: `${BASE_URL}/reviews`,
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.7,
+    },
+    {
+      url: `${BASE_URL}/reviews/love-letter`,
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.65,
+    },
+
     // ── About ──
     {
       url: `${BASE_URL}/about`,

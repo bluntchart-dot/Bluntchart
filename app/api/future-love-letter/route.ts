@@ -8,6 +8,9 @@ import {
   buildLetterUserPrompt,
 } from "@/lib/future-love-letter/letter-prompt";
 import { GEMINI_MODEL } from "@/lib/future-love-letter/config";
+import { createSupabaseAdmin } from "@/lib/supabase-admin";
+import { ensureUser } from "@/lib/db/users";
+import { DB } from "@/lib/db/tables";
 import type { BirthData } from "@/lib/types";
 import type { FutureLoveRequest, FutureLoveResult, LetterResponse } from "@/lib/future-love-letter/types";
 
@@ -85,7 +88,6 @@ export async function POST(req: NextRequest) {
     try {
       parsed = JSON.parse(jsonStr) as LetterResponse;
     } catch {
-      // Gemini sometimes produces JSON with unescaped newlines in string values
       try {
         const fixed = jsonStr
           .replace(/(?<=:\s*")([\s\S]*?)(?="(?:\s*[,}]))/g, (match) =>
@@ -116,6 +118,35 @@ export async function POST(req: NextRequest) {
         : [],
       name: body.name,
     };
+
+    // Save email + letter to Supabase (non-blocking — don't fail the response)
+    if (body.email) {
+      try {
+        const supabase = createSupabaseAdmin();
+        const { user } = await ensureUser(supabase, body.email, body.name);
+
+        if (user) {
+          await supabase.from(DB.readings).insert([
+            {
+              user_id: user.id,
+              payment_id: null,
+              birth_time: body.time,
+              birth_place: body.placeName || null,
+              timezone,
+              reading_json: {
+                letter: parsed.letter,
+                shareableQuotes: parsed.shareableQuotes,
+                meta: { name: body.name, dob: body.date, birth_place: body.placeName },
+              },
+              reading_status: "complete",
+              product_type: "future-love-letter",
+            },
+          ]);
+        }
+      } catch (dbErr) {
+        console.error("[future-love-letter] DB save failed (non-fatal):", dbErr);
+      }
+    }
 
     return NextResponse.json(result);
   } catch (err) {

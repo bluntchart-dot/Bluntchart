@@ -26,6 +26,7 @@ export interface LetterResponse {
 
 export interface FutureLoveRequest {
   name: string;
+  email?: string;
   date: string;
   time: string;
   lat: number;

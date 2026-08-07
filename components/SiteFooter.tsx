@@ -211,6 +211,7 @@ export default function SiteFooter() {
               <ul>
                 <li><Link href="/about">About</Link></li>
                 <li><Link href="/founder">Meet the Founder</Link></li>
+                <li><Link href="/reviews">Reviews</Link></li>
               </ul>
             </div>
           </div>

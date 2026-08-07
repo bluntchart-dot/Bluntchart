@@ -7,6 +7,7 @@ import Link from "next/link";
 
 interface FormValues {
   name: string;
+  email: string;
   dob: string;
   time: string;
   place: string;
@@ -113,6 +114,18 @@ const TeaseAndForm = forwardRef<HTMLDivElement, Props>(function TeaseAndForm(
                 onChange={(e) => handleInput("name", e.target.value)}
                 autoComplete="given-name"
               />
+            </div>
+            <div className="fll-form-group">
+              <label className="fll-label">Email</label>
+              <input
+                className="fll-input"
+                type="email"
+                placeholder="Where should we send a copy?"
+                value={form.email}
+                onChange={(e) => handleInput("email", e.target.value)}
+                autoComplete="email"
+              />
+              <span className="fll-input-hint">We&rsquo;ll send your letter here. No spam.</span>
             </div>
             <div className="fll-form-group">
               <label className="fll-label">Date of birth</label>
