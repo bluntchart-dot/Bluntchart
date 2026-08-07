@@ -675,6 +675,7 @@ export default function HomePage() {
   const [submitted, setSubmitted] = useState(false);
   const [wlLoading, setWlLoading] = useState(false);
   const [scrolled,  setScrolled]  = useState(false);
+  const [menuOpen,  setMenuOpen]  = useState(false);
   const [resultShowing, setResultShowing] = useState(false);
 
   useEffect(() => {
@@ -855,8 +856,13 @@ export default function HomePage() {
         .fb2{border-top:1px solid var(--border);padding-top:22px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
         .disc{font-size:.73rem;color:rgba(232,228,240,.25);max-width:520px;line-height:1.55}
         .copy{font-size:.73rem;color:rgba(232,228,240,.2)}
+        .nav-ham{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:4px}
+        .nav-ham-l{display:block;width:22px;height:2px;background:rgba(232,228,240,.6);border-radius:2px;transition:all .25s}
+        .nav-ham-l.open:nth-child(1){transform:rotate(45deg) translate(5px,5px)}
+        .nav-ham-l.open:nth-child(2){opacity:0}
+        .nav-ham-l.open:nth-child(3){transform:rotate(-45deg) translate(5px,-5px)}
         @media(max-width:900px){.cred-grid{grid-template-columns:1fr 1fr}.upcoming-grid,.wl-cards{grid-template-columns:1fr}.cmp-head,.cmp-row{grid-template-columns:1fr 110px 110px}}
-        @media(max-width:768px){.nl{display:none}.hero{padding-top:90px;padding-bottom:64px}.horb{width:300px;height:300px}.hctas{flex-direction:column;align-items:center}.bp,.bs{width:100%;max-width:300px;justify-content:center}.htr{flex-direction:column;gap:10px}.rg{grid-template-columns:1fr}.fi{flex-direction:column;gap:28px}.fb2{flex-direction:column;align-items:flex-start}.revg{grid-template-columns:1fr}.cmp-head,.cmp-row{grid-template-columns:1fr 90px 90px}.cred-grid{grid-template-columns:1fr}}
+        @media(max-width:768px){.nav-ham{display:flex}.nl{display:none;position:absolute;top:100%;left:0;right:0;flex-direction:column;background:rgba(9,9,15,.96);border-bottom:1px solid var(--border);padding:20px 24px;gap:16px;backdrop-filter:blur(16px)}.nl.nl-open{display:flex}.nl a{font-size:.9rem}.hero{padding-top:90px;padding-bottom:64px}.horb{width:300px;height:300px}.hctas{flex-direction:column;align-items:center}.bp,.bs{width:100%;max-width:300px;justify-content:center}.htr{flex-direction:column;gap:10px}.rg{grid-template-columns:1fr}.fi{flex-direction:column;gap:28px}.fb2{flex-direction:column;align-items:flex-start}.revg{grid-template-columns:1fr}.cmp-head,.cmp-row{grid-template-columns:1fr 90px 90px}.cred-grid{grid-template-columns:1fr}}
         @media(max-width:480px){.sec,.try-sec,.waitlist-sec{padding:72px 0}.c{padding:0 16px}.price-main{padding:24px 20px}.upcoming-grid,.wl-cards{grid-template-columns:1fr}}
       `}</style>
 
@@ -867,14 +873,17 @@ export default function HomePage() {
             <Image src="/mascot.png" alt="BluntChart mascot" width={34} height={34} style={{ borderRadius:"50%" }} priority/>
             <span className="g">BluntChart</span>
           </a>
-          <ul className="nl">
-            <li><a href="#try-it">Try Free</a></li>
-<li><a href="/free-birth-chart-readings">How It Works</a></li>
-<li><a href="#reveals">What We Reveal</a></li>
-<li><a href="/zodiac-signs">Zodiac Signs</a></li>
-<li><a href="/future-love-letter">Love-letter</a></li>
-<li><a href="/astrology-app-alternatives">Alternatives</a></li>
-<li><a className="ncta" href="#try-it">Get Reading $15</a></li>
+          <button className="nav-ham" onClick={() => setMenuOpen(!menuOpen)} aria-label="Menu" type="button">
+            <span className={`nav-ham-l${menuOpen?" open":""}`}/><span className={`nav-ham-l${menuOpen?" open":""}`}/><span className={`nav-ham-l${menuOpen?" open":""}`}/>
+          </button>
+          <ul className={`nl${menuOpen?" nl-open":""}`}>
+            <li><a href="#try-it" onClick={() => setMenuOpen(false)}>Try Free</a></li>
+<li><a href="/free-birth-chart-readings" onClick={() => setMenuOpen(false)}>How It Works</a></li>
+<li><a href="#reveals" onClick={() => setMenuOpen(false)}>What We Reveal</a></li>
+<li><a href="/zodiac-signs" onClick={() => setMenuOpen(false)}>Zodiac Signs</a></li>
+<li><a href="/future-love-letter" onClick={() => setMenuOpen(false)}>Love-letter</a></li>
+<li><a href="/astrology-app-alternatives" onClick={() => setMenuOpen(false)}>Alternatives</a></li>
+<li><a className="ncta" href="#try-it" onClick={() => setMenuOpen(false)}>Get Reading $15</a></li>
           </ul>
         </div>
       </nav>
