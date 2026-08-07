@@ -18,7 +18,8 @@ type EventName =
   | "future_love_share_started"
   | "future_love_quote_selected"
   | "future_love_segment_selected"
-  | "future_love_upsell_clicked";
+  | "future_love_upsell_clicked"
+  | "future_love_waitlisted";
 
 type EventProperties = Record<string, string | number | boolean>;
 
