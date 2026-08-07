@@ -4,6 +4,7 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import { trackEvent } from "@/lib/future-love-letter/analytics";
 import type { FutureLoveResult } from "@/lib/future-love-letter/types";
 import Link from "next/link";
+import Image from "next/image";
 
 import StarBackground from "./components/StarBackground";
 import Hero from "./components/Hero";
@@ -16,6 +17,47 @@ import FAQ from "./components/FAQ";
 
 const FUTURE_PERSON_LABEL = "Future Husband";
 const SIGNATURE = "Someone worth waiting for";
+
+/* ─── NAVBAR ─────────────────────────────────────────────────────────── */
+
+function Navbar() {
+  const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 30);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  return (
+    <nav className={`fll-nav${scrolled ? " fll-nav-scrolled" : ""}`}>
+      <div className="fll-nav-inner">
+        <Link href="/" className="fll-nav-logo">
+          <Image src="/mascot.png" alt="BluntChart" width={30} height={30} style={{ borderRadius: "50%" }} />
+          <span className="fll-nav-logo-text">BluntChart</span>
+        </Link>
+        <button
+          className="fll-nav-hamburger"
+          onClick={() => setMenuOpen(!menuOpen)}
+          aria-label="Menu"
+          type="button"
+        >
+          <span className={`fll-nav-ham-line${menuOpen ? " open" : ""}`} />
+          <span className={`fll-nav-ham-line${menuOpen ? " open" : ""}`} />
+          <span className={`fll-nav-ham-line${menuOpen ? " open" : ""}`} />
+        </button>
+        <ul className={`fll-nav-links${menuOpen ? " fll-nav-links-open" : ""}`}>
+          <li><Link href="/#try-it" onClick={() => setMenuOpen(false)}>Try Free</Link></li>
+          <li><Link href="/free-birth-chart-readings" onClick={() => setMenuOpen(false)}>How It Works</Link></li>
+          <li><Link href="/zodiac-signs" onClick={() => setMenuOpen(false)}>Zodiac Signs</Link></li>
+          <li><Link href="/future-love-letter" onClick={() => setMenuOpen(false)}>Love-letter</Link></li>
+          <li><Link href="/#try-it" className="fll-nav-cta" onClick={() => setMenuOpen(false)}>Get Reading $15</Link></li>
+        </ul>
+      </div>
+    </nav>
+  );
+}
 
 /* ─── GENERATION MESSAGES ────────────────────────────────────────────── */
 
@@ -185,6 +227,7 @@ export default function FutureLoveLetterClient() {
   if (stage === "generating") {
     return (
       <div className="fll-page">
+        <Navbar />
         <StarBackground />
         <style>{styles}</style>
         <div className="fll-gen-container">
@@ -216,10 +259,16 @@ export default function FutureLoveLetterClient() {
 
     return (
       <div className="fll-page" ref={readingRef}>
+        <Navbar />
         <StarBackground />
         <style>{styles}</style>
 
         <div className="fll-reading-container">
+          <div className="fll-reading-logo">
+            <Link href="/">
+              <Image src="/mascot.png" alt="BluntChart" width={24} height={24} style={{ borderRadius: "50%", opacity: 0.6 }} />
+            </Link>
+          </div>
           <div className="fll-reading-header">
             <p className="fll-reading-eyebrow">A LOVE LETTER</p>
             <h1 className="fll-reading-h1">
@@ -476,6 +525,7 @@ export default function FutureLoveLetterClient() {
 
   return (
     <div className="fll-page">
+      <Navbar />
       <StarBackground />
       <style>{styles}</style>
 
@@ -505,6 +555,128 @@ export default function FutureLoveLetterClient() {
 /* ─── ALL STYLES ───────────────────────────────────────────────────── */
 
 const styles = `
+/* ══════════════════════════════════════════════════════════════════════
+   NAVBAR
+   ══════════════════════════════════════════════════════════════════════ */
+.fll-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  padding: 16px 0;
+  transition: all 0.3s;
+}
+.fll-nav-scrolled {
+  background: rgba(7,7,13,0.92);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  backdrop-filter: blur(16px);
+}
+.fll-nav-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.fll-nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+}
+.fll-nav-logo-text {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #f0b84a, #d4537e, #6b2fd4);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.fll-nav-links {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.fll-nav-links a {
+  font-size: 0.83rem;
+  font-weight: 500;
+  color: rgba(232,228,240,0.55);
+  text-decoration: none;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  transition: color 0.2s;
+}
+.fll-nav-links a:hover { color: #e8e4f0; }
+.fll-nav-cta {
+  color: #F0B84A !important;
+  border: 1px solid rgba(240,184,74,0.18);
+  padding: 6px 15px;
+  border-radius: 4px;
+}
+.fll-nav-cta:hover { background: rgba(240,184,74,0.18); }
+.fll-nav-hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+}
+.fll-nav-ham-line {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: rgba(232,228,240,0.6);
+  border-radius: 2px;
+  transition: all 0.25s;
+}
+.fll-nav-ham-line.open:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+.fll-nav-ham-line.open:nth-child(2) { opacity: 0; }
+.fll-nav-ham-line.open:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+@media (max-width: 768px) {
+  .fll-nav-hamburger { display: flex; }
+  .fll-nav-links {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    background: rgba(7,7,13,0.96);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    padding: 20px 24px;
+    gap: 16px;
+    backdrop-filter: blur(16px);
+  }
+  .fll-nav-links-open { display: flex; }
+  .fll-nav-links a { font-size: 0.9rem; }
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   READING LOGO (top-right on letter page)
+   ══════════════════════════════════════════════════════════════════════ */
+.fll-reading-logo {
+  position: absolute;
+  top: 96px;
+  right: 24px;
+  z-index: 10;
+}
+.fll-reading-logo a {
+  display: flex;
+  align-items: center;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+.fll-reading-logo a:hover { opacity: 1; }
+
 /* ══════════════════════════════════════════════════════════════════════
    BASE
    ══════════════════════════════════════════════════════════════════════ */
@@ -616,7 +788,7 @@ const styles = `
 .fll-hero {
   position: relative;
   z-index: 1;
-  padding: 60px 24px 40px;
+  padding: 96px 24px 40px;
   max-width: 1200px;
   margin: 0 auto;
 }
@@ -1340,7 +1512,7 @@ const styles = `
 .fll-reading-container {
   position: relative;
   z-index: 1;
-  padding: 80px 24px;
+  padding: 96px 24px 80px;
   max-width: 720px;
   margin: 0 auto;
 }
@@ -1638,7 +1810,7 @@ const styles = `
    RESPONSIVE
    ══════════════════════════════════════════════════════════════════════ */
 @media (max-width: 768px) {
-  .fll-hero { padding: 48px 20px 32px; }
+  .fll-hero { padding: 80px 20px 32px; }
   .fll-hero-inner {
     grid-template-columns: 1fr;
     gap: 32px;
