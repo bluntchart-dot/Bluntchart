@@ -22,6 +22,44 @@ function extractJson(text: string): string {
   return text;
 }
 
+function repairJsonString(raw: string): string {
+  let result = "";
+  let inString = false;
+  let escaped = false;
+
+  for (let i = 0; i < raw.length; i++) {
+    const ch = raw[i];
+
+    if (escaped) {
+      result += ch;
+      escaped = false;
+      continue;
+    }
+
+    if (ch === "\\") {
+      escaped = true;
+      result += ch;
+      continue;
+    }
+
+    if (ch === '"') {
+      inString = !inString;
+      result += ch;
+      continue;
+    }
+
+    if (inString) {
+      if (ch === "\n") { result += "\\n"; continue; }
+      if (ch === "\r") { result += "\\r"; continue; }
+      if (ch === "\t") { result += "\\t"; continue; }
+    }
+
+    result += ch;
+  }
+
+  return result;
+}
+
 export async function POST(req: NextRequest) {
   try {
     const body = (await req.json()) as FutureLoveRequest;
@@ -71,6 +109,18 @@ export async function POST(req: NextRequest) {
         temperature: 0.85,
         maxOutputTokens: 4000,
         responseMimeType: "application/json",
+        responseSchema: {
+          type: "object" as const,
+          properties: {
+            letter: { type: "string" as const, description: "The full love letter text" },
+            shareableQuotes: {
+              type: "array" as const,
+              items: { type: "string" as const },
+              description: "3 screenshot-worthy lines from the letter",
+            },
+          },
+          required: ["letter", "shareableQuotes"],
+        },
       },
     });
 
@@ -89,11 +139,7 @@ export async function POST(req: NextRequest) {
       parsed = JSON.parse(jsonStr) as LetterResponse;
     } catch {
       try {
-        const fixed = jsonStr
-          .replace(/(?<=:\s*")([\s\S]*?)(?="(?:\s*[,}]))/g, (match) =>
-            match.replace(/\n/g, "\\n").replace(/\r/g, "\\r").replace(/\t/g, "\\t"),
-          );
-        parsed = JSON.parse(fixed) as LetterResponse;
+        parsed = JSON.parse(repairJsonString(jsonStr)) as LetterResponse;
       } catch {
         console.error("[future-love-letter] JSON parse failed:", rawText.slice(0, 800));
         return NextResponse.json(
