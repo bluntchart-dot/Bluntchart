@@ -84,7 +84,7 @@ type SegmentValue = (typeof SEGMENTS)[number]["value"];
 /* ─── MAIN COMPONENT ─────────────────────────────────────────────────── */
 
 export default function FutureLoveLetterClient() {
-  const [stage, setStage] = useState<"funnel" | "generating" | "reading">(
+  const [stage, setStage] = useState<"funnel" | "generating" | "reading" | "waitlisted">(
     "funnel",
   );
   const [form, setForm] = useState({
@@ -178,6 +178,11 @@ export default function FutureLoveLetterClient() {
 
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
+        if ((data as { waitlisted?: boolean }).waitlisted) {
+          setStage("waitlisted");
+          trackEvent("future_love_waitlisted");
+          return;
+        }
         throw new Error(
           (data as { error?: string }).error || "Something went wrong",
         );
@@ -226,6 +231,62 @@ export default function FutureLoveLetterClient() {
     month: "long",
     day: "numeric",
   });
+
+  /* ─── WAITLISTED ─────────────────────────────────────────────────── */
+
+  if (stage === "waitlisted") {
+    return (
+      <div className="fll-page">
+        <Navbar />
+        <StarBackground />
+        <style>{styles}</style>
+        <div className="fll-waitlist-container">
+          <div className="fll-waitlist-envelope">
+            <img
+              src="/Premium envelope.png"
+              alt=""
+              className="fll-waitlist-env-img"
+            />
+          </div>
+          <div className="fll-waitlist-content">
+            <p className="fll-waitlist-icon">&#128140;</p>
+            <h2 className="fll-waitlist-heading">
+              We&rsquo;ve written all of today&rsquo;s letters!
+            </h2>
+            <p className="fll-waitlist-body">
+              We&rsquo;re currently testing this experience with a small group
+              each day. Your details have been saved&nbsp;&mdash; we&rsquo;ll
+              generate and send your personalized letter as soon as
+              tomorrow&rsquo;s letters open.
+            </p>
+            <div className="fll-waitlist-check">
+              <span className="fll-waitlist-check-icon">&#10003;</span>
+              <span>Your birth details are saved</span>
+            </div>
+            {form.email && (
+              <div className="fll-waitlist-check">
+                <span className="fll-waitlist-check-icon">&#10003;</span>
+                <span>We&rsquo;ll send it to {form.email}</span>
+              </div>
+            )}
+            <p className="fll-waitlist-hint">
+              Letters reopen daily at 12:30 PM IST
+            </p>
+            <button
+              className="fll-cta"
+              onClick={() => {
+                setStage("funnel");
+                window.scrollTo({ top: 0 });
+              }}
+              type="button"
+            >
+              BACK TO PAGE
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   /* ─── GENERATING ─────────────────────────────────────────────────── */
 
@@ -1494,6 +1555,72 @@ const styles = `
   font-size: 14px;
   line-height: 1.7;
   color: rgba(232,228,240,0.5);
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   WAITLIST STATE
+   ══════════════════════════════════════════════════════════════════════ */
+.fll-waitlist-container {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 96px 24px 60px;
+}
+.fll-waitlist-envelope {
+  margin-bottom: 32px;
+}
+.fll-waitlist-env-img {
+  width: 200px;
+  height: auto;
+  filter: drop-shadow(0 12px 30px rgba(0,0,0,0.4));
+  opacity: 0.7;
+}
+.fll-waitlist-content {
+  max-width: 480px;
+  text-align: center;
+}
+.fll-waitlist-icon {
+  font-size: 40px;
+  margin-bottom: 16px;
+}
+.fll-waitlist-heading {
+  font-family: var(--font-display);
+  font-size: clamp(22px, 4.5vw, 30px);
+  font-weight: 400;
+  color: #f0e9dc;
+  line-height: 1.3;
+  margin: 0 0 16px;
+}
+.fll-waitlist-body {
+  font-size: 15px;
+  color: rgba(232,228,240,0.55);
+  line-height: 1.7;
+  margin-bottom: 28px;
+}
+.fll-waitlist-check {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-size: 14px;
+  color: rgba(232,228,240,0.6);
+  margin-bottom: 10px;
+}
+.fll-waitlist-check-icon {
+  color: #58c97a;
+  font-weight: 700;
+  font-size: 16px;
+}
+.fll-waitlist-hint {
+  font-size: 12px;
+  color: rgba(232,228,240,0.3);
+  margin-top: 20px;
+  margin-bottom: 28px;
+  letter-spacing: 0.04em;
 }
 
 /* ══════════════════════════════════════════════════════════════════════

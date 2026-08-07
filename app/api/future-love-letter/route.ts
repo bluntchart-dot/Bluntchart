@@ -101,58 +101,113 @@ export async function POST(req: NextRequest) {
 
     const ai = new GoogleGenAI({ apiKey });
 
-    const response = await ai.models.generateContent({
-      model: GEMINI_MODEL,
-      contents: userPrompt,
-      config: {
-        systemInstruction: systemPrompt,
-        temperature: 0.85,
-        maxOutputTokens: 4000,
-        responseMimeType: "application/json",
-        responseSchema: {
-          type: "object" as const,
-          properties: {
-            letter: { type: "string" as const, description: "The full love letter text" },
-            shareableQuotes: {
-              type: "array" as const,
-              items: { type: "string" as const },
-              description: "3 screenshot-worthy lines from the letter",
-            },
+    const geminiConfig = {
+      systemInstruction: systemPrompt,
+      temperature: 0.85,
+      maxOutputTokens: 4000,
+      responseMimeType: "application/json" as const,
+      responseSchema: {
+        type: "object" as const,
+        properties: {
+          letter: { type: "string" as const, description: "The full love letter text" },
+          shareableQuotes: {
+            type: "array" as const,
+            items: { type: "string" as const },
+            description: "3 screenshot-worthy lines from the letter",
           },
-          required: ["letter", "shareableQuotes"],
         },
+        required: ["letter", "shareableQuotes"],
       },
-    });
+    };
 
-    const rawText = (response.text ?? "").trim();
-    if (!rawText) {
-      console.error("[future-love-letter] Empty Gemini response");
-      return NextResponse.json(
-        { error: "Generation produced empty response" },
-        { status: 502 },
-      );
-    }
+    const MAX_ATTEMPTS = 2;
+    let parsed: LetterResponse | null = null;
+    let lastError = "";
 
-    const jsonStr = extractJson(rawText);
-    let parsed: LetterResponse;
-    try {
-      parsed = JSON.parse(jsonStr) as LetterResponse;
-    } catch {
+    for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
       try {
-        parsed = JSON.parse(repairJsonString(jsonStr)) as LetterResponse;
-      } catch {
-        console.error("[future-love-letter] JSON parse failed:", rawText.slice(0, 800));
-        return NextResponse.json(
-          { error: "Generation produced invalid response" },
-          { status: 502 },
-        );
+        const config = attempt === 1
+          ? geminiConfig
+          : { ...geminiConfig, temperature: 0.6 };
+
+        const response = await ai.models.generateContent({
+          model: GEMINI_MODEL,
+          contents: userPrompt,
+          config,
+        });
+
+        const rawText = (response.text ?? "").trim();
+        if (!rawText) {
+          lastError = "Empty Gemini response";
+          console.error(`[future-love-letter] Attempt ${attempt}: empty response`);
+          continue;
+        }
+
+        const jsonStr = extractJson(rawText);
+        let candidate: LetterResponse;
+        try {
+          candidate = JSON.parse(jsonStr) as LetterResponse;
+        } catch {
+          try {
+            candidate = JSON.parse(repairJsonString(jsonStr)) as LetterResponse;
+          } catch (repairErr) {
+            console.error(`[future-love-letter] Attempt ${attempt} parse failed. Raw length: ${rawText.length}, first 300:`, rawText.slice(0, 300), `last 200:`, rawText.slice(-200));
+            lastError = repairErr instanceof Error ? repairErr.message : String(repairErr);
+            continue;
+          }
+        }
+
+        if (!candidate.letter || typeof candidate.letter !== "string") {
+          lastError = "Missing letter field";
+          console.error(`[future-love-letter] Attempt ${attempt}: missing letter field`);
+          continue;
+        }
+
+        parsed = candidate;
+        if (attempt > 1) {
+          console.log(`[future-love-letter] Succeeded on attempt ${attempt}`);
+        }
+        break;
+      } catch (genErr) {
+        lastError = genErr instanceof Error ? genErr.message : String(genErr);
+        const errStr = typeof genErr === "object" ? JSON.stringify(genErr) : lastError;
+        console.error(`[future-love-letter] Attempt ${attempt} generation error:`, lastError);
+        if (errStr.includes("429") || /quota|RESOURCE_EXHAUSTED/i.test(errStr)) {
+          // Save birth details for later generation
+          if (body.email) {
+            try {
+              const supabase = createSupabaseAdmin();
+              const { user } = await ensureUser(supabase, body.email, body.name);
+              if (user) {
+                await supabase.from(DB.readings).insert([{
+                  user_id: user.id,
+                  payment_id: null,
+                  birth_time: body.time,
+                  birth_place: body.placeName || null,
+                  timezone,
+                  reading_json: {
+                    meta: { name: body.name, dob: body.date, birth_place: body.placeName, lat: body.lat, lng: body.lng },
+                  },
+                  reading_status: "pending",
+                  product_type: "future-love-letter",
+                }]);
+              }
+            } catch (dbErr) {
+              console.error("[future-love-letter] Waitlist save failed:", dbErr);
+            }
+          }
+          return NextResponse.json(
+            { waitlisted: true },
+            { status: 429 },
+          );
+        }
       }
     }
 
-    if (!parsed.letter || typeof parsed.letter !== "string") {
-      console.error("[future-love-letter] Missing letter field in response");
+    if (!parsed) {
+      console.error("[future-love-letter] All attempts failed. Last error:", lastError);
       return NextResponse.json(
-        { error: "Generation produced incomplete response" },
+        { error: "Generation produced invalid response" },
         { status: 502 },
       );
     }
@@ -199,9 +254,9 @@ export async function POST(req: NextRequest) {
     const msg = err instanceof Error ? err.message : String(err);
     console.error("[future-love-letter] Unhandled error:", msg);
 
-    if (msg.includes("429") || /quota/i.test(msg)) {
+    if (msg.includes("429") || /quota|RESOURCE_EXHAUSTED/i.test(msg)) {
       return NextResponse.json(
-        { error: "We're experiencing high demand. Please try again in a moment." },
+        { waitlisted: true },
         { status: 429 },
       );
     }
