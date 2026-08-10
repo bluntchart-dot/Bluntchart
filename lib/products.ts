@@ -36,6 +36,16 @@ const PRODUCTS: Record<string, ProductConfig> = {
     accessPath: "/my-book",
     hasCheckoutFlow: true,
   },
+  "future-love-letter": {
+    type: "future-love-letter",
+    gumroadPermalink: "wfuvtd",
+    gumroadCheckoutUrl:
+      "https://bluntchart.gumroad.com/l/wfuvtd",
+    priceDollars: "4.99",
+    priceCents: 499,
+    accessPath: "/my-love-letter",
+    hasCheckoutFlow: true,
+  },
   compatibility: {
     type: "compatibility",
     gumroadPermalink: "",

@@ -4,6 +4,7 @@ import { loadBirthLeadByEmail } from "@/lib/db/checkout-flow";
 import { fulfillPaidOrder, markPaymentFailed } from "@/lib/db/fulfillment";
 import { acknowledgePayment } from "@/lib/db/reading-lifecycle";
 import { parseGumroadSessionId } from "@/lib/gumroad-checkout";
+import { generateLoveLetter } from "@/lib/future-love-letter/generate-letter";
 import { dbError, dbLog } from "@/lib/db/log";
 import { DB } from "@/lib/db/tables";
 import type { BirthInputs, ProductType } from "@/lib/db/types";
@@ -21,6 +22,9 @@ import {
   shareReminderOneMail,
   shareReminderTwoMail,
   bookConfirmationMail,
+  loveLetterConfirmationMail,
+  loveLetterDeliveryMail,
+  loveLetterReviewMail,
 } from "@/lib/email-templates";
 
 function isPaidStatus(status: string | null | undefined): boolean {
@@ -280,6 +284,104 @@ export async function POST(req: Request) {
         paymentId: ack.paymentId,
         readingStatus: "queued",
       });
+    }
+
+    // ═══════════════════════════════════════════════════════════════════
+    // LOVE LETTER PATH — synchronous Gemini generation
+    // ═══════════════════════════════════════════════════════════════════
+    if (productType === "future-love-letter") {
+      // Idempotent check
+      if (gumroadPaymentId) {
+        const { data: existingSale } = await supabase
+          .from(DB.payments)
+          .select("id, access_token, payment_status, product_type")
+          .eq("gumroad_payment_id", gumroadPaymentId)
+          .maybeSingle();
+
+        if (existingSale && isPaidStatus(existingSale.payment_status) && existingSale.access_token) {
+          const url = accessUrl(existingSale.access_token, "future-love-letter");
+          dbLog(scope, "love letter already fulfilled — duplicate webhook", { email, accessUrl: url });
+          return Response.json({ success: true, accessUrl: url, duplicate: true });
+        }
+      }
+
+      // Confirmation email
+      try {
+        const tpl = loveLetterConfirmationMail({ firstName });
+        await sendEmail({ to: email, subject: tpl.subject, html: tpl.html, text: tpl.text });
+        dbLog(scope, "love letter confirmation email sent", { email });
+      } catch (mailErr) {
+        dbError(scope, "love letter confirmation email failed (non-fatal)", mailErr, { email });
+      }
+
+      // Generate the letter
+      dbLog(scope, "love letter generation started", { email });
+
+      const letterResult = await generateLoveLetter({
+        name: lead.name,
+        date: lead.dob,
+        time: lead.birth_time,
+        lat: lead.birth_lat ?? 0,
+        lng: lead.birth_lng ?? 0,
+        placeName: lead.birth_place,
+        timezone: lead.timezone,
+      });
+
+      if (!letterResult.ok || !letterResult.letter) {
+        dbError(scope, "love letter generation failed", letterResult.error ?? "", { email });
+        await markPaymentFailed(supabase, email, gumroadPaymentId, sessionId);
+        return Response.json({ error: "Letter generation failed" }, { status: 500 });
+      }
+
+      dbLog(scope, "love letter generation success", { email });
+
+      const readingJson = {
+        letter: letterResult.letter,
+        shareableQuotes: letterResult.shareableQuotes ?? [],
+        meta: { name: lead.name, dob: lead.dob, birth_place: lead.birth_place },
+      };
+
+      // Fulfill order (creates reading + updates payment)
+      const fulfilled = await fulfillPaidOrder(supabase, {
+        email,
+        gumroadPaymentId,
+        amountCents,
+        sessionId,
+        productType: "future-love-letter",
+        lead,
+        readingJson,
+      });
+
+      if (!fulfilled.ok || !fulfilled.accessToken) {
+        dbError(scope, "love letter fulfillment failed", fulfilled.error ?? "", { email });
+        return Response.json({ error: fulfilled.error ?? "Fulfillment failed" }, { status: 500 });
+      }
+
+      const letterUrl = accessUrl(fulfilled.accessToken, "future-love-letter");
+      dbLog(scope, "love letter saved", { email, accessUrl: letterUrl });
+
+      // Delivery email
+      try {
+        const tpl = loveLetterDeliveryMail({ firstName, readingUrl: letterUrl });
+        await sendEmail({ to: email, subject: tpl.subject, html: tpl.html, text: tpl.text });
+        dbLog(scope, "love letter delivery email sent", { email, accessUrl: letterUrl });
+      } catch (mailErr) {
+        dbError(scope, "love letter delivery email failed (non-fatal)", mailErr, { email });
+      }
+
+      // Review email (24h later)
+      try {
+        await sendEmail({
+          to: email,
+          ...loveLetterReviewMail({ firstName, cardUrl: "https://bluntchart.com/reviews/love-letter" }),
+          scheduledAt: scheduledIso(DELAY_MS.loveLetterReview),
+        });
+        dbLog(scope, "love letter review email scheduled", { email });
+      } catch (mailErr) {
+        dbError(scope, "love letter review email scheduling failed (non-fatal)", mailErr, { email });
+      }
+
+      return Response.json({ success: true, accessUrl: letterUrl });
     }
 
     // ═══════════════════════════════════════════════════════════════════

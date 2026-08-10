@@ -130,7 +130,12 @@ const birth_lng =
         ? `${SITE_URL}/in-depth-birth-chart`
         : `${SITE_URL}#try-it`;
 
-      if (isBook) {
+      const isLoveLetter = product_type === "future-love-letter";
+
+      if (isLoveLetter) {
+        // No abandoned-cart sequence for love letters — simple checkout flow
+        emailScheduled = true;
+      } else if (isBook) {
         const [preview, abandonedOne, abandonedTwo, abandonedThree] = await Promise.all([
           sendEmail({
             to: email,

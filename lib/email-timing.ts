@@ -13,6 +13,8 @@ export const DELAY_MS = {
   // Book product — post-delivery engagement
   bookReview: 2 * 24 * 3_600_000,
   bookSocialProof: 5 * 24 * 3_600_000,
+  // Love letter — post-delivery
+  loveLetterReview: 24 * 3_600_000,
 } as const;
 
 export const scheduledIso = (ms: number) => new Date(Date.now() + ms).toISOString();

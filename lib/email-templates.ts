@@ -652,3 +652,90 @@ ${textSignOff}`;
 
   return { subject, text, html };
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   FUTURE LOVE LETTER
+   ═══════════════════════════════════════════════════════════════════ */
+
+export function loveLetterConfirmationMail({ firstName }: BaseVars): EmailTemplate {
+  const subject = "💌 Your letter is in the stars";
+
+  const text = `Hey ${firstName},
+
+Your letter is officially on its way.
+
+We're putting the pieces together from your birth chart, and your future husband has already started writing.
+
+Give us a little time.
+We'll make sure it feels personal, warm, and a little too accurate.
+
+Talk soon,
+BluntChart`;
+
+  const html = wrap(`
+    <p style="font-size:18px;line-height:1.8;margin:0 0 14px;">Hey ${esc(firstName)},</p>
+    <p style="font-size:16px;line-height:1.9;margin:0 0 14px;">Your letter is officially on its way.</p>
+    <p style="font-size:16px;line-height:1.9;margin:0 0 14px;">We're putting the pieces together from your birth chart, and your future husband has already started writing.</p>
+    <p style="font-size:16px;line-height:1.9;margin:0 0 14px;">Give us a little time.<br/>We'll make sure it feels personal, warm, and a little too accurate.</p>
+    <p style="font-size:16px;line-height:1.9;margin:0 0 0;">Talk soon,<br/>BluntChart</p>
+  `);
+
+  return { subject, text, html };
+}
+
+export function loveLetterDeliveryMail({ firstName, readingUrl }: BaseVars): EmailTemplate {
+  const subject = "Your Love Letter is here!";
+
+  const text = `Hey ${firstName},
+
+It's ready.
+
+Your Future Husband Love Letter is waiting for you, and yes... it may know you a little better than it should.
+
+Read it somewhere quiet if you can.
+Some lines are sweet, some are teasing, and a few might make you blush.
+
+Open your letter: ${readingUrl ?? "https://bluntchart.com"}
+
+With love,
+BluntChart`;
+
+  const html = wrap(`
+    <p style="font-size:18px;line-height:1.8;margin:0 0 14px;">Hey ${esc(firstName)},</p>
+    <p style="font-size:16px;line-height:1.9;margin:0 0 14px;">It's ready.</p>
+    <p style="font-size:16px;line-height:1.9;margin:0 0 14px;">Your Future Husband Love Letter is waiting for you, and yes... it may know you a little better than it should.</p>
+    <p style="font-size:16px;line-height:1.9;margin:0 0 14px;">Read it somewhere quiet if you can.<br/>Some lines are sweet, some are teasing, and a few might make you blush.</p>
+    ${button(readingUrl ?? "https://bluntchart.com", "Open your letter →")}
+    <p style="font-size:16px;line-height:1.9;margin:18px 0 0;">With love,<br/>BluntChart</p>
+  `);
+
+  return { subject, text, html };
+}
+
+export function loveLetterReviewMail({ firstName, cardUrl }: BaseVars): EmailTemplate {
+  const subject = `${firstName}, how was the letter?`;
+
+  const text = `Hey ${firstName},
+
+So... did he get you?
+
+If your Future Husband's letter made you feel something — a smile, a blush, a "how did it know that?" — we'd love to hear about it.
+
+Leave a review: ${cardUrl ?? "https://bluntchart.com/reviews/love-letter"}
+
+Your feedback genuinely helps more people discover this.
+
+With love,
+BluntChart`;
+
+  const html = wrap(`
+    <p style="font-size:18px;line-height:1.8;margin:0 0 14px;">Hey ${esc(firstName)},</p>
+    <p style="font-size:16px;line-height:1.9;margin:0 0 14px;">So... did he get you?</p>
+    <p style="font-size:16px;line-height:1.9;margin:0 0 14px;">If your Future Husband's letter made you feel something — a smile, a blush, a "how did it know that?" — we'd love to hear about it.</p>
+    ${button(cardUrl ?? "https://bluntchart.com/reviews/love-letter", "Leave a review →")}
+    <p style="font-size:16px;line-height:1.9;margin:18px 0 0;">Your feedback genuinely helps more people discover this.</p>
+    <p style="font-size:16px;line-height:1.9;margin:0;">With love,<br/>BluntChart</p>
+  `);
+
+  return { subject, text, html };
+}

@@ -146,62 +146,58 @@ export default function FutureLoveLetterClient() {
     if (!canSubmit) return;
 
     trackEvent("future_love_form_submitted");
-    setStage("generating");
     setError(null);
-    setGenMessageIdx(0);
-    window.scrollTo({ top: 0, behavior: "smooth" });
-
-    const msgInterval = setInterval(() => {
-      setGenMessageIdx((i) =>
-        i < GEN_MESSAGES.length - 1 ? i + 1 : i,
-      );
-    }, 3500);
-
-    trackEvent("future_love_generation_started");
 
     try {
-      const res = await fetch("/api/future-love-letter", {
+      const res = await fetch("/api/save-pending", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: form.name.trim(),
           email: form.email.trim(),
-          date: form.dob,
-          time: form.time,
-          lat: form.lat,
-          lng: form.lng,
-          placeName: form.place,
+          dob: form.dob,
+          birth_time: form.time,
+          birth_place: form.place,
+          birth_lat: form.lat,
+          birth_lng: form.lng,
+          product_type: "future-love-letter",
         }),
       });
 
-      clearInterval(msgInterval);
-
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        if ((data as { waitlisted?: boolean }).waitlisted) {
-          setStage("waitlisted");
-          trackEvent("future_love_waitlisted");
-          return;
-        }
         throw new Error(
           (data as { error?: string }).error || "Something went wrong",
         );
       }
 
-      const data = (await res.json()) as FutureLoveResult;
-      setResult(data);
-      setStage("reading");
-      trackEvent("future_love_generation_success");
-      trackEvent("future_love_generated");
+      const data = (await res.json()) as { sessionId?: string };
+      const sessionId = data.sessionId ?? "";
 
-      setTimeout(() => {
-        readingRef.current?.scrollIntoView({ behavior: "smooth" });
-      }, 300);
+      if (typeof window !== "undefined" && sessionId) {
+        try {
+          sessionStorage.setItem("checkout_session_id", sessionId);
+          sessionStorage.setItem("checkout_email", form.email.trim());
+          localStorage.setItem("checkout_session_id", sessionId);
+          localStorage.setItem("checkout_email", form.email.trim());
+        } catch { /* storage unavailable */ }
+      }
+
+      const checkoutUrl = new URL("https://bluntchart.gumroad.com/l/wfuvtd");
+      checkoutUrl.searchParams.set("wanted", "true");
+      checkoutUrl.searchParams.set("email", form.email.trim().toLowerCase());
+      if (sessionId) {
+        checkoutUrl.searchParams.set("custom_fields[session_id]", sessionId);
+        checkoutUrl.searchParams.set("session_id", sessionId);
+      }
+      const returnUrl = `${window.location.origin}/checkout/complete?session_id=${encodeURIComponent(sessionId)}`;
+      checkoutUrl.searchParams.set("redirect_url", returnUrl);
+      checkoutUrl.searchParams.set("return_url", returnUrl);
+
+      window.location.href = checkoutUrl.toString();
     } catch (err) {
-      clearInterval(msgInterval);
       const msg = err instanceof Error ? err.message : "Something went wrong";
       setError(msg);
-      setStage("funnel");
       trackEvent("future_love_generation_failed");
     }
   }
