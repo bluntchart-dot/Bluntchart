@@ -2070,17 +2070,37 @@ const styles = `
   max-width: 900px;
   margin: 0 auto;
 }
-.fll-rv-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
-  margin-top: 36px;
-  margin-bottom: 40px;
+.fll-rv-scroll-wrap {
+  display: block;
+  overflow: hidden;
+  margin: 36px -24px 12px;
+  cursor: pointer;
+  text-decoration: none;
+  mask-image: linear-gradient(90deg, transparent, black 5%, black 95%, transparent);
+  -webkit-mask-image: linear-gradient(90deg, transparent, black 5%, black 95%, transparent);
 }
-@media (max-width: 600px) {
-  .fll-rv-grid { grid-template-columns: 1fr; }
+.fll-rv-track {
+  display: flex;
+  gap: 16px;
+  width: max-content;
+  animation: fll-rv-scroll 30s linear infinite;
+}
+.fll-rv-scroll-wrap:hover .fll-rv-track {
+  animation-play-state: paused;
+}
+@keyframes fll-rv-scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.fll-rv-hint {
+  font-size: 12px;
+  color: rgba(240,184,74,0.45);
+  margin-bottom: 32px;
+  letter-spacing: 0.04em;
 }
 .fll-rv-card {
+  flex-shrink: 0;
+  width: 280px;
   background: rgba(255,255,255,0.025);
   border: 0.5px solid rgba(255,255,255,0.08);
   border-radius: 16px;

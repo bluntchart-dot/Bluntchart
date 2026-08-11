@@ -63,36 +63,39 @@ export default function ReviewsSection({ onCta }: { onCta: () => void }) {
         TAKE THEIRS.
       </h2>
 
-      <div className="fll-rv-grid">
-        {displayReviews.slice(0, 6).map((review) => (
-          <div key={review.id} className="fll-rv-card">
-            <StarRating rating={review.rating} />
-            {review.testimonial && (
-              <p className="fll-rv-testimonial">
-                &ldquo;{review.testimonial}&rdquo;
-              </p>
-            )}
-            {!review.testimonial && review.best_line && (
-              <p className="fll-rv-bestline">
-                Line that got them: &ldquo;{review.best_line}&rdquo;
-              </p>
-            )}
-            {!review.testimonial && !review.best_line && review.emotional_reaction && (
-              <p className="fll-rv-reaction">
-                {REACTION_LABELS[review.emotional_reaction] || review.emotional_reaction}
-              </p>
-            )}
-            <div className="fll-rv-meta">
-              {review.name && <span className="fll-rv-name">{review.name}</span>}
-              {review.zodiac_sign && (
-                <span className="fll-rv-zodiac">
-                  {review.zodiac_sign.charAt(0).toUpperCase() + review.zodiac_sign.slice(1)}
-                </span>
+      <Link href="/reviews/love-letter" className="fll-rv-scroll-wrap">
+        <div className="fll-rv-track">
+          {[...displayReviews.slice(0, 8), ...displayReviews.slice(0, 8)].map((review, i) => (
+            <div key={`${review.id}-${i}`} className="fll-rv-card">
+              <StarRating rating={review.rating} />
+              {review.testimonial && (
+                <p className="fll-rv-testimonial">
+                  &ldquo;{review.testimonial}&rdquo;
+                </p>
               )}
+              {!review.testimonial && review.best_line && (
+                <p className="fll-rv-bestline">
+                  Line that got them: &ldquo;{review.best_line}&rdquo;
+                </p>
+              )}
+              {!review.testimonial && !review.best_line && review.emotional_reaction && (
+                <p className="fll-rv-reaction">
+                  {REACTION_LABELS[review.emotional_reaction] || review.emotional_reaction}
+                </p>
+              )}
+              <div className="fll-rv-meta">
+                {review.name && <span className="fll-rv-name">{review.name}</span>}
+                {review.zodiac_sign && (
+                  <span className="fll-rv-zodiac">
+                    {review.zodiac_sign.charAt(0).toUpperCase() + review.zodiac_sign.slice(1)}
+                  </span>
+                )}
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      </Link>
+      <p className="fll-rv-hint">Tap to see all reviews</p>
 
       <div className="fll-rv-actions">
         <button className="fll-cta" onClick={onCta} type="button">
