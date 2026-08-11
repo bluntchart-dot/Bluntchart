@@ -934,10 +934,16 @@ const styles = `
   cursor: pointer;
   transition: transform 0.2s, box-shadow 0.2s;
   white-space: nowrap;
+  animation: fll-promo-pop 2s ease-in-out infinite;
 }
 .fll-promo-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+  transform: scale(1.08);
+  box-shadow: 0 4px 18px rgba(255,255,255,0.3);
+  animation: none;
+}
+@keyframes fll-promo-pop {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); box-shadow: 0 2px 12px rgba(255,255,255,0.25); }
 }
 
 /* ══════════════════════════════════════════════════════════════════════
