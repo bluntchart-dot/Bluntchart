@@ -610,6 +610,18 @@ export default function FutureLoveLetterClient() {
       <StarBackground />
       <style>{styles}</style>
 
+      <div className="fll-promo-banner">
+        <div className="fll-promo-inner">
+          <span className="fll-promo-badge">LAUNCH OFFER</span>
+          <span className="fll-promo-text">
+            <span className="fll-promo-highlight">50% off</span> for a limited time &mdash; your future husband won&rsquo;t wait forever
+          </span>
+          <button className="fll-promo-btn" onClick={scrollToForm} type="button">
+            CLAIM YOURS &rarr;
+          </button>
+        </div>
+      </div>
+
       <Hero onCta={scrollToForm} />
       <TeaseAndForm
         ref={formRef}
@@ -641,7 +653,7 @@ const styles = `
    ══════════════════════════════════════════════════════════════════════ */
 .fll-nav {
   position: fixed;
-  top: 0;
+  top: 40px;
   left: 0;
   right: 0;
   z-index: 100;
@@ -860,6 +872,72 @@ const styles = `
 .fll-cta-ghost:hover {
   background: rgba(240,184,74,0.08);
   border-color: rgba(240,184,74,0.5);
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   PROMO BANNER
+   ══════════════════════════════════════════════════════════════════════ */
+.fll-promo-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 200;
+  background: linear-gradient(135deg, #6b2fd4 0%, #d4537e 50%, #f0b84a 100%);
+  padding: 10px 24px;
+}
+.fll-promo-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+.fll-promo-badge {
+  display: inline-block;
+  background: rgba(255,255,255,0.18);
+  backdrop-filter: blur(4px);
+  color: #fff;
+  font-family: var(--font-body);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  padding: 4px 10px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+.fll-promo-text {
+  color: rgba(255,255,255,0.92);
+  font-family: var(--font-display, 'Playfair Display', Georgia, serif);
+  font-size: 15px;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  line-height: 1.3;
+}
+.fll-promo-highlight {
+  font-weight: 700;
+  color: #fff;
+  font-style: italic;
+}
+.fll-promo-btn {
+  background: #fff;
+  color: #6b2fd4;
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  padding: 7px 22px;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  white-space: nowrap;
+}
+.fll-promo-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
 }
 
 /* ══════════════════════════════════════════════════════════════════════
