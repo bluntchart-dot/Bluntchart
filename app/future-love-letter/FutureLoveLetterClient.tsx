@@ -12,6 +12,7 @@ import TeaseAndForm from "./components/TeaseAndForm";
 import FutureHusbandVisual from "./components/FutureHusbandVisual";
 import InteractiveSampleLetter from "./components/InteractiveSampleLetter";
 import AstrologyTrustSection from "./components/AstrologyTrustSection";
+import ReviewsSection from "./components/ReviewsSection";
 import FinalCTA from "./components/FinalCTA";
 import FAQ from "./components/FAQ";
 
@@ -635,6 +636,7 @@ export default function FutureLoveLetterClient() {
       <FutureHusbandVisual onCta={scrollToForm} />
       <InteractiveSampleLetter onCta={scrollToForm} />
       <AstrologyTrustSection />
+      <ReviewsSection onCta={scrollToForm} />
       <FinalCTA onCta={scrollToForm} />
       <FAQ />
 
@@ -2056,6 +2058,97 @@ const styles = `
   color: rgba(232,228,240,0.35);
   margin-top: 14px;
 }
+
+/* ══════════════════════════════════════════════════════════════════════
+   REVIEWS SECTION
+   ══════════════════════════════════════════════════════════════════════ */
+.fll-reviews {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  padding: 80px 24px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+.fll-rv-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-top: 36px;
+  margin-bottom: 40px;
+}
+@media (max-width: 600px) {
+  .fll-rv-grid { grid-template-columns: 1fr; }
+}
+.fll-rv-card {
+  background: rgba(255,255,255,0.025);
+  border: 0.5px solid rgba(255,255,255,0.08);
+  border-radius: 16px;
+  padding: 24px;
+  text-align: left;
+  transition: border-color 0.2s;
+}
+.fll-rv-card:hover {
+  border-color: rgba(240,184,74,0.2);
+}
+.fll-rv-stars {
+  display: block;
+  margin-bottom: 12px;
+  font-size: 16px;
+  letter-spacing: 2px;
+}
+.fll-rv-star-filled { color: #F0B84A; }
+.fll-rv-star-empty { color: rgba(255,255,255,0.1); }
+.fll-rv-testimonial {
+  font-family: var(--font-display, 'Playfair Display', Georgia, serif);
+  font-style: italic;
+  font-size: 15px;
+  line-height: 1.7;
+  color: rgba(232,228,240,0.75);
+  margin-bottom: 14px;
+}
+.fll-rv-bestline {
+  font-size: 14px;
+  line-height: 1.65;
+  color: rgba(232,228,240,0.6);
+  margin-bottom: 14px;
+}
+.fll-rv-reaction {
+  font-size: 14px;
+  color: rgba(240,184,74,0.7);
+  margin-bottom: 14px;
+}
+.fll-rv-meta {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.fll-rv-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(232,228,240,0.5);
+}
+.fll-rv-zodiac {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: rgba(240,184,74,0.45);
+}
+.fll-rv-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+.fll-rv-all-link {
+  font-size: 13px;
+  color: rgba(240,184,74,0.6);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+.fll-rv-all-link:hover { color: #F0B84A; }
 
 /* ══════════════════════════════════════════════════════════════════════
    DISCLAIMER

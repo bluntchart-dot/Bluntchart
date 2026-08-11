@@ -324,7 +324,7 @@ export async function POST(req: Request) {
         lat: lead.birth_lat ?? 0,
         lng: lead.birth_lng ?? 0,
         placeName: lead.birth_place,
-        timezone: lead.timezone,
+        timezone: lead.timezone ?? undefined,
       });
 
       if (!letterResult.ok || !letterResult.letter) {
