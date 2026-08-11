@@ -63,7 +63,7 @@ export default function ReviewsSection({ onCta }: { onCta: () => void }) {
         TAKE THEIRS.
       </h2>
 
-      <Link href="/reviews/love-letter" className="fll-rv-scroll-wrap">
+      <Link href="/reviews" className="fll-rv-scroll-wrap">
         <div className="fll-rv-track">
           {[...displayReviews.slice(0, 8), ...displayReviews.slice(0, 8)].map((review, i) => (
             <div key={`${review.id}-${i}`} className="fll-rv-card">
