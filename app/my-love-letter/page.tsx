@@ -151,9 +151,19 @@ function LoveLetterContent() {
           </Link>
         </div>
 
-        <p className="mll-disclaimer">
-          Created from your birth chart for reflection and entertainment.
-        </p>
+        <div className="mll-disclaimer">
+          <p>
+            One little note: this isn&rsquo;t literally a letter from your future husband.
+            He&rsquo;s a fictional character created from the relationship themes in your chart,
+            imagined as someone who knows how to love you well.
+          </p>
+          <p>
+            For a deeper look at your potential spouse and partnership themes, explore our{" "}
+            <Link href="/in-depth-birth-chart" className="mll-disclaimer-link">
+              Future Spouse Reading
+            </Link>.
+          </p>
+        </div>
       </div>
     </div>
   );
@@ -366,8 +376,21 @@ const styles = `
 .mll-disclaimer {
   text-align: center;
   font-size: 12px;
-  color: rgba(232,228,240,0.2);
+  line-height: 1.7;
+  color: rgba(232,228,240,0.25);
   padding-top: 24px;
   border-top: 0.5px solid rgba(255,255,255,0.06);
+}
+.mll-disclaimer p {
+  margin-bottom: 8px;
+}
+.mll-disclaimer-link {
+  color: rgba(240,184,74,0.5);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: color 0.2s;
+}
+.mll-disclaimer-link:hover {
+  color: #F0B84A;
 }
 `;
