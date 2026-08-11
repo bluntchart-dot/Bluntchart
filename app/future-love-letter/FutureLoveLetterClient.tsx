@@ -852,9 +852,19 @@ const styles = `
 }
 .fll-cta-submit { width: 100%; margin-top: 8px; }
 .fll-cta-micro {
-  font-size: 12px;
-  color: rgba(232,228,240,0.3);
+  font-size: 13px;
+  color: rgba(232,228,240,0.4);
   margin-top: 14px;
+}
+.fll-price-old {
+  text-decoration: line-through;
+  color: rgba(232,228,240,0.3);
+  font-size: 13px;
+}
+.fll-price-now {
+  color: #F0B84A;
+  font-weight: 700;
+  font-size: 15px;
 }
 .fll-cta-ghost {
   display: inline-block;

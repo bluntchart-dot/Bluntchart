@@ -181,8 +181,11 @@ const TeaseAndForm = forwardRef<HTMLDivElement, Props>(function TeaseAndForm(
               LET MY FUTURE HUSBAND TALK
             </button>
             <div className="fll-form-micro">
-              <p>Takes about a minute.</p>
-              <p>Costs absolutely nothing.</p>
+              <p>
+                <span className="fll-price-old">$9.99</span>{" "}
+                <span className="fll-price-now">$4.99</span>{" "}
+                &mdash; launch offer
+              </p>
               <p className="fll-dim">
                 Emotional consequences are between you and your birth
                 chart.

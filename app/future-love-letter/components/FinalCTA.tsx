@@ -29,7 +29,9 @@ export default function FinalCTA({ onCta }: Props) {
         WRITE MY LETTER
       </button>
       <p className="fll-cta-micro">
-        Takes about a minute. Emotional consequences not included.
+        <span className="fll-price-old">$9.99</span>{" "}
+        <span className="fll-price-now">$4.99</span>{" "}
+        &mdash; launch price
       </p>
     </section>
   );

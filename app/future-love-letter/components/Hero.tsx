@@ -39,7 +39,7 @@ export default function Hero({ onCta }: Props) {
         {/* Copy column */}
         <div className="fll-hero-copy-col">
           <p className="fll-eyebrow">
-            FREE &bull; PERSONALIZED FROM YOUR BIRTH CHART
+            PERSONALIZED FROM YOUR BIRTH CHART
           </p>
           <h1 className="fll-h1">
             A LOVE LETTER
@@ -70,8 +70,9 @@ export default function Hero({ onCta }: Props) {
             I NEED TO READ THIS
           </button>
           <p className="fll-cta-micro">
-            Free for now. No card. Your future husband is expensive
-            enough.
+            <span className="fll-price-old">$9.99</span>{" "}
+            <span className="fll-price-now">$4.99</span>{" "}
+            &mdash; launch price, limited time
           </p>
         </div>
 

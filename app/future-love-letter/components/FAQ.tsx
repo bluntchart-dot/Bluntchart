@@ -20,8 +20,8 @@ const ITEMS = [
     a: "Zodiac compatibility usually compares two Sun signs. We look at your Moon, Venus, Mars, 7th house, aspects and more — multiple parts of your chart that describe emotional needs, attraction, partnership patterns and internal contradictions. Two Scorpios can need completely different things from love.",
   },
   {
-    q: "Is this actually free?",
-    a: "Yes. No card, no paywall, no \"unlock paragraph two for $14.99.\" We're testing Future Love Letter as a new experience, so the full thing is free right now.",
+    q: "How much does it cost?",
+    a: "The Future Love Letter is $4.99 during our launch period (50% off the regular $9.99 price). You fill in your birth details, pay once, and receive your full personalized letter via email — no subscription, no hidden fees.",
   },
   {
     q: "Why do you need my exact birth time?",
