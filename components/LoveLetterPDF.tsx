@@ -80,6 +80,16 @@ const s = StyleSheet.create({
     marginTop: 28,
     marginBottom: 6,
   },
+  disclaimer: {
+    marginTop: 32,
+    paddingTop: 16,
+    borderTop: "0.5 solid #d4c4a0",
+    fontSize: 9,
+    lineHeight: 1.6,
+    color: "#9a8a6a",
+    textAlign: "center",
+    fontFamily: "Helvetica",
+  },
   footer: {
     position: "absolute",
     bottom: 36,
@@ -143,6 +153,11 @@ export default function LoveLetterPDF({ letter, name, date }: Props) {
             </Text>
           );
         })}
+
+        <Text style={s.disclaimer}>
+          This is a fictional letter inspired by the relationship themes in your birth chart.
+          The &quot;future husband&quot; is an imagined character, not a prediction.
+        </Text>
 
         <Text style={s.footer}>
           Generated from {displayName}&apos;s birth chart by BluntChart

@@ -820,12 +820,14 @@ const styles = `
 /* Disclaimer */
 .fll-disclaimer-box {
   text-align: center;
-  font-size: 12px;
+  font-size: 13px;
   line-height: 1.7;
-  color: rgba(232,228,240,0.25);
-  padding-top: 40px;
+  color: rgba(232,228,240,0.7);
+  padding: 28px 24px;
   margin-top: 60px;
-  border-top: 0.5px solid rgba(255,255,255,0.06);
+  background: rgba(240,184,74,0.04);
+  border: 0.5px solid rgba(240,184,74,0.15);
+  border-radius: 14px;
 }
 .fll-disclaimer-box p {
   margin-bottom: 8px;
