@@ -13,8 +13,9 @@ export default function VibrantStarBackground() {
     if (!canvas) return;
     const c = canvas;
 
-    const ctx = c.getContext("2d");
-    if (!ctx) return;
+    const maybeCtx = c.getContext("2d");
+    if (!maybeCtx) return;
+    const ctx = maybeCtx;
 
     let animationId = 0;
     let alive = true;
