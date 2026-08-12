@@ -11,8 +11,9 @@ export default function VibrantStarBackground() {
       cleanupRef.current = null;
     }
     if (!canvas) return;
+    const c = canvas;
 
-    const ctx = canvas.getContext("2d");
+    const ctx = c.getContext("2d");
     if (!ctx) return;
 
     let animationId = 0;
@@ -37,18 +38,18 @@ export default function VibrantStarBackground() {
     }[] = [];
 
     function resize() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+      c.width = window.innerWidth;
+      c.height = window.innerHeight;
       initStars();
     }
 
     function initStars() {
       const count = Math.floor(
-        (canvas.width * canvas.height) / 12000,
+        (c.width * c.height) / 12000,
       );
       stars = Array.from({ length: count }, () => ({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
+        x: Math.random() * c.width,
+        y: Math.random() * c.height,
         r: Math.random() * 1.3 + 0.2,
         a: Math.random() * Math.PI * 2,
         speed: Math.random() * 0.004 + 0.001,
@@ -58,8 +59,8 @@ export default function VibrantStarBackground() {
     function spawnShootingStar() {
       if (shootingStars.length >= 2) return;
       shootingStars.push({
-        x: Math.random() * canvas.width * 0.7,
-        y: Math.random() * canvas.height * 0.25,
+        x: Math.random() * c.width * 0.7,
+        y: Math.random() * c.height * 0.25,
         len: 70 + Math.random() * 90,
         speed: 2 + Math.random() * 2.5,
         angle: Math.PI / 4 + (Math.random() - 0.5) * 0.4,
@@ -72,7 +73,7 @@ export default function VibrantStarBackground() {
     let frame = 0;
     function draw() {
       if (!alive) return;
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.clearRect(0, 0, c.width, c.height);
 
       for (const s of stars) {
         s.a += s.speed;
