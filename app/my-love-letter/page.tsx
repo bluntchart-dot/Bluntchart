@@ -4,12 +4,25 @@ import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import VibrantStarBackground from "./VibrantStarBackground";
 
 interface LetterData {
   letter: string;
   shareableQuotes?: string[];
   meta?: { name?: string; dob?: string; birth_place?: string };
 }
+
+const FUTURE_PERSON_LABEL = "Future Husband";
+const SIGNATURE = "Someone worth waiting for";
+
+const SEGMENTS = [
+  { value: "single", label: "No one. I'm extremely single." },
+  { value: "someone", label: "...there might be someone." },
+  { value: "partner", label: "My boyfriend / partner." },
+  { value: "husband", label: "My husband." },
+] as const;
+
+type SegmentValue = (typeof SEGMENTS)[number]["value"];
 
 function LoveLetterContent() {
   const searchParams = useSearchParams();
@@ -19,6 +32,12 @@ function LoveLetterContent() {
   const [error, setError] = useState<string | null>(null);
   const [data, setData] = useState<LetterData | null>(null);
   const [copiedQuote, setCopiedQuote] = useState<number | null>(null);
+  const [selectedQuote, setSelectedQuote] = useState<number | null>(null);
+  const [feedback, setFeedback] = useState<string | null>(null);
+  const [feedbackText, setFeedbackText] = useState("");
+  const [feedbackSent, setFeedbackSent] = useState(false);
+  const [segment, setSegment] = useState<SegmentValue | null>(null);
+  const [pdfBusy, setPdfBusy] = useState(false);
 
   useEffect(() => {
     if (!token) {
@@ -48,31 +67,22 @@ function LoveLetterContent() {
     day: "numeric",
   });
 
-  const name = data?.meta?.name ?? "";
-
   if (loading) {
     return (
-      <div className="mll-page">
-        <style>{styles}</style>
-        <Nav />
-        <div className="mll-loading">
-          <p>Loading your letter...</p>
-        </div>
+      <div className="mll-loading">
+        <p>Loading your letter...</p>
       </div>
     );
   }
 
   if (error || !data) {
     return (
-      <div className="mll-page">
-        <style>{styles}</style>
-        <Nav />
-        <div className="mll-error">
-          <p>{error || "Something went wrong."}</p>
-          <Link href="/future-love-letter" className="mll-cta">
-            GET YOUR LETTER
-          </Link>
-        </div>
+      <div className="mll-error">
+        <h2 className="fll-reading-h1">Reading unavailable</h2>
+        <p>{error || "Something went wrong."}</p>
+        <Link href="/future-love-letter" className="fll-cta">
+          GET YOUR LETTER
+        </Link>
       </div>
     );
   }
@@ -84,47 +94,148 @@ function LoveLetterContent() {
     .filter((p) => !/^my\s+love[,.]?\s*$/i.test(p))
     .filter((p) => !/^my\s+dear[,.]?\s*$/i.test(p));
 
-  return (
-    <div className="mll-page">
-      <style>{styles}</style>
-      <Nav />
+  const quotes = data.shareableQuotes ?? [];
 
-      <div className="mll-container">
-        <div className="mll-logo-corner">
+  const handleDownloadPdf = async () => {
+    if (pdfBusy) return;
+    setPdfBusy(true);
+    try {
+      const [{ pdf }, { default: LoveLetterPDF }] = await Promise.all([
+        import("@react-pdf/renderer"),
+        import("@/components/LoveLetterPDF"),
+      ]);
+      const blob = await pdf(
+        <LoveLetterPDF
+          letter={data.letter}
+          name={data.meta?.name}
+          date={today}
+        />,
+      ).toBlob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      const safeName = (data.meta?.name || "love-letter")
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "");
+      a.download = `bluntchart-love-letter-${safeName}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 2_000);
+    } catch (err) {
+      console.error("[love-letter-pdf] download failed:", err);
+      alert("Could not generate the PDF. Please try again.");
+    } finally {
+      setPdfBusy(false);
+    }
+  };
+
+  return (
+      <div className="fll-reading-container">
+        <div className="fll-reading-logo">
           <Link href="/">
             <Image src="/mascot.png" alt="BluntChart" width={24} height={24} style={{ borderRadius: "50%", opacity: 0.6 }} />
           </Link>
         </div>
 
-        <div className="mll-header">
-          <p className="mll-eyebrow">A LOVE LETTER</p>
-          <h1 className="mll-h1">FROM YOUR FUTURE HUSBAND</h1>
+        <div className="fll-reading-header">
+          <p className="fll-reading-eyebrow">A LOVE LETTER</p>
+          <h1 className="fll-reading-h1">FROM YOUR {FUTURE_PERSON_LABEL.toUpperCase()}</h1>
         </div>
 
-        <div className="mll-paper">
-          <div className="mll-paper-inner">
-            <p className="mll-paper-date">{today}</p>
-            <p className="mll-paper-salutation">My love,</p>
+        {/* Beige paper letter */}
+        <div className="fll-paper">
+          <div className="fll-paper-inner">
+            <p className="fll-paper-date">{today}</p>
+            <p className="fll-paper-salutation">My love,</p>
             {paragraphs.map((p, i) => {
-              if (p.startsWith("Yours,") || p === "Someone worth waiting for" || p === "♥") {
-                return <p key={i} className="mll-paper-closing">{p}</p>;
+              if (p.startsWith("Yours,") || p === SIGNATURE || p === "♥") {
+                return <p key={i} className="fll-paper-closing">{p}</p>;
               }
-              return <p key={i} className="mll-paper-body">{p}</p>;
+              return <p key={i} className="fll-paper-body">{p}</p>;
             })}
           </div>
         </div>
 
-        {data.shareableQuotes && data.shareableQuotes.length > 0 && (
-          <div className="mll-share-section">
-            <h2 className="mll-section-heading">KEEP THE PART THAT GOT YOU.</h2>
-            <p className="mll-share-sub">Pick one line. Tap to copy.</p>
-            <div className="mll-share-quotes">
-              {data.shareableQuotes.map((q, i) => (
+        {/* Download PDF */}
+        <div className="mll-download-wrap">
+          <button
+            className="mll-download-btn"
+            onClick={handleDownloadPdf}
+            disabled={pdfBusy}
+            type="button"
+          >
+            {pdfBusy ? "Preparing your letter..." : "Download as PDF"}
+          </button>
+        </div>
+
+        {/* Feedback */}
+        <div className="fll-feedback-section">
+          <h2 className="fll-section-heading">
+            BE HONEST.<br />DID HE GET YOU?
+          </h2>
+          <div className="fll-feedback-options">
+            {[
+              { value: "positive", label: "Annoyingly, yes." },
+              { value: "partial", label: "A little too much." },
+              { value: "negative", label: "He's got work to do." },
+            ].map((opt) => (
+              <button
+                key={opt.value}
+                className={`fll-feedback-btn ${feedback === opt.value ? "active" : ""}`}
+                onClick={() => setFeedback(opt.value)}
+                type="button"
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
+          {feedback && !feedbackSent && (
+            <div className="fll-feedback-text-wrap">
+              <p className="fll-feedback-prompt">What line made you stop scrolling?</p>
+              <textarea
+                className="fll-feedback-textarea"
+                placeholder="Paste the line that hit different..."
+                value={feedbackText}
+                onChange={(e) => setFeedbackText(e.target.value)}
+                rows={3}
+              />
+              <button
+                className="fll-btn-secondary"
+                onClick={() => setFeedbackSent(true)}
+                type="button"
+              >
+                {feedbackText.trim() ? "Send" : "Skip"}
+              </button>
+            </div>
+          )}
+          {feedbackSent && (
+            <p className="fll-feedback-thanks">Thanks. He&rsquo;ll try to keep it up.</p>
+          )}
+          {feedback && (
+            <Link href="/reviews/love-letter" className="fll-review-link">
+              Leave a review &rarr;
+            </Link>
+          )}
+        </div>
+
+        {/* Shareable quotes */}
+        {quotes.length > 0 && (
+          <div className="fll-share-section">
+            <h2 className="fll-section-heading">KEEP THE PART THAT GOT YOU.</h2>
+            <p className="fll-share-sub">
+              You don&rsquo;t have to expose the entire emotional damage report.<br />
+              Pick one line. Tap to copy.
+            </p>
+            <div className="fll-share-quotes">
+              {quotes.map((q, i) => (
                 <button
                   key={i}
-                  className="mll-share-card"
+                  className={`fll-share-card ${selectedQuote === i ? "selected" : ""}`}
                   onClick={() => {
-                    const text = `"${q}"\n\n— A Love Letter From My Future Husband\nbluntchart.com/future-love-letter`;
+                    setSelectedQuote(i);
+                    const text = `"${q}"\n\n— A Love Letter From My ${FUTURE_PERSON_LABEL}\nbluntchart.com/future-love-letter`;
                     navigator.clipboard.writeText(text).then(() => {
                       setCopiedQuote(i);
                       setTimeout(() => setCopiedQuote(null), 2000);
@@ -132,10 +243,10 @@ function LoveLetterContent() {
                   }}
                   type="button"
                 >
-                  <span className="mll-share-card-quote">&ldquo;{q}&rdquo;</span>
-                  <span className="mll-share-card-attr">A Love Letter From My Future Husband</span>
-                  <span className="mll-share-card-brand">bluntchart.com</span>
-                  <span className="mll-share-card-copy">
+                  <span className="fll-share-card-quote">&ldquo;{q}&rdquo;</span>
+                  <span className="fll-share-card-attr">A Love Letter From My {FUTURE_PERSON_LABEL}</span>
+                  <span className="fll-share-card-brand">bluntchart.com</span>
+                  <span className="fll-share-card-copy">
                     {copiedQuote === i ? "Copied!" : "Tap to copy"}
                   </span>
                 </button>
@@ -144,14 +255,97 @@ function LoveLetterContent() {
           </div>
         )}
 
-        <div className="mll-review-section">
-          <h2 className="mll-section-heading">DID HE GET YOU?</h2>
-          <Link href="/reviews/love-letter" className="mll-cta">
-            LEAVE A REVIEW &rarr;
-          </Link>
+        {/* Segmentation + upsell */}
+        <div className="fll-segment-section">
+          <h2 className="fll-section-heading">
+            OKAY, ONE QUESTION&hellip;<br />
+            WHO WERE YOU THINKING ABOUT<br />
+            WHILE READING THAT?
+          </h2>
+          <div className="fll-segment-options">
+            {SEGMENTS.map((opt) => (
+              <button
+                key={opt.value}
+                className={`fll-segment-btn ${segment === opt.value ? "active" : ""}`}
+                onClick={() => setSegment(opt.value)}
+                type="button"
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
+          <p className="fll-segment-micro">No names. We&rsquo;re just nosy.</p>
+
+          {segment === "single" && (
+            <div className="fll-upsell">
+              <h3 className="fll-upsell-heading">
+                HE TOLD YOU HOW HE&rsquo;LL LOVE YOU.<br />
+                NOW FIND OUT WHY YOU NEED<br />
+                LOVE THAT WAY IN THE FIRST PLACE.
+              </h3>
+              <p className="fll-upsell-body">
+                The letter only explored a slice of your chart. Go deeper into the patterns,
+                contradictions, emotional needs and parts of yourself that don&rsquo;t fit
+                neatly into a zodiac-sign description.
+              </p>
+              <Link href="/in-depth-birth-chart" className="fll-cta">
+                GO DEEPER INTO MY CHART &rarr;
+              </Link>
+            </div>
+          )}
+
+          {segment === "someone" && (
+            <div className="fll-upsell">
+              <h3 className="fll-upsell-heading">
+                OH.<br />SO THERE IS A SUSPECT.
+              </h3>
+              <p className="fll-upsell-body">
+                Your letter started with your chart. If you have their birth details,
+                we can put both charts on the table.
+              </p>
+              <Link href="/#waitlist" className="fll-cta">
+                CHECK OUR COMPATIBILITY &rarr;
+              </Link>
+              <p className="fll-upsell-alt">
+                Or{" "}
+                <Link href="/in-depth-birth-chart" className="fll-link">
+                  go deeper into your own chart &rarr;
+                </Link>
+              </p>
+            </div>
+          )}
+
+          {segment === "partner" && (
+            <div className="fll-upsell">
+              <h3 className="fll-upsell-heading">
+                YOU HAD SOMEONE IN MIND,<br />DIDN&rsquo;T YOU?
+              </h3>
+              <p className="fll-upsell-body">
+                A letter can explore your relationship patterns. Two birth charts
+                let us explore what happens when yours meets theirs.
+              </p>
+              <Link href="/#waitlist" className="fll-cta">
+                READ OUR COMPATIBILITY &rarr;
+              </Link>
+            </div>
+          )}
+
+          {segment === "husband" && (
+            <div className="fll-upsell">
+              <h3 className="fll-upsell-heading">OH, SO YOU BROUGHT RECEIPTS.</h3>
+              <p className="fll-upsell-body">
+                You&rsquo;ve already got the husband. Now put both charts on the table
+                and see how the relationship looks astrologically.
+              </p>
+              <Link href="/#waitlist" className="fll-cta">
+                READ OUR COMPATIBILITY &rarr;
+              </Link>
+            </div>
+          )}
         </div>
 
-        <div className="mll-disclaimer">
+        {/* Disclaimer */}
+        <div className="fll-disclaimer-box">
           <p>
             One little note: this isn&rsquo;t literally a letter from your future husband.
             He&rsquo;s a fictional character created from the relationship themes in your chart,
@@ -159,22 +353,21 @@ function LoveLetterContent() {
           </p>
           <p>
             For a deeper look at your potential spouse and partnership themes, explore our{" "}
-            <Link href="/in-depth-birth-chart" className="mll-disclaimer-link">
+            <Link href="/in-depth-birth-chart" className="fll-link">
               Future Spouse Reading
             </Link>.
           </p>
         </div>
       </div>
-    </div>
   );
 }
 
 function Nav() {
   return (
-    <nav className="mll-nav">
-      <Link href="/" className="mll-nav-logo">
+    <nav className="fll-nav-static">
+      <Link href="/" className="fll-nav-logo-link">
         <Image src="/mascot.png" alt="BluntChart" width={28} height={28} style={{ borderRadius: "50%" }} />
-        <span className="mll-nav-logo-text">BluntChart</span>
+        <span className="fll-nav-logo-label">BluntChart</span>
       </Link>
     </nav>
   );
@@ -182,30 +375,41 @@ function Nav() {
 
 export default function MyLoveLetterPage() {
   return (
-    <Suspense fallback={<div className="mll-page"><style>{styles}</style><Nav /><div className="mll-loading"><p>Loading...</p></div></div>}>
-      <LoveLetterContent />
-    </Suspense>
+    <div className="fll-page">
+      <style>{styles}</style>
+      <Nav />
+      <VibrantStarBackground />
+      <Suspense fallback={<div className="mll-loading"><p>Loading...</p></div>}>
+        <LoveLetterContent />
+      </Suspense>
+    </div>
   );
 }
 
 const styles = `
-.mll-page {
+.fll-page {
+  position: relative;
   min-height: 100vh;
   background: #07070d;
   color: #e8e4f0;
+  overflow-x: hidden;
   font-family: var(--font-body, 'DM Sans', system-ui, sans-serif);
 }
-.mll-nav {
+
+/* Nav */
+.fll-nav-static {
+  position: relative;
+  z-index: 10;
   padding: 18px 24px;
   border-bottom: 1px solid rgba(255,255,255,0.06);
 }
-.mll-nav-logo {
+.fll-nav-logo-link {
   display: inline-flex;
   align-items: center;
   gap: 8px;
   text-decoration: none;
 }
-.mll-nav-logo-text {
+.fll-nav-logo-label {
   font-family: var(--font-display, 'Playfair Display', Georgia, serif);
   font-size: 1.1rem;
   font-weight: 700;
@@ -214,18 +418,11 @@ const styles = `
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
-.mll-container {
-  max-width: 680px;
-  margin: 0 auto;
-  padding: 48px 24px 96px;
-  position: relative;
-}
-.mll-logo-corner {
-  position: absolute;
-  top: 48px;
-  right: 24px;
-}
+
+/* Loading / Error */
 .mll-loading, .mll-error {
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -235,162 +432,402 @@ const styles = `
   gap: 24px;
   color: rgba(232,228,240,0.5);
 }
-.mll-header {
+
+/* Reading container */
+.fll-reading-container {
+  position: relative;
+  z-index: 1;
+  padding: 96px 24px 80px;
+  max-width: 720px;
+  margin: 0 auto;
+}
+.fll-reading-logo {
+  position: absolute;
+  top: 96px;
+  right: 24px;
+  z-index: 10;
+}
+.fll-reading-header {
   text-align: center;
   margin-bottom: 48px;
 }
-.mll-eyebrow {
+.fll-reading-eyebrow {
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 3px;
+  color: rgba(232,228,240,0.6);
+  margin-bottom: 12px;
+}
+.fll-reading-h1 {
+  font-family: var(--font-display, 'Playfair Display', Georgia, serif);
+  font-size: clamp(28px, 6vw, 44px);
+  font-weight: 400;
   color: #F0B84A;
-  margin-bottom: 14px;
+  margin: 0 0 16px;
 }
-.mll-h1 {
-  font-family: var(--font-display, 'Playfair Display', Georgia, serif);
-  font-size: clamp(24px, 5vw, 36px);
-  font-weight: 400;
-  color: #f0e9dc;
-  margin: 0;
-  line-height: 1.2;
+
+/* Beige paper */
+.fll-paper {
+  position: relative;
+  background: linear-gradient(170deg, #faf6ee 0%, #f2eadb 60%, #ede4d3 100%);
+  border-radius: 3px;
+  padding: 4px;
+  box-shadow:
+    0 2px 8px rgba(0,0,0,0.12),
+    0 20px 60px rgba(0,0,0,0.3),
+    0 0 80px rgba(240,184,74,0.05);
 }
-.mll-paper {
-  background: rgba(255,255,255,0.02);
-  border: 0.5px solid rgba(255,255,255,0.07);
-  border-radius: 20px;
-  padding: 40px 32px;
-  margin-bottom: 48px;
+.fll-paper::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 3px;
+  background: repeating-linear-gradient(
+    0deg, transparent, transparent 28px,
+    rgba(180,160,130,0.05) 28px, rgba(180,160,130,0.05) 29px
+  );
+  pointer-events: none;
 }
-@media (max-width: 600px) {
-  .mll-paper { padding: 28px 20px; }
+.fll-paper-inner {
+  padding: clamp(32px, 6vw, 56px) clamp(28px, 5vw, 48px);
 }
-.mll-paper-inner {
-  max-width: 560px;
-  margin: 0 auto;
-}
-.mll-paper-date {
+.fll-paper-date {
   font-size: 12px;
-  color: rgba(232,228,240,0.25);
-  margin-bottom: 20px;
+  color: #9a8a6a;
+  margin-bottom: 28px;
 }
-.mll-paper-salutation {
+.fll-paper-salutation {
   font-family: var(--font-display, 'Playfair Display', Georgia, serif);
   font-style: italic;
-  font-size: 18px;
-  color: rgba(232,228,240,0.7);
-  margin-bottom: 20px;
-}
-.mll-paper-body {
-  font-size: 15px;
-  line-height: 1.9;
-  color: rgba(232,228,240,0.72);
-  margin-bottom: 16px;
-}
-.mll-paper-closing {
-  font-family: var(--font-display, 'Playfair Display', Georgia, serif);
-  font-style: italic;
-  font-size: 16px;
-  color: rgba(232,228,240,0.55);
-  margin-top: 28px;
-}
-.mll-section-heading {
-  font-family: var(--font-display, 'Playfair Display', Georgia, serif);
-  font-size: clamp(18px, 3.5vw, 24px);
-  font-weight: 400;
-  color: #f0e9dc;
-  text-align: center;
-  margin: 0 0 20px;
-}
-.mll-share-section {
-  margin-bottom: 48px;
-  text-align: center;
-}
-.mll-share-sub {
-  font-size: 14px;
-  color: rgba(232,228,240,0.4);
+  font-size: 20px;
+  color: #3a3428;
   margin-bottom: 24px;
 }
-.mll-share-quotes {
+.fll-paper-body {
+  font-family: var(--font-display, 'Playfair Display', Georgia, serif);
+  font-size: clamp(15px, 2.5vw, 17px);
+  line-height: 1.85;
+  color: #3a3428;
+  margin-bottom: 18px;
+}
+.fll-paper-closing {
+  font-family: var(--font-display, 'Playfair Display', Georgia, serif);
+  font-style: italic;
+  font-size: 17px;
+  color: #5a4e3a;
+  margin-bottom: 8px;
+  margin-top: 32px;
+}
+
+/* Download button */
+.mll-download-wrap {
+  text-align: center;
+  margin-top: 28px;
+}
+.mll-download-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 32px;
+  background: rgba(255,255,255,0.08);
+  border: 0.5px solid rgba(240,184,74,0.3);
+  border-radius: 50px;
+  color: rgba(240,184,74,0.85);
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.25s;
+}
+.mll-download-btn:hover {
+  background: rgba(240,184,74,0.08);
+  border-color: rgba(240,184,74,0.4);
+  color: #F0B84A;
+}
+.mll-download-btn:disabled {
+  opacity: 0.5;
+  cursor: wait;
+}
+
+/* Section heading */
+.fll-section-heading {
+  font-family: var(--font-display, 'Playfair Display', Georgia, serif);
+  font-size: clamp(24px, 4.5vw, 36px);
+  font-weight: 400;
+  line-height: 1.25;
+  color: #f0e9dc;
+  margin-bottom: 20px;
+}
+
+/* Feedback */
+.fll-feedback-section {
+  margin-top: 80px;
+  text-align: center;
+}
+.fll-feedback-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 24px;
+}
+.fll-feedback-btn {
+  padding: 12px 24px;
+  background: rgba(255,255,255,0.08);
+  border: 0.5px solid rgba(255,255,255,0.18);
+  border-radius: 50px;
+  color: rgba(232,228,240,0.85);
+  font-family: var(--font-body);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.fll-feedback-btn:hover {
+  background: rgba(255,255,255,0.12);
+  border-color: rgba(240,184,74,0.35);
+}
+.fll-feedback-btn.active {
+  background: rgba(240,184,74,0.1);
+  border-color: rgba(240,184,74,0.35);
+  color: #F0B84A;
+}
+.fll-feedback-text-wrap {
+  margin-top: 24px;
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.fll-feedback-prompt {
+  font-size: 14px;
+  color: rgba(232,228,240,0.5);
+  margin-bottom: 12px;
+}
+.fll-feedback-textarea {
+  width: 100%;
+  background: rgba(255,255,255,0.04);
+  border: 0.5px solid rgba(255,255,255,0.1);
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 14px;
+  color: #e8e4f0;
+  font-family: inherit;
+  outline: none;
+  resize: vertical;
+  margin-bottom: 12px;
+}
+.fll-feedback-textarea:focus {
+  border-color: rgba(240,184,74,0.35);
+}
+.fll-feedback-thanks {
+  font-size: 14px;
+  color: rgba(240,184,74,0.6);
+  font-style: italic;
+  margin-top: 16px;
+}
+.fll-review-link {
+  display: inline-block;
+  margin-top: 20px;
+  font-size: 13px;
+  color: #F0B84A;
+  text-decoration: none;
+  font-weight: 500;
+  transition: opacity 0.2s;
+}
+.fll-review-link:hover { opacity: 0.7; }
+.fll-btn-secondary {
+  padding: 10px 28px;
+  background: rgba(255,255,255,0.08);
+  border: 0.5px solid rgba(255,255,255,0.18);
+  border-radius: 50px;
+  color: rgba(232,228,240,0.85);
+  font-family: var(--font-body);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.fll-btn-secondary:hover { background: rgba(255,255,255,0.1); }
+
+/* Share */
+.fll-share-section {
+  margin-top: 80px;
+  text-align: center;
+}
+.fll-share-sub {
+  font-size: 14px;
+  color: rgba(232,228,240,0.65);
+  margin-bottom: 28px;
+  line-height: 1.6;
+}
+.fll-share-quotes {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 14px;
+  max-width: 440px;
+  margin: 0 auto;
 }
-.mll-share-card {
-  background: rgba(255,255,255,0.025);
-  border: 0.5px solid rgba(255,255,255,0.08);
-  border-radius: 16px;
-  padding: 24px;
-  cursor: pointer;
+.fll-share-card {
+  position: relative;
+  background: linear-gradient(170deg, rgba(250,246,238,0.08) 0%, rgba(240,184,74,0.05) 100%);
+  border: 0.5px solid rgba(255,255,255,0.15);
+  border-radius: 14px;
+  padding: 24px 22px 18px;
   text-align: left;
-  transition: border-color 0.2s;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.fll-share-card:hover {
+  border-color: rgba(240,184,74,0.2);
+}
+.fll-share-card.selected {
+  border-color: rgba(240,184,74,0.35);
+  box-shadow: 0 0 28px rgba(240,184,74,0.06);
+}
+.fll-share-card-quote {
+  display: block;
+  font-family: var(--font-display, 'Playfair Display', Georgia, serif);
+  font-style: italic;
+  font-size: 15px;
+  line-height: 1.6;
+  color: #f0e9dc;
+  margin-bottom: 14px;
+}
+.fll-share-card-attr {
+  display: block;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: rgba(240,184,74,0.65);
+  margin-bottom: 3px;
+}
+.fll-share-card-brand {
+  font-size: 10px;
+  color: rgba(232,228,240,0.4);
+}
+.fll-share-card-copy {
+  display: block;
+  margin-top: 10px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: rgba(240,184,74,0.7);
+  transition: color 0.2s;
+}
+.fll-share-card:hover .fll-share-card-copy { color: rgba(240,184,74,0.8); }
+.fll-share-card.selected .fll-share-card-copy { color: #F0B84A; }
+
+/* Segmentation */
+.fll-segment-section {
+  margin-top: 80px;
+  text-align: center;
+}
+.fll-segment-options {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  max-width: 360px;
+  margin: 24px auto 0;
 }
-.mll-share-card:hover {
-  border-color: rgba(212,83,126,0.3);
-}
-.mll-share-card-quote {
-  font-family: var(--font-display, 'Playfair Display', Georgia, serif);
-  font-style: italic;
-  font-size: 15px;
-  color: rgba(232,228,240,0.75);
-  line-height: 1.7;
-}
-.mll-share-card-attr {
-  font-size: 11px;
-  color: rgba(232,228,240,0.3);
-  font-weight: 600;
-  letter-spacing: 0.04em;
-}
-.mll-share-card-brand {
-  font-size: 11px;
-  color: rgba(240,184,74,0.5);
-}
-.mll-share-card-copy {
-  font-size: 11px;
-  font-weight: 600;
-  color: #d4537e;
-  letter-spacing: 0.04em;
-}
-.mll-review-section {
+.fll-segment-btn {
+  padding: 14px 24px;
+  background: rgba(255,255,255,0.08);
+  border: 0.5px solid rgba(255,255,255,0.18);
+  border-radius: 50px;
+  color: rgba(232,228,240,0.85);
+  font-family: var(--font-body);
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
   text-align: center;
-  margin-bottom: 48px;
 }
-.mll-cta {
-  display: inline-flex;
-  padding: 14px 32px;
-  background: linear-gradient(135deg, #6b2fd4, #d4537e);
-  color: #fff;
+.fll-segment-btn:hover {
+  background: rgba(255,255,255,0.12);
+  border-color: rgba(240,184,74,0.35);
+}
+.fll-segment-btn.active {
+  background: rgba(240,184,74,0.1);
+  border-color: rgba(240,184,74,0.35);
+  color: #F0B84A;
+}
+.fll-segment-micro {
   font-size: 12px;
+  color: rgba(232,228,240,0.25);
+  margin-top: 14px;
+}
+
+/* Upsell */
+.fll-upsell {
+  margin-top: 48px;
+  padding: 36px 28px;
+  background: rgba(240,184,74,0.03);
+  border: 0.5px solid rgba(240,184,74,0.1);
+  border-radius: 20px;
+  animation: fll-fade-in 0.5s ease-out;
+}
+@keyframes fll-fade-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.fll-upsell-heading {
+  font-family: var(--font-display, 'Playfair Display', Georgia, serif);
+  font-size: clamp(20px, 4vw, 28px);
+  font-weight: 400;
+  line-height: 1.3;
+  color: #f0e9dc;
+  margin-bottom: 16px;
+}
+.fll-upsell-body {
+  font-size: 15px;
+  line-height: 1.7;
+  color: rgba(232,228,240,0.55);
+  margin-bottom: 24px;
+}
+.fll-upsell-alt {
+  font-size: 13px;
+  color: rgba(232,228,240,0.35);
+  margin-top: 14px;
+}
+
+/* CTA */
+.fll-cta {
+  display: inline-block;
+  padding: 18px 48px;
+  background: linear-gradient(135deg, #F0B84A 0%, #d4a03c 100%);
+  color: #1a1408;
+  font-family: var(--font-body);
+  font-size: 14px;
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 1.5px;
   text-transform: uppercase;
   text-decoration: none;
-  border-radius: 10px;
   border: none;
+  border-radius: 50px;
   cursor: pointer;
-  transition: opacity 0.2s;
+  transition: transform 0.2s, box-shadow 0.2s;
 }
-.mll-cta:hover { opacity: 0.85; }
-.mll-disclaimer {
+.fll-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(240,184,74,0.35);
+}
+
+.fll-link {
+  color: rgba(240,184,74,0.5);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* Disclaimer */
+.fll-disclaimer-box {
   text-align: center;
   font-size: 12px;
   line-height: 1.7;
   color: rgba(232,228,240,0.25);
-  padding-top: 24px;
+  padding-top: 40px;
+  margin-top: 60px;
   border-top: 0.5px solid rgba(255,255,255,0.06);
 }
-.mll-disclaimer p {
+.fll-disclaimer-box p {
   margin-bottom: 8px;
-}
-.mll-disclaimer-link {
-  color: rgba(240,184,74,0.5);
-  text-decoration: underline;
-  text-underline-offset: 2px;
-  transition: color 0.2s;
-}
-.mll-disclaimer-link:hover {
-  color: #F0B84A;
 }
 `;
