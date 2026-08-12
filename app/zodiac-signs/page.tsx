@@ -321,7 +321,10 @@ export default function ZodiacSignsPage() {
                 </div>
 
                 {/* Read more */}
-                <span style={{ fontSize:13, fontWeight:600, color:sign.color }}>Read full {sign.name} guide →</span>
+                <div style={{ display:"flex", gap:16, alignItems:"center", flexWrap:"wrap" }}>
+                  <span style={{ fontSize:13, fontWeight:600, color:sign.color }}>Read full {sign.name} guide →</span>
+                  <Link href={`/sun-in-${sign.slug}`} onClick={(e) => e.stopPropagation()} style={{ fontSize:12, fontWeight:500, color:"#F0B84A", textDecoration:"none", opacity:0.7 }}>Sun in {sign.name} →</Link>
+                </div>
               </div>
             </Link>
           ))}
