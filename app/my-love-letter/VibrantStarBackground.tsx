@@ -61,11 +61,11 @@ export default function VibrantStarBackground() {
         x: Math.random() * canvas.width * 0.7,
         y: Math.random() * canvas.height * 0.25,
         len: 70 + Math.random() * 90,
-        speed: 5 + Math.random() * 5,
+        speed: 2 + Math.random() * 2.5,
         angle: Math.PI / 4 + (Math.random() - 0.5) * 0.4,
         alpha: 0,
         life: 0,
-        maxLife: 55 + Math.random() * 35,
+        maxLife: 80 + Math.random() * 50,
       });
     }
 
