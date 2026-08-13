@@ -61,6 +61,7 @@ function MyReadingContent() {
   );
   const [error, setError] = useState("");
   const [reading, setReading] = useState<Record<string, unknown> | null>(null);
+  const [pdfBusy, setPdfBusy] = useState(false);
 
   useEffect(() => {
     if (!token) {
@@ -138,7 +139,13 @@ function MyReadingContent() {
     : [];
 
   const preview = Array.isArray(reading?.preview)
-    ? (reading!.preview as Array<{ planet?: string; truth?: string }>)
+    ? (reading!.preview as Array<{
+        planet?: string;
+        hook?: string;
+        truth?: string;
+        reveal?: string;
+        cliffhanger?: string;
+      }>)
     : [];
 
   const rawCard = reading?.shareCard as Record<string, unknown> | undefined;
@@ -164,6 +171,45 @@ const meta = reading?.meta as Record<string, unknown> | undefined;
     return null;
   })();
 
+  const resolvedName =
+    (reading?.name as string) ?? (meta?.name as string) ?? "";
+
+  const handleDownloadPdf = async () => {
+    if (pdfBusy) return;
+    setPdfBusy(true);
+    try {
+      const [{ pdf }, { default: ReadingPDF }] = await Promise.all([
+        import("@react-pdf/renderer"),
+        import("@/components/ReadingPDF"),
+      ]);
+      const blob = await pdf(
+        <ReadingPDF
+          name={resolvedName || "you"}
+          letterOpener={letterOpener}
+          preview={preview}
+          paidInsights={paidInsights}
+        />,
+      ).toBlob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      const safeName = (resolvedName || "reading")
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "");
+      a.download = `bluntchart-reading-${safeName}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 2_000);
+    } catch (err) {
+      console.error("[reading-pdf] download failed:", err);
+      alert("Could not generate the PDF. Please try again.");
+    } finally {
+      setPdfBusy(false);
+    }
+  };
+
   /* Pull Sun/Moon/Rising from REAL chart data OR fall back to AI planets */
   const aiPlanets = reading?.planets as Record<string, string> | undefined;
   const sunSign =
@@ -179,9 +225,6 @@ const meta = reading?.meta as Record<string, unknown> | undefined;
      - NEW format:  { line1, line2, line3 }           ← from updated claude-prompt.ts
      - OLD format:  { lines: [line1, line2, line3] }  ← backwards compat
   */
-  const resolvedName =
-    (reading?.name as string) ?? (meta?.name as string) ?? "";
-
   const lines = rawCard?.lines as string[] | undefined;
 
   const shareCardProps: ShareCardData | null =
@@ -203,9 +246,37 @@ const meta = reading?.meta as Record<string, unknown> | undefined;
   return (
     <main className="min-h-screen bg-[#09090f] text-[#e8e4f0] py-12 px-4 sm:px-6 lg:px-10">
       <div className="max-w-6xl mx-auto w-full">
-        <p className="text-xs uppercase tracking-[0.2em] text-[#6b6585] mb-3">
-          BluntChart · Your full reading
-        </p>
+        <div className="flex items-center justify-between mb-3">
+          <p className="text-xs uppercase tracking-[0.2em] text-[#6b6585]">
+            BluntChart · Your full reading
+          </p>
+          <button
+            onClick={handleDownloadPdf}
+            disabled={pdfBusy}
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold text-white transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:brightness-110 active:scale-[0.97]"
+            style={{
+              background: "linear-gradient(135deg, #6b2fd4, #d4537e, #f0b84a)",
+            }}
+            type="button"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+              <polyline points="7 10 12 15 17 10" />
+              <line x1="12" y1="15" x2="12" y2="3" />
+            </svg>
+            {pdfBusy ? "Preparing..." : "Download PDF"}
+          </button>
+        </div>
 
         {/* Letter Opener */}
         {letterOpener ? (
@@ -249,24 +320,38 @@ const meta = reading?.meta as Record<string, unknown> | undefined;
           </section>
         )}
 
-        {/* Preview Insights */}
+        {/* Preview Insights (full content, same styling as paid) */}
         {preview.length > 0 && (
           <section className="mb-10">
             <h2 className="text-xs uppercase tracking-widest text-[#9b6fe8] mb-5">
               Preview insights
             </h2>
             {preview.map((ins, i) => (
-              <div
+              <article
                 key={i}
-                className="mb-6 p-6 rounded-xl border border-white/10 bg-white/[0.03]"
+                className="mb-10 p-7 sm:p-9 rounded-2xl border border-white/10 bg-white/[0.03]"
               >
                 {ins.planet && (
-                  <div className="text-xs uppercase tracking-wider text-[#6b6585] mb-3">
+                  <div className="text-xs uppercase tracking-[0.14em] text-[#6b6585] mb-5 font-semibold">
                     {ins.planet}
                   </div>
                 )}
-                <ReadingText text={ins.truth ?? ""} />
-              </div>
+                {ins.hook && (
+                  <p className="text-xl sm:text-2xl font-serif font-semibold leading-snug mb-6 text-[#f0ece8]">
+                    {ins.hook}
+                  </p>
+                )}
+                {ins.truth && (
+                  <div className="text-[#b8b0d4] mb-6 text-base sm:text-[1.05rem] leading-relaxed max-w-3xl">
+                    <ReadingText text={ins.truth} className="space-y-4" />
+                  </div>
+                )}
+                {ins.reveal && (
+                  <p className="text-base sm:text-lg font-serif italic text-[#d8d2ec] leading-relaxed">
+                    {ins.reveal}
+                  </p>
+                )}
+              </article>
             ))}
           </section>
         )}
