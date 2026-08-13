@@ -58,16 +58,16 @@ export default function VibrantStarBackground() {
     }
 
     function spawnShootingStar() {
-      if (shootingStars.length >= 2) return;
+      if (shootingStars.length >= 1) return;
       shootingStars.push({
         x: Math.random() * c.width * 0.7,
-        y: Math.random() * c.height * 0.25,
+        y: Math.random() * c.height * 0.2,
         len: 70 + Math.random() * 90,
-        speed: 2 + Math.random() * 2.5,
+        speed: 1.5 + Math.random() * 1.5,
         angle: Math.PI / 4 + (Math.random() - 0.5) * 0.4,
         alpha: 0,
         life: 0,
-        maxLife: 80 + Math.random() * 50,
+        maxLife: 100 + Math.random() * 60,
       });
     }
 
@@ -119,7 +119,7 @@ export default function VibrantStarBackground() {
       }
 
       frame++;
-      if (frame % 60 === 0 && Math.random() < 0.8)
+      if (frame % 180 === 0 && Math.random() < 0.6)
         spawnShootingStar();
       animationId = requestAnimationFrame(draw);
     }
@@ -146,7 +146,7 @@ export default function VibrantStarBackground() {
         width: "100%",
         height: "100%",
         pointerEvents: "none",
-        zIndex: 0,
+        zIndex: -1,
       }}
     />
   );
