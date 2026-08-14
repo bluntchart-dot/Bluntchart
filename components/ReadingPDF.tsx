@@ -29,148 +29,248 @@ interface Props {
   paidInsights: PaidInsight[];
 }
 
-const PURPLE = "#6b2fd4";
+/* ── Palette ── */
+const COVER_BG = "#0a0910";
+const COVER_TEXT = "#efe9dc";
+const COVER_DIM = "#7a736a";
 const GOLD = "#f0b84a";
-const BG = "#0e0e18";
-const CARD_BG = "#16162a";
-const WHITE = "#e8e4f0";
-const DIM = "#9b95b0";
-const ACCENT = "#c4a8ff";
+const PURPLE = "#7a5abf";
+const PAGE_BG = "#ffffff";
+const INK = "#1a1420";
+const MUTED = "#5a5468";
+const LIGHT_CARD = "#f5f2f8";
+const RULE = "#d8d0e4";
 
 const s = StyleSheet.create({
-  page: {
-    paddingTop: 56,
-    paddingBottom: 64,
-    paddingHorizontal: 48,
-    backgroundColor: BG,
-    fontFamily: "Helvetica",
-    fontSize: 11,
-    lineHeight: 1.7,
-    color: WHITE,
+  /* ── Cover page (dark) ── */
+  cover: {
+    padding: 0,
+    backgroundColor: COVER_BG,
+    color: COVER_TEXT,
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
   },
-  brand: {
+  coverInner: {
+    paddingTop: 48,
+    paddingBottom: 48,
+    paddingHorizontal: 56,
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    textAlign: "center",
+  },
+  coverBrand: {
     fontSize: 10,
     letterSpacing: 4,
     color: GOLD,
     fontFamily: "Helvetica-Bold",
-    textAlign: "center",
-    marginBottom: 8,
   },
-  subtitle: {
+  coverTitle: {
+    fontFamily: "Times-Bold",
+    fontSize: 48,
+    lineHeight: 1.15,
+    color: "#f5c99e",
+    letterSpacing: -1,
+    textAlign: "center",
+    marginTop: 44,
+  },
+  coverSubtitle: {
+    fontFamily: "Times-Italic",
+    fontSize: 13,
+    lineHeight: 1.6,
+    color: "#c4bdb2",
+    textAlign: "center",
+    marginTop: 20,
+  },
+  coverPreparedLabel: {
+    fontSize: 9,
+    letterSpacing: 3,
+    color: COVER_DIM,
+    fontFamily: "Helvetica-Bold",
+    marginTop: 56,
+  },
+  coverName: {
+    fontFamily: "Times-Roman",
+    fontSize: 22,
+    lineHeight: 1.2,
+    color: COVER_TEXT,
+    textAlign: "center",
+    marginTop: 10,
+  },
+  coverFooter: {
+    position: "absolute",
+    bottom: 36,
+    left: 0,
+    right: 0,
+    textAlign: "center",
     fontSize: 9,
     letterSpacing: 2,
-    color: DIM,
-    textAlign: "center",
-    marginBottom: 32,
+    color: COVER_DIM,
+    fontFamily: "Helvetica",
   },
-  divider: {
-    width: 50,
-    height: 1,
-    backgroundColor: PURPLE,
-    alignSelf: "center",
+
+  /* ── Content pages (white) ── */
+  page: {
+    paddingTop: 64,
+    paddingBottom: 64,
+    paddingHorizontal: 56,
+    backgroundColor: PAGE_BG,
+    color: INK,
+    fontFamily: "Times-Roman",
+    fontSize: 11,
+    lineHeight: 1.7,
+  },
+  pageHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     marginBottom: 28,
+    paddingBottom: 12,
+    borderBottomWidth: 0.5,
+    borderBottomColor: RULE,
+  },
+  pageHeaderBrand: {
+    fontSize: 7,
+    letterSpacing: 3,
+    color: PURPLE,
+    fontFamily: "Helvetica-Bold",
+  },
+  pageHeaderSection: {
+    fontSize: 7,
+    letterSpacing: 2,
+    color: MUTED,
+    fontFamily: "Helvetica",
+  },
+  sectionEyebrow: {
+    fontSize: 8,
+    letterSpacing: 3,
+    color: PURPLE,
+    fontFamily: "Helvetica-Bold",
+    marginBottom: 6,
     marginTop: 4,
   },
-  letterOpener: {
-    fontSize: 12,
-    lineHeight: 1.8,
-    color: WHITE,
-    marginBottom: 28,
-  },
-  sectionLabel: {
+  sectionEyebrowGold: {
     fontSize: 8,
-    letterSpacing: 2.5,
-    color: DIM,
-    fontFamily: "Helvetica-Bold",
-    marginBottom: 16,
-    marginTop: 8,
-  },
-  sectionLabelGold: {
-    fontSize: 8,
-    letterSpacing: 2.5,
+    letterSpacing: 3,
     color: GOLD,
     fontFamily: "Helvetica-Bold",
-    marginBottom: 16,
-    marginTop: 8,
+    marginBottom: 6,
+    marginTop: 4,
   },
+  letterOpenerText: {
+    fontSize: 12,
+    lineHeight: 1.85,
+    color: INK,
+    marginBottom: 10,
+    fontFamily: "Times-Italic",
+  },
+
+  /* ── Insight cards (light background) ── */
   card: {
-    backgroundColor: CARD_BG,
-    borderRadius: 8,
-    padding: 24,
-    marginBottom: 18,
+    backgroundColor: LIGHT_CARD,
+    borderRadius: 6,
+    padding: 22,
+    marginBottom: 20,
   },
   planetLabel: {
     fontSize: 8,
-    letterSpacing: 2,
-    color: DIM,
+    letterSpacing: 2.5,
+    color: PURPLE,
     fontFamily: "Helvetica-Bold",
     marginBottom: 10,
-    textTransform: "uppercase",
   },
   hook: {
-    fontSize: 15,
+    fontSize: 16,
     fontFamily: "Times-Bold",
-    color: WHITE,
-    lineHeight: 1.4,
-    marginBottom: 12,
+    color: INK,
+    lineHeight: 1.35,
+    marginBottom: 14,
   },
   truth: {
-    fontSize: 14,
+    fontSize: 15,
     fontFamily: "Times-Bold",
-    color: WHITE,
-    lineHeight: 1.4,
-    marginBottom: 12,
+    color: INK,
+    lineHeight: 1.35,
+    marginBottom: 14,
   },
   body: {
     fontSize: 11,
     lineHeight: 1.75,
-    color: ACCENT,
-    marginBottom: 6,
+    color: "#2a2436",
+    marginBottom: 7,
+    fontFamily: "Times-Roman",
   },
   reveal: {
     fontSize: 12,
     fontFamily: "Times-Italic",
-    color: WHITE,
+    color: MUTED,
     lineHeight: 1.6,
     marginTop: 8,
   },
   actionWrap: {
     marginTop: 14,
     paddingTop: 10,
-    borderTop: `0.5 solid ${PURPLE}`,
+    borderTopWidth: 0.5,
+    borderTopColor: RULE,
   },
   actionLabel: {
     fontSize: 7,
     letterSpacing: 2,
-    color: GOLD,
+    color: PURPLE,
     fontFamily: "Helvetica-Bold",
     marginBottom: 4,
   },
   actionText: {
     fontSize: 10,
-    color: GOLD,
+    color: INK,
     lineHeight: 1.6,
+    fontFamily: "Times-Italic",
   },
-  footer: {
+  pageFooter: {
     position: "absolute",
     bottom: 28,
-    left: 0,
-    right: 0,
-    textAlign: "center",
+    left: 56,
+    right: 56,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  pageFooterText: {
     fontSize: 8,
-    color: DIM,
+    color: MUTED,
     letterSpacing: 1,
     fontFamily: "Helvetica",
   },
+
+  /* ── Closing page (dark) ── */
+  closing: {
+    padding: 0,
+    backgroundColor: COVER_BG,
+    color: COVER_TEXT,
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  closingText: {
+    fontSize: 14,
+    fontFamily: "Times-Italic",
+    color: "#c4bdb2",
+    textAlign: "center",
+    lineHeight: 1.8,
+    marginTop: 20,
+    maxWidth: 340,
+  },
   disclaimer: {
-    marginTop: 28,
-    paddingTop: 14,
-    borderTop: `0.5 solid ${PURPLE}`,
-    fontSize: 8,
+    fontSize: 9,
     lineHeight: 1.5,
-    color: DIM,
+    color: COVER_DIM,
     textAlign: "center",
     fontFamily: "Helvetica",
+    marginTop: 32,
+    maxWidth: 360,
   },
 });
 
@@ -179,6 +279,15 @@ function splitParagraphs(text: string): string[] {
     .split(/\n+/)
     .map((p) => p.trim())
     .filter(Boolean);
+}
+
+function PageHeader({ section }: { section: string }) {
+  return (
+    <View style={s.pageHeader} fixed>
+      <Text style={s.pageHeaderBrand}>BLUNTCHART</Text>
+      <Text style={s.pageHeaderSection}>{section}</Text>
+    </View>
+  );
 }
 
 export default function ReadingPDF({
@@ -195,16 +304,28 @@ export default function ReadingPDF({
       author="BluntChart"
       subject="Your Full Birth Chart Reading"
     >
-      {/* Page 1: Letter opener + preview insights */}
+      {/* ═══ COVER PAGE (dark) ═══ */}
+      <Page size="A4" style={s.cover}>
+        <View style={s.coverInner}>
+          <Text style={s.coverBrand}>BLUNTCHART</Text>
+          <Text style={s.coverTitle}>Your Birth{"\n"}Chart Reading</Text>
+          <Text style={s.coverSubtitle}>
+            Brutally honest. Deeply personal.
+          </Text>
+          <Text style={s.coverPreparedLabel}>PREPARED FOR</Text>
+          <Text style={s.coverName}>{displayName}</Text>
+        </View>
+        <Text style={s.coverFooter}>bluntchart.com</Text>
+      </Page>
+
+      {/* ═══ LETTER OPENER + PREVIEW (white) ═══ */}
       <Page size="A4" style={s.page}>
-        <Text style={s.brand}>BLUNTCHART</Text>
-        <Text style={s.subtitle}>YOUR BIRTH CHART READING</Text>
-        <View style={s.divider} />
+        <PageHeader section="YOUR READING" />
 
         {letterOpener && (
-          <View style={{ marginBottom: 24 }}>
+          <View style={{ marginBottom: 28 }}>
             {splitParagraphs(letterOpener).map((p, i) => (
-              <Text key={i} style={s.letterOpener}>
+              <Text key={i} style={s.letterOpenerText}>
                 {p}
               </Text>
             ))}
@@ -213,7 +334,7 @@ export default function ReadingPDF({
 
         {preview.length > 0 && (
           <View>
-            <Text style={s.sectionLabel}>PREVIEW INSIGHTS</Text>
+            <Text style={s.sectionEyebrow}>PREVIEW INSIGHTS</Text>
             {preview.map((ins, i) => (
               <View key={i} style={s.card}>
                 {ins.planet && <Text style={s.planetLabel}>{ins.planet}</Text>}
@@ -230,67 +351,60 @@ export default function ReadingPDF({
           </View>
         )}
 
-        <Text style={s.footer}>bluntchart.com</Text>
+        <View style={s.pageFooter}>
+          <Text style={s.pageFooterText}>bluntchart.com</Text>
+          <Text style={s.pageFooterText}>{displayName}</Text>
+        </View>
       </Page>
 
-      {/* Paid insights: ~2 per page */}
-      {chunkArray(paidInsights, 2).map((chunk, pageIdx) => (
-        <Page key={pageIdx} size="A4" style={s.page}>
-          {pageIdx === 0 && (
-            <Text style={s.sectionLabelGold}>
-              FULL READING · {paidInsights.length} INSIGHTS
-            </Text>
-          )}
+      {/* ═══ PAID INSIGHTS (white, one per page) ═══ */}
+      {paidInsights.map((ins, i) => (
+        <Page key={i} size="A4" style={s.page}>
+          <PageHeader
+            section={
+              i === 0
+                ? `FULL READING · ${paidInsights.length} INSIGHTS`
+                : `INSIGHT ${i + 1} OF ${paidInsights.length}`
+            }
+          />
 
-          {chunk.map((ins, i) => (
-            <View
-              key={i}
-              style={s.card}
-              wrap={false}
-            >
-              {ins.planet && <Text style={s.planetLabel}>{ins.planet}</Text>}
-              {ins.truth && <Text style={s.truth}>{ins.truth}</Text>}
-              {ins.explain &&
-                splitParagraphs(ins.explain).map((p, j) => (
-                  <Text key={j} style={s.body}>
-                    {p}
-                  </Text>
-                ))}
-              {ins.action && (
-                <View style={s.actionWrap}>
-                  <Text style={s.actionLabel}>THIS WEEK</Text>
-                  <Text style={s.actionText}>{ins.action}</Text>
-                </View>
-              )}
-            </View>
-          ))}
+          <View style={s.card} wrap={false}>
+            {ins.planet && <Text style={s.planetLabel}>{ins.planet}</Text>}
+            {ins.truth && <Text style={s.truth}>{ins.truth}</Text>}
+            {ins.explain &&
+              splitParagraphs(ins.explain).map((p, j) => (
+                <Text key={j} style={s.body}>
+                  {p}
+                </Text>
+              ))}
+            {ins.action && (
+              <View style={s.actionWrap}>
+                <Text style={s.actionLabel}>THIS WEEK</Text>
+                <Text style={s.actionText}>{ins.action}</Text>
+              </View>
+            )}
+          </View>
 
-          <Text style={s.footer}>bluntchart.com</Text>
+          <View style={s.pageFooter}>
+            <Text style={s.pageFooterText}>bluntchart.com</Text>
+            <Text style={s.pageFooterText}>{displayName}</Text>
+          </View>
         </Page>
       ))}
 
-      {/* Final page: disclaimer */}
-      <Page size="A4" style={s.page}>
-        <View
-          style={{
-            flex: 1,
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <Text style={s.brand}>BLUNTCHART</Text>
-          <View style={s.divider} />
-          <Text
+      {/* ═══ CLOSING PAGE (dark) ═══ */}
+      <Page size="A4" style={s.closing}>
+        <View style={s.coverInner}>
+          <Text style={s.coverBrand}>BLUNTCHART</Text>
+          <View
             style={{
-              fontSize: 14,
-              fontFamily: "Times-Italic",
-              color: ACCENT,
-              textAlign: "center",
-              lineHeight: 1.8,
-              marginBottom: 20,
-              maxWidth: 360,
+              width: 50,
+              height: 1,
+              backgroundColor: GOLD,
+              marginTop: 16,
             }}
-          >
+          />
+          <Text style={s.closingText}>
             Generated from {displayName}&apos;s birth chart
           </Text>
           <Text style={s.disclaimer}>
@@ -298,16 +412,8 @@ export default function ReadingPDF({
             psychological advice.
           </Text>
         </View>
-        <Text style={s.footer}>bluntchart.com</Text>
+        <Text style={s.coverFooter}>bluntchart.com</Text>
       </Page>
     </Document>
   );
-}
-
-function chunkArray<T>(arr: T[], size: number): T[][] {
-  const chunks: T[][] = [];
-  for (let i = 0; i < arr.length; i += size) {
-    chunks.push(arr.slice(i, i + size));
-  }
-  return chunks;
 }
