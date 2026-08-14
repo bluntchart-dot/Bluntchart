@@ -50,22 +50,28 @@ const CAPTURE_SCALE = 3;
 const CARD_RADIUS_PX = 16;
 
 async function captureCard(el: HTMLDivElement): Promise<HTMLCanvasElement> {
-  // html2canvas cannot evaluate clamp() / vw-based font sizes — it
-  // silently falls back to a wrong value, shifting the entire layout.
-  // Snapshot every computed style that uses clamp() in its inline form,
-  // replace with the browser-resolved px value, capture, then restore.
-  const saved: { node: HTMLElement; prop: string; orig: string }[] = [];
-  const PROPS = ["fontSize"] as const;
-  el.querySelectorAll("*").forEach((child) => {
-    const h = child as HTMLElement;
-    for (const p of PROPS) {
-      const v = h.style[p];
-      if (v && v.includes("clamp")) {
-        saved.push({ node: h, prop: p, orig: v });
-        h.style[p] = getComputedStyle(h)[p];
+  // html2canvas mis-computes clamp(), vw units, and %-based margins/padding,
+  // which shifts font sizes and spacing in the exported image. Walk every
+  // inline style property on the card tree, replace any value that contains
+  // a dynamic unit with the browser's resolved px value, capture, restore.
+  const fixes: { node: HTMLElement; prop: string; orig: string }[] = [];
+  const DYNAMIC = /clamp|vw|vh|%/;
+
+  const resolve = (node: HTMLElement) => {
+    const s = node.style;
+    const cs = getComputedStyle(node);
+    for (let i = 0; i < s.length; i++) {
+      const prop = s[i];
+      const val = s.getPropertyValue(prop);
+      if (val && DYNAMIC.test(val)) {
+        fixes.push({ node, prop, orig: val });
+        s.setProperty(prop, cs.getPropertyValue(prop));
       }
     }
-  });
+  };
+
+  resolve(el);
+  el.querySelectorAll("*").forEach((ch) => resolve(ch as HTMLElement));
 
   const { default: html2canvas } = await import("html2canvas");
   const raw = await html2canvas(el, {
@@ -76,9 +82,7 @@ async function captureCard(el: HTMLDivElement): Promise<HTMLCanvasElement> {
     allowTaint: true,
   });
 
-  saved.forEach(({ node, prop, orig }) => {
-    (node.style as unknown as Record<string, string>)[prop] = orig;
-  });
+  fixes.forEach(({ node, prop, orig }) => node.style.setProperty(prop, orig));
 
   // html2canvas does not reliably apply the captured element's own
   // border-radius to the exported canvas (well documented limitation:
