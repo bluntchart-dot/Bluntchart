@@ -47,6 +47,9 @@ export const metadata: Metadata = {
   icons: {
     icon: "/favicon.ico",
   },
+  other: {
+    "p:domain_verify": "9a982818b27e22b6271edf3d746d99ce",
+  },
 };
 
 export default function RootLayout({
