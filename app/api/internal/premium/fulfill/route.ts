@@ -1,23 +1,24 @@
 /**
  * POST /api/internal/premium/fulfill
  *
- * Internal-only manual fulfillment endpoint. Same cookie gate as
- * /api/internal/premium/generate. Runs the current V1.2 insight-map
- * engine, persists the reading with a real access token, and sends the
- * customer email sequence (manual confirmation → delivery → scheduled
- * review + social-proof follow-ups).
+ * Unified internal manual fulfillment endpoint. Supports three products:
+ *
+ *   "birth-chart-book"    → V1.2 insight-map engine (Claude)
+ *   "reading"             → $15 birth chart reading pipeline (Claude)
+ *   "future-love-letter"  → love letter (Gemini)
+ *
+ * Same cookie gate as /api/internal/premium/generate. Runs the product's
+ * generator, persists the result with a real access token (no Payments
+ * row), and sends the product-specific email sequence.
  *
  * Body:
  *   {
+ *     product_type,              // "birth-chart-book" | "reading" | "future-love-letter"
  *     name, dob, birth_time, city, email,
  *     birth_lat?, birth_lng?, timezone?,
- *     order_source,          // "personal-test" | "etsy" | "other"
- *     model?                 // AiModelId (default: sonnet-5 to match Gumroad path)
+ *     order_source,              // "etsy" | "website" | "personal-test" | "other"
+ *     model?                     // AiModelId — only used by book product
  *   }
- *
- * Success response includes the customer book URL AND the raw access
- * token so the admin can rebuild the URL from Supabase if email delivery
- * ever fails.
  */
 
 import { randomUUID } from "node:crypto";
@@ -25,6 +26,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { isDevAuthorized } from "@/lib/premium/dev-auth";
 import { generateAiReading } from "@/lib/premium/generate-ai-reading";
+import { buildPaidReadingPayload } from "@/lib/build-paid-reading";
+import { generateLoveLetter } from "@/lib/future-love-letter/generate-letter";
 import { createSupabaseAdmin } from "@/lib/supabase-admin";
 import {
   DEFAULT_MODEL,
@@ -32,14 +35,20 @@ import {
 } from "@/lib/premium/ai/models";
 import type { AiModelId } from "@/lib/premium/ai/types";
 import type { PremiumBirthDetails } from "@/lib/premium/build-mock-reading";
+import type { BirthLead } from "@/lib/db/checkout-flow";
+import type { ProductType } from "@/lib/db/types";
 import {
-  persistManualBookFulfillment,
-  sendManualBookEmails,
+  persistManualFulfillment,
   manualReadingUrl,
+  sendManualBookEmails,
+  sendManualReadingEmails,
+  sendManualLoveLetterEmails,
 } from "@/lib/premium/manual-fulfillment";
 import { isValidInternalSource } from "@/lib/premium/order-sources";
+import { accessUrl } from "@/lib/products";
 
 interface Body {
+  product_type?: string;
   name?: string;
   email?: string;
   dob?: string;
@@ -52,12 +61,18 @@ interface Body {
   model?: string;
 }
 
+const SUPPORTED_PRODUCTS: ProductType[] = ["birth-chart-book", "reading", "future-love-letter"];
+
+const PRODUCT_LABEL: Record<string, string> = {
+  "birth-chart-book": "Birth Chart Book",
+  "reading": "Birth Chart Reading",
+  "future-love-letter": "Love Letter",
+};
+
 const isValidDate  = (s: string) => /^\d{4}-\d{2}-\d{2}$/.test(s);
 const isValidTime  = (s: string) => /^\d{2}:\d{2}$/.test(s);
 const isValidEmail = (s: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s);
 
-// Manual fulfillment defaults to Sonnet 5 to match the Gumroad-book model,
-// so the reading a friend sees matches what a paying customer would see.
 const DEFAULT_MANUAL_MODEL: AiModelId = "sonnet-5";
 
 function resolveModel(raw: string | undefined): AiModelId {
@@ -81,6 +96,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: false, error: "Invalid JSON body." }, { status: 400 });
   }
 
+  const productType = (body.product_type ?? "").trim() as ProductType;
   const name       = (body.name ?? "").trim();
   const email      = (body.email ?? "").trim().toLowerCase();
   const dob        = (body.dob ?? "").trim();
@@ -88,6 +104,12 @@ export async function POST(req: NextRequest) {
   const birthPlace = (body.city ?? "").trim();
   const orderSource = (body.order_source ?? "").trim();
 
+  if (!productType || !SUPPORTED_PRODUCTS.includes(productType)) {
+    return NextResponse.json(
+      { ok: false, error: "Please select a product (Book, Reading, or Love Letter)." },
+      { status: 400 }
+    );
+  }
   if (!name || !email || !dob || !birthTime || !birthPlace) {
     return NextResponse.json(
       { ok: false, error: "Please fill in name, email, date of birth, time, and city." },
@@ -105,70 +127,151 @@ export async function POST(req: NextRequest) {
   }
   if (!isValidInternalSource(orderSource)) {
     return NextResponse.json(
-      { ok: false, error: "Please choose an order source (Personal / Test, Etsy, or Other)." },
+      { ok: false, error: "Please choose an order source." },
       { status: 400 }
     );
   }
 
-  if (!process.env.ANTHROPIC_API_KEY) {
-    return NextResponse.json(
-      { ok: false, error: "ANTHROPIC_API_KEY is not configured on this server." },
-      { status: 503 }
-    );
-  }
+  const birthLat =
+    typeof body.birth_lat === "number" && Number.isFinite(body.birth_lat)
+      ? body.birth_lat
+      : null;
+  const birthLng =
+    typeof body.birth_lng === "number" && Number.isFinite(body.birth_lng)
+      ? body.birth_lng
+      : null;
+  const timezone = body.timezone?.trim() || null;
 
-  const model = resolveModel(body.model);
+  /* ═══════════════════════════════════════════════════════════════════
+     GENERATION — branch by product type
+  ═══════════════════════════════════════════════════════════════════ */
 
-  const birth: PremiumBirthDetails = {
-    name,
-    email,
-    dob,
-    birth_time: birthTime,
-    birth_place: birthPlace,
-    birth_lat:
-      typeof body.birth_lat === "number" && Number.isFinite(body.birth_lat)
-        ? body.birth_lat
-        : null,
-    birth_lng:
-      typeof body.birth_lng === "number" && Number.isFinite(body.birth_lng)
-        ? body.birth_lng
-        : null,
-    timezone: body.timezone?.trim() || null,
-  };
+  let readingJson: Record<string, unknown>;
+  let model = "";
 
-  /* ── 1. Generate reading via V1.2 engine ────────────────────────── */
-  const generationRequestId = randomUUID();
-  const genResult = await generateAiReading(birth, {
-    modelId: model,
-    generationRequestId,
-  });
-  if (!genResult.ok) {
-    console.error("[premium/fulfill] generation failed:", genResult.error, genResult.errorCategory);
-    return NextResponse.json(
-      {
-        ok: false,
-        error: genResult.error,
-        errorCategory: genResult.errorCategory,
-      },
-      { status: 500 }
-    );
-  }
+  if (productType === "birth-chart-book") {
+    /* ── Book: V1.2 insight-map engine (Claude) ─────────────────────── */
+    if (!process.env.ANTHROPIC_API_KEY) {
+      return NextResponse.json(
+        { ok: false, error: "ANTHROPIC_API_KEY is not configured on this server." },
+        { status: 503 }
+      );
+    }
 
-  /* ── 2. Persist in Supabase (isolated path — Gumroad flow untouched) ── */
-  const supabase = createSupabaseAdmin();
-  const persist = await persistManualBookFulfillment(supabase, {
-    birth: {
+    model = resolveModel(body.model);
+    const birth: PremiumBirthDetails = {
+      name, email, dob, birth_time: birthTime,
+      birth_place: birthPlace,
+      birth_lat: birthLat, birth_lng: birthLng,
+      timezone,
+    };
+
+    const generationRequestId = randomUUID();
+    const genResult = await generateAiReading(birth, {
+      modelId: model as AiModelId,
+      generationRequestId,
+    });
+    if (!genResult.ok) {
+      console.error("[premium/fulfill] book generation failed:", genResult.error, genResult.errorCategory);
+      return NextResponse.json(
+        { ok: false, error: genResult.error, errorCategory: genResult.errorCategory },
+        { status: 500 }
+      );
+    }
+    readingJson = genResult.reading as unknown as Record<string, unknown>;
+
+  } else if (productType === "reading") {
+    /* ── $15 Reading: Claude prompt pipeline ─────────────────────────── */
+    if (!process.env.ANTHROPIC_API_KEY) {
+      return NextResponse.json(
+        { ok: false, error: "ANTHROPIC_API_KEY is not configured on this server." },
+        { status: 503 }
+      );
+    }
+
+    const syntheticLead: BirthLead = {
       name,
       email,
       dob,
       birth_time: birthTime,
       birth_place: birthPlace,
-      timezone: birth.timezone,
+      birth_lat: birthLat,
+      birth_lng: birthLng,
+      timezone,
+      focus_area: null,
+      preview_json: null,
+      user_id: null,
+      product_type: "reading",
+      preview_email_id: null,
+      abandoned_one_email_id: null,
+      abandoned_two_email_id: null,
+      abandoned_three_email_id: null,
+    };
+
+    const payload = await buildPaidReadingPayload(syntheticLead);
+    if (!payload) {
+      return NextResponse.json(
+        { ok: false, error: "Reading generation failed. Check geocoding and chart calculation." },
+        { status: 500 }
+      );
+    }
+    readingJson = payload as unknown as Record<string, unknown>;
+    model = "claude-reading-pipeline";
+
+  } else {
+    /* ── Love Letter: Gemini ─────────────────────────────────────────── */
+    if (!process.env.GEMINI_API_KEY) {
+      return NextResponse.json(
+        { ok: false, error: "GEMINI_API_KEY is not configured on this server." },
+        { status: 503 }
+      );
+    }
+
+    if (!birthLat || !birthLng) {
+      return NextResponse.json(
+        { ok: false, error: "Love letter requires coordinates. Please select a city from the location picker." },
+        { status: 400 }
+      );
+    }
+
+    const letterResult = await generateLoveLetter({
+      name,
+      date: dob,
+      time: birthTime,
+      lat: birthLat,
+      lng: birthLng,
+      placeName: birthPlace,
+      timezone: timezone ?? undefined,
+    });
+
+    if (!letterResult.ok || !letterResult.letter) {
+      return NextResponse.json(
+        { ok: false, error: letterResult.error ?? "Love letter generation failed." },
+        { status: 500 }
+      );
+    }
+
+    readingJson = {
+      letter: letterResult.letter,
+      shareableQuotes: letterResult.shareableQuotes ?? [],
+      meta: { name, dob, birth_place: birthPlace },
+    };
+    model = "gemini";
+  }
+
+  /* ═══════════════════════════════════════════════════════════════════
+     PERSISTENCE — same for all products
+  ═══════════════════════════════════════════════════════════════════ */
+
+  const supabase = createSupabaseAdmin();
+  const persist = await persistManualFulfillment(supabase, {
+    birth: {
+      name, email, dob, birth_time: birthTime,
+      birth_place: birthPlace, timezone,
     },
-    reading: genResult.reading,
-    orderSource: orderSource as ReturnType<typeof isValidInternalSource> extends true
-      ? never
-      : "personal-test" | "etsy" | "other",
+    readingJson,
+    productType,
+    orderSource: orderSource as "etsy" | "website" | "personal-test" | "other",
   });
 
   if (!persist.ok || !persist.accessToken) {
@@ -178,31 +281,36 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const readingUrl = manualReadingUrl(persist.accessToken);
+  const readingUrl = manualReadingUrl(persist.accessToken, productType);
   const firstName = name.split(/\s+/)[0] || name;
 
-  /* ── 3. Send emails (all non-fatal — return statuses to admin UI) ── */
-  const emails = await sendManualBookEmails({
-    email,
-    firstName,
-    birthDate: dob,
-    readingUrl,
-  });
+  /* ═══════════════════════════════════════════════════════════════════
+     EMAILS — product-specific sequences
+  ═══════════════════════════════════════════════════════════════════ */
 
-  /* ── 4. Return everything the admin needs, INCLUDING access token ── */
+  let emails;
+  if (productType === "birth-chart-book") {
+    emails = await sendManualBookEmails({ email, firstName, birthDate: dob, readingUrl });
+  } else if (productType === "reading") {
+    emails = await sendManualReadingEmails({ email, firstName, birthDate: dob, readingUrl });
+  } else {
+    emails = await sendManualLoveLetterEmails({ email, firstName, readingUrl });
+  }
+
+  /* ═══════════════════════════════════════════════════════════════════
+     RESPONSE — everything the admin needs
+  ═══════════════════════════════════════════════════════════════════ */
+
   return NextResponse.json({
     ok: true,
-    customer: {
-      name,
-      email,
-      firstName,
-    },
+    productType,
+    productLabel: PRODUCT_LABEL[productType] ?? productType,
+    customer: { name, email, firstName },
     orderSource,
     accessToken: persist.accessToken,
     readingUrl,
     readingId: persist.readingId,
     model,
-    generationTelemetry: genResult.telemetry,
     emailStatus: {
       confirmation: {
         sent: emails.confirmation.ok,

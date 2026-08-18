@@ -712,6 +712,36 @@ BluntChart`;
   return { subject, text, html };
 }
 
+export function manualReadingConfirmationMail({ firstName, birthDate }: BaseVars): EmailTemplate {
+  const subject = `${firstName}, your birth chart reading is on its way`;
+
+  const text = `${firstName},
+
+We've received your details and your personalized birth chart reading is being generated right now.
+
+Your ${birthDate ?? "birth date"} chart is processing using a high-precision ephemeris (Astronomy Engine).
+
+This takes about 45 seconds. You'll receive another email the moment it's ready with your full reading link.
+
+You're about to see what top astrologers charge $100/hour for.
+
+Deep breath.
+
+xx bluntchart`;
+
+  const html = wrap(`
+    <p style="font-size:18px;line-height:1.8;margin:0 0 14px;">${esc(firstName)},</p>
+    <p style="font-size:16px;line-height:1.9;margin:0 0 14px;">We've received your details and your personalized birth chart reading is being generated right now.</p>
+    <p style="font-size:16px;line-height:1.9;margin:0 0 14px;">Your <strong>${esc(birthDate ?? "birth date")}</strong> chart is processing using a high-precision ephemeris (Astronomy Engine).</p>
+    <p style="font-size:16px;line-height:1.9;margin:0 0 14px;">This takes about 45 seconds. You'll receive another email the moment it's ready with your full reading link.</p>
+    <p style="font-size:16px;line-height:1.9;margin:0 0 14px;">You're about to see what top astrologers charge $100/hour for.</p>
+    <p style="font-size:16px;line-height:1.9;margin:0 0 14px;">Deep breath.</p>
+    <p style="font-size:14px;line-height:1.8;margin:0;">xx bluntchart</p>
+  `);
+
+  return { subject, text, html };
+}
+
 export function loveLetterReviewMail({ firstName, cardUrl }: BaseVars): EmailTemplate {
   const subject = `${firstName}, how was the letter?`;
 

@@ -3,14 +3,14 @@
 /**
  * PremiumReadingApp — /internal/premium admin form.
  *
- * Manual-fulfillment workflow. Runs the current V1.2 insight-map engine,
- * persists the reading in Supabase with a real access token, and sends
- * the customer email sequence (confirmation → delivery → scheduled
- * review + social-proof). Behind the existing password gate.
+ * Unified manual-fulfillment workflow for all products:
+ *   - Birth Chart Book ($24)
+ *   - Birth Chart Reading ($15)
+ *   - Future Love Letter ($4.99)
  *
- * On success shows the admin panel: customer email, order source,
- * payment/reading IDs, access token, full /my-book?token=... URL with
- * copy button, and email delivery statuses.
+ * Runs the correct generator per product, persists in Supabase with a
+ * real access token, and sends product-specific email sequences.
+ * Behind the existing password gate.
  */
 
 import { useEffect, useState } from "react";
@@ -21,6 +21,62 @@ import {
   ORDER_SOURCE_LABEL,
   type OrderSource,
 } from "@/lib/premium/order-sources";
+import MoonPhasePanel from "@/components/MoonPhasePanel";
+
+/* ─── Types ─────────────────────────────────────────────────────── */
+
+type InternalProductType = "birth-chart-book" | "reading" | "future-love-letter" | "moon-phase";
+
+const PRODUCTS: { value: InternalProductType; label: string; price: string }[] = [
+  { value: "birth-chart-book", label: "Birth Chart Book", price: "$24" },
+  { value: "reading", label: "Birth Chart Reading", price: "$15" },
+  { value: "future-love-letter", label: "Love Letter", price: "$4.99" },
+  { value: "moon-phase", label: "Moon Phase Card", price: "$9.99" },
+];
+
+const PRODUCT_LABEL: Record<InternalProductType, string> = {
+  "birth-chart-book": "Book",
+  "reading": "Reading",
+  "future-love-letter": "Love Letter",
+  "moon-phase": "Moon Phase Card",
+};
+
+const LOADING_MSGS: Record<InternalProductType, string[]> = {
+  "birth-chart-book": [
+    "Calculating chart…",
+    "Extracting insight signals…",
+    "Interpreting with Claude…",
+    "Writing the book…",
+    "Running QA…",
+    "Saving to database…",
+    "Sending emails…",
+  ],
+  "reading": [
+    "Geocoding birth location…",
+    "Calculating chart…",
+    "Generating reading with Claude…",
+    "Validating output…",
+    "Saving to database…",
+    "Sending emails…",
+  ],
+  "future-love-letter": [
+    "Calculating chart…",
+    "Interpreting placements…",
+    "Writing with Gemini…",
+    "Saving to database…",
+    "Sending emails…",
+  ],
+  "moon-phase": [
+    "Rendering moon artwork…",
+  ],
+};
+
+const READER_PATH: Record<InternalProductType, string> = {
+  "birth-chart-book": "/my-book",
+  "reading": "/my-reading",
+  "future-love-letter": "/my-love-letter",
+  "moon-phase": "",
+};
 
 /* ─── Small style tokens ─────────────────────────────────────────── */
 const inp: React.CSSProperties = {
@@ -44,17 +100,7 @@ const lbl: React.CSSProperties = {
   marginBottom: 6,
 };
 
-const LOADING_MSGS = [
-  "Calculating chart…",
-  "Extracting insight signals…",
-  "Interpreting with Claude…",
-  "Writing the book…",
-  "Running QA…",
-  "Saving to database…",
-  "Sending emails…",
-];
-
-/* ─── Shape of the /fulfill response the admin panel renders ─────── */
+/* ─── Shape of the /fulfill response ───────────────────────────── */
 interface EmailStatus {
   sent: boolean;
   id: string | null;
@@ -62,6 +108,8 @@ interface EmailStatus {
 }
 interface FulfillmentResult {
   ok: true;
+  productType: InternalProductType;
+  productLabel: string;
   customer: { name: string; email: string; firstName: string };
   orderSource: OrderSource;
   accessToken: string;
@@ -84,6 +132,7 @@ export default function PremiumReadingApp({ eyebrow }: Props) {
   const [screen, setScreen] = useState<"form" | "loading" | "done">("form");
   const [result, setResult] = useState<FulfillmentResult | null>(null);
 
+  const [productType, setProductType] = useState<InternalProductType | "">("");
   const [fname,     setFname]     = useState("");
   const [email,     setEmail]     = useState("");
   const [dob,       setDob]       = useState("");
@@ -93,26 +142,32 @@ export default function PremiumReadingApp({ eyebrow }: Props) {
   const [orderSource, setOrderSource] = useState<OrderSource | "">("");
   const [model,     setModel]     = useState<string>("sonnet-5");
   const [err,       setErr]       = useState("");
-  const [loadMsg,   setLoadMsg]   = useState(LOADING_MSGS[0]);
+  const [loadMsg,   setLoadMsg]   = useState("");
 
   useEffect(() => {
-    if (screen !== "loading") return;
+    if (screen !== "loading" || !productType) return;
+    const msgs = LOADING_MSGS[productType];
     let i = 0;
+    setLoadMsg(msgs[0]);
     const t = setInterval(() => {
-      i = (i + 1) % LOADING_MSGS.length;
-      setLoadMsg(LOADING_MSGS[i]);
+      i = (i + 1) % msgs.length;
+      setLoadMsg(msgs[i]);
     }, 2200);
     return () => clearInterval(t);
-  }, [screen]);
+  }, [screen, productType]);
 
   const reset = () => {
     setScreen("form");
     setResult(null);
-    setFname(""); setEmail(""); setDob(""); setBtime("");
+    setProductType(""); setFname(""); setEmail(""); setDob(""); setBtime("");
     setCity(""); setCityGeo(null); setOrderSource(""); setErr("");
   };
 
   const submit = async () => {
+    if (!productType) {
+      setErr("Please select a product.");
+      return;
+    }
     if (!fname.trim() || !email.trim() || !dob || !btime || !city.trim()) {
       setErr("Please fill in name, email, date of birth, exact birth time, and city.");
       return;
@@ -130,15 +185,18 @@ export default function PremiumReadingApp({ eyebrow }: Props) {
 
     const browserTz = Intl.DateTimeFormat().resolvedOptions().timeZone ?? "";
     const payload: Record<string, unknown> = {
+      product_type: productType,
       name: fname.trim(),
       email: email.trim().toLowerCase(),
       dob,
       birth_time: btime,
       city: city.trim(),
       timezone: browserTz,
-      model,
       order_source: orderSource,
     };
+    if (productType === "birth-chart-book") {
+      payload.model = model;
+    }
     if (cityGeo) {
       payload.birth_lat = cityGeo.lat;
       payload.birth_lng = cityGeo.lng;
@@ -171,7 +229,9 @@ export default function PremiumReadingApp({ eyebrow }: Props) {
           {loadMsg}
         </div>
         <div style={{ fontSize: 13, color: "#4a4560" }}>
-          This can take 60–120 seconds.
+          {productType === "birth-chart-book"
+            ? "This can take 60–120 seconds."
+            : "This can take 30–60 seconds."}
         </div>
       </div>
     );
@@ -182,7 +242,17 @@ export default function PremiumReadingApp({ eyebrow }: Props) {
     return <ResultPanel result={result} onNew={reset} />;
   }
 
+  /* ── MOON PHASE CARD — separate client-side flow ───────────── */
+  if (productType === "moon-phase") {
+    return <MoonPhasePanel onBack={() => { setProductType(""); }} />;
+  }
+
   /* ── FORM ─────────────────────────────────────────────────────── */
+  const showModelSelector = productType === "birth-chart-book";
+  const buttonLabel = productType
+    ? `Generate & Send ${PRODUCT_LABEL[productType]} →`
+    : "Select a product above →";
+
   return (
     <div style={{ maxWidth: 640, margin: "0 auto", width: "100%" }}>
       {eyebrow && (
@@ -206,9 +276,12 @@ export default function PremiumReadingApp({ eyebrow }: Props) {
           Manual fulfillment
         </div>
         <div style={{ fontSize: 13, color: "#6b6585", lineHeight: 1.6, marginBottom: 28 }}>
-          Enter customer birth details. This will generate the reading with the current V1.2 engine, save it to Supabase, and send the customer confirmation + delivery emails.
+          Select a product, enter customer birth details. This will generate the product, save it to Supabase, and send the customer the appropriate email sequence.
         </div>
 
+        <ProductSelector productType={productType} setProductType={setProductType} />
+
+        {/* ── Birth details ───────────────────────────────────────── */}
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 16 }}>
           <div>
             <label style={lbl}>Customer name</label>
@@ -243,6 +316,7 @@ export default function PremiumReadingApp({ eyebrow }: Props) {
           />
         </div>
 
+        {/* ── Order source ────────────────────────────────────────── */}
         <div style={{ marginBottom: 20 }}>
           <label style={lbl}>Order source</label>
           <select
@@ -259,50 +333,123 @@ export default function PremiumReadingApp({ eyebrow }: Props) {
           </select>
         </div>
 
-        <div style={{ marginBottom: 24 }}>
-          <label style={lbl}>Generator model</label>
-          <select
-            value={model}
-            onChange={e => setModel(e.target.value)}
-            style={{ ...inp, appearance: "none", cursor: "pointer" }}
-          >
-            <option value="haiku-4-5" style={{ background: "#12121e", color: "#e8e4f0" }}>
-              Claude Haiku 4.5 (fast, cheap)
-            </option>
-            <option value="sonnet-5" style={{ background: "#12121e", color: "#e8e4f0" }}>
-              Claude Sonnet 5 (matches Gumroad book)
-            </option>
-            <option value="opus-4-8" style={{ background: "#12121e", color: "#e8e4f0" }}>
-              Claude Opus 4.8 (highest quality)
-            </option>
-          </select>
-          <small style={{ fontSize: 11, color: "#3a3858", marginTop: 4, display: "block" }}>
-            Sonnet 5 is what real paying customers get. Haiku is faster for internal tests.
-          </small>
-        </div>
+        {/* ── Model selector (book only) ──────────────────────────── */}
+        {showModelSelector && (
+          <div style={{ marginBottom: 24 }}>
+            <label style={lbl}>Generator model</label>
+            <select
+              value={model}
+              onChange={e => setModel(e.target.value)}
+              style={{ ...inp, appearance: "none", cursor: "pointer" }}
+            >
+              <option value="haiku-4-5" style={{ background: "#12121e", color: "#e8e4f0" }}>
+                Claude Haiku 4.5 (fast, cheap)
+              </option>
+              <option value="sonnet-5" style={{ background: "#12121e", color: "#e8e4f0" }}>
+                Claude Sonnet 5 (matches Gumroad book)
+              </option>
+              <option value="opus-4-8" style={{ background: "#12121e", color: "#e8e4f0" }}>
+                Claude Opus 4.8 (highest quality)
+              </option>
+            </select>
+            <small style={{ fontSize: 11, color: "#3a3858", marginTop: 4, display: "block" }}>
+              Sonnet 5 is what real paying customers get. Haiku is faster for internal tests.
+            </small>
+          </div>
+        )}
 
-        <button onClick={submit} style={{
+        {/* ── Product-specific notes ──────────────────────────────── */}
+        {productType === "future-love-letter" && (
+          <div style={{
+            background: "rgba(107,47,212,0.08)",
+            border: "0.5px solid rgba(107,47,212,0.2)",
+            borderRadius: 10, padding: "10px 14px",
+            fontSize: 12, color: "#9b8bb8", marginBottom: 20, lineHeight: 1.6,
+          }}>
+            Love Letter uses Google Gemini. Make sure to select a city from the dropdown (coordinates required).
+          </div>
+        )}
+
+        <button onClick={submit} disabled={!productType} style={{
           width: "100%",
-          background: "linear-gradient(135deg,#6b2fd4,#d4537e)",
-          color: "#fff", border: "none",
+          background: productType
+            ? "linear-gradient(135deg,#6b2fd4,#d4537e)"
+            : "rgba(255,255,255,0.06)",
+          color: productType ? "#fff" : "#4a4560",
+          border: "none",
           borderRadius: 12, padding: "16px 20px",
           fontSize: 15, fontWeight: 600,
-          fontFamily: "inherit", cursor: "pointer", letterSpacing: "0.2px",
+          fontFamily: "inherit",
+          cursor: productType ? "pointer" : "not-allowed",
+          letterSpacing: "0.2px",
         }}>
-          Generate &amp; Send Book →
+          {buttonLabel}
         </button>
       </div>
       <div style={{ fontSize: 11, color: "#2e2c3e", textAlign: "center", marginTop: 14 }}>
-        Manual fulfillment · V1.2 engine · real Supabase persistence · real customer emails
+        Manual fulfillment · real Supabase persistence · real customer emails
       </div>
     </div>
   );
 }
 
 /* ─────────────────────────────────────────────────────────────────
-   Admin result panel — shown after a successful fulfillment. Displays
-   the access token and full URL so support can rebuild the link if
-   email ever fails.
+   Product selector — shared between standard form and moon-phase flow.
+───────────────────────────────────────────────────────────────── */
+
+function ProductSelector({
+  productType,
+  setProductType,
+}: {
+  productType: InternalProductType | "";
+  setProductType: (v: InternalProductType | "") => void;
+}) {
+  return (
+    <div style={{ marginBottom: 20 }}>
+      <label style={lbl}>Product</label>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+        {PRODUCTS.map(p => {
+          const selected = productType === p.value;
+          return (
+            <button
+              key={p.value}
+              type="button"
+              onClick={() => setProductType(p.value)}
+              style={{
+                background: selected
+                  ? "linear-gradient(135deg,rgba(107,47,212,0.25),rgba(212,83,126,0.25))"
+                  : "rgba(255,255,255,0.04)",
+                border: selected
+                  ? "1px solid rgba(212,83,126,0.5)"
+                  : "0.5px solid rgba(255,255,255,0.1)",
+                borderRadius: 12,
+                padding: "14px 10px",
+                cursor: "pointer",
+                textAlign: "center",
+                fontFamily: "inherit",
+                transition: "all 0.15s ease",
+              }}
+            >
+              <div style={{
+                fontSize: 13,
+                fontWeight: 600,
+                color: selected ? "#e8e4f0" : "#8b8599",
+              }}>{p.label}</div>
+              <div style={{
+                fontSize: 11,
+                color: selected ? "#d4537e" : "#4a4560",
+                marginTop: 2,
+              }}>{p.price}</div>
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   Admin result panel — shown after a successful fulfillment.
 ───────────────────────────────────────────────────────────────── */
 
 function StatusPill({ ok, label }: { ok: boolean; label: string }) {
@@ -322,13 +469,46 @@ function StatusPill({ ok, label }: { ok: boolean; label: string }) {
 
 function ResultPanel({ result, onNew }: { result: FulfillmentResult; onNew: () => void }) {
   const [copied, setCopied] = useState(false);
+  const [retrying, setRetrying] = useState(false);
+  const [retryResult, setRetryResult] = useState<string | null>(null);
+
   const copyUrl = async () => {
     try {
       await navigator.clipboard.writeText(result.readingUrl);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
-    } catch { /* clipboard unavailable — user can select the field */ }
+    } catch { /* clipboard unavailable */ }
   };
+
+  const retryEmails = async () => {
+    setRetrying(true);
+    setRetryResult(null);
+    try {
+      const res = await fetch("/api/internal/premium/retry-emails", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ readingId: result.readingId }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.ok) {
+        setRetryResult(`Failed: ${data.error ?? "Unknown error"}`);
+      } else {
+        setRetryResult(data.delivery.sent
+          ? "Delivery email resent successfully."
+          : `Delivery failed: ${data.delivery.error ?? "Unknown"}`);
+      }
+    } catch (e) {
+      setRetryResult(`Error: ${e instanceof Error ? e.message : "Unknown"}`);
+    } finally {
+      setRetrying(false);
+    }
+  };
+
+  const productLabel = result.productLabel ?? PRODUCT_LABEL[result.productType] ?? result.productType;
+  const linkLabel = `Copy ${productLabel} Link`;
+  const hasEmailFailure = !result.emailStatus.confirmation.sent
+    || !result.emailStatus.delivery.sent
+    || !result.emailStatus.reviewScheduled.sent;
 
   const row: React.CSSProperties = {
     display: "grid",
@@ -370,7 +550,7 @@ function ResultPanel({ result, onNew }: { result: FulfillmentResult; onNew: () =
         color: "#a7f0c1", fontSize: 13, fontWeight: 600,
         marginBottom: 20, letterSpacing: "0.02em",
       }}>
-        ✓ Book generated and saved. Customer emails dispatched below.
+        ✓ {productLabel} generated and saved. Customer emails dispatched below.
       </div>
 
       <div style={{
@@ -383,6 +563,10 @@ function ResultPanel({ result, onNew }: { result: FulfillmentResult; onNew: () =
         </div>
 
         <div style={row}>
+          <span style={rowLabel}>Product</span>
+          <span style={rowValue}>{productLabel}</span>
+        </div>
+        <div style={row}>
           <span style={rowLabel}>Customer</span>
           <span style={rowValue}>{result.customer.name} · {result.customer.email}</span>
         </div>
@@ -391,7 +575,7 @@ function ResultPanel({ result, onNew }: { result: FulfillmentResult; onNew: () =
           <span style={rowValue}>{ORDER_SOURCE_LABEL[result.orderSource]}</span>
         </div>
         <div style={row}>
-          <span style={rowLabel}>Model</span>
+          <span style={rowLabel}>Model / Engine</span>
           <span style={rowValue}>{result.model}</span>
         </div>
         <div style={row}>
@@ -405,7 +589,7 @@ function ResultPanel({ result, onNew }: { result: FulfillmentResult; onNew: () =
         </div>
 
         <div style={{ marginTop: 18 }}>
-          <label style={lbl}>Full book URL (safe to send to customer)</label>
+          <label style={lbl}>Full URL (safe to send to customer)</label>
           <div style={{ display: "flex", gap: 10 }}>
             <input
               readOnly
@@ -420,7 +604,7 @@ function ResultPanel({ result, onNew }: { result: FulfillmentResult; onNew: () =
               fontSize: 13, fontWeight: 600, whiteSpace: "nowrap",
               cursor: "pointer", fontFamily: "inherit",
             }}>
-              {copied ? "Copied" : "Copy Book Link"}
+              {copied ? "Copied" : linkLabel}
             </button>
           </div>
         </div>
@@ -450,6 +634,32 @@ function ResultPanel({ result, onNew }: { result: FulfillmentResult; onNew: () =
             );
           })()}
         </div>
+
+        {/* ── Retry emails button ──────────────────────────────── */}
+        {(hasEmailFailure || true) && (
+          <div style={{ marginTop: 18 }}>
+            <button onClick={retryEmails} disabled={retrying} style={{
+              background: "rgba(255,255,255,0.06)",
+              border: "0.5px solid rgba(255,255,255,0.15)",
+              color: "#e8e4f0",
+              borderRadius: 10, padding: "10px 16px",
+              fontSize: 13, fontWeight: 500,
+              cursor: retrying ? "wait" : "pointer",
+              fontFamily: "inherit",
+              opacity: retrying ? 0.5 : 1,
+            }}>
+              {retrying ? "Resending…" : "Resend Delivery Email"}
+            </button>
+            {retryResult && (
+              <div style={{
+                marginTop: 8, fontSize: 12, lineHeight: 1.5,
+                color: retryResult.startsWith("All") ? "#a7f0c1" : "#f0a0b8",
+              }}>
+                {retryResult}
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       <button onClick={onNew} style={{
