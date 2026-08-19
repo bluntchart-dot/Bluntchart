@@ -7,6 +7,7 @@
 import * as THREE from "three";
 import { createMoonScene, postProcessPremium } from "@/lib/moon-renderer";
 import type { CompatibilityResult } from "@/lib/moon-phase";
+import { SECONDARY_LINE } from "@/lib/moon-content";
 
 export const MASTER_W = 2400;
 export const MASTER_H = 3000;
@@ -251,6 +252,7 @@ export function composeMaster(
   const ctx = canvas.getContext("2d")!;
 
   const { name1, name2, date1, date2, serif, sans, contentLine } = input;
+  const secondaryLine = SECONDARY_LINE;
   const W = MASTER_W;
   const H = MASTER_H;
 
@@ -386,6 +388,12 @@ export function composeMaster(
   ctx.font = `italic 400 50px ${serif}`;
   ctx.fillStyle = "rgba(245, 243, 240, 0.88)";
   ctx.fillText("“" + contentLine + "”", W / 2, contentY);
+
+  // Secondary line (fixed)
+  const secondaryY = contentY + 80;
+  ctx.font = `italic 300 34px ${serif}`;
+  ctx.fillStyle = "rgba(218, 185, 90, 0.50)";
+  ctx.fillText(secondaryLine, W / 2, secondaryY);
 
   // Brand
   ctx.font = `300 26px ${sans}`;

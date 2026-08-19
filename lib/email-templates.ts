@@ -769,3 +769,38 @@ BluntChart`;
 
   return { subject, text, html };
 }
+
+/* ─── MOON PHASE CARD — delivery ─── */
+
+export function moonPhaseDeliveryMail({
+  name1,
+  name2,
+  deliveryUrl,
+}: {
+  name1: string;
+  name2: string;
+  deliveryUrl: string;
+}): EmailTemplate {
+  const subject = `${name1} & ${name2} — your Moon Phase Card is ready`;
+
+  const text = `Your Moon Phase Card for ${name1} & ${name2} is ready.
+
+Download all formats — print-ready 8×10, phone wallpaper, social story, square, and PDF:
+
+${deliveryUrl}
+
+The link regenerates your artwork on-the-fly using the same moon data — it will always work.
+
+xx bluntchart`;
+
+  const html = wrap(`
+    <p style="font-size:18px;line-height:1.8;margin:0 0 14px;">Your Moon Phase Card is ready.</p>
+    <p style="font-size:16px;line-height:1.9;margin:0 0 14px;"><strong>${esc(name1)}</strong> &amp; <strong>${esc(name2)}</strong></p>
+    <p style="font-size:16px;line-height:1.9;margin:0 0 14px;">All formats included — print-ready 8×10, phone wallpaper, social story, square, and PDF.</p>
+    ${button(deliveryUrl, "Download your Moon Phase Card →")}
+    <p style="font-size:14px;line-height:1.8;margin-top:18px;opacity:.75;">The link regenerates your artwork on-the-fly — it will always work.</p>
+    <p style="font-size:14px;line-height:1.8;margin:0;">xx bluntchart</p>
+  `);
+
+  return { subject, text, html };
+}

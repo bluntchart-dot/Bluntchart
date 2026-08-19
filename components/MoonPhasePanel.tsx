@@ -81,11 +81,13 @@ export default function MoonPhasePanel({ onBack }: { onBack: () => void }) {
   const [dob1, setDob1] = useState("");
   const [name2, setName2] = useState("");
   const [dob2, setDob2] = useState("");
+  const [email, setEmail] = useState("");
   const [stage, setStage] = useState<Stage>("form");
   const [files, setFiles] = useState<GeneratedFile[]>([]);
   const [info, setInfo] = useState("");
   const [err, setErr] = useState("");
   const [saveResult, setSaveResult] = useState("");
+  const [emailResult, setEmailResult] = useState("");
   const [showLibrary, setShowLibrary] = useState(false);
   const rendering = useRef(false);
 
@@ -215,18 +217,20 @@ export default function MoonPhasePanel({ onBack }: { onBack: () => void }) {
     setStage("saving");
     try {
       const pkgName = buildPackageName(name1.trim(), name2.trim());
-      const payload = files.map((f) => ({
-        name: f.filename,
-        dataURL: f.dataURL,
-      }));
-      const res = await fetch("/api/internal/moon-export", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ packageName: pkgName, files: payload }),
-      });
-      if (!res.ok) throw new Error(`Server returned ${res.status}`);
-      const data = await res.json();
-      setSaveResult(`Saved ${data.count} files to ${data.directory}`);
+      let saved = 0;
+      for (const f of files) {
+        const res = await fetch("/api/internal/moon-export", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            packageName: pkgName,
+            files: [{ name: f.filename, dataURL: f.dataURL }],
+          }),
+        });
+        if (!res.ok) throw new Error(`Server returned ${res.status} for ${f.filename}`);
+        saved++;
+      }
+      setSaveResult(`Saved ${saved} files to public/moon-textures/rendered/${pkgName}`);
       setStage("saved");
     } catch (e) {
       console.error("Save failed:", e);
@@ -237,16 +241,46 @@ export default function MoonPhasePanel({ onBack }: { onBack: () => void }) {
     }
   }
 
+  async function sendDeliveryEmail() {
+    if (!email.trim()) return;
+    setEmailResult("Sending…");
+    try {
+      const token = btoa(JSON.stringify({
+        n1: name1.trim(), d1: dob1,
+        n2: name2.trim(), d2: dob2,
+      }));
+      const res = await fetch("/api/internal/moon-phase/send-delivery", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: email.trim().toLowerCase(),
+          name1: name1.trim(),
+          name2: name2.trim(),
+          token,
+        }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || `Server returned ${res.status}`);
+      }
+      setEmailResult("Delivery email sent successfully.");
+    } catch (e) {
+      setEmailResult(`Email failed: ${e instanceof Error ? e.message : String(e)}`);
+    }
+  }
+
   function resetForm() {
     setStage("form");
     setFiles([]);
     setInfo("");
     setErr("");
     setSaveResult("");
+    setEmailResult("");
     setName1("");
     setDob1("");
     setName2("");
     setDob2("");
+    setEmail("");
   }
 
   if (stage === "rendering") {
@@ -277,7 +311,10 @@ export default function MoonPhasePanel({ onBack }: { onBack: () => void }) {
         info={info}
         stage={stage}
         saveResult={saveResult}
+        emailResult={emailResult}
+        email={email}
         onSave={saveToServer}
+        onSendEmail={sendDeliveryEmail}
         onNew={resetForm}
         onBack={onBack}
         showLibrary={showLibrary}
@@ -333,9 +370,9 @@ export default function MoonPhasePanel({ onBack }: { onBack: () => void }) {
             marginBottom: 28,
           }}
         >
-          Enter two names and birth dates. Generates the approved v6 artwork in
-          all export formats (8×10 print, PDF, phone wallpaper, IG story,
-          square). No AI, no email — purely local rendering.
+          Enter two names, birth dates, and the customer's email. Generates the
+          approved v6 artwork in all export formats and emails the customer a
+          download link.
         </div>
 
         <div
@@ -418,6 +455,39 @@ export default function MoonPhasePanel({ onBack }: { onBack: () => void }) {
           </div>
         </div>
 
+        <div
+          style={{
+            fontSize: 10,
+            fontWeight: 600,
+            color: "#c9a84c",
+            letterSpacing: "1.5px",
+            textTransform: "uppercase",
+            marginBottom: 12,
+          }}
+        >
+          Delivery
+        </div>
+        <div style={{ marginBottom: 24 }}>
+          <label style={lbl}>Customer email</label>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="customer@email.com"
+            style={inp}
+          />
+          <small
+            style={{
+              fontSize: 11,
+              color: "#3a3858",
+              marginTop: 4,
+              display: "block",
+            }}
+          >
+            They'll receive a link to download all formats
+          </small>
+        </div>
+
         <button
           onClick={generate}
           disabled={!name1.trim() || !dob1 || !name2.trim() || !dob2}
@@ -490,7 +560,10 @@ function MoonPhaseResult({
   info,
   stage,
   saveResult,
+  emailResult,
+  email,
   onSave,
+  onSendEmail,
   onNew,
   onBack,
   showLibrary,
@@ -500,7 +573,10 @@ function MoonPhaseResult({
   info: string;
   stage: Stage;
   saveResult: string;
+  emailResult: string;
+  email: string;
   onSave: () => void;
+  onSendEmail: () => void;
   onNew: () => void;
   onBack: () => void;
   showLibrary: boolean;
@@ -729,6 +805,85 @@ function MoonPhaseResult({
         </div>
       )}
 
+      {email && (
+        <div
+          style={{
+            background: "rgba(255,255,255,0.03)",
+            border: "0.5px solid rgba(255,255,255,0.08)",
+            borderRadius: 14,
+            padding: 20,
+            marginBottom: 16,
+          }}
+        >
+          <div
+            style={{
+              fontSize: 10,
+              fontWeight: 600,
+              color: "#c9a84c",
+              letterSpacing: "1.5px",
+              textTransform: "uppercase" as const,
+              marginBottom: 10,
+            }}
+          >
+            Email delivery
+          </div>
+          <div
+            style={{
+              fontSize: 13,
+              color: "#8b8599",
+              marginBottom: 12,
+            }}
+          >
+            Send download link to{" "}
+            <span style={{ color: "#e8e4f0", fontWeight: 600 }}>{email}</span>
+          </div>
+          <button
+            onClick={onSendEmail}
+            disabled={emailResult === "Sending…"}
+            style={{
+              width: "100%",
+              background: emailResult === "Delivery email sent successfully."
+                ? "rgba(122,214,153,0.12)"
+                : "rgba(201, 168, 76, 0.15)",
+              color: emailResult === "Delivery email sent successfully."
+                ? "#a7f0c1"
+                : "#c9a84c",
+              border: emailResult === "Delivery email sent successfully."
+                ? "0.5px solid rgba(122,214,153,0.3)"
+                : "0.5px solid rgba(201, 168, 76, 0.3)",
+              borderRadius: 10,
+              padding: "12px 18px",
+              fontSize: 13,
+              fontWeight: 600,
+              cursor: emailResult === "Sending…" ? "wait" : "pointer",
+              fontFamily: "inherit",
+              opacity: emailResult === "Sending…" ? 0.5 : 1,
+            }}
+          >
+            {emailResult === "Sending…"
+              ? "Sending…"
+              : emailResult === "Delivery email sent successfully."
+              ? "Sent — Send Again"
+              : "Send delivery email"}
+          </button>
+          {emailResult && emailResult !== "Sending…" && (
+            <div
+              style={{
+                textAlign: "center",
+                fontSize: 12,
+                color: emailResult.startsWith("Email failed")
+                  ? "#f0a0b8"
+                  : "#6b9a6b",
+                fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace",
+                marginTop: 8,
+              }}
+            >
+              {emailResult}
+            </div>
+          )}
+        </div>
+      )}
+
       <div style={{ display: "flex", justifyContent: "space-between", marginTop: 6 }}>
         <button
           onClick={onBack}
@@ -769,16 +924,15 @@ function ContentLibraryViewer() {
   const lines = getContentLibrary();
 
   const ranges = [
-    { label: "90–100%", range: [90, 100] as [number, number], theme: "deep resonance" },
-    { label: "80–89%", range: [80, 89] as [number, number], theme: "strong connection" },
-    { label: "70–79%", range: [70, 79] as [number, number], theme: "warm pull" },
-    { label: "60–69%", range: [60, 69] as [number, number], theme: "balanced pull" },
-    { label: "50–59%", range: [50, 59] as [number, number], theme: "interesting tension" },
-    { label: "40–49%", range: [40, 49] as [number, number], theme: "complementary contrast" },
-    { label: "30–39%", range: [30, 39] as [number, number], theme: "different rhythms" },
-    { label: "20–29%", range: [20, 29] as [number, number], theme: "distant moons" },
-    { label: "10–19%", range: [10, 19] as [number, number], theme: "separate light" },
-    { label: "0–9%", range: [0, 9] as [number, number], theme: "new moon territory" },
+    { label: "90–100%", range: [90, 100] as [number, number], theme: "exceptional chemistry" },
+    { label: "80–89%", range: [80, 89] as [number, number], theme: "strong pull" },
+    { label: "70–79%", range: [70, 79] as [number, number], theme: "strong complement" },
+    { label: "60–69%", range: [60, 69] as [number, number], theme: "balanced tension" },
+    { label: "50–59%", range: [50, 59] as [number, number], theme: "honest friction" },
+    { label: "40–49%", range: [40, 49] as [number, number], theme: "drawn to the difference" },
+    { label: "30–39%", range: [30, 39] as [number, number], theme: "against the odds" },
+    { label: "20–29%", range: [20, 29] as [number, number], theme: "unlikely, but intriguing" },
+    { label: "0–19%", range: [0, 19] as [number, number], theme: "very different" },
   ];
 
   return (
@@ -809,7 +963,7 @@ function ContentLibraryViewer() {
           lineHeight: 1.6,
         }}
       >
-        {lines.length} curated lines across 10 score ranges. Each line is
+        {lines.length} curated lines across 9 score ranges. Each line is
         deterministically selected by FNV-1a hash of
         name1+date1+name2+date2. To update: edit{" "}
         <span
