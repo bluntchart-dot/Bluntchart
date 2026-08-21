@@ -347,15 +347,13 @@ function LoveLetterContent() {
         {/* Disclaimer */}
         <div className="fll-disclaimer-box">
           <p>
-            One little note: this isn&rsquo;t literally a letter from your future husband.
-            He&rsquo;s a fictional character created from the relationship themes in your chart,
-            imagined as someone who knows how to love you well.
+            He&rsquo;s not real &mdash; but the relationship themes he&rsquo;s responding to are.
+            Your chart says more about who you&rsquo;ll end up with than a letter can cover.
           </p>
           <p>
-            For a deeper look at your potential spouse and partnership themes, explore our{" "}
-            <Link href="/in-depth-birth-chart" className="fll-link">
-              Future Spouse Reading
-            </Link>.
+            <Link href="/in-depth-birth-chart" className="fll-disclaimer-link">
+              See Your Future Spouse Reading &rarr;
+            </Link>
           </p>
         </div>
       </div>
@@ -831,5 +829,16 @@ const styles = `
 }
 .fll-disclaimer-box p {
   margin-bottom: 8px;
+}
+.fll-disclaimer-link {
+  color: #F0B84A;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 0.3px;
+  transition: opacity 0.2s;
+}
+.fll-disclaimer-link:hover {
+  opacity: 0.75;
 }
 `;

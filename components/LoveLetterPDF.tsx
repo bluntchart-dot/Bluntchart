@@ -155,8 +155,8 @@ export default function LoveLetterPDF({ letter, name, date }: Props) {
         })}
 
         <Text style={s.disclaimer}>
-          This is a fictional letter inspired by the relationship themes in your birth chart.
-          The &quot;future husband&quot; is an imagined character, not a prediction.
+          He&apos;s not real — but the relationship themes he&apos;s responding to are.
+          Your chart says more about who you&apos;ll end up with than a letter can cover.
         </Text>
 
         <Text style={s.footer}>
