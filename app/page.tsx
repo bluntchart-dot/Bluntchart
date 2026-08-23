@@ -22,7 +22,7 @@ interface Insight {
   explain?: string;
   action?: string;
 }
-// Preview: 2 insights only. Chart wheel, 8 paid beats + share card come after payment (webhook email).
+// Discovery: 1 insight only. Chart wheel, 10 paid insights + share card come after payment (webhook email).
 interface ReadingData {
   preview: Insight[];
   letter_opener?: string;
@@ -62,7 +62,7 @@ const COMPARISON = [
   { feature: "One-time payment",               us: true, them: "Subscription" },
   { feature: "Shareable identity card",        us: true, them: false },
   { feature: "~1,500 words specific to you",   us: true, them: false },
-  { feature: "Free preview before you pay",    us: true, them: false },
+  { feature: "Free discovery before you pay",    us: true, them: false },
 ];
 
 const FAQS = [
@@ -328,7 +328,7 @@ try {
         letter_opener?: string;
       };
       const previewList = (Array.isArray(raw.preview) ? raw.preview : [])
-        .slice(0, 2)
+        .slice(0, 1)
         .map((ins) => ({
           ...ins,
           truth: normalizeReadingCopy(ins.truth ?? ""),
@@ -452,7 +452,7 @@ setErr("");
       <div style={{ background:"rgba(255,255,255,0.03)", border:"0.5px solid rgba(255,255,255,0.08)",
         borderRadius:18, padding:32 }}>
         <div style={{ fontFamily:"var(--font-display)", fontSize:22, marginBottom:6, color:"#e8e4f0" }}>
-          Get your free preview
+          Get your free discovery
         </div>
         <div style={{ fontSize:13, color:"#6b6585", lineHeight:1.6, marginBottom:28 }}>
           Your exact birth time is what makes this specific to you, not just anyone born that day.
@@ -532,7 +532,7 @@ setErr("");
           background:"linear-gradient(135deg,#6b2fd4,#d4537e)", color:"#fff", border:"none",
           borderRadius:12, padding:"16px 20px", fontSize:15, fontWeight:600,
           fontFamily:"inherit", cursor:"pointer", letterSpacing:"0.2px" }}>
-          Read my chart — free preview ✨
+          Read my chart — free discovery ✨
         </button>
       </div>
       <div style={{ fontSize:11, color:"#2e2c3e", textAlign:"center", marginTop:14 }}>
@@ -548,7 +548,7 @@ setErr("");
       <div style={{ fontFamily:"var(--font-display)", fontSize:22, margin:"16px 0 8px", color:"#e8e4f0" }}>
         {loadMsg}
       </div>
-      <div style={{ fontSize:13, color:"#4a4560" }}>Calculating your chart and writing your preview…</div>
+      <div style={{ fontSize:13, color:"#4a4560" }}>Calculating your chart and writing your discovery…</div>
     </div>
   );
 
@@ -564,11 +564,11 @@ setErr("");
             {err}
           </div>
         )}
-        <SectionDivider label="Free preview · 2 of 10" />
+        <SectionDivider label="Your chart · free discovery" />
         <p style={{ textAlign:"center", fontSize:15, color:"rgba(232,228,240,0.48)",
           marginBottom:28, fontFamily:"var(--font-display)", fontStyle:"italic", lineHeight:1.65,
           maxWidth:560, marginLeft:"auto", marginRight:"auto" }}>
-          Your real placements. Two truths your chart wanted you to hear before you unlock the rest.
+          Your real placements. One truth your chart wanted you to hear before you unlock the rest.
         </p>
         <PreviewReadingStage
            fname={fname}
@@ -600,11 +600,11 @@ setErr("");
           <div style={{ background:"rgba(107,47,212,0.04)", borderTop:"0.5px solid rgba(107,47,212,0.1)",
             padding:"32px 28px 28px", textAlign:"center" }}>
             <div style={{ fontFamily:"var(--font-display)", fontSize:20, marginBottom:10, color:"#e8e4f0" }}>
-  {focusArea && FOCUS_LOCKWALL_COPY[focusArea] ? "9 insights waiting, including the one you asked about" : "8 more insights waiting"}
+  The full pattern is waiting
 </div>
 <p style={{ fontSize:14, color:"#6b6585", lineHeight:1.75, maxWidth:380,
   margin:"0 auto 24px" }}>
-  Natal chart wheel (high-precision ephemeris, Astronomy Engine). {focusArea && FOCUS_LOCKWALL_COPY[focusArea] ? FOCUS_LOCKWALL_COPY[focusArea] + " Plus these two previews again in one thread and your shareable identity card." : "Eight deeper cuts, these two previews again in one thread, plus your shareable identity card."} In your inbox the moment you pay. Yours forever.
+  Natal chart wheel (high-precision ephemeris, Astronomy Engine). 10 complete insights across all your planets, houses, and key life areas. Plus your shareable identity card. In your inbox the moment you pay. Yours forever.
 </p>
             <button onClick={handleUnlock}
               style={{ display:"block", width:"100%",
@@ -612,7 +612,7 @@ setErr("");
                 color:"#0d0800", border:"none", borderRadius:12, padding:"17px 20px",
                 fontSize:15, fontWeight:700, fontFamily:"inherit", cursor:"pointer",
                 letterSpacing:"0.2px" }}>
-              Unlock full reading · $15 ✦
+              Show Me The Full Pattern →
             </button>
             <div style={{ fontSize:11, color:"#3a3858", marginTop:10 }}>
               One-time · No subscription · Full reading emailed instantly after payment
@@ -902,7 +902,7 @@ export default function HomePage() {
             <p className="hsh">It&apos;s time you did too.</p>
             <p className="hb">BluntChart takes your birth date, time, and place. Calculates your real natal chart and delivers a reading that tells you the truth in plain language, no sugarcoating.</p>
             <div className="hctas">
-              <a className="bp" href="#try-it">Get My Free Preview ✨</a>
+              <a className="bp" href="#try-it">Get My Free Discovery ✨</a>
               <a className="bs" href="#reveals">See What We Reveal ↓</a>
             </div>
             <div className="htr">
@@ -922,8 +922,8 @@ export default function HomePage() {
           {!resultShowing && (
             <>
               <div className="sl"><span>Real natal chart · High-precision ephemeris (Astronomy Engine)</span></div>
-              <h2 style={{ maxWidth:640 }}>Two answers,<br/><em>completely free.</em></h2>
-              <p className="sub">No account. No payment. Enter your birth details and we&apos;ll tell you what your chart actually says. Not your sign. <em>Your chart.</em></p>
+              <h2 style={{ maxWidth:640 }}>One discovery,<br/><em>completely free.</em></h2>
+              <p className="sub">No account. No payment. Enter your birth details and we&apos;ll show you one thing your chart says about you. Not your sign. <em>Your chart.</em></p>
               <div className="cred-grid">
                 {PLANET_CREDENTIALS.map((item, i) => (
                   <div className="cred-item" key={i}>
@@ -995,13 +995,13 @@ export default function HomePage() {
               <div className="price-num">$15</div>
               <p className="price-sub">One-time · Emailed instantly · Yours forever</p>
               <ul className="price-includes">
-                <li>2 free preview beats before you pay (no chart, no card)</li>
-                <li>8 deeper paid insights plus natal chart wheel + share card in your inbox</li>
+                <li>1 free discovery before you pay (no card required)</li>
+                <li>10 complete paid insights plus natal chart wheel + share card in your inbox</li>
                 <li>High-precision ephemeris (Astronomy Engine) for planet positions in the full delivery</li>
                 <li>No account required</li>
               </ul>
               <a className="bp" href="#try-it" style={{ display:"block", textAlign:"center", textDecoration:"none" }}>
-                Get My Free Preview First ✨
+                Get My Free Discovery First ✨
               </a>
             </div>
           </div>

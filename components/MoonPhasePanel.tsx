@@ -7,11 +7,14 @@ import { calculateCompatibility } from "@/lib/moon-phase";
 import { getContentLine, getLineCount, getAllLines } from "@/lib/moon-content";
 import {
   renderMoon,
-  renderCombinedMoon,
-  composeMaster,
+  blendBirthMoons,
+  scoreToPhaseAngle,
   MOON_SMALL,
-  MOON_BIG,
 } from "@/lib/moon-artwork";
+import { composeA1, MOON_HERO_A1 } from "@/lib/moon-a1-soulmate";
+import { composeA2, MOON_HERO_A2 } from "@/lib/moon-a2-match";
+import { composeB1, MOON_HERO_B1 } from "@/lib/moon-b1-compat";
+import { composeB2, MOON_LARGE_B2 } from "@/lib/moon-b2-astromatch";
 import {
   FORMATS,
   deriveFormat,
@@ -33,6 +36,15 @@ const dmSans = DM_Sans({
   style: ["normal", "italic"],
   display: "block",
 });
+
+export type MoonProduct = "a1" | "a2" | "b1" | "b2";
+
+const PRODUCT_INFO: Record<MoonProduct, { name: string; desc: string }> = {
+  a1: { name: "Soulmate Moon", desc: "Combined birth Moons, no %" },
+  a2: { name: "Moon Match", desc: "Single hero Moon, Moon Match %" },
+  b1: { name: "Astrology Compatibility", desc: "Single hero Moon, astrology %" },
+  b2: { name: "Astrology Match", desc: "Two large birth Moons, astrology %" },
+};
 
 interface GeneratedFile {
   id: string;
@@ -76,11 +88,17 @@ const lbl: React.CSSProperties = {
 
 type Stage = "form" | "rendering" | "done" | "saving" | "saved";
 
-export default function MoonPhasePanel({ onBack }: { onBack: () => void }) {
+interface Props {
+  product: MoonProduct;
+  onBack: () => void;
+}
+
+export default function MoonPhasePanel({ product, onBack }: Props) {
   const [name1, setName1] = useState("");
   const [dob1, setDob1] = useState("");
   const [name2, setName2] = useState("");
   const [dob2, setDob2] = useState("");
+  const [mockScore, setMockScore] = useState(75);
   const [email, setEmail] = useState("");
   const [stage, setStage] = useState<Stage>("form");
   const [files, setFiles] = useState<GeneratedFile[]>([]);
@@ -90,6 +108,9 @@ export default function MoonPhasePanel({ onBack }: { onBack: () => void }) {
   const [emailResult, setEmailResult] = useState("");
   const [showLibrary, setShowLibrary] = useState(false);
   const rendering = useRef(false);
+
+  const needsMockScore = product === "b1" || product === "b2";
+  const pInfo = PRODUCT_INFO[product];
 
   async function generate() {
     if (rendering.current) return;
@@ -108,8 +129,9 @@ export default function MoonPhasePanel({ onBack }: { onBack: () => void }) {
       await document.fonts.ready;
 
       const compat = calculateCompatibility(dob1, dob2);
+      const score = needsMockScore ? mockScore : compat.score;
       const contentLine = getContentLine(
-        compat.score,
+        score,
         name1.trim(),
         dob1,
         name2.trim(),
@@ -117,7 +139,7 @@ export default function MoonPhasePanel({ onBack }: { onBack: () => void }) {
       );
 
       setInfo(
-        `${name1.trim()} (${compat.person1.phaseName}) × ${name2.trim()} (${compat.person2.phaseName}) — ${compat.score}% — "${contentLine}"`
+        `${name1.trim()} × ${name2.trim()} — ${pInfo.name} — ${product === "a1" ? "combined" : score + "%"} — "${contentLine}"`
       );
 
       const serif = cormorant.style.fontFamily;
@@ -136,27 +158,7 @@ export default function MoonPhasePanel({ onBack }: { onBack: () => void }) {
         }),
       ]);
 
-      const m1 = renderMoon(
-        compat.person1.phaseAngle,
-        MOON_SMALL,
-        colorMap,
-        displacementMap
-      );
-      const m2 = renderMoon(
-        compat.person2.phaseAngle,
-        MOON_SMALL,
-        colorMap,
-        displacementMap
-      );
-      const combined = renderCombinedMoon(
-        compat.person1.phaseAngle,
-        compat.person2.phaseAngle,
-        MOON_BIG,
-        colorMap,
-        displacementMap
-      );
-
-      const master = composeMaster(m1, m2, combined, compat, {
+      const composeInput = {
         name1: name1.trim(),
         date1: dob1,
         name2: name2.trim(),
@@ -164,7 +166,49 @@ export default function MoonPhasePanel({ onBack }: { onBack: () => void }) {
         serif,
         sans,
         contentLine,
-      });
+      };
+
+      let master: HTMLCanvasElement;
+
+      if (product === "a1") {
+        const m1 = renderMoon(compat.person1.phaseAngle, MOON_SMALL, colorMap, displacementMap);
+        const m2 = renderMoon(compat.person2.phaseAngle, MOON_SMALL, colorMap, displacementMap);
+        const hero = blendBirthMoons(
+          compat.person1.phaseAngle,
+          compat.person2.phaseAngle,
+          MOON_HERO_A1,
+          colorMap,
+          displacementMap
+        );
+        master = composeA1(m1, m2, hero, compat, composeInput);
+      } else if (product === "a2") {
+        const heroAngle = scoreToPhaseAngle(compat.score);
+        const esOpts = compat.score < 25
+          ? { earthshineIntensity: 0.008 + ((25 - compat.score) / 25) * 0.04 }
+          : { earthshineIntensity: 0.008 };
+        const hero = renderMoon(heroAngle, MOON_HERO_A2, colorMap, displacementMap, esOpts);
+        master = composeA2(hero, compat, composeInput);
+      } else if (product === "b1") {
+        const heroAngle = scoreToPhaseAngle(mockScore);
+        const esOpts = mockScore < 25
+          ? { earthshineIntensity: 0.008 + ((25 - mockScore) / 25) * 0.04 }
+          : { earthshineIntensity: 0.008 };
+        const hero = renderMoon(heroAngle, MOON_HERO_B1, colorMap, displacementMap, esOpts);
+        master = composeB1(hero, {
+          ...composeInput,
+          score: mockScore,
+        });
+      } else {
+        const es = { earthshineIntensity: 0.008 };
+        const m1 = renderMoon(compat.person1.phaseAngle, MOON_LARGE_B2, colorMap, displacementMap, es);
+        const m2 = renderMoon(compat.person2.phaseAngle, MOON_LARGE_B2, colorMap, displacementMap, es);
+        master = composeB2(m1, m2, {
+          ...composeInput,
+          score: mockScore,
+          person1PhaseName: compat.person1.phaseName,
+          person2PhaseName: compat.person2.phaseName,
+        });
+      }
 
       colorMap.dispose();
       displacementMap.dispose();
@@ -205,7 +249,7 @@ export default function MoonPhasePanel({ onBack }: { onBack: () => void }) {
       setFiles(generated);
       setStage("done");
     } catch (e) {
-      console.error("Moon phase generation failed:", e);
+      console.error("Generation failed:", e);
       setErr(e instanceof Error ? e.message : "Generation failed.");
       setStage("form");
     } finally {
@@ -295,7 +339,7 @@ export default function MoonPhasePanel({ onBack }: { onBack: () => void }) {
             color: "#e8e4f0",
           }}
         >
-          Rendering moon artwork…
+          Rendering {pInfo.name}…
         </div>
         <div style={{ fontSize: 13, color: "#4a4560" }}>
           Three.js rendering + composition. This takes 5–15 seconds.
@@ -307,6 +351,7 @@ export default function MoonPhasePanel({ onBack }: { onBack: () => void }) {
   if ((stage === "done" || stage === "saving" || stage === "saved") && files.length > 0) {
     return (
       <MoonPhaseResult
+        product={product}
         files={files}
         info={info}
         stage={stage}
@@ -356,23 +401,21 @@ export default function MoonPhasePanel({ onBack }: { onBack: () => void }) {
           style={{
             fontFamily: "var(--font-display)",
             fontSize: 22,
-            marginBottom: 6,
+            marginBottom: 4,
             color: "#e8e4f0",
           }}
         >
-          Moon Phase Card
+          {pInfo.name}
         </div>
         <div
           style={{
-            fontSize: 13,
+            fontSize: 12,
             color: "#6b6585",
             lineHeight: 1.6,
-            marginBottom: 28,
+            marginBottom: 24,
           }}
         >
-          Enter two names, birth dates, and the customer's email. Generates the
-          approved v6 artwork in all export formats and emails the customer a
-          download link.
+          {pInfo.desc}
         </div>
 
         <div
@@ -432,7 +475,7 @@ export default function MoonPhasePanel({ onBack }: { onBack: () => void }) {
             display: "grid",
             gridTemplateColumns: "1fr 1fr",
             gap: 12,
-            marginBottom: 24,
+            marginBottom: needsMockScore ? 20 : 24,
           }}
         >
           <div>
@@ -454,6 +497,52 @@ export default function MoonPhasePanel({ onBack }: { onBack: () => void }) {
             />
           </div>
         </div>
+
+        {needsMockScore && (
+          <div style={{ marginBottom: 24 }}>
+            <div
+              style={{
+                fontSize: 10,
+                fontWeight: 600,
+                color: "#c9a84c",
+                letterSpacing: "1.5px",
+                textTransform: "uppercase",
+                marginBottom: 12,
+              }}
+            >
+              Mock astrology score
+            </div>
+            <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+              <input
+                type="range"
+                min={0}
+                max={100}
+                value={mockScore}
+                onChange={(e) => setMockScore(Number(e.target.value))}
+                style={{ flex: 1 }}
+              />
+              <input
+                type="number"
+                min={0}
+                max={100}
+                value={mockScore}
+                onChange={(e) => setMockScore(Math.min(100, Math.max(0, Number(e.target.value))))}
+                style={{ ...inp, width: 70, textAlign: "center" }}
+              />
+              <span style={{ fontSize: 14, color: "#6b6585" }}>%</span>
+            </div>
+            <small
+              style={{
+                fontSize: 11,
+                color: "#3a3858",
+                marginTop: 4,
+                display: "block",
+              }}
+            >
+              Placeholder until the astrology engine is implemented
+            </small>
+          </div>
+        )}
 
         <div
           style={{
@@ -484,7 +573,7 @@ export default function MoonPhasePanel({ onBack }: { onBack: () => void }) {
               display: "block",
             }}
           >
-            They'll receive a link to download all formats
+            They&apos;ll receive a link to download all formats
           </small>
         </div>
 
@@ -514,7 +603,7 @@ export default function MoonPhasePanel({ onBack }: { onBack: () => void }) {
             letterSpacing: "0.2px",
           }}
         >
-          Generate Moon Phase Card
+          Generate {pInfo.name}
         </button>
       </div>
 
@@ -556,6 +645,7 @@ export default function MoonPhasePanel({ onBack }: { onBack: () => void }) {
 }
 
 function MoonPhaseResult({
+  product,
   files,
   info,
   stage,
@@ -569,6 +659,7 @@ function MoonPhaseResult({
   showLibrary,
   setShowLibrary,
 }: {
+  product: MoonProduct;
   files: GeneratedFile[];
   info: string;
   stage: Stage;
@@ -583,6 +674,7 @@ function MoonPhaseResult({
   setShowLibrary: (v: boolean) => void;
 }) {
   const masterFile = files.find((f) => f.id === "print-8x10");
+  const pInfo = PRODUCT_INFO[product];
 
   return (
     <div style={{ maxWidth: 720, margin: "0 auto", width: "100%" }}>
@@ -599,7 +691,7 @@ function MoonPhaseResult({
           letterSpacing: "0.02em",
         }}
       >
-        Moon Phase Card generated — {files.length} formats ready.
+        {pInfo.name} generated — {files.length} formats ready.
       </div>
 
       {info && (
@@ -626,7 +718,7 @@ function MoonPhaseResult({
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={masterFile.dataURL}
-            alt="Master artwork"
+            alt={`${pInfo.name} artwork`}
             style={{
               maxWidth: "100%",
               maxHeight: 500,
@@ -734,6 +826,22 @@ function MoonPhaseResult({
           ))}
         </div>
       </div>
+
+      {(product === "a2" || product === "b1") && (
+        <div
+          style={{
+            background: "rgba(218, 185, 90, 0.06)",
+            border: "0.5px solid rgba(218, 185, 90, 0.2)",
+            borderRadius: 14,
+            padding: "14px 18px",
+            marginBottom: 16,
+            fontSize: 12,
+            color: "#c9a84c",
+          }}
+        >
+          Animated Story (MP4) — requires FFmpeg server-side encoding. Frame rendering is ready; MP4 export pending infrastructure setup.
+        </div>
+      )}
 
       <div
         style={{

@@ -1,21 +1,30 @@
 /**
- * Moon Phase Artwork — shared composition module.
- * Implements the approved v6 design as reusable rendering functions.
+ * Moon Phase Artwork — shared rendering utilities.
+ * Low-level functions used by all moon products (A1/A2/B1/B2).
  * Client-only (uses DOM Canvas + Three.js WebGL).
  */
 
 import * as THREE from "three";
 import { createMoonScene, postProcessPremium } from "@/lib/moon-renderer";
-import type { CompatibilityResult } from "@/lib/moon-phase";
-import { SECONDARY_LINE } from "@/lib/moon-content";
 
 export const MASTER_W = 2400;
 export const MASTER_H = 3000;
 export const MOON_SMALL = 440;
-export const MOON_BIG = 960;
 const BORDER_INSET = 38;
 
-function createPRNG(seed: number) {
+export { BORDER_INSET };
+
+export interface ComposeInput {
+  name1: string;
+  date1: string;
+  name2: string;
+  date2: string;
+  serif: string;
+  sans: string;
+  contentLine: string;
+}
+
+export function createPRNG(seed: number) {
   let s = seed % 2147483647;
   if (s <= 0) s += 2147483646;
   return () => {
@@ -24,7 +33,7 @@ function createPRNG(seed: number) {
   };
 }
 
-function hashString(str: string): number {
+export function hashString(str: string): number {
   let h = 5381;
   for (let i = 0; i < str.length; i++) {
     h = ((h << 5) + h + str.charCodeAt(i)) | 0;
@@ -90,7 +99,7 @@ export function drawStarField(
   }
 }
 
-function drawMoonGlow(
+export function drawMoonGlow(
   ctx: CanvasRenderingContext2D,
   moonCanvas: HTMLCanvasElement,
   cx: number,
@@ -143,7 +152,8 @@ export function renderMoon(
   phaseAngle: number,
   renderSize: number,
   colorMap: THREE.Texture,
-  displacementMap: THREE.Texture
+  displacementMap: THREE.Texture,
+  opts?: { earthshineIntensity?: number }
 ): HTMLCanvasElement {
   const canvas = document.createElement("canvas");
   const renderer = new THREE.WebGLRenderer({
@@ -163,6 +173,7 @@ export function renderMoon(
     phaseAngle,
     size: renderSize,
     premium: true,
+    earthshineIntensity: opts?.earthshineIntensity,
   });
 
   (scene.material as THREE.MeshStandardMaterial).map = colorMap;
@@ -180,15 +191,31 @@ export function renderMoon(
   return processed;
 }
 
-export function renderCombinedMoon(
-  angle1: number,
-  angle2: number,
+export function fmtDate(d: string): string {
+  return new Date(d + "T12:00:00Z").toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+    timeZone: "UTC",
+  });
+}
+
+export function scoreToPhaseAngle(score: number): number {
+  const illum = Math.max(0, Math.min(100, score)) / 100;
+  const cosA = Math.max(-1, Math.min(1, 1 - 2 * illum));
+  return Math.acos(cosA) * (180 / Math.PI);
+}
+
+export function blendBirthMoons(
+  phaseAngle1: number,
+  phaseAngle2: number,
   renderSize: number,
   colorMap: THREE.Texture,
   displacementMap: THREE.Texture
 ): HTMLCanvasElement {
-  const c1 = renderMoon(angle1, renderSize, colorMap, displacementMap);
-  const c2 = renderMoon(angle2, renderSize, colorMap, displacementMap);
+  const es = { earthshineIntensity: 0.01 };
+  const c1 = renderMoon(phaseAngle1, renderSize, colorMap, displacementMap, es);
+  const c2 = renderMoon(phaseAngle2, renderSize, colorMap, displacementMap, es);
 
   const w = c1.width;
   const h = c1.height;
@@ -218,187 +245,4 @@ export function renderCombinedMoon(
   result.height = h;
   result.getContext("2d")!.putImageData(out, 0, 0);
   return result;
-}
-
-function fmtDate(d: string): string {
-  return new Date(d + "T12:00:00Z").toLocaleDateString("en-US", {
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-    timeZone: "UTC",
-  });
-}
-
-export interface ComposeInput {
-  name1: string;
-  date1: string;
-  name2: string;
-  date2: string;
-  serif: string;
-  sans: string;
-  contentLine: string;
-}
-
-export function composeMaster(
-  moon1: HTMLCanvasElement,
-  moon2: HTMLCanvasElement,
-  combinedMoon: HTMLCanvasElement,
-  compat: CompatibilityResult,
-  input: ComposeInput
-): HTMLCanvasElement {
-  const canvas = document.createElement("canvas");
-  canvas.width = MASTER_W;
-  canvas.height = MASTER_H;
-  const ctx = canvas.getContext("2d")!;
-
-  const { name1, name2, date1, date2, serif, sans, contentLine } = input;
-  const secondaryLine = SECONDARY_LINE;
-  const W = MASTER_W;
-  const H = MASTER_H;
-
-  const smallGap = 260;
-  const m1x = W / 2 - smallGap / 2 - MOON_SMALL / 2;
-  const m2x = W / 2 + smallGap / 2 + MOON_SMALL / 2;
-  const smallY = 560;
-  const bigY = 1550;
-
-  // Background
-  const bg = ctx.createRadialGradient(
-    W / 2, bigY - 100, 80,
-    W / 2, bigY - 100, W * 0.9
-  );
-  bg.addColorStop(0, "#0a0d1a");
-  bg.addColorStop(0.45, "#060910");
-  bg.addColorStop(1, "#030508");
-  ctx.fillStyle = bg;
-  ctx.fillRect(0, 0, W, H);
-
-  // Stars
-  const seed = hashString(name1 + name2 + date1 + date2);
-  drawStarField(ctx, W, H, seed, [
-    { x: m1x, y: smallY, r: MOON_SMALL / 2 + 40 },
-    { x: m2x, y: smallY, r: MOON_SMALL / 2 + 40 },
-    { x: W / 2, y: bigY, r: MOON_BIG / 2 + 60 },
-    { x: W / 2, y: bigY + MOON_BIG / 2 + 260, r: 400 },
-  ]);
-
-  // Border
-  ctx.strokeStyle = "rgba(220, 190, 100, 0.42)";
-  ctx.lineWidth = 3;
-  ctx.strokeRect(
-    BORDER_INSET, BORDER_INSET,
-    W - BORDER_INSET * 2, H - BORDER_INSET * 2
-  );
-
-  ctx.textAlign = "center";
-  ctx.textBaseline = "top";
-
-  // Eyebrow
-  ctx.font = `500 48px ${sans}`;
-  ctx.fillStyle = "rgba(218, 185, 90, 0.78)";
-  ctx.letterSpacing = "18px";
-  ctx.fillText("OUR MOONS", W / 2 + 9, 190);
-  ctx.letterSpacing = "0px";
-
-  // Glow — individual moons
-  drawMoonGlow(ctx, moon1, m1x, smallY, MOON_SMALL, 12, 0.35);
-  drawMoonGlow(ctx, moon2, m2x, smallY, MOON_SMALL, 12, 0.35);
-
-  // Individual moons
-  ctx.drawImage(moon1, m1x - MOON_SMALL / 2, smallY - MOON_SMALL / 2, MOON_SMALL, MOON_SMALL);
-  ctx.drawImage(moon2, m2x - MOON_SMALL / 2, smallY - MOON_SMALL / 2, MOON_SMALL, MOON_SMALL);
-
-  // Names
-  const nameY = smallY + MOON_SMALL / 2 + 52;
-  ctx.font = `600 96px ${serif}`;
-  ctx.fillStyle = "#e8e3d8";
-  ctx.letterSpacing = "6px";
-  ctx.fillText(name1.toUpperCase(), m1x, nameY);
-  ctx.fillText(name2.toUpperCase(), m2x, nameY);
-  ctx.letterSpacing = "0px";
-
-  // Dates
-  const dateY = nameY + 86;
-  ctx.font = `italic 300 30px ${sans}`;
-  ctx.fillStyle = "rgba(200, 198, 192, 0.55)";
-  ctx.fillText(fmtDate(date1), m1x, dateY);
-  ctx.fillText(fmtDate(date2), m2x, dateY);
-
-  // Phase labels
-  const phaseY = dateY + 42;
-  ctx.font = `500 22px ${sans}`;
-  ctx.fillStyle = "rgba(218, 185, 90, 0.55)";
-  ctx.letterSpacing = "3px";
-  ctx.fillText(compat.person1.phaseName, m1x, phaseY);
-  ctx.fillText(compat.person2.phaseName, m2x, phaseY);
-  ctx.letterSpacing = "0px";
-
-  // Connector
-  const connY = phaseY + 54;
-  ctx.strokeStyle = "rgba(218, 185, 90, 0.16)";
-  ctx.lineWidth = 1;
-  ctx.beginPath();
-  ctx.moveTo(W / 2 - 80, connY);
-  ctx.lineTo(W / 2 - 11, connY);
-  ctx.moveTo(W / 2 + 11, connY);
-  ctx.lineTo(W / 2 + 80, connY);
-  ctx.stroke();
-
-  ctx.fillStyle = "rgba(218, 185, 90, 0.35)";
-  ctx.save();
-  ctx.translate(W / 2, connY);
-  ctx.rotate(Math.PI / 4);
-  ctx.fillRect(-5.5, -5.5, 11, 11);
-  ctx.restore();
-
-  // Glow — combined moon
-  drawMoonGlow(ctx, combinedMoon, W / 2, bigY, MOON_BIG, 18, 0.45);
-
-  // Combined moon
-  ctx.drawImage(combinedMoon, W / 2 - MOON_BIG / 2, bigY - MOON_BIG / 2, MOON_BIG, MOON_BIG);
-
-  // Score
-  const scoreY = bigY + MOON_BIG / 2 + 110;
-
-  ctx.save();
-  ctx.font = `700 240px ${serif}`;
-  ctx.fillStyle = "rgba(195, 200, 215, 0.12)";
-  ctx.filter = "blur(10px)";
-  ctx.letterSpacing = "6px";
-  ctx.fillText(compat.score + "%", W / 2 + 3, scoreY);
-  ctx.letterSpacing = "0px";
-  ctx.restore();
-
-  ctx.font = `700 240px ${serif}`;
-  ctx.fillStyle = "#c5c9d8";
-  ctx.letterSpacing = "6px";
-  ctx.fillText(compat.score + "%", W / 2 + 3, scoreY);
-  ctx.letterSpacing = "0px";
-
-  // "COMPATIBILITY"
-  const compatY = scoreY + 290;
-  ctx.font = `500 36px ${sans}`;
-  ctx.fillStyle = "rgba(218, 185, 90, 0.60)";
-  ctx.letterSpacing = "16px";
-  ctx.fillText("COMPATIBILITY", W / 2 + 8, compatY);
-  ctx.letterSpacing = "0px";
-
-  // Content line
-  const contentY = compatY + 110;
-  ctx.font = `italic 400 50px ${serif}`;
-  ctx.fillStyle = "rgba(245, 243, 240, 0.88)";
-  ctx.fillText("“" + contentLine + "”", W / 2, contentY);
-
-  // Secondary line (fixed)
-  const secondaryY = contentY + 80;
-  ctx.font = `italic 300 34px ${serif}`;
-  ctx.fillStyle = "rgba(218, 185, 90, 0.50)";
-  ctx.fillText(secondaryLine, W / 2, secondaryY);
-
-  // Brand
-  ctx.font = `300 26px ${sans}`;
-  ctx.fillStyle = "rgba(140, 138, 155, 0.38)";
-  ctx.fillText("bluntchart.com", W / 2, H - 110);
-
-  return canvas;
 }

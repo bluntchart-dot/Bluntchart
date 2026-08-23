@@ -39,7 +39,7 @@ function inferColorKey(
   for (const k of Object.keys(DOT_COLORS)) {
     if (t.includes(k)) return k;
   }
-  return index === 0 ? "sun" : "moon";
+  return index === 0 ? "venus" : "sun";
 }
 
 /* ─── Component ─────────────────────────────────────────────────────────── */
@@ -48,7 +48,7 @@ export function PreviewReadingStage({
   fname,
   preview,
   letterOpener,
-  onUnlock,          // ← passed from app/page.tsx; triggers payment flow
+  onUnlock,
 }: {
   fname:         string;
   preview:       PreviewInsight[];
@@ -57,13 +57,12 @@ export function PreviewReadingStage({
 }) {
   const displayName = fname.trim() || "You";
 
-  const beats = preview.slice(0, 2).map((ins, i) => ({
-    ...ins,
-    colorKey: ins.colorKey?.trim() || inferColorKey(ins.planet, i),
-    truth:    normalizeReadingCopy(ins.truth),
-    explain:  ins.explain ? normalizeReadingCopy(ins.explain) : "",
-    action:   ins.action?.trim() ?? "",
-  }));
+  const ins = preview[0];
+  if (!ins) return null;
+
+  const colorKey = ins.colorKey?.trim() || inferColorKey(ins.planet, 0);
+  const accent = DOT_COLORS[colorKey] || "#EC96B4";
+  const truth = normalizeReadingCopy(ins.truth);
 
   return (
     <div className="preview-landscape">
@@ -78,190 +77,106 @@ export function PreviewReadingStage({
       {/* ── Header ── */}
       <header className="preview-header">
         <div>
-          <p className="preview-eyebrow">Your chart · free preview</p>
+          <p className="preview-eyebrow">Your chart · free discovery</p>
           <h2 className="preview-name">{displayName}</h2>
         </div>
-        <p className="preview-count">2 of 10 insights</p>
       </header>
 
-      {/* ── Two-panel grid ── */}
-      <div className="preview-grid">
-        {beats.map((ins, i) => {
-          const accent = DOT_COLORS[ins.colorKey] || "#EC96B4";
+      {/* ── Single discovery card ── */}
+      <div style={{ maxWidth: 640, margin: "0 auto" }}>
+        <article
+          className="preview-panel"
+          style={{ borderColor: `${accent}33` }}
+        >
+          <p className="preview-theme" style={{ color: accent }}>
+            {ins.planet}
+          </p>
 
-          const plainExplain = ins.explain.includes("In simple words:")
-            ? ins.explain.split("In simple words:")[1]?.trim() ?? ins.explain
-            : ins.explain;
+          {ins.hook ? (
+            <p style={{
+              fontSize: 15,
+              color: "rgba(232,228,240,0.7)",
+              fontStyle: "italic",
+              lineHeight: 1.6,
+              marginBottom: 16,
+            }}>
+              {ins.hook}
+            </p>
+          ) : null}
 
-          /* ════════════════════════════════════════
-             INSIGHT 1 — full, no restrictions
-          ════════════════════════════════════════ */
-          if (i === 0) {
-            return (
-              <article
-                key={i}
-                className="preview-panel"
-                style={{ borderColor: `${accent}33` }}
-              >
-                <p className="preview-theme" style={{ color: accent }}>
-                  {ins.planet}
-                </p>
+          <div className="preview-truth">
+            <ReadingText text={truth} />
+          </div>
 
-                <div className="preview-truth">
-                  <ReadingText text={ins.truth} />
-                </div>
+          {ins.reveal ? (
+            <div style={{
+              marginTop: 16,
+              paddingTop: 16,
+              borderTop: "0.5px solid rgba(255,255,255,0.06)",
+            }}>
+              <ReadingText text={normalizeReadingCopy(ins.reveal)} />
+            </div>
+          ) : null}
 
-                {plainExplain ? (
-                  <div className="preview-explain">
-                    <span className="preview-explain-label">In simple words</span>
-                    <ReadingText text={plainExplain} />
-                  </div>
-                ) : null}
-
-                {ins.action ? (
-                  <p className="preview-action">
-                    <span>This week</span>
-                    {ins.action}
-                  </p>
-                ) : null}
-              </article>
-            );
-          }
-
-          /* ════════════════════════════════════════
-             INSIGHT 2 — blurs at line ~5, paywall CTA
-             The content renders in full so the blur
-             reveals tantalizingly partial text.
-          ════════════════════════════════════════ */
-          return (
-            <article
-              key={i}
-              className="preview-panel"
-              style={{
-                borderColor: `${accent}33`,
-                position:    "relative",
-                overflow:    "hidden",
-                /* Enough height so gradient has room to work */
-                minHeight:   "420px",
-              }}
-            >
-              {/* ── Actual content (gets blurred at bottom) ── */}
-              <p className="preview-theme" style={{ color: accent }}>
-                {ins.planet}
+          {/* ── Curiosity gap + CTA ── */}
+          <div style={{
+            marginTop: 28,
+            paddingTop: 24,
+            borderTop: "0.5px solid rgba(255,255,255,0.08)",
+            textAlign: "center",
+          }}>
+            {ins.cliffhanger ? (
+              <p style={{
+                color: "#c4a8ff",
+                fontSize: 13,
+                lineHeight: 1.6,
+                maxWidth: 360,
+                margin: "0 auto 20px",
+                opacity: 0.9,
+              }}>
+                {ins.cliffhanger}
               </p>
+            ) : null}
 
-              <div className="preview-truth">
-                <ReadingText text={ins.truth} />
-              </div>
+            <button
+              onClick={onUnlock}
+              style={{
+                display: "block",
+                width: "100%",
+                maxWidth: 360,
+                margin: "0 auto",
+                background: "linear-gradient(135deg,#f0b84a,#e8854a)",
+                color: "#0d0800",
+                fontWeight: 700,
+                padding: "16px 20px",
+                borderRadius: 12,
+                fontSize: 15,
+                border: "none",
+                cursor: "pointer",
+                letterSpacing: "0.2px",
+                fontFamily: "inherit",
+                transition: "opacity 0.15s",
+              }}
+              onMouseEnter={(e) =>
+                ((e.target as HTMLButtonElement).style.opacity = "0.9")
+              }
+              onMouseLeave={(e) =>
+                ((e.target as HTMLButtonElement).style.opacity = "1")
+              }
+            >
+              Show Me The Full Pattern →
+            </button>
 
-              {/* Render explain + action — they'll sit behind the blur,
-                  creating visible-but-unreadable text that adds to curiosity */}
-              {plainExplain ? (
-                <div className="preview-explain">
-                  <span className="preview-explain-label">In simple words</span>
-                  <ReadingText text={plainExplain} />
-                </div>
-              ) : null}
-
-              {ins.action ? (
-                <p className="preview-action">
-                  <span>This week</span>
-                  {ins.action}
-                </p>
-              ) : null}
-
-              {/* ── Gradient fade — starts at 45%, fully opaque at 75% ── */}
-              <div
-                aria-hidden="true"
-                style={{
-                  position:   "absolute",
-                  bottom:     0,
-                  left:       0,
-                  right:      0,
-                  height:     "72%",
-                  background: "linear-gradient(to bottom, transparent 0%, rgba(9,9,15,0.85) 45%, #09090f 70%)",
-                  pointerEvents: "none",
-                  zIndex:     1,
-                }}
-              />
-
-              {/* ── Paywall CTA — sits on top of the gradient ── */}
-              <div
-                style={{
-                  position:        "absolute",
-                  bottom:          0,
-                  left:            0,
-                  right:           0,
-                  padding:         "20px 16px 24px",
-                  display:         "flex",
-                  flexDirection:   "column",
-                  alignItems:      "center",
-                  gap:             "10px",
-                  zIndex:          2,
-                  textAlign:       "center",
-                }}
-              >
-                {/* Cliffhanger line */}
-                {ins.cliffhanger ? (
-                  <p
-                    style={{
-                      color:      "#c4a8ff",
-                      fontSize:   "12px",
-                      lineHeight: 1.5,
-                      maxWidth:   "240px",
-                      opacity:    0.9,
-                    }}
-                  >
-                    🔒 {ins.cliffhanger}
-                  </p>
-                ) : (
-                  <p style={{ color: "#c4a8ff", fontSize: "12px", opacity: 0.9 }}>
-                    🔒 This is where it gets specific to you
-                  </p>
-                )}
-
-                {/* Unlock button */}
-                <button
-                  onClick={onUnlock}
-                  style={{
-                    background:    "#f59e0b",
-                    color:         "#000",
-                    fontWeight:    700,
-                    padding:       "13px 0",
-                    borderRadius:  "999px",
-                    fontSize:      "14px",
-                    border:        "none",
-                    cursor:        "pointer",
-                    width:         "100%",
-                    maxWidth:      "260px",
-                    letterSpacing: "0.01em",
-                    transition:    "background 0.15s",
-                  }}
-                  onMouseEnter={(e) =>
-                    ((e.target as HTMLButtonElement).style.background = "#fbbf24")
-                  }
-                  onMouseLeave={(e) =>
-                    ((e.target as HTMLButtonElement).style.background = "#f59e0b")
-                  }
-                >
-                  Unlock Full Reading — $15
-                </button>
-
-                {/* Sub-label */}
-                <p
-                  style={{
-                    color:          "#6b6585",
-                    fontSize:       "10px",
-                    letterSpacing:  "0.06em",
-                    textTransform:  "uppercase",
-                  }}
-                >
-                  10 insights · shareable card · one-time payment
-                </p>
-              </div>
-            </article>
-          );
-        })}
+            <p style={{
+              color: "#6b6585",
+              fontSize: 11,
+              letterSpacing: "0.04em",
+              marginTop: 12,
+            }}>
+              10 complete insights · Personalized to your chart · One-time payment
+            </p>
+          </div>
+        </article>
       </div>
     </div>
   );

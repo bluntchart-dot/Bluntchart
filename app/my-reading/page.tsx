@@ -12,6 +12,29 @@ import { getChartHighlights } from "@/lib/chart-calculator";
 import ChartHighlightBoxes from "@/components/ChartHighlightBoxes";
 import FunFactBoxes from "@/components/FunFactBoxes";
 
+const SECTION_TAGS: Record<string, string> = {
+  rising: "PERSONALITY",
+  moon: "EMOTIONS",
+  venus: "LOVE",
+  mars: "DRIVE & AMBITION",
+  mercury: "MIND",
+  saturn: "CAREER & GROWTH",
+  jupiter: "CONFIDENCE",
+  "the full picture": "YOUR LIFE NOW",
+  "your love pattern": "LOVE",
+  "what is actually going on with your career": "CAREER",
+  "your real relationship with money": "MONEY",
+  "who you actually are": "IDENTITY & PURPOSE",
+};
+
+function getSectionTag(planet: string): string | null {
+  const lower = planet.toLowerCase();
+  for (const [key, tag] of Object.entries(SECTION_TAGS)) {
+    if (lower.includes(key)) return tag;
+  }
+  return null;
+}
+
 const ChartWheel = dynamic(() => import("@/components/ChartWheel"), {
   ssr: false,
   loading: () => (
@@ -320,42 +343,6 @@ const meta = reading?.meta as Record<string, unknown> | undefined;
           </section>
         )}
 
-        {/* Preview Insights (full content, same styling as paid) */}
-        {preview.length > 0 && (
-          <section className="mb-10">
-            <h2 className="text-xs uppercase tracking-widest text-[#9b6fe8] mb-5">
-              Preview insights
-            </h2>
-            {preview.map((ins, i) => (
-              <article
-                key={i}
-                className="mb-10 p-7 sm:p-9 rounded-2xl border border-white/10 bg-white/[0.03]"
-              >
-                {ins.planet && (
-                  <div className="text-xs uppercase tracking-[0.14em] text-[#6b6585] mb-5 font-semibold">
-                    {ins.planet}
-                  </div>
-                )}
-                {ins.hook && (
-                  <p className="text-xl sm:text-2xl font-serif font-semibold leading-snug mb-6 text-[#f0ece8]">
-                    {ins.hook}
-                  </p>
-                )}
-                {ins.truth && (
-                  <div className="text-[#b8b0d4] mb-6 text-base sm:text-[1.05rem] leading-relaxed max-w-3xl">
-                    <ReadingText text={ins.truth} className="space-y-4" />
-                  </div>
-                )}
-                {ins.reveal && (
-                  <p className="text-base sm:text-lg font-serif italic text-[#d8d2ec] leading-relaxed">
-                    {ins.reveal}
-                  </p>
-                )}
-              </article>
-            ))}
-          </section>
-        )}
-
         {/* Full Reading */}
         {paidInsights.length > 0 && (
           <section className="mb-12">
@@ -367,6 +354,11 @@ const meta = reading?.meta as Record<string, unknown> | undefined;
                 key={i}
                 className="mb-10 p-7 sm:p-9 rounded-2xl border border-white/10 bg-white/[0.03]"
               >
+                {ins.planet && getSectionTag(ins.planet) && (
+                  <span className="inline-block text-[10px] uppercase tracking-[0.18em] text-[#f0b84a] bg-[#f0b84a]/10 px-3 py-1 rounded-md mb-3 font-semibold">
+                    {getSectionTag(ins.planet!)}
+                  </span>
+                )}
                 {ins.planet && (
                   <div className="text-xs uppercase tracking-[0.14em] text-[#6b6585] mb-5 font-semibold">
                     {ins.planet}
@@ -410,7 +402,7 @@ const meta = reading?.meta as Record<string, unknown> | undefined;
         )}
 
         {/* Fallback if nothing rendered */}
-        {!paidInsights.length && !preview.length && (
+        {!paidInsights.length && (
           <pre className="text-xs overflow-auto p-4 rounded bg-black/40 border border-white/10">
             {JSON.stringify(reading, null, 2)}
           </pre>

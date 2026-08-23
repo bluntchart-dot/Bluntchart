@@ -76,7 +76,7 @@ export interface ShareCardPayload {
 export interface FullReading {
   letter_opener: string;
   preview: PreviewInsight[];
-  paidInsights: PaidInsight[];   // 8 items normally, 9 when focusArea is set
+  paidInsights: PaidInsight[];   // always 8 items
   shareCard: ShareCardPayload;
 }
 
@@ -92,8 +92,8 @@ export interface PreviewReading {
 const PREVIEW_TOOL = {
   name: "submit_preview_reading",
   description:
-    "Submit the two free preview insights for the user's birth chart. " +
-    "Call this exactly once to deliver the preview.",
+    "Submit the single free discovery for the user's birth chart. " +
+    "Call this exactly once to deliver the discovery.",
   input_schema: {
     type: "object" as const,
     required: ["letter_opener", "preview"],
@@ -101,8 +101,8 @@ const PREVIEW_TOOL = {
       letter_opener: { type: "string" },
       preview: {
         type: "array",
-        minItems: 2,
-        maxItems: 2,
+        minItems: 1,
+        maxItems: 1,
         items: {
           type: "object",
           required: ["planet", "hook", "truth", "reveal", "cliffhanger"],
@@ -120,64 +120,17 @@ const PREVIEW_TOOL = {
 };
 
 /* ─────────────────────────────────────────────────────────────────────
-   FULL READING TOOL SCHEMA FACTORY
-   The number of paidInsights depends on focusArea.
-   - No focus: exactly 8 paid insights.
-   - Focus picked: exactly 9 (the 8th is the focus deep-dive).
+   FULL READING TOOL SCHEMA
+   Always exactly 8 paid insights + 2 preview insights = 10 total.
 ───────────────────────────────────────────────────────────────────── */
 
-function buildReadingToolSchema(expectedCount: 8 | 9) {
-  // Char-length floors. Real word counts done by the validator.
-  // 250 words ≈ 1300 chars. 400 words ≈ 2100 chars.
+function buildReadingToolSchema(_expectedCount: 8) {
   const standardExplainMinChars = 1100;   // ~210 words floor
-  const focusExplainMinChars = 1800;      // ~340 words floor
-
-  const paidInsightsSchema =
-    expectedCount === 9
-      ? {
-          type: "array" as const,
-          minItems: 9,
-          maxItems: 9,
-          // index 7 is the focus synthesis insight: no "action"/"this week"
-          // field. It ends on the reframe itself, not an assignment.
-          prefixItems: Array.from({ length: 9 }, (_, i) => ({
-            type: "object",
-            required:
-              i === 7
-                ? ["planet", "truth", "explain"]
-                : ["planet", "truth", "explain", "action"],
-            properties: {
-              planet: { type: "string" },
-              truth: { type: "string" },
-              explain: {
-                type: "string",
-                minLength: i === 7 ? focusExplainMinChars : standardExplainMinChars,
-              },
-              ...(i === 7 ? {} : { action: { type: "string" } }),
-            },
-          })),
-          items: false,
-        }
-      : {
-          type: "array" as const,
-          minItems: 8,
-          maxItems: 8,
-          items: {
-            type: "object",
-            required: ["planet", "truth", "explain", "action"],
-            properties: {
-              planet: { type: "string" },
-              truth: { type: "string" },
-              explain: { type: "string", minLength: standardExplainMinChars },
-              action: { type: "string" },
-            },
-          },
-        };
 
   return {
     name: "submit_birth_chart_reading",
     description:
-      `Submit the complete paid birth chart reading. Must include exactly ${expectedCount} ` +
+      `Submit the complete paid birth chart reading. Must include exactly 8 ` +
       `paid insights in the order specified, a letter_opener, the 2 preview insights, ` +
       `and a shareCard. Call this exactly once.`,
     input_schema: {
@@ -203,7 +156,21 @@ function buildReadingToolSchema(expectedCount: 8 | 9) {
           },
         },
 
-        paidInsights: paidInsightsSchema,
+        paidInsights: {
+          type: "array" as const,
+          minItems: 8,
+          maxItems: 8,
+          items: {
+            type: "object",
+            required: ["planet", "truth", "explain", "action"],
+            properties: {
+              planet: { type: "string" },
+              truth: { type: "string" },
+              explain: { type: "string", minLength: standardExplainMinChars },
+              action: { type: "string" },
+            },
+          },
+        },
 
         shareCard: {
           type: "object",
@@ -328,10 +295,7 @@ export async function generateFullReading(
     system: FULL_SYSTEM_PROMPT,
     userPrompt: buildFullReadingPrompt(birth, chart, focusArea, existingPreview),
     tool,
-    // 8 to 9 paid insights at ~300 to 450 words each + letter + preview + shareCard.
-    // 10k tokens gives headroom for the 9-section case + JSON envelope.
-    maxTokens: expectedCount === 9 ? 10000 : 8192,
-    // 0.9 = sweet spot for voice-rich JSON. Lower flattens voice, higher breaks format.
+    maxTokens: 8192,
     temperature: 0.9,
     context: "reading-tool:full",
   });
@@ -347,7 +311,7 @@ export async function generatePreviewReading(
     system: PREVIEW_SYSTEM_PROMPT,
     userPrompt: buildPreviewPrompt(birth, chart, focusArea),
     tool: PREVIEW_TOOL,
-    maxTokens: 1500,
+    maxTokens: 900,
     temperature: 0.9,
     context: "reading-tool:preview",
   });

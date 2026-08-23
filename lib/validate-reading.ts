@@ -28,7 +28,6 @@ import {
   normalizeFocusArea,
   expectedPaidInsightCount,
   AlreadyRevealedInsight,
-  FOCUS_SPEC,
 } from "./claude-prompt";
 
 /* ═════════════════════════════════════════════════════════════════
@@ -38,8 +37,6 @@ import {
 const MIN_WORDS_PER_INSIGHT = 220;
 const SATURN_MIN_WORDS = 250;
 const CLOSER_MIN_WORDS = 300;
-const FOCUS_DEEP_DIVE_MIN_WORDS = 350;
-
 // Target length for the shareable card's flex line (its only rendered
 // content). Below the floor it's rejected outright; outside the target
 // window it's a warning so a slightly long flex doesn't burn a retry.
@@ -69,7 +66,7 @@ export interface ValidationResult {
   metrics: {
     totalWords: number;
     paidInsightCount: number;
-    expectedPaidInsightCount: 8 | 9;
+    expectedPaidInsightCount: 8;
     perSectionWords: number[];
     hasEmDashes: boolean;
     hasEnDashes: boolean;
@@ -115,17 +112,6 @@ function isFirstPersonFlex(s: string): boolean {
   );
 }
 
-// Derived from FOCUS_SPEC titles (single source of truth) instead of a
-// hardcoded string list, so renaming/adding a focus area can't silently
-// desync this check from what the model is actually asked to title it.
-const FOCUS_DEEP_DIVE_TITLES = new Set(
-  Object.values(FOCUS_SPEC).map((s) => s.title.toLowerCase())
-);
-
-function isFocusDeepDive(insight: PaidInsight): boolean {
-  return FOCUS_DEEP_DIVE_TITLES.has((insight.planet ?? "").toLowerCase());
-}
-
 /* ═════════════════════════════════════════════════════════════════
    PER-FIELD VALIDATORS
 ═════════════════════════════════════════════════════════════════ */
@@ -151,11 +137,6 @@ function validateInsight(
     minWords = CLOSER_MIN_WORDS;
     sectionLabel = "closer";
   }
-  if (isFocusDeepDive(insight)) {
-    minWords = FOCUS_DEEP_DIVE_MIN_WORDS;
-    sectionLabel = "focus deep-dive";
-  }
-
   if (wc < minWords) {
     issues.push({
       section: label,
@@ -201,9 +182,7 @@ function validateInsight(
     });
   }
 
-  // The focus deep-dive deliberately has no action/"this week" field —
-  // it ends on the reframe, not an assignment.
-  if (!isFocusDeepDive(insight) && (!insight.action || insight.action.length < 15)) {
+  if (!insight.action || insight.action.length < 15) {
     issues.push({
       section: label,
       field: "action",
@@ -268,7 +247,6 @@ export function validateReading(
   const issues: ValidationIssue[] = [];
   const perSectionWords: number[] = [];
   const expected = expectedPaidInsightCount(focusArea);
-  const focusKey = normalizeFocusArea(focusArea);
 
   if (!reading.letter_opener || reading.letter_opener.length < 30) {
     issues.push({
@@ -293,7 +271,7 @@ export function validateReading(
     issues.push({
       section: "root",
       field: "paidInsights",
-      problem: `Expected ${expected} paid insights (focusArea=${focusKey ?? "none"}), got ${paidCount}.`,
+      problem: `Expected ${expected} paid insights, got ${paidCount}.`,
       severity: "fatal",
     });
   }
@@ -301,18 +279,6 @@ export function validateReading(
   (reading.paidInsights ?? []).forEach((insight, i) => {
     perSectionWords.push(validateInsight(insight, i, issues));
   });
-
-  if (focusKey) {
-    const hasDeepDive = (reading.paidInsights ?? []).some(isFocusDeepDive);
-    if (!hasDeepDive) {
-      issues.push({
-        section: "root",
-        field: "paidInsights",
-        problem: `Focus area "${focusKey}" requested but deep-dive section is missing.`,
-        severity: "fatal",
-      });
-    }
-  }
 
   validateShareCard(reading.shareCard, issues);
 

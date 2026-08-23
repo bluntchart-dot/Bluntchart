@@ -22,23 +22,41 @@ import {
   type OrderSource,
 } from "@/lib/premium/order-sources";
 import MoonPhasePanel from "@/components/MoonPhasePanel";
+import type { MoonProduct } from "@/components/MoonPhasePanel";
 
 /* ─── Types ─────────────────────────────────────────────────────── */
 
-type InternalProductType = "birth-chart-book" | "reading" | "future-love-letter" | "moon-phase";
+type InternalProductType = "birth-chart-book" | "reading" | "future-love-letter" | "moon-a1" | "moon-a2" | "moon-b1" | "moon-b2";
+
+const MOON_PRODUCT_MAP: Record<string, MoonProduct> = {
+  "moon-a1": "a1",
+  "moon-a2": "a2",
+  "moon-b1": "b1",
+  "moon-b2": "b2",
+};
+
+function isMoonProduct(pt: string): pt is "moon-a1" | "moon-a2" | "moon-b1" | "moon-b2" {
+  return pt in MOON_PRODUCT_MAP;
+}
 
 const PRODUCTS: { value: InternalProductType; label: string; price: string }[] = [
   { value: "birth-chart-book", label: "Birth Chart Book", price: "$24" },
   { value: "reading", label: "Birth Chart Reading", price: "$15" },
   { value: "future-love-letter", label: "Love Letter", price: "$4.99" },
-  { value: "moon-phase", label: "Moon Phase Card", price: "$9.99" },
+  { value: "moon-a1", label: "Soulmate Moon", price: "$9.99" },
+  { value: "moon-a2", label: "Moon Match", price: "$9.99" },
+  { value: "moon-b1", label: "Astrology Compatibility", price: "$9.99" },
+  { value: "moon-b2", label: "Astrology Match", price: "$9.99" },
 ];
 
 const PRODUCT_LABEL: Record<InternalProductType, string> = {
   "birth-chart-book": "Book",
   "reading": "Reading",
   "future-love-letter": "Love Letter",
-  "moon-phase": "Moon Phase Card",
+  "moon-a1": "Soulmate Moon",
+  "moon-a2": "Moon Match",
+  "moon-b1": "Astrology Compatibility",
+  "moon-b2": "Astrology Match",
 };
 
 const LOADING_MSGS: Record<InternalProductType, string[]> = {
@@ -66,16 +84,20 @@ const LOADING_MSGS: Record<InternalProductType, string[]> = {
     "Saving to database…",
     "Sending emails…",
   ],
-  "moon-phase": [
-    "Rendering moon artwork…",
-  ],
+  "moon-a1": ["Rendering Soulmate Moon artwork…"],
+  "moon-a2": ["Rendering Moon Match artwork…"],
+  "moon-b1": ["Rendering Astrology Compatibility artwork…"],
+  "moon-b2": ["Rendering Astrology Match artwork…"],
 };
 
 const READER_PATH: Record<InternalProductType, string> = {
   "birth-chart-book": "/my-book",
   "reading": "/my-reading",
   "future-love-letter": "/my-love-letter",
-  "moon-phase": "",
+  "moon-a1": "",
+  "moon-a2": "",
+  "moon-b1": "",
+  "moon-b2": "",
 };
 
 /* ─── Small style tokens ─────────────────────────────────────────── */
@@ -242,9 +264,9 @@ export default function PremiumReadingApp({ eyebrow }: Props) {
     return <ResultPanel result={result} onNew={reset} />;
   }
 
-  /* ── MOON PHASE CARD — separate client-side flow ───────────── */
-  if (productType === "moon-phase") {
-    return <MoonPhasePanel onBack={() => { setProductType(""); }} />;
+  /* ── MOON PRODUCTS — separate client-side flow ─────────────── */
+  if (productType && isMoonProduct(productType)) {
+    return <MoonPhasePanel product={MOON_PRODUCT_MAP[productType]} onBack={() => { setProductType(""); }} />;
   }
 
   /* ── FORM ─────────────────────────────────────────────────────── */
@@ -404,45 +426,54 @@ function ProductSelector({
   productType: InternalProductType | "";
   setProductType: (v: InternalProductType | "") => void;
 }) {
+  const astroProducts = PRODUCTS.filter(p => !p.value.startsWith("moon-"));
+  const moonProducts = PRODUCTS.filter(p => p.value.startsWith("moon-"));
+
+  const renderBtn = (p: (typeof PRODUCTS)[number]) => {
+    const selected = productType === p.value;
+    return (
+      <button
+        key={p.value}
+        type="button"
+        onClick={() => setProductType(p.value)}
+        style={{
+          background: selected
+            ? "linear-gradient(135deg,rgba(107,47,212,0.25),rgba(212,83,126,0.25))"
+            : "rgba(255,255,255,0.04)",
+          border: selected
+            ? "1px solid rgba(212,83,126,0.5)"
+            : "0.5px solid rgba(255,255,255,0.1)",
+          borderRadius: 12,
+          padding: "14px 10px",
+          cursor: "pointer",
+          textAlign: "center",
+          fontFamily: "inherit",
+          transition: "all 0.15s ease",
+        }}
+      >
+        <div style={{
+          fontSize: 13,
+          fontWeight: 600,
+          color: selected ? "#e8e4f0" : "#8b8599",
+        }}>{p.label}</div>
+        <div style={{
+          fontSize: 11,
+          color: selected ? "#d4537e" : "#4a4560",
+          marginTop: 2,
+        }}>{p.price}</div>
+      </button>
+    );
+  };
+
   return (
     <div style={{ marginBottom: 20 }}>
-      <label style={lbl}>Product</label>
+      <label style={lbl}>Astrology products</label>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, marginBottom: 14 }}>
+        {astroProducts.map(renderBtn)}
+      </div>
+      <label style={lbl}>Moon products</label>
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
-        {PRODUCTS.map(p => {
-          const selected = productType === p.value;
-          return (
-            <button
-              key={p.value}
-              type="button"
-              onClick={() => setProductType(p.value)}
-              style={{
-                background: selected
-                  ? "linear-gradient(135deg,rgba(107,47,212,0.25),rgba(212,83,126,0.25))"
-                  : "rgba(255,255,255,0.04)",
-                border: selected
-                  ? "1px solid rgba(212,83,126,0.5)"
-                  : "0.5px solid rgba(255,255,255,0.1)",
-                borderRadius: 12,
-                padding: "14px 10px",
-                cursor: "pointer",
-                textAlign: "center",
-                fontFamily: "inherit",
-                transition: "all 0.15s ease",
-              }}
-            >
-              <div style={{
-                fontSize: 13,
-                fontWeight: 600,
-                color: selected ? "#e8e4f0" : "#8b8599",
-              }}>{p.label}</div>
-              <div style={{
-                fontSize: 11,
-                color: selected ? "#d4537e" : "#4a4560",
-                marginTop: 2,
-              }}>{p.price}</div>
-            </button>
-          );
-        })}
+        {moonProducts.map(renderBtn)}
       </div>
     </div>
   );

@@ -146,7 +146,8 @@ function renderMoon(
   phaseAngle: number,
   renderSize: number,
   colorMap: THREE.Texture,
-  displacementMap: THREE.Texture
+  displacementMap: THREE.Texture,
+  opts?: { earthshineIntensity?: number }
 ): HTMLCanvasElement {
   const canvas = document.createElement("canvas");
   const renderer = new THREE.WebGLRenderer({
@@ -166,6 +167,7 @@ function renderMoon(
     phaseAngle,
     size: renderSize,
     premium: true,
+    earthshineIntensity: opts?.earthshineIntensity,
   });
 
   (scene.material as THREE.MeshStandardMaterial).map = colorMap;
@@ -183,15 +185,62 @@ function renderMoon(
   return processed;
 }
 
+function addChampagneRim(canvas: HTMLCanvasElement, score: number) {
+  const ctx = canvas.getContext("2d")!;
+  const w = canvas.width;
+  const h = canvas.height;
+  const imageData = ctx.getImageData(0, 0, w, h);
+  const d = imageData.data;
+
+  const cx = w / 2;
+  const cy = h / 2;
+  const r = w / (2 * 1.05);
+
+  const t = Math.max(0, (30 - score) / 30);
+
+  for (let y = 0; y < h; y++) {
+    for (let x = 0; x < w; x++) {
+      const idx = (y * w + x) * 4;
+      if (d[idx + 3] === 0) continue;
+
+      const dx = x - cx;
+      const dy = y - cy;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      const normDist = dist / r;
+
+      if (normDist > 0.90 && normDist <= 1.0) {
+        const rimT = (normDist - 0.90) / 0.10;
+        const rimStrength = rimT * rimT * t * 0.22;
+        d[idx]     = Math.min(255, d[idx]     + Math.round(200 * rimStrength));
+        d[idx + 1] = Math.min(255, d[idx + 1] + Math.round(170 * rimStrength));
+        d[idx + 2] = Math.min(255, d[idx + 2] + Math.round(100 * rimStrength));
+      }
+    }
+  }
+
+  ctx.putImageData(imageData, 0, 0);
+}
+
 function renderCombinedMoon(
   angle1: number,
   angle2: number,
   renderSize: number,
   colorMap: THREE.Texture,
-  displacementMap: THREE.Texture
+  displacementMap: THREE.Texture,
+  score: number
 ): HTMLCanvasElement {
-  const c1 = renderMoon(angle1, renderSize, colorMap, displacementMap);
-  const c2 = renderMoon(angle2, renderSize, colorMap, displacementMap);
+  const coverage = Math.max(0, Math.min(100, score)) / 100;
+  const perSide = coverage / 2;
+  const cosA = Math.max(-1, Math.min(1, 1 - 2 * perSide));
+  const seamOverlap = score >= 90 ? ((score - 90) / 10) * 12 : 0;
+  const syntheticAngle = Math.acos(cosA) * (180 / Math.PI) + seamOverlap;
+
+  const esOpts = score < 25
+    ? { earthshineIntensity: 0.002 + ((25 - score) / 25) * 0.06 }
+    : undefined;
+
+  const c1 = renderMoon(syntheticAngle, renderSize, colorMap, displacementMap, esOpts);
+  const c2 = renderMoon(360 - syntheticAngle, renderSize, colorMap, displacementMap, esOpts);
 
   const w = c1.width;
   const h = c1.height;
@@ -220,6 +269,11 @@ function renderCombinedMoon(
   result.width = w;
   result.height = h;
   result.getContext("2d")!.putImageData(out, 0, 0);
+
+  if (score < 30) {
+    addChampagneRim(result, score);
+  }
+
   return result;
 }
 
@@ -450,7 +504,8 @@ export default function ArtworkPage() {
           compat.person2.phaseAngle,
           MOON_BIG,
           colorMap,
-          displacementMap
+          displacementMap,
+          compat.score
         );
 
         const canvas = canvasRef.current!;

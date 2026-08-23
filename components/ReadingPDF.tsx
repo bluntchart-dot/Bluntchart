@@ -40,6 +40,31 @@ const INK = "#1a1420";
 const MUTED = "#5a5468";
 const LIGHT_CARD = "#f5f2f8";
 const RULE = "#d8d0e4";
+const TAG_BG = "#ede8f5";
+
+/* ── Life-area tags ── */
+const SECTION_TAGS: Record<string, string> = {
+  rising: "PERSONALITY",
+  moon: "EMOTIONS",
+  venus: "LOVE",
+  mars: "DRIVE & AMBITION",
+  mercury: "MIND",
+  saturn: "CAREER & GROWTH",
+  jupiter: "CONFIDENCE",
+  "the full picture": "YOUR LIFE NOW",
+  "your love pattern": "LOVE",
+  "what is actually going on with your career": "CAREER",
+  "your real relationship with money": "MONEY",
+  "who you actually are": "IDENTITY & PURPOSE",
+};
+
+function getTag(planet: string): string | null {
+  const lower = planet.toLowerCase();
+  for (const [key, tag] of Object.entries(SECTION_TAGS)) {
+    if (lower.includes(key)) return tag;
+  }
+  return null;
+}
 
 const s = StyleSheet.create({
   /* ── Cover page (dark) ── */
@@ -113,21 +138,21 @@ const s = StyleSheet.create({
 
   /* ── Content pages (white) ── */
   page: {
-    paddingTop: 64,
-    paddingBottom: 64,
-    paddingHorizontal: 56,
+    paddingTop: 56,
+    paddingBottom: 56,
+    paddingHorizontal: 52,
     backgroundColor: PAGE_BG,
     color: INK,
     fontFamily: "Times-Roman",
-    fontSize: 11,
+    fontSize: 12,
     lineHeight: 1.7,
   },
   pageHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 28,
-    paddingBottom: 12,
+    marginBottom: 24,
+    paddingBottom: 10,
     borderBottomWidth: 0.5,
     borderBottomColor: RULE,
   },
@@ -148,70 +173,79 @@ const s = StyleSheet.create({
     letterSpacing: 3,
     color: PURPLE,
     fontFamily: "Helvetica-Bold",
-    marginBottom: 6,
-    marginTop: 4,
-  },
-  sectionEyebrowGold: {
-    fontSize: 8,
-    letterSpacing: 3,
-    color: GOLD,
-    fontFamily: "Helvetica-Bold",
-    marginBottom: 6,
-    marginTop: 4,
+    marginBottom: 8,
   },
   letterOpenerText: {
-    fontSize: 12,
+    fontSize: 12.5,
     lineHeight: 1.85,
     color: INK,
     marginBottom: 10,
     fontFamily: "Times-Italic",
   },
 
-  /* ── Insight cards (light background) ── */
+  /* ── Tag pill ── */
+  tagWrap: {
+    flexDirection: "row",
+    marginBottom: 8,
+  },
+  tag: {
+    fontSize: 7,
+    letterSpacing: 2,
+    color: PURPLE,
+    fontFamily: "Helvetica-Bold",
+    backgroundColor: TAG_BG,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 3,
+  },
+
+  /* ── Insight cards ── */
   card: {
     backgroundColor: LIGHT_CARD,
     borderRadius: 6,
-    padding: 22,
+    paddingHorizontal: 24,
+    paddingTop: 20,
+    paddingBottom: 22,
     marginBottom: 20,
   },
   planetLabel: {
-    fontSize: 8,
-    letterSpacing: 2.5,
+    fontSize: 9,
+    letterSpacing: 2,
     color: PURPLE,
     fontFamily: "Helvetica-Bold",
     marginBottom: 10,
   },
   hook: {
-    fontSize: 16,
+    fontSize: 17,
     fontFamily: "Times-Bold",
     color: INK,
-    lineHeight: 1.35,
+    lineHeight: 1.3,
     marginBottom: 14,
   },
   truth: {
-    fontSize: 15,
+    fontSize: 16,
     fontFamily: "Times-Bold",
     color: INK,
-    lineHeight: 1.35,
+    lineHeight: 1.3,
     marginBottom: 14,
   },
   body: {
-    fontSize: 11,
+    fontSize: 12,
     lineHeight: 1.75,
     color: "#2a2436",
     marginBottom: 7,
     fontFamily: "Times-Roman",
   },
   reveal: {
-    fontSize: 12,
+    fontSize: 13,
     fontFamily: "Times-Italic",
     color: MUTED,
     lineHeight: 1.6,
-    marginTop: 8,
+    marginTop: 10,
   },
   actionWrap: {
-    marginTop: 14,
-    paddingTop: 10,
+    marginTop: 16,
+    paddingTop: 12,
     borderTopWidth: 0.5,
     borderTopColor: RULE,
   },
@@ -223,16 +257,16 @@ const s = StyleSheet.create({
     marginBottom: 4,
   },
   actionText: {
-    fontSize: 10,
+    fontSize: 11,
     color: INK,
     lineHeight: 1.6,
     fontFamily: "Times-Italic",
   },
   pageFooter: {
     position: "absolute",
-    bottom: 28,
-    left: 56,
-    right: 56,
+    bottom: 24,
+    left: 52,
+    right: 52,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
@@ -244,16 +278,15 @@ const s = StyleSheet.create({
     fontFamily: "Helvetica",
   },
 
-  /* ── Closing page (dark) ── */
-  closing: {
-    padding: 0,
-    backgroundColor: COVER_BG,
-    color: COVER_TEXT,
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "center",
+  /* ── Divider between insights ── */
+  insightDivider: {
+    height: 1,
+    backgroundColor: RULE,
+    marginTop: 8,
+    marginBottom: 24,
   },
+
+  /* ── Closing page (dark) ── */
   closingText: {
     fontSize: 14,
     fontFamily: "Times-Italic",
@@ -286,6 +319,16 @@ function PageHeader({ section }: { section: string }) {
     <View style={s.pageHeader} fixed>
       <Text style={s.pageHeaderBrand}>BLUNTCHART</Text>
       <Text style={s.pageHeaderSection}>{section}</Text>
+    </View>
+  );
+}
+
+function TagPill({ planet }: { planet: string }) {
+  const tag = getTag(planet);
+  if (!tag) return null;
+  return (
+    <View style={s.tagWrap}>
+      <Text style={s.tag}>{tag}</Text>
     </View>
   );
 }
@@ -323,30 +366,11 @@ export default function ReadingPDF({
         <PageHeader section="YOUR READING" />
 
         {letterOpener && (
-          <View style={{ marginBottom: 28 }}>
+          <View style={{ marginBottom: 24 }}>
             {splitParagraphs(letterOpener).map((p, i) => (
               <Text key={i} style={s.letterOpenerText}>
                 {p}
               </Text>
-            ))}
-          </View>
-        )}
-
-        {preview.length > 0 && (
-          <View>
-            <Text style={s.sectionEyebrow}>PREVIEW INSIGHTS</Text>
-            {preview.map((ins, i) => (
-              <View key={i} style={s.card}>
-                {ins.planet && <Text style={s.planetLabel}>{ins.planet}</Text>}
-                {ins.hook && <Text style={s.hook}>{ins.hook}</Text>}
-                {ins.truth &&
-                  splitParagraphs(ins.truth).map((p, j) => (
-                    <Text key={j} style={s.body}>
-                      {p}
-                    </Text>
-                  ))}
-                {ins.reveal && <Text style={s.reveal}>{ins.reveal}</Text>}
-              </View>
             ))}
           </View>
         )}
@@ -357,26 +381,33 @@ export default function ReadingPDF({
         </View>
       </Page>
 
-      {/* ═══ PAID INSIGHTS (white, one per page) ═══ */}
-      {paidInsights.map((ins, i) => (
-        <Page key={i} size="A4" style={s.page}>
-          <PageHeader
-            section={
-              i === 0
-                ? `FULL READING · ${paidInsights.length} INSIGHTS`
-                : `INSIGHT ${i + 1} OF ${paidInsights.length}`
-            }
-          />
+      {/* ═══ PAID INSIGHTS (white, flowing naturally) ═══ */}
+      <Page size="A4" style={s.page}>
+        <PageHeader section={`FULL READING · ${paidInsights.length} INSIGHTS`} />
 
-          <View style={s.card} wrap={false}>
+        {paidInsights.map((ins, i) => (
+          <View key={i}>
+            {/* Divider between insights (not before the first) */}
+            {i > 0 && <View style={s.insightDivider} />}
+
+            {/* Tag pill */}
+            {ins.planet && <TagPill planet={ins.planet} />}
+
+            {/* Planet label */}
             {ins.planet && <Text style={s.planetLabel}>{ins.planet}</Text>}
+
+            {/* Truth heading */}
             {ins.truth && <Text style={s.truth}>{ins.truth}</Text>}
+
+            {/* Body paragraphs */}
             {ins.explain &&
               splitParagraphs(ins.explain).map((p, j) => (
                 <Text key={j} style={s.body}>
                   {p}
                 </Text>
               ))}
+
+            {/* Action */}
             {ins.action && (
               <View style={s.actionWrap}>
                 <Text style={s.actionLabel}>THIS WEEK</Text>
@@ -384,16 +415,16 @@ export default function ReadingPDF({
               </View>
             )}
           </View>
+        ))}
 
-          <View style={s.pageFooter}>
-            <Text style={s.pageFooterText}>bluntchart.com</Text>
-            <Text style={s.pageFooterText}>{displayName}</Text>
-          </View>
-        </Page>
-      ))}
+        <View style={s.pageFooter}>
+          <Text style={s.pageFooterText}>bluntchart.com</Text>
+          <Text style={s.pageFooterText}>{displayName}</Text>
+        </View>
+      </Page>
 
       {/* ═══ CLOSING PAGE (dark) ═══ */}
-      <Page size="A4" style={s.closing}>
+      <Page size="A4" style={s.cover}>
         <View style={s.coverInner}>
           <Text style={s.coverBrand}>BLUNTCHART</Text>
           <View

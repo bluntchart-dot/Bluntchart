@@ -165,27 +165,23 @@ export async function buildPaidReadingPayload(
     );
   }
 
-  // If a free preview was saved, splice it in verbatim so the paid page
-  // shows the exact same 2 insights the user already read for free,
-  // instead of the fresh (different) ones the model just generated above.
-  if (lead.preview_json?.preview?.length) {
-    reading.preview = lead.preview_json.preview.map((p) => ({
-      planet: p.planet,
-      hook: p.hook ?? "",
-      truth: p.truth,
-      reveal: p.reveal ?? "",
-      cliffhanger: p.cliffhanger ?? "",
-    }));
-    if (lead.preview_json.letter_opener) {
-      reading.letter_opener = lead.preview_json.letter_opener;
-    }
-  }
-
   // ── 5. Adapt to legacy shape for downstream consumers ──────────────
+  // The free discovery (saved at preview time) is included separately.
+  // The full reading's 2 preview + 8 paid = 10 insights are ALL paid content.
   const legacy = toLegacyReadingShape(reading, chart);
+
+  // Include the saved free discovery verbatim so it appears in the final
+  // delivered reading exactly as the user saw it before payment.
+  const freeDiscovery = lead.preview_json?.preview?.length
+    ? {
+        letter_opener: lead.preview_json.letter_opener ?? "",
+        discovery: lead.preview_json.preview[0],
+      }
+    : null;
 
   return {
     ...legacy,
+    ...(freeDiscovery ? { freeDiscovery } : {}),
     chart,
     highlights,
     meta: {

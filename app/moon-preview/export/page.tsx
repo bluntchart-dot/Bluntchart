@@ -5,13 +5,8 @@ import * as THREE from "three";
 import { Cormorant_Garamond, DM_Sans } from "next/font/google";
 import { calculateCompatibility } from "@/lib/moon-phase";
 import { getContentLine } from "@/lib/moon-content";
-import {
-  renderMoon,
-  renderCombinedMoon,
-  composeMaster,
-  MOON_SMALL,
-  MOON_BIG,
-} from "@/lib/moon-artwork";
+import { renderMoon, blendBirthMoons, MOON_SMALL } from "@/lib/moon-artwork";
+import { composeA1, MOON_HERO_A1 } from "@/lib/moon-a1-soulmate";
 import {
   FORMATS,
   deriveFormat,
@@ -115,15 +110,16 @@ export default function ExportPage() {
         colorMap,
         displacementMap
       );
-      const combined = renderCombinedMoon(
+
+      const heroMoon = blendBirthMoons(
         compat.person1.phaseAngle,
         compat.person2.phaseAngle,
-        MOON_BIG,
+        MOON_HERO_A1,
         colorMap,
         displacementMap
       );
 
-      const master = composeMaster(m1, m2, combined, compat, {
+      const master = composeA1(m1, m2, heroMoon, compat, {
         name1,
         date1,
         name2,

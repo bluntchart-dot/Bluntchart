@@ -139,6 +139,26 @@ export function toLegacyReadingShape(
 ): LegacyReading {
   const sunSign = planetSign(chart, "Sun");
 
+  // Convert preview-format insights to paid-format for the combined list.
+  const previewAsPaid: LegacyInsight[] = (reading.preview ?? []).map((p) => ({
+    planet:   p.planet,
+    colorKey: colorKeyFromPlanet(p.planet),
+    truth:    p.hook,   // new.hook is the bold one-liner
+    explain:  p.truth,  // new.truth is the elaboration paragraphs
+    action:   p.reveal, // new.reveal is the emotional kicker
+  }));
+
+  const paidInsights: LegacyInsight[] = (reading.paidInsights ?? []).map((p) => ({
+    planet:   p.planet,
+    colorKey: colorKeyFromPlanet(p.planet),
+    truth:    p.truth,
+    explain:  p.explain,
+    action:   p.action,
+  }));
+
+  // Merge preview + paid into one flat list of 10 complete paid insights.
+  const allInsights = [...previewAsPaid, ...paidInsights];
+
   return {
     planets: {
       sun:     sunSign,
@@ -153,26 +173,11 @@ export function toLegacyReadingShape(
 
     sunDates: SUN_DATE_RANGES[sunSign] ?? "",
 
-    preview: (reading.preview ?? []).map((p) => ({
-      planet:   p.planet,
-      colorKey: colorKeyFromPlanet(p.planet),
-      truth:    p.hook,   // new.hook is the bold one-liner
-      explain:  p.truth,  // new.truth is the elaboration paragraphs
-      action:   p.reveal, // new.reveal is the emotional kicker
-    })),
+    preview: previewAsPaid,
 
-    paidInsights: (reading.paidInsights ?? []).map((p) => ({
-      planet:   p.planet,
-      colorKey: colorKeyFromPlanet(p.planet),
-      truth:    p.truth,
-      explain:  p.explain,
-      action:   p.action,
-    })),
+    paidInsights: allInsights,
 
-    // The old `locked` array used to hold which sections were paywalled.
-    // Since paid users get everything now, we fill it with the section
-    // titles for any UI that iterates over locked content.
-    locked: (reading.paidInsights ?? []).map((p) => p.planet),
+    locked: allInsights.map((p) => p.planet),
 
     shareCard: {
       sign:    sunSign,
