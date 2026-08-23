@@ -75,6 +75,22 @@ export interface AiGenerationRequest {
    * Consumed by prompt-builder's buildUserPromptV2.
    */
   chapterContexts?: Record<string, unknown>;
+  /**
+   * Product-specific system prompt. When set, overrides the default
+   * birth-chart system prompt. Populated by the orchestrator from
+   * ProductDefinition.systemPrompt.
+   */
+  productSystemPrompt?: string;
+  /**
+   * Product-specific contract reminder appended after chapter slots.
+   * When set, overrides the default birth-chart contract reminder.
+   */
+  productContractReminder?: string;
+  /**
+   * Product-specific tool name for Anthropic tool-use.
+   * When set, overrides the default birth-chart tool name.
+   */
+  productReadingToolName?: string;
 }
 
 export interface AiGenerationBody {

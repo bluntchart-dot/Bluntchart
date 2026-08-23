@@ -18,8 +18,8 @@ import type {
   AiSectionRequest,
 } from "./types";
 import {
-  CONTRACT_REMINDER,
-  SYSTEM_PROMPT,
+  CONTRACT_REMINDER as BC_CONTRACT_REMINDER,
+  SYSTEM_PROMPT as BC_SYSTEM_PROMPT,
 } from "@/lib/premium/products/birth-chart/prompt-fragments";
 import type {
   InsightAssignment,
@@ -245,8 +245,8 @@ function formatSection(
    Public API
 ───────────────────────────────────────────────────────────────────── */
 
-export function buildSystemPrompt(): string {
-  return SYSTEM_PROMPT;
+export function buildSystemPrompt(req?: AiGenerationRequest): string {
+  return req?.productSystemPrompt ?? BC_SYSTEM_PROMPT;
 }
 
 export function buildUserPrompt(req: AiGenerationRequest): string {
@@ -268,5 +268,6 @@ export function buildUserPromptV2(req: AiGenerationRequestV2): string {
     .map((s, i) => formatSection(s, i, req.chapterContexts?.[s.id]))
     .join("\n\n---\n\n");
 
-  return `${header}\n\n${body}\n\n---\n\n${CONTRACT_REMINDER}`;
+  const contractReminder = req.productContractReminder ?? BC_CONTRACT_REMINDER;
+  return `${header}\n\n${body}\n\n---\n\n${contractReminder}`;
 }

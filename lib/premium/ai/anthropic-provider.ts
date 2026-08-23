@@ -32,9 +32,10 @@ import {
 import { buildSystemPrompt, buildUserPrompt } from "./prompt-builder";
 import { getModelConfig } from "./models";
 
-const TOOL_NAME = "submit_birth_chart_reading";
+const DEFAULT_TOOL_NAME = "submit_birth_chart_reading";
 
-function buildTool(sectionIds: readonly string[]) {
+function buildTool(sectionIds: readonly string[], toolName?: string) {
+  const name = toolName ?? DEFAULT_TOOL_NAME;
   const properties: Record<string, unknown> = {};
   for (const id of sectionIds) {
     properties[id] = {
@@ -43,9 +44,9 @@ function buildTool(sectionIds: readonly string[]) {
     };
   }
   return {
-    name: TOOL_NAME,
+    name,
     description:
-      "Submit the finished book by returning one body per requested section id.",
+      "Submit the finished reading by returning one body per requested section id.",
     input_schema: {
       type: "object" as const,
       properties,
@@ -72,18 +73,19 @@ export class AnthropicProvider implements AiProvider {
   ): Promise<AiGenerationResult> {
     const started = Date.now();
     const sectionIds = request.sections.map((s) => s.id);
-    const tool = buildTool(sectionIds);
+    const toolName = request.productReadingToolName ?? DEFAULT_TOOL_NAME;
+    const tool = buildTool(sectionIds, toolName);
 
     try {
       const stream = this.client.messages.stream({
         model: model.upstreamId,
         max_tokens: model.maxOutputTokens,
         tools: [tool],
-        tool_choice: { type: "tool", name: TOOL_NAME },
+        tool_choice: { type: "tool", name: toolName },
         system: [
           {
             type: "text",
-            text: buildSystemPrompt(),
+            text: buildSystemPrompt(request),
             cache_control: { type: "ephemeral" },
           },
         ],
@@ -108,7 +110,7 @@ export class AnthropicProvider implements AiProvider {
       if (!toolBlock || toolBlock.type !== "tool_use") {
         return {
           ok: false,
-          error: `Model did not return the ${TOOL_NAME} tool. finish_reason=${final.stop_reason ?? "unknown"}`,
+          error: `Model did not return the ${toolName} tool. finish_reason=${final.stop_reason ?? "unknown"}`,
         };
       }
 

@@ -1,9 +1,10 @@
 /**
  * POST /api/internal/premium/fulfill
  *
- * Unified internal manual fulfillment endpoint. Supports three products:
+ * Unified internal manual fulfillment endpoint. Supports four products:
  *
- *   "birth-chart-book"    → V1.2 insight-map engine (Claude)
+ *   "birth-chart-book"    → V1.2 insight-map engine (Claude) — Book product
+ *   "in-depth-reading"    → V1.2 insight-map engine (Claude) — In-Depth Reading product
  *   "reading"             → $15 birth chart reading pipeline (Claude)
  *   "future-love-letter"  → love letter (Gemini)
  *
@@ -13,7 +14,7 @@
  *
  * Body:
  *   {
- *     product_type,              // "birth-chart-book" | "reading" | "future-love-letter"
+ *     product_type,              // "birth-chart-book" | "in-depth-reading" | "reading" | "future-love-letter"
  *     name, dob, birth_time, city, email,
  *     birth_lat?, birth_lng?, timezone?,
  *     order_source,              // "etsy" | "website" | "personal-test" | "other"
@@ -61,10 +62,11 @@ interface Body {
   model?: string;
 }
 
-const SUPPORTED_PRODUCTS: ProductType[] = ["birth-chart-book", "reading", "future-love-letter"];
+const SUPPORTED_PRODUCTS: ProductType[] = ["birth-chart-book", "in-depth-reading", "reading", "future-love-letter"];
 
 const PRODUCT_LABEL: Record<string, string> = {
   "birth-chart-book": "Birth Chart Book",
+  "in-depth-reading": "In-Depth Reading",
   "reading": "Birth Chart Reading",
   "future-love-letter": "Love Letter",
 };
@@ -106,7 +108,7 @@ export async function POST(req: NextRequest) {
 
   if (!productType || !SUPPORTED_PRODUCTS.includes(productType)) {
     return NextResponse.json(
-      { ok: false, error: "Please select a product (Book, Reading, or Love Letter)." },
+      { ok: false, error: "Please select a product (Book, In-Depth Reading, Reading, or Love Letter)." },
       { status: 400 }
     );
   }
@@ -173,6 +175,38 @@ export async function POST(req: NextRequest) {
     });
     if (!genResult.ok) {
       console.error("[premium/fulfill] book generation failed:", genResult.error, genResult.errorCategory);
+      return NextResponse.json(
+        { ok: false, error: genResult.error, errorCategory: genResult.errorCategory },
+        { status: 500 }
+      );
+    }
+    readingJson = genResult.reading as unknown as Record<string, unknown>;
+
+  } else if (productType === "in-depth-reading") {
+    /* ── In-Depth Reading: V1.2 insight-map engine (Claude) ────────── */
+    if (!process.env.ANTHROPIC_API_KEY) {
+      return NextResponse.json(
+        { ok: false, error: "ANTHROPIC_API_KEY is not configured on this server." },
+        { status: 503 }
+      );
+    }
+
+    model = resolveModel(body.model);
+    const birth: PremiumBirthDetails = {
+      name, email, dob, birth_time: birthTime,
+      birth_place: birthPlace,
+      birth_lat: birthLat, birth_lng: birthLng,
+      timezone,
+    };
+
+    const generationRequestId = randomUUID();
+    const genResult = await generateAiReading(birth, {
+      modelId: model as AiModelId,
+      generationRequestId,
+      product: "in-depth-reading",
+    });
+    if (!genResult.ok) {
+      console.error("[premium/fulfill] in-depth reading generation failed:", genResult.error, genResult.errorCategory);
       return NextResponse.json(
         { ok: false, error: genResult.error, errorCategory: genResult.errorCategory },
         { status: 500 }
@@ -289,7 +323,7 @@ export async function POST(req: NextRequest) {
   ═══════════════════════════════════════════════════════════════════ */
 
   let emails;
-  if (productType === "birth-chart-book") {
+  if (productType === "birth-chart-book" || productType === "in-depth-reading") {
     emails = await sendManualBookEmails({ email, firstName, birthDate: dob, readingUrl });
   } else if (productType === "reading") {
     emails = await sendManualReadingEmails({ email, firstName, birthDate: dob, readingUrl });

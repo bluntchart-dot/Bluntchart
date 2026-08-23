@@ -36,6 +36,16 @@ const PRODUCTS: Record<string, ProductConfig> = {
     accessPath: "/my-book",
     hasCheckoutFlow: true,
   },
+  "in-depth-reading": {
+    type: "in-depth-reading",
+    gumroadPermalink: "in-depth-birthchart",
+    gumroadCheckoutUrl:
+      "https://bluntchart.gumroad.com/l/in-depth-birthchart",
+    priceDollars: "24",
+    priceCents: 2400,
+    accessPath: "/in-depth-readings",
+    hasCheckoutFlow: true,
+  },
   "future-love-letter": {
     type: "future-love-letter",
     gumroadPermalink: "wfuvtd",

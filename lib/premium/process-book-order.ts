@@ -1,7 +1,8 @@
 import { createSupabaseAdmin } from "@/lib/supabase-admin";
 import { buildBookReadingPayload } from "@/lib/premium/build-book-reading";
+import { buildInDepthReadingPayload } from "@/lib/premium/build-indepth-reading";
 import type { BirthLead } from "@/lib/db/checkout-flow";
-import type { BirthInputs } from "@/lib/db/types";
+import type { BirthInputs, ProductType } from "@/lib/db/types";
 import {
   completeGeneration,
   failGeneration,
@@ -21,7 +22,8 @@ import { dbError, dbLog } from "@/lib/db/log";
 
 export function birthInputsToLead(
   inputs: BirthInputs,
-  email: string
+  email: string,
+  productType: ProductType = "birth-chart-book"
 ): BirthLead {
   return {
     name: inputs.name,
@@ -34,7 +36,7 @@ export function birthInputsToLead(
     birth_lat: inputs.birth_lat,
     birth_lng: inputs.birth_lng,
     focus_area: null,
-    product_type: "birth-chart-book",
+    product_type: productType,
     preview_json: null,
     preview_email_id: null,
     abandoned_one_email_id: null,
@@ -43,16 +45,18 @@ export function birthInputsToLead(
   };
 }
 
+const V12_PRODUCT_TYPES = new Set<ProductType>(["birth-chart-book", "in-depth-reading"]);
+
 export async function processOrder(order: ClaimedOrder): Promise<void> {
   const scope = "generate-book-worker";
   const supabase = createSupabaseAdmin();
 
-  if (order.productType !== "birth-chart-book") {
-    dbError(scope, "unexpected non-book order in queue — skipping", "", {
+  if (!V12_PRODUCT_TYPES.has(order.productType)) {
+    dbError(scope, "unexpected product type in V1.2 queue — skipping", "", {
       paymentId: order.id,
       productType: order.productType,
     });
-    await failGeneration(supabase, order.id, "Non-book product in book queue");
+    await failGeneration(supabase, order.id, `Unsupported product type: ${order.productType}`);
     return;
   }
 
@@ -95,11 +99,13 @@ export async function processOrder(order: ClaimedOrder): Promise<void> {
       );
     }
   } else {
-    // ── Generate book reading ──
-    const lead = birthInputsToLead(order.birthInputs, order.email);
-    const bookReading = await buildBookReadingPayload(lead);
-    const readingJson = bookReading
-      ? (bookReading as unknown as Record<string, unknown>)
+    // ── Generate reading (book or in-depth) ──
+    const lead = birthInputsToLead(order.birthInputs, order.email, order.productType);
+    const generatedReading = order.productType === "in-depth-reading"
+      ? await buildInDepthReadingPayload(lead)
+      : await buildBookReadingPayload(lead);
+    const readingJson = generatedReading
+      ? (generatedReading as unknown as Record<string, unknown>)
       : null;
 
     if (!readingJson) {

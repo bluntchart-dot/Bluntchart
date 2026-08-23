@@ -28,6 +28,7 @@ export const READING_VERSION = "premium-1.0.0" as const;
 
 export type ReadingProduct =
   | "birth-chart"
+  | "in-depth-reading"
   | "compatibility"     // reserved, not implemented
   | "year-ahead"        // reserved, not implemented
   | "gift-reading";     // reserved, not implemented
@@ -76,6 +77,19 @@ export type SectionId =
   | "transit-timing"
   | "transit-season"
   | "transit-life-areas"
+  // In-Depth Reading — Part I chapters
+  | "who-you-are"
+  | "purpose-and-destiny"
+  | "career-and-success"
+  | "love-and-relationships"
+  | "money-and-wealth"
+  | "growth-and-wellbeing"
+  // In-Depth Reading — Part II chapters
+  | "whats-happening-now"
+  | "when-does-it-get-better"
+  | "whats-coming-next"
+  // In-Depth Reading — closer
+  | "takeaways"
   // Closer
   | "farewell"
   | "final-note";

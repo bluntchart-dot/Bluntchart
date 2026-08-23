@@ -1,6 +1,6 @@
 /** Row shapes aligned with your Supabase schema (see dashboard ERD). */
 
-export type ProductType = "reading" | "birth-chart-book" | "compatibility" | "transit" | "future-love-letter";
+export type ProductType = "reading" | "birth-chart-book" | "in-depth-reading" | "compatibility" | "transit" | "future-love-letter";
 
 export type CheckoutStep =
   | "form_submitted"

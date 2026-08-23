@@ -41,7 +41,10 @@ function detectProductTypeFromWebhook(params: URLSearchParams): ProductType | nu
   if (byPermalink) return byPermalink.type;
 
   const productName = params.get("product_name") ?? "";
-  if (productName.toLowerCase().includes("in-depth") || productName.toLowerCase().includes("birth chart book")) {
+  if (productName.toLowerCase().includes("in-depth")) {
+    return "in-depth-reading";
+  }
+  if (productName.toLowerCase().includes("birth chart book")) {
     return "birth-chart-book";
   }
 
@@ -167,7 +170,7 @@ export async function POST(req: Request) {
     }
 
     const product = getProduct(productType);
-    const isBook = productType === "birth-chart-book";
+    const isBook = productType === "birth-chart-book" || productType === "in-depth-reading";
     const amountCents = Number(params.get("price") || String(product.priceCents));
 
     dbLog(scope, "lead found — product type resolved", {

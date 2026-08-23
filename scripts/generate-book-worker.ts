@@ -80,10 +80,15 @@ async function runWatchdog(): Promise<void> {
     process.exit(0);
   }
 
-  // Claim queued orders
+  // Claim queued orders (books + in-depth readings)
   const claimed: ClaimedOrder[] = [];
+  const queuedProductTypes = ["birth-chart-book", "in-depth-reading"] as const;
   for (let i = 0; i < availableSlots; i++) {
-    const order = await claimNextQueuedOrder(supabase, "birth-chart-book");
+    let order: ClaimedOrder | null = null;
+    for (const pt of queuedProductTypes) {
+      order = await claimNextQueuedOrder(supabase, pt);
+      if (order) break;
+    }
     if (!order) break;
     claimed.push(order);
   }

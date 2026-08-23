@@ -35,7 +35,6 @@ import { buildBuiltUsing } from "./built-using";
 import type { PremiumBirthDetails } from "./build-mock-reading";
 import { buildReaderAnchor, buildSectionChartContext } from "./chart-context";
 import { getProduct } from "./products/registry";
-import { BIRTH_CHART_CHAPTER_PROFILES } from "./products/birth-chart/chapter-profiles";
 import {
   READING_VERSION,
   type BlueprintSection,
@@ -81,6 +80,7 @@ import {
   INSIGHT_ENGINE_VERSION,
   PRODUCT_VERSION,
   PROMPT_VERSION,
+  getProductVersions,
 } from "./versions";
 import {
   emitTelemetry,
@@ -100,9 +100,11 @@ const MAX_REGEN_CHAPTERS = 3;
 const SOFT_FLAG_REGEN_SEVERITY = 0.5;
 const LOCK_TTL_MS = 180_000;
 
-const PART_ONE_CHAPTER_IDS = new Set(
-  BIRTH_CHART_CHAPTER_PROFILES.map((p) => p.section)
-);
+import type { ChapterProfile } from "./insights/types";
+
+function partOneChapterIds(profiles: readonly ChapterProfile[]): Set<string> {
+  return new Set(profiles.map((p) => p.section));
+}
 
 /* ─────────────────────────────────────────────────────────────────────
    Result types
@@ -270,12 +272,14 @@ function buildAiRequest(params: BuildRequestParams): AiGenerationRequest {
   const def = getProduct(product);
   const guidelines = def.guidelines;
   const anchor = buildReaderAnchor(chart, name);
+  const chapterProfiles = def.chapterProfiles;
+  const PART_ONE_CHAPTER_IDS = partOneChapterIds(chapterProfiles);
 
   const sections: AiSectionRequest[] = [];
   const chapterContexts: Record<string, ChapterPromptContext> = {};
 
   const profileBySection = new Map(
-    BIRTH_CHART_CHAPTER_PROFILES.map((p) => [p.section, p])
+    chapterProfiles.map((p) => [p.section, p])
   );
 
   for (const section of def.activeSections) {
@@ -351,6 +355,9 @@ function buildAiRequest(params: BuildRequestParams): AiGenerationRequest {
     readerOpener,
     sections,
     chapterContexts,
+    productSystemPrompt: def.systemPrompt,
+    productContractReminder: def.contractReminder,
+    productReadingToolName: def.readingToolName,
   };
   return req;
 }
@@ -415,7 +422,8 @@ interface QaResult {
 
 function runQa(
   sections: RenderedSection[],
-  ledger: Ledger
+  ledger: Ledger,
+  partOneIds: Set<string>
 ): QaResult {
   const chapters = sections.filter((s) => s.pageType === "chapter");
   const hardInput: HardCUR[] = chapters.map((c) => ({
@@ -425,7 +433,7 @@ function runQa(
   const softInput: SoftCUR[] = chapters.map((c) => ({
     section: c.id,
     body: c.body,
-    isTransit: !PART_ONE_CHAPTER_IDS.has(c.id),
+    isTransit: !partOneIds.has(c.id),
   }));
   return {
     hardFlags: runHardChecks(hardInput),
@@ -464,6 +472,11 @@ export async function generateAiReading(
     };
   }
 
+  const productDef = getProduct(product);
+  const chapterProfiles = productDef.chapterProfiles;
+  const PART_ONE_CHAPTER_IDS = partOneChapterIds(chapterProfiles);
+  const pv = getProductVersions(product);
+
   const invalidReasonCounts: Record<string, number> = {};
   const tokenAccum = { input: 0, output: 0, cacheRead: 0, cacheCreation: 0 };
   let interpretMs = 0;
@@ -481,10 +494,10 @@ export async function generateAiReading(
   ): void => {
     const telemetry: GenerationTelemetry = {
       generationRequestId,
-      productVersion: PRODUCT_VERSION,
-      insightEngineVersion: INSIGHT_ENGINE_VERSION,
-      blueprintVersion: BLUEPRINT_VERSION,
-      promptVersion: PROMPT_VERSION,
+      productVersion: pv.productVersion,
+      insightEngineVersion: pv.insightEngineVersion,
+      blueprintVersion: pv.blueprintVersion,
+      promptVersion: pv.promptVersion,
       modelId: model.id,
       provider: "anthropic",
       signalCount: 0,
@@ -571,7 +584,7 @@ export async function generateAiReading(
     /* Step 6: schedule */
     const { assignments, ledger } = scheduleInsights(
       validInsights,
-      BIRTH_CHART_CHAPTER_PROFILES
+      chapterProfiles
     );
     seedKnownBannedImages(ledger);
 
@@ -631,7 +644,7 @@ export async function generateAiReading(
     let sections = renderSectionsFromBodies(chart, bodies, product);
 
     /* Step 8: QA */
-    let qa = runQa(sections, ledger);
+    let qa = runQa(sections, ledger, PART_ONE_CHAPTER_IDS);
     hardFlagCount = qa.hardFlags.length;
     softFlagCount = qa.softFlags.length;
 
@@ -714,7 +727,7 @@ export async function generateAiReading(
         }
         sections = renderSectionsFromBodies(chart, bodies, product);
         // Re-scan; we do NOT loop again — one pass max.
-        qa = runQa(sections, ledger);
+        qa = runQa(sections, ledger, PART_ONE_CHAPTER_IDS);
         hardFlagCount = qa.hardFlags.length;
         softFlagCount = qa.softFlags.length;
         qaOutcome = "regenerated";
@@ -739,7 +752,7 @@ export async function generateAiReading(
     }
 
     /* Step 9: assemble */
-    const def = getProduct(product);
+    const def = productDef;
     const debug: PremiumReadingDebug = {
       insightMap: validInsights,
       chapterAssignments: Object.fromEntries(
@@ -773,10 +786,10 @@ export async function generateAiReading(
             : model.id.startsWith("opus")
               ? "opus"
               : "unknown",
-        productVersion: PRODUCT_VERSION,
-        insightEngineVersion: INSIGHT_ENGINE_VERSION,
-        promptVersion: PROMPT_VERSION,
-        blueprintVersion: BLUEPRINT_VERSION,
+        productVersion: pv.productVersion,
+        insightEngineVersion: pv.insightEngineVersion,
+        promptVersion: pv.promptVersion,
+        blueprintVersion: pv.blueprintVersion,
         modelId: model.id,
         provider: "anthropic",
         generationRequestId,
@@ -793,10 +806,10 @@ export async function generateAiReading(
 
     const genTelemetry: GenerationTelemetry = {
       generationRequestId,
-      productVersion: PRODUCT_VERSION,
-      insightEngineVersion: INSIGHT_ENGINE_VERSION,
-      blueprintVersion: BLUEPRINT_VERSION,
-      promptVersion: PROMPT_VERSION,
+      productVersion: pv.productVersion,
+      insightEngineVersion: pv.insightEngineVersion,
+      blueprintVersion: pv.blueprintVersion,
+      promptVersion: pv.promptVersion,
       modelId: model.id,
       provider: "anthropic",
       signalCount: selectedSignals.length,
