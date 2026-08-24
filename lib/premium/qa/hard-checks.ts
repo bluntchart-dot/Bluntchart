@@ -45,6 +45,21 @@ export interface ChapterUnderReview {
   readonly body: string;
 }
 
+/**
+ * Strip superscript reference blocks from the bottom of a chapter body.
+ * References start after a blank line with ¹ ² ³ ⁴ and contain deliberate
+ * astrology vocabulary that should not trigger leakage checks.
+ */
+function stripReferences(body: string): string {
+  const paragraphs = body.split(/\n\s*\n/);
+  const kept: string[] = [];
+  for (const p of paragraphs) {
+    if (/^[¹²³⁴⁵⁶⁷⁸⁹⁰]\s/.test(p.trim())) break;
+    kept.push(p);
+  }
+  return kept.join("\n\n");
+}
+
 function normalisedForDupeCheck(s: string): string {
   return s.trim().toLowerCase().replace(/\s+/g, " ");
 }
@@ -96,7 +111,9 @@ export function runHardChecks(
     }
 
     // Astrology leakage — cap at 2 mentions per chapter.
-    const matches = trimmed.match(ASTROLOGY_REGEX) ?? [];
+    // Strip superscript reference blocks first — they deliberately name placements.
+    const bodyWithoutRefs = stripReferences(trimmed);
+    const matches = bodyWithoutRefs.match(ASTROLOGY_REGEX) ?? [];
     if (matches.length > 2) {
       flags.push({
         section: c.section,
