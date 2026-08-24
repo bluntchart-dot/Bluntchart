@@ -26,7 +26,7 @@ import type { MoonProduct } from "@/components/MoonPhasePanel";
 
 /* ─── Types ─────────────────────────────────────────────────────── */
 
-type InternalProductType = "birth-chart-book" | "reading" | "future-love-letter" | "moon-a1" | "moon-a2" | "moon-b1" | "moon-b2";
+type InternalProductType = "birth-chart-book" | "in-depth-reading" | "reading" | "future-love-letter" | "moon-a1" | "moon-a2" | "moon-b1" | "moon-b2";
 
 const MOON_PRODUCT_MAP: Record<string, MoonProduct> = {
   "moon-a1": "a1",
@@ -41,6 +41,7 @@ function isMoonProduct(pt: string): pt is "moon-a1" | "moon-a2" | "moon-b1" | "m
 
 const PRODUCTS: { value: InternalProductType; label: string; price: string }[] = [
   { value: "birth-chart-book", label: "Birth Chart Book", price: "$24" },
+  { value: "in-depth-reading", label: "In-Depth Reading", price: "$24" },
   { value: "reading", label: "Birth Chart Reading", price: "$15" },
   { value: "future-love-letter", label: "Love Letter", price: "$4.99" },
   { value: "moon-a1", label: "Soulmate Moon", price: "$9.99" },
@@ -51,6 +52,7 @@ const PRODUCTS: { value: InternalProductType; label: string; price: string }[] =
 
 const PRODUCT_LABEL: Record<InternalProductType, string> = {
   "birth-chart-book": "Book",
+  "in-depth-reading": "In-Depth Reading",
   "reading": "Reading",
   "future-love-letter": "Love Letter",
   "moon-a1": "Soulmate Moon",
@@ -65,6 +67,15 @@ const LOADING_MSGS: Record<InternalProductType, string[]> = {
     "Extracting insight signals…",
     "Interpreting with Claude…",
     "Writing the book…",
+    "Running QA…",
+    "Saving to database…",
+    "Sending emails…",
+  ],
+  "in-depth-reading": [
+    "Calculating chart…",
+    "Extracting insight signals…",
+    "Interpreting with Claude…",
+    "Writing the reading…",
     "Running QA…",
     "Saving to database…",
     "Sending emails…",
@@ -92,6 +103,7 @@ const LOADING_MSGS: Record<InternalProductType, string[]> = {
 
 const READER_PATH: Record<InternalProductType, string> = {
   "birth-chart-book": "/my-book",
+  "in-depth-reading": "/in-depth-readings",
   "reading": "/my-reading",
   "future-love-letter": "/my-love-letter",
   "moon-a1": "",
@@ -216,7 +228,7 @@ export default function PremiumReadingApp({ eyebrow }: Props) {
       timezone: browserTz,
       order_source: orderSource,
     };
-    if (productType === "birth-chart-book") {
+    if (productType === "birth-chart-book" || productType === "in-depth-reading") {
       payload.model = model;
     }
     if (cityGeo) {
@@ -251,7 +263,7 @@ export default function PremiumReadingApp({ eyebrow }: Props) {
           {loadMsg}
         </div>
         <div style={{ fontSize: 13, color: "#4a4560" }}>
-          {productType === "birth-chart-book"
+          {productType === "birth-chart-book" || productType === "in-depth-reading"
             ? "This can take 60–120 seconds."
             : "This can take 30–60 seconds."}
         </div>
@@ -270,7 +282,7 @@ export default function PremiumReadingApp({ eyebrow }: Props) {
   }
 
   /* ── FORM ─────────────────────────────────────────────────────── */
-  const showModelSelector = productType === "birth-chart-book";
+  const showModelSelector = productType === "birth-chart-book" || productType === "in-depth-reading";
   const buttonLabel = productType
     ? `Generate & Send ${PRODUCT_LABEL[productType]} →`
     : "Select a product above →";
