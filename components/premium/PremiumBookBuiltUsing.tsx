@@ -10,10 +10,14 @@ import type { BuiltUsingItem } from "@/lib/premium/types";
 
 export default function PremiumBookBuiltUsing({
   items,
+  references,
 }: {
   items: readonly BuiltUsingItem[];
+  references?: readonly string[];
 }) {
-  if (!items || items.length === 0) return null;
+  const hasItems = items && items.length > 0;
+  const hasRefs = references && references.length > 0;
+  if (!hasItems && !hasRefs) return null;
 
   return (
     <div className="mt-14 pt-8 border-t border-white/8">
@@ -21,27 +25,38 @@ export default function PremiumBookBuiltUsing({
         <span className="text-[#f0b84a]">✨</span>
         <span>Why we&apos;re saying this</span>
       </div>
-      <ul className="space-y-3">
-        {items.map((item, i) => (
-          <li
-            key={`${item.label}-${i}`}
-            className="flex items-start gap-3 text-sm leading-relaxed"
-          >
-            <span
-              className="w-6 shrink-0 text-center text-base text-[#c4a8ff] font-medium"
-              aria-hidden
+      {hasRefs && (
+        <div className="space-y-3 mb-5">
+          {references.map((ref, i) => (
+            <p key={i} className="text-[13px] leading-relaxed text-white/55">
+              {ref}
+            </p>
+          ))}
+        </div>
+      )}
+      {hasItems && (
+        <ul className="space-y-3">
+          {items.map((item, i) => (
+            <li
+              key={`${item.label}-${i}`}
+              className="flex items-start gap-3 text-sm leading-relaxed"
             >
-              {item.symbol}
-            </span>
-            <span className="flex-1">
-              <span className="text-[#e8e4f0] font-medium">{item.label}</span>
-              <span className="block text-white/55 text-[13px] mt-0.5">
-                {item.meaning}
+              <span
+                className="w-6 shrink-0 text-center text-base text-[#c4a8ff] font-medium"
+                aria-hidden
+              >
+                {item.symbol}
               </span>
-            </span>
-          </li>
-        ))}
-      </ul>
+              <span className="flex-1">
+                <span className="text-[#e8e4f0] font-medium">{item.label}</span>
+                <span className="block text-white/55 text-[13px] mt-0.5">
+                  {item.meaning}
+                </span>
+              </span>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }

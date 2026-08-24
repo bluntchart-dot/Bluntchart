@@ -274,7 +274,7 @@ Let's look at the landscape.`,
     pageTheme: "elevated",
     title: "What To Do With All of This",
     subtitle: "The short version. What matters, what to stop, what to start, and what to look forward to.",
-    chapterNumber: 1,
+    chapterNumber: 7,
   },
 
   {

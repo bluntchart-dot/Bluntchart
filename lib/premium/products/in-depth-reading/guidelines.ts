@@ -29,11 +29,11 @@ export const IN_DEPTH_READING_GUIDELINES: GuidelineMap = {
     narrativeForm: "guess",
     emotionalObjective:
       "This is the hook chapter. The reader should finish it thinking 'how does this know what's happening in my life?' Answer: Why does my life feel the way it does right now? What major area is being activated? What is ending, beginning, changing or demanding attention? ALWAYS evaluate: (1) love/relationships, (2) career/work, (3) one additional area the transits most strongly activate (money, wellbeing, family, identity, etc.).",
-    tone: "Present, intimate, knowing. Someone who has been watching her life from above and is finally telling her what they see.",
+    tone: "Present, intimate, knowing. Someone who has been watching their life from above and is finally telling them what they see.",
     desiredReaderFeeling:
       "\"How did it know that? That is exactly what's happening.\"",
     writingStyle:
-      "Open with a small, specific guess about her recent weeks — something that feels uncannily accurate. The guess should be grounded in what the transit evidence actually supports, expressed as the most specific possibility the astrology allows. Then name the season: what's being activated, what's trying to leave, what's trying to enter. Cover love (is a new connection forming? is an old one exhausting her? is she avoiding something?), career (is something shifting? is she outgrowing a role? is an opportunity circling?), and one more activated area. Do NOT force equal space if the astrology doesn't show meaningful activity in one area — lead with the strongest signal. End on what this season is actually asking of her.",
+      "Open with a small, specific guess about their recent weeks — something that feels uncannily accurate. Then name what's being activated, what's trying to leave, what's trying to enter. Give each area (love, career, one more) ONE focused paragraph with real depth and daily-life specifics. NEVER repeat the same topic across multiple paragraphs — if career is covered in paragraph 2, do not return to career in paragraph 5. Lead with the strongest signal. Each observation should feel grounded in their actual daily experience, not a vague astrological summary. End on what this period is actually asking of them.",
     approxWords: [550, 700],
     transitionGoal:
       "End on the natural question the reader now has: when does this pressure let up? That's exactly what the next chapter answers.",
@@ -44,15 +44,15 @@ export const IN_DEPTH_READING_GUIDELINES: GuidelineMap = {
     id: "when-does-it-get-better",
     narrativeForm: "observation",
     emotionalObjective:
-      "This is the relief chapter. Answer: When does the difficult phase start easing? When do happier/supportive periods begin? In which area — love, career, money, wellbeing? ALWAYS cover: (1) love timing — when does the relationship situation shift, (2) career timing — when does work pressure ease or opportunity arrive, (3) one more area with genuine transit activity.",
+      "This is the relief chapter. Keep it tight and specific — 2-3 focused paragraphs. Answer: When does the pressure start easing? Which area improves first? What does relief actually look like? Cover love timing, career timing, and one more area — concisely.",
     tone: "Warm, honest, hopeful without lying. A friend who tells the truth about the forecast.",
     desiredReaderFeeling:
       "\"Okay. I can hold on. I know when it shifts and where.\"",
     writingStyle:
-      "Open by validating the weight she's carrying. Then be specific: which transit is causing the heaviness, when does it ease (months, not exact dates). For love: when does the relationship energy shift, and what does the shift look like (new connection? existing relationship deepening? clarity about what she wants?). For career: when does the work pressure lift, when does an opportunity window open. For the third area: name the specific transit and timing. Be honest if some pressure continues while other areas improve. End on the specific area that gets noticeably lighter first.",
-    approxWords: BASELINE_WORDS,
+      "Keep this chapter tight. Open by validating what they're carrying in one sentence. Then be specific and concise: the heaviest pressure eases within X months/weeks, the area that lightens first is [area], and what relief looks like for them specifically. Use relative timing only (months, weeks — NEVER seasons like spring/summer). Be honest if some pressure continues. End on the specific thing that gets noticeably easier first. This chapter should feel like a sharp, useful answer — not a long exploration.",
+    approxWords: [350, 450],
     transitionGoal:
-      "She knows when it eases. The next chapter shows what's opening up beyond that.",
+      "They know when it eases. The next chapter shows what's opening up beyond that.",
     astrologyInputs: ["current-transits", "jupiter", "venus"],
   },
 
@@ -60,15 +60,15 @@ export const IN_DEPTH_READING_GUIDELINES: GuidelineMap = {
     id: "whats-coming-next",
     narrativeForm: "challenge",
     emotionalObjective:
-      "This is the strategic forward-look chapter. Answer: What important opportunities or changes are approaching? What should I be prepared for? ALWAYS cover: (1) love — what relationship development is approaching, (2) career — what professional opportunity or shift is coming, (3) one more area with genuine upcoming transit activity. One opportunity, one caution, one window.",
-    tone: "Clear-eyed, strategic, forward-leaning. The friend who tells her what she would actually do.",
+      "This is the strategic forward-look chapter. Answer: What important opportunities or changes are approaching? What should they be prepared for? ALWAYS cover: (1) love — what relationship development is approaching, (2) career — what professional opportunity or shift is coming, (3) one more area with genuine upcoming transit activity. One opportunity, one caution, one window.",
+    tone: "Clear-eyed, strategic, forward-leaning. The friend who tells them what they would actually do.",
     desiredReaderFeeling:
       "\"I know what's coming and I feel ready for it.\"",
     writingStyle:
-      "Open with a friendly dare — there's a decision she already knows she has to make. Name the biggest upcoming shift in love (someone entering? a commitment question? a pattern finally breaking?). Name the biggest career move (the opportunity, the timing, what it requires). Name the biggest caution across all areas — the mistake to avoid, the trap that looks tempting. Give approximate timing (weeks or months, never exact dates). End with a line that makes her feel equipped, not anxious.",
+      "Open with a friendly dare — there's a decision they already know they have to make. Name the biggest upcoming shift in love. Name the biggest career move. Name the biggest caution — the mistake to avoid. Give approximate timing in months or weeks (NEVER seasons). End with a line that makes them feel equipped, not anxious. This is not a prediction of specific events — it's a reading of what the chart evidence suggests is developing.",
     approxWords: BASELINE_WORDS,
     transitionGoal:
-      "The reader now knows what's happening, when it shifts, and what's coming. She's ready to understand WHY — the birth chart explains everything the transits just showed.",
+      "The reader now knows what's happening, when it shifts, and what's coming. They're ready to understand WHY — the birth chart explains everything the transits just showed.",
     astrologyInputs: ["current-transits", "major-aspects"],
   },
 
@@ -180,15 +180,15 @@ export const IN_DEPTH_READING_GUIDELINES: GuidelineMap = {
     id: "takeaways",
     narrativeForm: "observation",
     emotionalObjective:
-      "Distill the entire reading into actionable clarity. What matters most right now, what to stop doing, what to start doing, what deserves priority, and what she can look forward to.",
+      "Distill the entire reading into actionable clarity. What matters most right now, what to stop doing, what to start doing, what deserves priority, and what they can look forward to.",
     tone: "Direct, warm, concise. A friend wrapping up a long conversation with the essentials.",
     desiredReaderFeeling:
       "\"I know exactly what to do with all of this.\"",
     writingStyle:
-      "Short and punchy. No new information — only synthesis. The one thing that matters most right now, the one thing to stop doing, the one thing to start doing, the area that deserves priority this season, and the hopeful thing on the horizon. Each point is 1–2 sentences max.",
+      "Use pointer/bullet format — start each piece of advice with a dash or bullet. No new information, only synthesis. Cover: what matters most right now, what to stop doing, what to start doing, the area that deserves priority, and the hopeful thing on the horizon. Each point is 1–2 sentences max. Scannable and actionable.",
     approxWords: [250, 350],
     transitionGoal:
-      "This is the closer. End on the thing she can look forward to.",
+      "This is the closer. End on the thing they can look forward to.",
     astrologyInputs: [],
   },
 };

@@ -11,9 +11,13 @@
 import dynamic from "next/dynamic";
 import type { PremiumReading, RenderedSection } from "@/lib/premium/types";
 import {
-  CHAPTER_BUILT_USING_TABLE,
-  HOW_WE_READ_EXPLAINER,
+  CHAPTER_BUILT_USING_TABLE as BC_BUILT_USING_TABLE,
+  HOW_WE_READ_EXPLAINER as BC_HOW_WE_READ,
 } from "@/lib/premium/products/birth-chart/blueprint";
+import {
+  CHAPTER_BUILT_USING_TABLE as IDR_BUILT_USING_TABLE,
+  HOW_WE_READ_EXPLAINER as IDR_HOW_WE_READ,
+} from "@/lib/premium/products/in-depth-reading/blueprint";
 import PremiumBookBuiltUsing from "./PremiumBookBuiltUsing";
 
 const ChartWheel = dynamic(() => import("@/components/ChartWheel"), {
@@ -42,6 +46,27 @@ const partDisplayNames: Record<string, string> = {
 };
 
 /* ─── Paragraph splitter (empty line = new paragraph) ─────────────── */
+const SUPERSCRIPT_RE = /^[¹²³⁴⁵⁶⁷⁸⁹⁰]\s/;
+
+function splitBodyAndReferences(body: string): {
+  bodyParagraphs: string[];
+  references: string[];
+} {
+  const paragraphs = body
+    .split(/\n\s*\n/)
+    .map((p) => p.trim())
+    .filter(Boolean);
+  const bodyParagraphs: string[] = [];
+  const references: string[] = [];
+  let inRefs = false;
+  for (const p of paragraphs) {
+    if (SUPERSCRIPT_RE.test(p)) inRefs = true;
+    if (inRefs) references.push(p);
+    else bodyParagraphs.push(p);
+  }
+  return { bodyParagraphs, references };
+}
+
 function toParagraphs(body: string): string[] {
   return body
     .split(/\n\s*\n/)
@@ -155,6 +180,9 @@ export default function PremiumBookPage({
 
   /* ═════════ EDUCATION (How we read your chart) ═════════ */
   if (section.pageType === "education") {
+    const isInDepth = reading.meta.product === "in-depth-reading";
+    const explainerText = isInDepth ? IDR_HOW_WE_READ : BC_HOW_WE_READ;
+    const builtUsingTable = isInDepth ? IDR_BUILT_USING_TABLE : BC_BUILT_USING_TABLE;
     return (
       <article className="premium-book-page premium-page-education">
         <div className="premium-page-inner">
@@ -166,7 +194,7 @@ export default function PremiumBookPage({
             </p>
           )}
           <div className="premium-page-body">
-            {toParagraphs(HOW_WE_READ_EXPLAINER).map((p, i) => (
+            {toParagraphs(explainerText).map((p, i) => (
               <p key={i}>{p}</p>
             ))}
           </div>
@@ -175,7 +203,7 @@ export default function PremiumBookPage({
               What each chapter is built on
             </div>
             <ul>
-              {CHAPTER_BUILT_USING_TABLE.map((row) => (
+              {builtUsingTable.map((row) => (
                 <li key={row.chapter}>
                   <span className="premium-attribution-icon" aria-hidden>
                     {row.icon}
@@ -202,6 +230,7 @@ export default function PremiumBookPage({
 
   /* ═════════ CHAPTER (AI-authored body) ═════════ */
   if (section.pageType === "chapter") {
+    const { bodyParagraphs: chapterBody, references } = splitBodyAndReferences(section.body);
     return (
       <article className="premium-book-page premium-page-chapter">
         <div className="premium-page-inner">
@@ -217,12 +246,15 @@ export default function PremiumBookPage({
             </p>
           )}
           <div className="premium-page-body">
-            {paragraphs.map((p, i) => (
+            {chapterBody.map((p, i) => (
               <p key={i}>{p}</p>
             ))}
           </div>
           {section.builtUsing && (
-            <PremiumBookBuiltUsing items={section.builtUsing} />
+            <PremiumBookBuiltUsing items={section.builtUsing} references={references} />
+          )}
+          {!section.builtUsing && references.length > 0 && (
+            <PremiumBookBuiltUsing items={[]} references={references} />
           )}
           {!isLast && (
             <div className="premium-page-cta">
