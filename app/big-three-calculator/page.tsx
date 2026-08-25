@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import BigThreeClient from "./BigThreeClient";
 
 export const metadata: Metadata = {
-  title: "Big Three Calculator: Sun, Moon & Rising Signs | BluntChart",
+  title: "Big 3 Calculator: Sun, Moon & Rising Signs | BluntChart",
   description:
     "Find your Big 3 free — Sun, Moon and Rising signs from your exact birth time. See what each one actually means for you. Instant result, no signup.",
   openGraph: {

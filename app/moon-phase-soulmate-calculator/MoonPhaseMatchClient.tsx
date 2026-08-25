@@ -387,7 +387,7 @@ export default function MoonPhaseMatchClient() {
         {/* ================= HERO ================= */}
         <div className="wrap"><div className="hero">
           <div className="eyebrow">✦ 147M+ views on TikTok · zero CapCut required ✦</div>
-          <h1>Do your moons <em>actually</em> make a full moon?</h1>
+          <h1>Your moon phase, <em>matched to theirs.</em></h1>
           <p className="hero-sub">The trend, minus the thirteen steps. Enter two birthdays — we calculate both real moon phases and hand you one merged card, already shareable.</p>
 
           <form className="matchform" id="matchForm">

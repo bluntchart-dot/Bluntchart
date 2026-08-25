@@ -118,7 +118,7 @@ export default function CapricornPage() {
                 </div>
                 <div>
                   <h1 style={{ fontFamily:"var(--font-display)", fontSize:"clamp(2.8rem,7vw,4.2rem)", fontWeight:900, lineHeight:1.02, margin:0, background:"linear-gradient(135deg, #7a8c6e, #4a5a40)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", backgroundClip:"text" }}>
-                    Capricorn
+                    Capricorn: Built the plan. Then built a backup plan.
                   </h1>
                   <p style={{ fontSize:16, color:"rgba(232,228,240,0.5)", marginTop:4 }}>The Sea-Goat · December 22 – January 19</p>
                 </div>

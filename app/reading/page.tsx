@@ -307,10 +307,10 @@ export default function HomePage() {
               className="max-w-4xl text-4xl font-black leading-[1.02] tracking-tight text-white sm:text-6xl lg:text-7xl"
               style={{ fontFamily: "var(--font-display)" }}
             >
-              Your chart already knows
+              What your chart actually
               <br />
               <span className="bg-gradient-to-r from-amber-300 via-orange-300 to-pink-400 bg-clip-text text-transparent">
-                why you&apos;re like this.
+                says about you.
               </span>
             </h1>
 

@@ -11,15 +11,18 @@ import {
   MASTER_W,
   MASTER_H,
   MOON_SMALL,
-  BORDER_INSET,
   type ComposeInput,
   hashString,
+  drawBackground,
   drawStarField,
+  drawBorder,
+  drawGrainOverlay,
   drawMoonGlow,
   fmtDate,
+  createPRNG,
 } from "@/lib/moon-artwork";
 
-export const MOON_HERO_A1 = 1200;
+export const MOON_HERO_A1 = 1400;
 
 export function composeA1(
   moon1: HTMLCanvasElement,
@@ -40,19 +43,11 @@ export function composeA1(
   const smallGap = 260;
   const m1x = W / 2 - smallGap / 2 - MOON_SMALL / 2;
   const m2x = W / 2 + smallGap / 2 + MOON_SMALL / 2;
-  const smallY = 480;
-  const bigY = 1440;
+  const smallY = 520;
+  const bigY = 1650;
 
   // Background
-  const bg = ctx.createRadialGradient(
-    W / 2, bigY - 80, 80,
-    W / 2, bigY - 80, W * 0.9
-  );
-  bg.addColorStop(0, "#0a0d1a");
-  bg.addColorStop(0.45, "#060910");
-  bg.addColorStop(1, "#030508");
-  ctx.fillStyle = bg;
-  ctx.fillRect(0, 0, W, H);
+  drawBackground(ctx, W, H, bigY - 80);
 
   // Stars
   const seed = hashString(name1 + name2 + date1 + date2);
@@ -63,13 +58,35 @@ export function composeA1(
     { x: W / 2, y: bigY + MOON_HERO_A1 / 2 + 200, r: 400 },
   ]);
 
+  // Constellation lines (decorative, behind the hero moon)
+  const rand = createPRNG(seed + 42);
+  ctx.save();
+  ctx.strokeStyle = "rgba(200, 200, 220, 0.06)";
+  ctx.lineWidth = 1;
+  const starPoints: [number, number][] = [];
+  for (let i = 0; i < 8; i++) {
+    starPoints.push([
+      W * 0.15 + rand() * W * 0.7,
+      bigY - MOON_HERO_A1 * 0.4 + rand() * MOON_HERO_A1 * 0.8,
+    ]);
+  }
+  for (let i = 0; i < starPoints.length - 1; i++) {
+    if (rand() > 0.45) continue;
+    ctx.beginPath();
+    ctx.moveTo(starPoints[i][0], starPoints[i][1]);
+    ctx.lineTo(starPoints[i + 1][0], starPoints[i + 1][1]);
+    ctx.stroke();
+  }
+  for (const [sx, sy] of starPoints) {
+    ctx.beginPath();
+    ctx.arc(sx, sy, 2, 0, Math.PI * 2);
+    ctx.fillStyle = "rgba(200, 200, 220, 0.12)";
+    ctx.fill();
+  }
+  ctx.restore();
+
   // Border
-  ctx.strokeStyle = "rgba(220, 190, 100, 0.42)";
-  ctx.lineWidth = 3;
-  ctx.strokeRect(
-    BORDER_INSET, BORDER_INSET,
-    W - BORDER_INSET * 2, H - BORDER_INSET * 2
-  );
+  drawBorder(ctx, W, H);
 
   ctx.textAlign = "center";
   ctx.textBaseline = "top";
@@ -135,7 +152,7 @@ export function composeA1(
   const contentY = bigY + MOON_HERO_A1 / 2 + 100;
   ctx.font = `italic 400 60px ${serif}`;
   ctx.fillStyle = "rgba(245, 243, 240, 0.90)";
-  ctx.fillText(`“${contentLine}”`, W / 2, contentY);
+  ctx.fillText(`"${contentLine}"`, W / 2, contentY);
 
   // Fixed secondary line
   const secondaryY = contentY + 88;
@@ -147,6 +164,9 @@ export function composeA1(
   ctx.font = `300 26px ${sans}`;
   ctx.fillStyle = "rgba(140, 138, 155, 0.38)";
   ctx.fillText("bluntchart.com", W / 2, H - 110);
+
+  // Grain overlay
+  drawGrainOverlay(ctx, W, H, seed);
 
   return canvas;
 }

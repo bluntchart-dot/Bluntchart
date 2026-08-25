@@ -118,7 +118,7 @@ export default function SagittariusPage() {
                 </div>
                 <div>
                   <h1 style={{ fontFamily:"var(--font-display)", fontSize:"clamp(2.8rem,7vw,4.2rem)", fontWeight:900, lineHeight:1.02, margin:0, background:"linear-gradient(135deg, #b06ce0, #7b3db8)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", backgroundClip:"text" }}>
-                    Sagittarius
+                    Sagittarius: Already left before you finished the question.
                   </h1>
                   <p style={{ fontSize:16, color:"rgba(232,228,240,0.5)", marginTop:4 }}>The Archer · November 22 – December 21</p>
                 </div>

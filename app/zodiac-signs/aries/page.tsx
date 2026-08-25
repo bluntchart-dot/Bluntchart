@@ -126,7 +126,7 @@ export default function AriesPage() {
                 </div>
                 <div>
                   <h1 style={{ fontFamily:"var(--font-display)", fontSize:"clamp(2.8rem,7vw,4.2rem)", fontWeight:900, lineHeight:1.02, margin:0, background:"linear-gradient(135deg, #e8a090, #d4537e)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", backgroundClip:"text" }}>
-                    Aries
+                    Aries: The sign that acts before it thinks.
                   </h1>
                   <p style={{ fontSize:16, color:"rgba(232,228,240,0.5)", marginTop:4 }}>The Ram · March 21 – April 19</p>
                 </div>

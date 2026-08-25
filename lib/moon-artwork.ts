@@ -99,6 +99,50 @@ export function drawStarField(
   }
 }
 
+export function drawGrainOverlay(
+  ctx: CanvasRenderingContext2D,
+  w: number,
+  h: number,
+  seed: number,
+  opacity = 0.03
+) {
+  const rand = createPRNG(seed + 999);
+  const grain = ctx.createImageData(w, h);
+  const d = grain.data;
+  for (let i = 0; i < d.length; i += 4) {
+    const v = Math.round(rand() * 255);
+    d[i] = v;
+    d[i + 1] = v;
+    d[i + 2] = v;
+    d[i + 3] = Math.round(opacity * 255);
+  }
+  const tmp = document.createElement("canvas");
+  tmp.width = w;
+  tmp.height = h;
+  const tctx = tmp.getContext("2d")!;
+  tctx.putImageData(grain, 0, 0);
+
+  ctx.save();
+  ctx.globalCompositeOperation = "overlay";
+  ctx.drawImage(tmp, 0, 0);
+  ctx.restore();
+}
+
+export function drawBorder(
+  ctx: CanvasRenderingContext2D,
+  w: number,
+  h: number,
+  inset = BORDER_INSET
+) {
+  ctx.strokeStyle = "rgba(220, 190, 100, 0.65)";
+  ctx.lineWidth = 4;
+  ctx.strokeRect(inset, inset, w - inset * 2, h - inset * 2);
+
+  ctx.strokeStyle = "rgba(220, 190, 100, 0.18)";
+  ctx.lineWidth = 1;
+  ctx.strokeRect(inset + 8, inset + 8, w - (inset + 8) * 2, h - (inset + 8) * 2);
+}
+
 export function drawMoonGlow(
   ctx: CanvasRenderingContext2D,
   moonCanvas: HTMLCanvasElement,
@@ -153,7 +197,7 @@ export function renderMoon(
   renderSize: number,
   colorMap: THREE.Texture,
   displacementMap: THREE.Texture,
-  opts?: { earthshineIntensity?: number }
+  opts?: { earthshineIntensity?: number; shadowLift?: boolean }
 ): HTMLCanvasElement {
   const canvas = document.createElement("canvas");
   const renderer = new THREE.WebGLRenderer({
@@ -169,11 +213,14 @@ export function renderMoon(
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.25;
 
+  const earthshine =
+    opts?.earthshineIntensity ?? (opts?.shadowLift ? 0.42 : undefined);
+
   const scene = createMoonScene({
     phaseAngle,
     size: renderSize,
     premium: true,
-    earthshineIntensity: opts?.earthshineIntensity,
+    earthshineIntensity: earthshine,
   });
 
   (scene.material as THREE.MeshStandardMaterial).map = colorMap;
@@ -183,7 +230,9 @@ export function renderMoon(
   (scene.material as THREE.MeshStandardMaterial).needsUpdate = true;
 
   renderer.render(scene.scene, scene.camera);
-  const processed = postProcessPremium(canvas);
+  const processed = postProcessPremium(canvas, {
+    shadowLift: opts?.shadowLift,
+  });
 
   scene.material.dispose();
   renderer.dispose();
@@ -213,9 +262,8 @@ export function blendBirthMoons(
   colorMap: THREE.Texture,
   displacementMap: THREE.Texture
 ): HTMLCanvasElement {
-  const es = { earthshineIntensity: 0.01 };
-  const c1 = renderMoon(phaseAngle1, renderSize, colorMap, displacementMap, es);
-  const c2 = renderMoon(phaseAngle2, renderSize, colorMap, displacementMap, es);
+  const c1 = renderMoon(phaseAngle1, renderSize, colorMap, displacementMap);
+  const c2 = renderMoon(phaseAngle2, renderSize, colorMap, displacementMap);
 
   const w = c1.width;
   const h = c1.height;

@@ -14,7 +14,7 @@ import {
 import { composeA1, MOON_HERO_A1 } from "@/lib/moon-a1-soulmate";
 import { composeA2, MOON_HERO_A2 } from "@/lib/moon-a2-match";
 import { composeB1, MOON_HERO_B1 } from "@/lib/moon-b1-compat";
-import { composeB2, MOON_LARGE_B2 } from "@/lib/moon-b2-astromatch";
+import { composeB2, MOON_B2 } from "@/lib/moon-b2-astromatch";
 import {
   FORMATS,
   deriveFormat,
@@ -42,8 +42,8 @@ export type MoonProduct = "a1" | "a2" | "b1" | "b2";
 const PRODUCT_INFO: Record<MoonProduct, { name: string; desc: string }> = {
   a1: { name: "Soulmate Moon", desc: "Combined birth Moons, no %" },
   a2: { name: "Moon Match", desc: "Single hero Moon, Moon Match %" },
-  b1: { name: "Astrology Compatibility", desc: "Single hero Moon, astrology %" },
-  b2: { name: "Astrology Match", desc: "Two large birth Moons, astrology %" },
+  b1: { name: "Astrology Compatibility", desc: "Two individual + hero Moon, astrology %" },
+  b2: { name: "Astrology Match", desc: "Two big Moons landscape, astrology % as text" },
 };
 
 interface GeneratedFile {
@@ -184,24 +184,28 @@ export default function MoonPhasePanel({ product, onBack }: Props) {
       } else if (product === "a2") {
         const heroAngle = scoreToPhaseAngle(compat.score);
         const esOpts = compat.score < 25
-          ? { earthshineIntensity: 0.008 + ((25 - compat.score) / 25) * 0.04 }
-          : { earthshineIntensity: 0.008 };
+          ? { earthshineIntensity: 0.12 + ((25 - compat.score) / 25) * 0.04, shadowLift: true }
+          : { shadowLift: true };
         const hero = renderMoon(heroAngle, MOON_HERO_A2, colorMap, displacementMap, esOpts);
         master = composeA2(hero, compat, composeInput);
       } else if (product === "b1") {
+        const m1 = renderMoon(compat.person1.phaseAngle, MOON_SMALL, colorMap, displacementMap);
+        const m2 = renderMoon(compat.person2.phaseAngle, MOON_SMALL, colorMap, displacementMap);
         const heroAngle = scoreToPhaseAngle(mockScore);
         const esOpts = mockScore < 25
-          ? { earthshineIntensity: 0.008 + ((25 - mockScore) / 25) * 0.04 }
-          : { earthshineIntensity: 0.008 };
+          ? { earthshineIntensity: 0.12 + ((25 - mockScore) / 25) * 0.04, shadowLift: true }
+          : { shadowLift: true };
         const hero = renderMoon(heroAngle, MOON_HERO_B1, colorMap, displacementMap, esOpts);
-        master = composeB1(hero, {
+        master = composeB1(m1, m2, hero, {
           ...composeInput,
           score: mockScore,
+          person1PhaseName: compat.person1.phaseName,
+          person2PhaseName: compat.person2.phaseName,
         });
       } else {
-        const es = { earthshineIntensity: 0.008 };
-        const m1 = renderMoon(compat.person1.phaseAngle, MOON_LARGE_B2, colorMap, displacementMap, es);
-        const m2 = renderMoon(compat.person2.phaseAngle, MOON_LARGE_B2, colorMap, displacementMap, es);
+        const sl = { shadowLift: true };
+        const m1 = renderMoon(compat.person1.phaseAngle, MOON_B2, colorMap, displacementMap, sl);
+        const m2 = renderMoon(compat.person2.phaseAngle, MOON_B2, colorMap, displacementMap, sl);
         master = composeB2(m1, m2, {
           ...composeInput,
           score: mockScore,

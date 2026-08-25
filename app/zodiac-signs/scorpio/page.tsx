@@ -118,7 +118,7 @@ export default function ScorpioPage() {
                 </div>
                 <div>
                   <h1 style={{ fontFamily:"var(--font-display)", fontSize:"clamp(2.8rem,7vw,4.2rem)", fontWeight:900, lineHeight:1.02, margin:0, background:"linear-gradient(135deg, #c94040, #8b2020)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", backgroundClip:"text" }}>
-                    Scorpio
+                    Scorpio: The traits everyone gets wrong.
                   </h1>
                   <p style={{ fontSize:16, color:"rgba(232,228,240,0.5)", marginTop:4 }}>The Scorpion · October 23 – November 21</p>
                 </div>

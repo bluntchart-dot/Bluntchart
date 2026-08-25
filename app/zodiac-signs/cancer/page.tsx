@@ -67,7 +67,7 @@ export default function CancerPage() {
               <div style={{ display:"flex", alignItems:"center", gap:16, marginBottom:16 }}>
                 <div style={{ width:60, height:60, borderRadius:16, background:"linear-gradient(145deg, #8aa8e820, #8aa8e808)", border:"1px solid #8aa8e840", display:"flex", alignItems:"center", justifyContent:"center", boxShadow:"0 0 28px #8aa8e810" }}><span style={{ fontSize:32, color:"var(--signColor)", fontFamily:"Georgia, serif", filter:"drop-shadow(0 0 6px #8aa8e860)" }}>♋</span></div>
                 <div>
-                  <h1 style={{ fontFamily:"var(--font-display)", fontSize:"clamp(2.8rem,7vw,4.2rem)", fontWeight:900, lineHeight:1.02, margin:0, background:"linear-gradient(135deg, #8aa8e8, #d4537e)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", backgroundClip:"text" }}>Cancer</h1>
+                  <h1 style={{ fontFamily:"var(--font-display)", fontSize:"clamp(2.8rem,7vw,4.2rem)", fontWeight:900, lineHeight:1.02, margin:0, background:"linear-gradient(135deg, #8aa8e8, #d4537e)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", backgroundClip:"text" }}>Cancer: Feels everything — and remembers all of it.</h1>
                   <p style={{ fontSize:16, color:"rgba(232,228,240,0.5)", marginTop:4 }}>June 21 – July 22</p>
                 </div>
               </div>

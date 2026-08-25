@@ -120,7 +120,7 @@ export default function VirgoPage() {
                 </div>
                 <div>
                   <h1 style={{ fontFamily:"var(--font-display)", fontSize:"clamp(2.8rem,7vw,4.2rem)", fontWeight:900, lineHeight:1.02, margin:0, background:"linear-gradient(135deg, #8ec5a0, #5dcaa5)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", backgroundClip:"text" }}>
-                    Virgo
+                    Virgo: Notices everything. Says almost none of it.
                   </h1>
                   <p style={{ fontSize:16, color:"rgba(232,228,240,0.5)", marginTop:4 }}>The Maiden · August 23 – September 22</p>
                 </div>

@@ -118,7 +118,7 @@ export default function PiscesPage() {
                 </div>
                 <div>
                   <h1 style={{ fontFamily:"var(--font-display)", fontSize:"clamp(2.8rem,7vw,4.2rem)", fontWeight:900, lineHeight:1.02, margin:0, background:"linear-gradient(135deg, #7b9ec4, #4a6e8f)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", backgroundClip:"text" }}>
-                    Pisces
+                    Pisces: Lives in a world you can&apos;t see — and it&apos;s beautiful there.
                   </h1>
                   <p style={{ fontSize:16, color:"rgba(232,228,240,0.5)", marginTop:4 }}>The Fish · February 19 – March 20</p>
                 </div>

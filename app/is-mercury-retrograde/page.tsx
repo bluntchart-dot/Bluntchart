@@ -4,9 +4,9 @@ import MercuryStatusHero from "./statushero";
 // ─── SEO METADATA ──────────────────────────────────────────────────────────────
 
 export const metadata: Metadata = {
-  title: "Is Mercury Retrograde Right Now? | 2026–2030 Dates & Status | BluntChart",
+  title: "Is Mercury Retrograde Right Now? Live Status | BluntChart",
   description:
-    "Check if Mercury is retrograde right now. Live status, countdown timer, all retrograde dates from 2026 to 2030 with shadow periods, and what it actually means for your natal chart.",
+    "Live Mercury retrograde status, countdown timer, and all retrograde dates through 2030. Shadow periods included. One glance, no astrology degree required.",
   keywords: [
     "is mercury retrograde",
     "is mercury retrograde right now",
@@ -278,6 +278,8 @@ export default function IsMercuryRetrogradePage() {
           <span style={{ color: "var(--white)" }}>Is Mercury Retrograde?</span>
         </nav>
       </div>
+
+      <h1 style={{ position:"absolute", width:1, height:1, padding:0, margin:-1, overflow:"hidden", clip:"rect(0,0,0,0)", whiteSpace:"nowrap", borderWidth:0 }}>Is Mercury retrograde right now?</h1>
 
       {/* STATUS HERO */}
       <section className="status-hero">

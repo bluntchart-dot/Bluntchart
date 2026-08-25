@@ -306,7 +306,7 @@ export default function FightCardClient() {
         {/* ================= HERO ================= */}
         <div className="wrap"><div className="hero">
           <div className="eyebrow">Included free with every Compatibility Reading · built on Gottman&apos;s repair-attempt research</div>
-          <h1>Break glass in case of <em>the 2AM fight.</em></h1>
+          <h1>What to say when you&apos;re <em>actually fighting.</em></h1>
           <p className="hero-sub">Not a deck of a thousand strangers&apos; prompts. A two-sided wallet card built from your actual synastry — what to say, what not to say, and the one line that de-escalates your specific pattern.</p>
           <div className="herobtns">
             <a href="#bridge" className="btnA">See how you get yours — $24</a>

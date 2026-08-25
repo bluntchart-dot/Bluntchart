@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import MoonSignClient from "./MoonSignClient";
 
 export const metadata: Metadata = {
-  title: "Moon Sign Calculator: What Is My Moon Sign? | BluntChart",
+  title: "Moon Sign Calculator: The Real Read | BluntChart",
   description:
-    "Find your Moon sign free in seconds. Your Moon sign reveals your emotional core, what you need and what sets you off. Instant result, no signup needed.",
+    "Find your Moon sign free in seconds. Your Moon sign is how you feel when no one's watching — what you need, what sets you off, what you can't fake. Instant result, no signup.",
   openGraph: {
     title: "Free Moon Sign Calculator | BluntChart",
     description: "Find your Moon sign free. Your Moon sign reveals your emotional nature — what you need, how you feel, what triggers you. Instant result.",

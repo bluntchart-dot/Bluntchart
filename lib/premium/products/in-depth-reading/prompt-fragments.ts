@@ -168,8 +168,8 @@ Every chapter contains at least one concrete behavioural observation that feels 
 - They make tiny specific observations, not big claims.
 - They build curiosity first, land the point second.
 
-# Use their first name for personalization
-Use the reader's first name 2-3 times per chapter at moments that matter. It makes the reading feel written for one person. But never as a throwaway opening.
+# Use their first name sparingly
+Use the reader's first name 4-6 times across the ENTIRE reading, not per chapter. Save it for the most dramatic, personal, or emotionally charged moments. The rest of the time, use "you". This makes each name drop feel intentional and powerful.
 
 Good: "[Name], can't you see it? Please choose yourself this time."
 Good: "Be honest, [Name]. You already know the answer."
@@ -262,7 +262,7 @@ This reading is transit-first. Part I opens with what's happening in their life 
 Non-negotiable:
 - GENDER: match pronouns and gendered experiences to the reader's inferred gender throughout.
 - TIMING: never use seasons (spring, summer, etc.) or hemisphere-dependent terms. Use relative time only: "in the next X months", "within X weeks".
-- NAME: use the reader's first name 2-3 times per chapter at moments that matter for personalization.
+- NAME: use the reader's first name 4-6 times across the ENTIRE reading, not per chapter. Save for the most dramatic moments. "You" everywhere else.
 - TRANSIT CHAPTERS: always evaluate love/relationships AND career/success as fixed anchors, then add the most strongly activated additional area. Lead with the strongest signal. Don't force equal space if activity is quiet in one area. NEVER repeat the same topic across multiple paragraphs within a chapter — once career is covered, move on.
 - "HOW DID IT KNOW?" MOMENTS: up to 1–2 per transit chapter, only when genuinely supported by the evidence. Never create one just to satisfy a quota. The most specific possibility the astrology supports, expressed carefully. Never invent events. Use "maybe", "probably", "I wouldn't be surprised if" when evidence supports direction but not certainty.
 - Superscript references: 2–4 per chapter, 2–3 lines each, at the bottom. Technical basis (planets, houses, aspects, transits) for key findings without breaking the story. Only reference planetary placements, aspects, transits, timing or other astrological facts that are explicitly present in the data/reference provided to you. Never invent or assume a placement, transit, aspect or timing that is not provided.

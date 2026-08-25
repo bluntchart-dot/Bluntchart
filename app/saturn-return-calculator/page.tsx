@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import SaturnCalculator from "./SaturnCalculator";
 
 export const metadata: Metadata = {
-  title: "Saturn Return Calculator — When Is My Saturn Return? | BluntChart",
+  title: "Saturn Return Calculator: When Is Mine? | BluntChart",
   description: "Free Saturn Return calculator. Enter your birth date to find your Saturn sign, exact return dates, and a brutally honest reading of what Saturn is actually testing in your life. Used by 27–30 year olds whose life just fell apart.",
   keywords: [
     "saturn return calculator","when is my saturn return","saturn return","saturn return dates",

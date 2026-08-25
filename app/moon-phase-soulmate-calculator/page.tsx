@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import MoonPhaseMatchClient from "./MoonPhaseMatchClient";
 
 export const metadata: Metadata = {
-  title: "Moon Phase Soulmate Calculator — Free, Instant, No CapCut | BluntChart",
+  title: "Moon Phase Soulmate Calculator: Free & Instant | BluntChart",
   description:
-    "Enter two birthdays. We calculate both real moon phases and hand you one merged, shareable card — no screenshots, no CapCut, no thirteen steps.",
+    "Enter two birthdays. We calculate both real moon phases and hand you one merged, shareable card. No screenshots. No CapCut. No thirteen steps.",
   openGraph: {
     title: "Moon Phase Soulmate Calculator | BluntChart",
     description:

@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Scorpio Zodiac Sign: Personality Traits, Dates, Compatibility & Meaning",
+  title: "Scorpio: The Zodiac's Most Misunderstood Sign | BluntChart",
   description:
-    "Everything you need to know about Scorpio (October 23 – November 21). Personality traits, strengths, weaknesses, love compatibility, career, friendships, and what it really means to be ruled by Pluto and Mars. Brutally honest astrology — no fluff.",
+    "Scorpio (Oct 23 – Nov 21) — real traits, compatibility, and the shadow side other sites won't mention. Written the way Scorpios prefer: bluntly.",
   keywords: [
     "scorpio", "scorpio zodiac sign", "scorpio personality", "scorpio traits",
     "scorpio dates", "scorpio compatibility", "scorpio personality traits",

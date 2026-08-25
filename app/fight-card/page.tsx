@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import FightCardClient from "./FightCardClient";
 
 export const metadata: Metadata = {
-  title: "The Fight Card — A Wallet Card Built From Your Actual Fight | BluntChart",
+  title: "The Fight Card: What to Say Mid-Argument | BluntChart",
   description:
-    "Not a generic conversation deck. A two-sided wallet card built from your real synastry — what to say, what not to say, mid-argument. Free with every Compatibility Reading.",
+    "A two-sided card built from your real synastry — what to say, what not to say, when you're actually fighting. Free with every Compatibility Reading.",
   openGraph: {
     title: "The Fight Card | BluntChart",
     description:

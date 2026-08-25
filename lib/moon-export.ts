@@ -3,7 +3,7 @@
  * All formats derive from the approved v6 master (2400×3000).
  */
 
-import { MASTER_W, MASTER_H, drawBackground, drawStarField } from "./moon-artwork";
+import { drawBackground, drawStarField } from "./moon-artwork";
 
 export interface ExportFormat {
   id: string;
@@ -54,8 +54,10 @@ function deriveTall(
   canvas.height = targetH;
   const ctx = canvas.getContext("2d")!;
 
-  const scale = targetW / MASTER_W;
-  const scaledH = MASTER_H * scale;
+  const srcW = master.width;
+  const srcH = master.height;
+  const scale = targetW / srcW;
+  const scaledH = srcH * scale;
   const offsetY = Math.round((targetH - scaledH) / 2);
 
   drawBackground(ctx, targetW, targetH, targetH * 0.45);
@@ -81,12 +83,15 @@ function deriveSquare(
   canvas.height = targetSize;
   const ctx = canvas.getContext("2d")!;
 
-  const cropSize = MASTER_W;
-  const cropY = 300;
+  const srcW = master.width;
+  const srcH = master.height;
+  const cropSize = Math.min(srcW, srcH);
+  const cropX = Math.round((srcW - cropSize) / 2);
+  const cropY = srcW >= srcH ? 0 : 300;
 
   ctx.drawImage(
     master,
-    0, cropY, cropSize, cropSize,
+    cropX, cropY, cropSize, cropSize,
     0, 0, targetSize, targetSize
   );
 
@@ -118,15 +123,13 @@ export function deriveFormat(
  * Build a minimal single-page PDF embedding a JPEG image at 8×10" (300 DPI).
  * Returns the PDF as a Uint8Array.
  */
-export function buildPrintPDF(jpegDataUrl: string): Uint8Array {
+export function buildPrintPDF(jpegDataUrl: string, imgW = 2400, imgH = 3000): Uint8Array {
   const raw = atob(jpegDataUrl.split(",")[1]);
   const jpegBytes = new Uint8Array(raw.length);
   for (let i = 0; i < raw.length; i++) jpegBytes[i] = raw.charCodeAt(i);
 
-  const imgW = 2400;
-  const imgH = 3000;
-  const pageW = 576; // 8" × 72
-  const pageH = 720; // 10" × 72
+  const pageW = Math.round((imgW / Math.max(imgW, imgH)) * 720);
+  const pageH = Math.round((imgH / Math.max(imgW, imgH)) * 720);
 
   const objects: string[] = [];
   const offsets: number[] = [];

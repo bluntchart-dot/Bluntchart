@@ -67,7 +67,7 @@ export default function LeoPage() {
               <div style={{ display:"flex", alignItems:"center", gap:16, marginBottom:16 }}>
                 <div style={{ width:60, height:60, borderRadius:16, background:"linear-gradient(145deg, #e8a09020, #e8a09008)", border:"1px solid #e8a09040", display:"flex", alignItems:"center", justifyContent:"center", boxShadow:"0 0 28px #e8a09010" }}><span style={{ fontSize:32, color:"var(--signColor)", fontFamily:"Georgia, serif", filter:"drop-shadow(0 0 6px #e8a09060)" }}>♌</span></div>
                 <div>
-                  <h1 style={{ fontFamily:"var(--font-display)", fontSize:"clamp(2.8rem,7vw,4.2rem)", fontWeight:900, lineHeight:1.02, margin:0, background:"linear-gradient(135deg, #e8a090, #d4537e)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", backgroundClip:"text" }}>Leo</h1>
+                  <h1 style={{ fontFamily:"var(--font-display)", fontSize:"clamp(2.8rem,7vw,4.2rem)", fontWeight:900, lineHeight:1.02, margin:0, background:"linear-gradient(135deg, #e8a090, #d4537e)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", backgroundClip:"text" }}>Leo: The sign the room was already watching.</h1>
                   <p style={{ fontSize:16, color:"rgba(232,228,240,0.5)", marginTop:4 }}>July 23 – August 22</p>
                 </div>
               </div>

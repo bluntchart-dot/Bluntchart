@@ -42,10 +42,10 @@ export default function Hero({ onCta }: Props) {
             PERSONALIZED FROM YOUR BIRTH CHART
           </p>
           <h1 className="fll-h1">
-            A LOVE LETTER
+            A letter from the person
             <br />
             <span className="fll-h1-accent">
-              FROM YOUR {LABEL.toUpperCase()}
+              your chart&apos;s been waiting for.
             </span>
           </h1>
           <div className="fll-hero-body">

@@ -22,9 +22,9 @@ const RAW_DEFAULTS = {
 
 const PREMIUM_DEFAULTS = {
   displacementScale: 0.02,
-  bumpScale: 0.07,
-  earthshineIntensity: 0.002,
-  sunIntensity: 4.8,
+  bumpScale: 0.10,
+  earthshineIntensity: 0.12,
+  sunIntensity: 4.56,
   roughness: 0.88,
   toneMappingExposure: 1.25,
 };
@@ -106,14 +106,20 @@ export function createMoonScene(opts: MoonRenderOptions) {
 /*  2D post-processing: contrast curve + unsharp mask + limb glow     */
 /* ------------------------------------------------------------------ */
 
-function applyContrastCurve(data: Uint8ClampedArray) {
+function applyContrastCurve(
+  data: Uint8ClampedArray,
+  preserveShadows?: boolean
+) {
   for (let i = 0; i < data.length; i += 4) {
     if (data[i + 3] === 0) continue;
     for (let c = 0; c < 3; c++) {
       let v = data[i + c] / 255;
-      // Smoothstep S-curve: darkens shadows, lifts highlights
+      const orig = v;
       v = v * v * (3 - 2 * v);
-      // Gentle gamma lift to preserve midtone detail
+      if (preserveShadows && orig < 0.20) {
+        const t = orig / 0.20;
+        v = orig * (1 - t) + v * t;
+      }
       v = Math.pow(v, 0.94);
       data[i + c] = Math.min(255, Math.max(0, Math.round(v * 255)));
     }
@@ -203,11 +209,8 @@ function applyLimbGlow(imageData: ImageData) {
 
       if (edgeDist > 0.85 && edgeDist <= 1.0) {
         const brightness = (data[idx] + data[idx + 1] + data[idx + 2]) / 3;
-        // Only enhance pixels that are genuinely sunlit (not ambient/earthshine)
         if (brightness > 80) {
           const t = (edgeDist - 0.85) / 0.15;
-          // Scale effect by how bright the pixel already is — brighter limb
-          // pixels get more enhancement, dim ones near terminator get less
           const brightFactor = Math.min(1, (brightness - 80) / 120);
           const limbStrength = t * t * 0.15 * brightFactor;
           for (let c = 0; c < 3; c++) {
@@ -222,7 +225,10 @@ function applyLimbGlow(imageData: ImageData) {
   }
 }
 
-export function postProcessPremium(canvas: HTMLCanvasElement) {
+export function postProcessPremium(
+  canvas: HTMLCanvasElement,
+  opts?: { shadowLift?: boolean }
+) {
   const w = canvas.width;
   const h = canvas.height;
 
@@ -234,7 +240,7 @@ export function postProcessPremium(canvas: HTMLCanvasElement) {
   ctx.drawImage(canvas, 0, 0);
   const imageData = ctx.getImageData(0, 0, w, h);
 
-  applyContrastCurve(imageData.data);
+  applyContrastCurve(imageData.data, opts?.shadowLift);
   applyUnsharpMask(imageData, 0.5, 1.5);
   applyLimbGlow(imageData);
 

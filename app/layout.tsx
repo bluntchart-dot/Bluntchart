@@ -17,14 +17,14 @@ const body = DM_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "BluntChart | Your chart. Unfiltered.",
+  title: "Honest Astrology & Birth Chart Readings | BluntChart",
   description:
-    "Brutally honest birth chart readings with a blunt tone, a shareable result card, and no subscription trap.",
+    "Real natal chart readings, brutally honest and personal. Free tools, no subscription, no sugarcoating. Astrology that actually says something.",
   metadataBase: new URL("https://bluntchart.com"),
   openGraph: {
-    title: "BluntChart | Your chart. Unfiltered.",
+    title: "Honest Astrology & Birth Chart Readings | BluntChart",
     description:
-      "Brutally honest birth chart readings with a shareable result card and no subscription trap.",
+      "Real natal chart readings, brutally honest and personal. Free tools, no subscription, no sugarcoating.",
     url: "https://bluntchart.com",
     siteName: "BluntChart",
     images: [
@@ -39,9 +39,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "BluntChart | Your chart. Unfiltered.",
+    title: "Honest Astrology & Birth Chart Readings | BluntChart",
     description:
-      "Brutally honest birth chart readings with a shareable result card and no subscription trap.",
+      "Real natal chart readings, brutally honest and personal. Free tools, no subscription, no sugarcoating.",
     images: ["/og-image.png"],
   },
   icons: {

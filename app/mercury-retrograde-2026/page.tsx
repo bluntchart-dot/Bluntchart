@@ -5,9 +5,9 @@ import Image from "next/image";
 
 export const metadata: Metadata = {
   title:
-    "Mercury Retrograde 2026 Dates, Meaning & Chart Effects | BluntChart",
+    "Mercury Retrograde 2026: All 3 Dates + Effects | BluntChart",
   description:
-    "All three Mercury retrograde dates for 2026 — Pisces (Feb 26–Mar 20), Cancer (Jun 29–Jul 23), Scorpio (Oct 24–Nov 13). Shadow periods, zodiac sign effects, and what your natal chart actually says about how retrograde hits you.",
+    "All three Mercury retrograde windows for 2026 — Pisces, Cancer, Scorpio. Exact dates, shadow periods, and what each one actually does to your chart. No fluff.",
   keywords: [
     "mercury retrograde 2026",
     "mercury retrograde 2026 dates",

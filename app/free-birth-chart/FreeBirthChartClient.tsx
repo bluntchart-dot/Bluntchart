@@ -241,10 +241,10 @@ export default function FreeBirthChartClient() {
 
             <h1 style={{ fontFamily:"var(--font-display)", fontSize:"clamp(2.2rem,5.5vw,3.6rem)",
               fontWeight:900, lineHeight:1.08, letterSpacing:"-0.02em", marginBottom:14 }}>
-              Free Birth Chart<br/>
+              Your real birth chart,<br/>
               <em style={{ fontStyle:"italic", background:"linear-gradient(135deg,#f0b84a,#d4537e)",
                 WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", backgroundClip:"text" }}>
-                Calculator
+                calculated in 20 seconds.
               </em>
             </h1>
 

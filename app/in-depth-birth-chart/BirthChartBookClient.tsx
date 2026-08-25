@@ -350,7 +350,7 @@ export default function BirthChartBookClient() {
               <span className="bcb-admit-dot" />
               In-depth birth chart reading &nbsp;·&nbsp; 49 pages &nbsp;·&nbsp; Ready in 10 minutes
             </div>
-            <h1 className="bcb-hero-h1">Birth Chart Reading</h1>
+            <h1 className="bcb-hero-h1">49 pages of your chart. Read without a filter.</h1>
             <h2 className="bcb-hero-h2">
               You've Googled yourself.<br />
               <span className="bcb-ital">This is what you actually found.</span>

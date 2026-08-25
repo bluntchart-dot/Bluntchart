@@ -2,10 +2,9 @@ import type { Metadata } from "next";
 import BirthChartBookClient from "./BirthChartBookClient";
 
 export const metadata: Metadata = {
-  title:
-    "In-Depth Birth Chart Reading | 49-Page Personalized Natal Chart Analysis | BluntChart",
+  title: "49-Page In-Depth Birth Chart Reading | BluntChart",
   description:
-    "The most detailed birth chart reading you'll find. 49 pages written from every planet in your chart. Ready in under 10 minutes. Not your sign, not a template. $24 launch price.",
+    "The most detailed natal chart reading you'll find. 14 chapters, every planet, every aspect. Ready in ten minutes. Not a template, not your Sun sign.",
   keywords: [
     "in-depth birth chart reading",
     "detailed birth chart reading",

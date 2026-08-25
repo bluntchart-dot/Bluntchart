@@ -4,11 +4,11 @@ import FutureLoveLetterClient from "./FutureLoveLetterClient";
 export const metadata: Metadata = {
   title: "Love Letter From Your Future Husband | BluntChart",
   description:
-    "What would your future husband say if he could write to you today? Get a personalized love letter inspired by your birth chart, love patterns and relationship needs.",
+    "A personalized love letter written from the person your chart says you're waiting for. Built from your Venus, Moon, and 7th house — not a template.",
   openGraph: {
     title: "Love Letter From Your Future Husband | BluntChart",
     description:
-      "What would your future husband say if he could write to you today? Get a personalized love letter inspired by your birth chart, love patterns and relationship needs.",
+      "A personalized love letter written from the person your chart says you're waiting for. Built from your Venus, Moon, and 7th house — not a template.",
     url: "https://bluntchart.com/future-love-letter",
     siteName: "BluntChart",
     type: "website",
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Love Letter From Your Future Husband | BluntChart",
     description:
-      "What would your future husband say if he could write to you today? Get a personalized love letter inspired by your birth chart, love patterns and relationship needs.",
+      "A personalized love letter written from the person your chart says you're waiting for. Built from your Venus, Moon, and 7th house — not a template.",
   },
   alternates: {
     canonical: "https://bluntchart.com/future-love-letter",
