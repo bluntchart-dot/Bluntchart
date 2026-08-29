@@ -19,12 +19,12 @@ const body = DM_Sans({
 export const metadata: Metadata = {
   title: "Honest Astrology & Birth Chart Readings | BluntChart",
   description:
-    "Real natal chart readings, brutally honest and personal. Free tools, no subscription, no sugarcoating. Astrology that actually says something.",
+    "Real natal chart readings, brutally honest and personal. Free tools, no subscription and no sugarcoating. Delivers an astrology reading that tells you the truth in plain simple language.",
   metadataBase: new URL("https://bluntchart.com"),
   openGraph: {
     title: "Honest Astrology & Birth Chart Readings | BluntChart",
     description:
-      "Real natal chart readings, brutally honest and personal. Free tools, no subscription, no sugarcoating.",
+      "Real natal chart readings, brutally honest and personal. Free tools, no subscription and no sugarcoating. Delivers an astrology reading that tells you the truth in plain simple language.",
     url: "https://bluntchart.com",
     siteName: "BluntChart",
     images: [
@@ -41,7 +41,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Honest Astrology & Birth Chart Readings | BluntChart",
     description:
-      "Real natal chart readings, brutally honest and personal. Free tools, no subscription, no sugarcoating.",
+      "Real natal chart readings, brutally honest and personal. Free tools, no subscription and no sugarcoating. Delivers an astrology reading that tells you the truth in plain simple language.",
     images: ["/og-image.png"],
   },
   icons: {
