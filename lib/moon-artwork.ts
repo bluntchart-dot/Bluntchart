@@ -22,6 +22,7 @@ export interface ComposeInput {
   serif: string;
   sans: string;
   contentLine: string;
+  skipGrain?: boolean;
 }
 
 export function createPRNG(seed: number) {
@@ -211,7 +212,8 @@ export function renderMoon(
   renderer.setClearColor(0x000000, 0);
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.25;
+  const illum = (1 - Math.cos((phaseAngle * Math.PI) / 180)) / 2;
+  renderer.toneMappingExposure = 1.25 * (illum > 0.85 ? 0.95 : 1);
 
   const earthshine =
     opts?.earthshineIntensity ?? (opts?.shadowLift ? 0.42 : undefined);
@@ -260,10 +262,11 @@ export function blendBirthMoons(
   phaseAngle2: number,
   renderSize: number,
   colorMap: THREE.Texture,
-  displacementMap: THREE.Texture
+  displacementMap: THREE.Texture,
+  moonOpts?: { earthshineIntensity?: number; shadowLift?: boolean }
 ): HTMLCanvasElement {
-  const c1 = renderMoon(phaseAngle1, renderSize, colorMap, displacementMap);
-  const c2 = renderMoon(phaseAngle2, renderSize, colorMap, displacementMap);
+  const c1 = renderMoon(phaseAngle1, renderSize, colorMap, displacementMap, moonOpts);
+  const c2 = renderMoon(phaseAngle2, renderSize, colorMap, displacementMap, moonOpts);
 
   const w = c1.width;
   const h = c1.height;
@@ -288,9 +291,45 @@ export function blendBirthMoons(
     out.data[i + 3] = Math.max(d1.data[i + 3], d2.data[i + 3]);
   }
 
+  const i1 = (1 - Math.cos((phaseAngle1 * Math.PI) / 180)) / 2;
+  const i2 = (1 - Math.cos((phaseAngle2 * Math.PI) / 180)) / 2;
+  if (Math.min(1, i1 + i2) > 0.85) {
+    for (let i = 0; i < out.data.length; i += 4) {
+      if (out.data[i + 3] === 0) continue;
+      out.data[i] = Math.round(out.data[i] * 0.95);
+      out.data[i + 1] = Math.round(out.data[i + 1] * 0.95);
+      out.data[i + 2] = Math.round(out.data[i + 2] * 0.95);
+    }
+  }
+
   const result = document.createElement("canvas");
   result.width = w;
   result.height = h;
   result.getContext("2d")!.putImageData(out, 0, 0);
   return result;
+}
+
+export function loadImage(src: string): Promise<HTMLImageElement> {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = reject;
+    img.src = src;
+  });
+}
+
+export function drawCoverImage(
+  ctx: CanvasRenderingContext2D,
+  img: HTMLImageElement,
+  w: number,
+  h: number,
+  opacity = 1
+) {
+  const scale = Math.max(w / img.naturalWidth, h / img.naturalHeight);
+  const dw = img.naturalWidth * scale;
+  const dh = img.naturalHeight * scale;
+  ctx.save();
+  if (opacity < 1) ctx.globalAlpha = opacity;
+  ctx.drawImage(img, (w - dw) / 2, (h - dh) / 2, dw, dh);
+  ctx.restore();
 }

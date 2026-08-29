@@ -44,10 +44,10 @@ const PRODUCTS: { value: InternalProductType; label: string; price: string }[] =
   { value: "in-depth-reading", label: "In-Depth Reading", price: "$24" },
   { value: "reading", label: "Birth Chart Reading", price: "$15" },
   { value: "future-love-letter", label: "Love Letter", price: "$4.99" },
-  { value: "moon-a1", label: "Soulmate Moon", price: "$9.99" },
-  { value: "moon-a2", label: "Moon Match", price: "$9.99" },
-  { value: "moon-b1", label: "Astrology Compatibility", price: "$9.99" },
-  { value: "moon-b2", label: "Astrology Match", price: "$9.99" },
+  { value: "moon-a1", label: "Soulmate Moon", price: "A1" },
+  { value: "moon-a2", label: "Moon Match", price: "A2" },
+  { value: "moon-b1", label: "Astrology Compatibility", price: "B1" },
+  { value: "moon-b2", label: "Astrology Match", price: "B2" },
 ];
 
 const PRODUCT_LABEL: Record<InternalProductType, string> = {
@@ -278,7 +278,7 @@ export default function PremiumReadingApp({ eyebrow }: Props) {
 
   /* ── MOON PRODUCTS — separate client-side flow ─────────────── */
   if (productType && isMoonProduct(productType)) {
-    return <MoonPhasePanel product={MOON_PRODUCT_MAP[productType]} onBack={() => { setProductType(""); }} />;
+    return <MoonPhasePanel initialProduct={MOON_PRODUCT_MAP[productType]} onBack={() => { setProductType(""); }} />;
   }
 
   /* ── FORM ─────────────────────────────────────────────────────── */

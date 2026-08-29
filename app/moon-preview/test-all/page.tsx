@@ -9,12 +9,17 @@ import {
   renderMoon,
   blendBirthMoons,
   scoreToPhaseAngle,
+  loadImage,
   MOON_SMALL,
+  MASTER_W,
+  MASTER_H,
 } from "@/lib/moon-artwork";
+import { createMoonScene, postProcessPremium } from "@/lib/moon-renderer";
+import { encodeVideo } from "@/lib/moon-video";
 import { composeA1, MOON_HERO_A1 } from "@/lib/moon-a1-soulmate";
 import { composeA2, MOON_HERO_A2 } from "@/lib/moon-a2-match";
 import { composeB1, MOON_HERO_B1 } from "@/lib/moon-b1-compat";
-import { composeB2, MOON_B2 } from "@/lib/moon-b2-astromatch";
+import { composeB2, MOON_B2, B2_W, B2_H } from "@/lib/moon-b2-astromatch";
 
 const cormorant = Cormorant_Garamond({
   subsets: ["latin"],
@@ -184,6 +189,10 @@ export default function TestAllPage() {
   const [score, setScore] = useState<number | null>(null);
   const [savedPath, setSavedPath] = useState<string | null>(null);
   const [errMsg, setErrMsg] = useState<string | null>(null);
+  const [videoStatus, setVideoStatus] = useState<"idle" | "encoding" | "done" | "error">("idle");
+  const [videoPct, setVideoPct] = useState(0);
+  const [videoInfo, setVideoInfo] = useState<string | null>(null);
+  const [videoURL, setVideoURL] = useState<string | null>(null);
   const rendering = useRef(false);
 
   const selectedCase = TEST_CASES.find((tc) => tc.id === selected);
@@ -238,9 +247,11 @@ export default function TestAllPage() {
           compat.person2.phaseAngle,
           MOON_HERO_A1,
           colorMap,
-          displacementMap
+          displacementMap,
+          { earthshineIntensity: 0 }
         );
-        master = composeA1(m1, m2, hero, compat, composeInput);
+        const milkyway = await loadImage("/Milkyway.png");
+        master = composeA1(m1, m2, hero, compat, composeInput, milkyway);
       } else if (tc.product === "a2") {
         const heroAngle = scoreToPhaseAngle(compat.score);
         const esOpts = compat.score < 25
@@ -257,23 +268,25 @@ export default function TestAllPage() {
           ? { earthshineIntensity: 0.12 + ((25 - mockScore) / 25) * 0.04, shadowLift: true }
           : { shadowLift: true };
         const hero = renderMoon(heroAngle, MOON_HERO_B1, colorMap, displacementMap, esOpts);
+        const natalImg = await loadImage("/half natal.png");
         master = composeB1(m1, m2, hero, {
           ...composeInput,
           score: mockScore,
           person1PhaseName: compat.person1.phaseName,
           person2PhaseName: compat.person2.phaseName,
-        });
+        }, natalImg);
       } else {
         const mockScore = tc.mockScore!;
         const sl = { shadowLift: true };
         const m1 = renderMoon(compat.person1.phaseAngle, MOON_B2, colorMap, displacementMap, sl);
         const m2 = renderMoon(compat.person2.phaseAngle, MOON_B2, colorMap, displacementMap, sl);
+        const landscape = await loadImage("/Landspace.png");
         master = composeB2(m1, m2, {
           ...composeInput,
           score: mockScore,
           person1PhaseName: compat.person1.phaseName,
           person2PhaseName: compat.person2.phaseName,
-        });
+        }, landscape);
       }
 
       colorMap.dispose();
@@ -306,6 +319,235 @@ export default function TestAllPage() {
     } catch (e) {
       setErrMsg(e instanceof Error ? e.message : String(e));
       setStatus("error");
+    } finally {
+      rendering.current = false;
+    }
+  }
+
+  async function generateMP4() {
+    if (rendering.current || !selectedCase || selectedCase.product === "a1") return;
+    rendering.current = true;
+    setVideoStatus("encoding");
+    setVideoPct(0);
+    setVideoInfo(null);
+    setErrMsg(null);
+
+    try {
+      await document.fonts.ready;
+      const serif = cormorant.style.fontFamily;
+      const sans = dmSans.style.fontFamily;
+      const tc = selectedCase;
+
+      const loader = new THREE.TextureLoader();
+      const [colorMap, displacementMap] = await Promise.all([
+        new Promise<THREE.Texture>((res) => {
+          const t = loader.load("/moon-textures/color-2k.jpg", () => res(t));
+          t.colorSpace = THREE.SRGBColorSpace;
+        }),
+        new Promise<THREE.Texture>((res) => {
+          const t = loader.load("/moon-textures/displacement-2k.png", () => res(t));
+        }),
+      ]);
+
+      const compat = calculateCompatibility(tc.date1, tc.date2);
+      const computedScore = tc.mockScore ?? compat.score;
+      const contentLine = getContentLine(computedScore, tc.name1, tc.date1, tc.name2, tc.date2);
+
+      const FPS = 24;
+      const DURATION = 5;
+      const TOTAL = FPS * DURATION;
+      const RENDER_SIZE = 1024;
+
+      const webglCanvas = document.createElement("canvas");
+      const threeRenderer = new THREE.WebGLRenderer({
+        canvas: webglCanvas,
+        alpha: true,
+        antialias: true,
+        preserveDrawingBuffer: true,
+      });
+      threeRenderer.setSize(RENDER_SIZE, RENDER_SIZE);
+      threeRenderer.setPixelRatio(1);
+      threeRenderer.setClearColor(0x000000, 0);
+      threeRenderer.outputColorSpace = THREE.SRGBColorSpace;
+      threeRenderer.toneMapping = THREE.ACESFilmicToneMapping;
+
+      const scenesToDispose: ReturnType<typeof createMoonScene>[] = [];
+      let blob: Blob;
+      let outW: number;
+      let outH: number;
+
+      if (tc.product === "a2") {
+        outW = 1080; outH = 1350;
+        const heroAngle = scoreToPhaseAngle(computedScore);
+        const esOpts = computedScore < 25
+          ? { earthshineIntensity: 0.12 + ((25 - computedScore) / 25) * 0.04, shadowLift: true }
+          : { shadowLift: true };
+        const earthshine = esOpts.earthshineIntensity ?? (esOpts.shadowLift ? 0.42 : undefined);
+        const illum = (1 - Math.cos((heroAngle * Math.PI) / 180)) / 2;
+        threeRenderer.toneMappingExposure = 1.25 * (illum > 0.85 ? 0.95 : 1);
+
+        const moonScene = createMoonScene({
+          phaseAngle: heroAngle, size: RENDER_SIZE, premium: true, earthshineIntensity: earthshine,
+        });
+        const mat = moonScene.material as THREE.MeshStandardMaterial;
+        mat.map = colorMap; mat.bumpMap = displacementMap; mat.displacementMap = displacementMap;
+        mat.needsUpdate = true;
+        scenesToDispose.push(moonScene);
+
+        const input = {
+          name1: tc.name1, date1: tc.date1, name2: tc.name2, date2: tc.date2,
+          serif, sans, contentLine, skipGrain: true,
+        };
+
+        blob = await encodeVideo({
+          width: outW, height: outH, fps: FPS, totalFrames: TOTAL, bitrate: 4_000_000,
+          onProgress: (pct) => setVideoPct(pct),
+          renderFrame: (fi, _c, ctx) => {
+            moonScene.moon.rotation.y = (fi / TOTAL) * Math.PI * 2;
+            threeRenderer.render(moonScene.scene, moonScene.camera);
+            const mc = postProcessPremium(webglCanvas, esOpts);
+            const full = composeA2(mc, compat, input);
+            ctx.drawImage(full, 0, 0, MASTER_W, MASTER_H, 0, 0, outW, outH);
+            mc.width = 0; mc.height = 0; full.width = 0; full.height = 0;
+          },
+        });
+
+      } else if (tc.product === "b1") {
+        outW = 1080; outH = 1350;
+        const heroAngle = scoreToPhaseAngle(computedScore);
+        const esOpts = computedScore < 25
+          ? { earthshineIntensity: 0.12 + ((25 - computedScore) / 25) * 0.04, shadowLift: true }
+          : { shadowLift: true };
+        const earthshine = esOpts.earthshineIntensity ?? (esOpts.shadowLift ? 0.42 : undefined);
+        const illum = (1 - Math.cos((heroAngle * Math.PI) / 180)) / 2;
+        threeRenderer.toneMappingExposure = 1.25 * (illum > 0.85 ? 0.95 : 1);
+
+        const moonScene = createMoonScene({
+          phaseAngle: heroAngle, size: RENDER_SIZE, premium: true, earthshineIntensity: earthshine,
+        });
+        const mat = moonScene.material as THREE.MeshStandardMaterial;
+        mat.map = colorMap; mat.bumpMap = displacementMap; mat.displacementMap = displacementMap;
+        mat.needsUpdate = true;
+        scenesToDispose.push(moonScene);
+
+        const m1 = renderMoon(compat.person1.phaseAngle, MOON_SMALL, colorMap, displacementMap);
+        const m2 = renderMoon(compat.person2.phaseAngle, MOON_SMALL, colorMap, displacementMap);
+        const natalImg = await loadImage("/half natal.png");
+
+        const b1Input = {
+          name1: tc.name1, date1: tc.date1, name2: tc.name2, date2: tc.date2,
+          serif, sans, contentLine,
+          score: computedScore,
+          person1PhaseName: compat.person1.phaseName,
+          person2PhaseName: compat.person2.phaseName,
+          skipGrain: true,
+        };
+
+        blob = await encodeVideo({
+          width: outW, height: outH, fps: FPS, totalFrames: TOTAL, bitrate: 4_000_000,
+          onProgress: (pct) => setVideoPct(pct),
+          renderFrame: (fi, _c, ctx) => {
+            moonScene.moon.rotation.y = (fi / TOTAL) * Math.PI * 2;
+            threeRenderer.render(moonScene.scene, moonScene.camera);
+            const mc = postProcessPremium(webglCanvas, esOpts);
+            const full = composeB1(m1, m2, mc, b1Input, natalImg);
+            ctx.drawImage(full, 0, 0, MASTER_W, MASTER_H, 0, 0, outW, outH);
+            mc.width = 0; mc.height = 0; full.width = 0; full.height = 0;
+          },
+        });
+        m1.width = 0; m1.height = 0;
+        m2.width = 0; m2.height = 0;
+
+      } else {
+        // B2 — landscape, both moons rotate very slowly
+        outW = 1350; outH = 1080;
+        const angle1 = compat.person1.phaseAngle;
+        const angle2 = compat.person2.phaseAngle;
+        const slOpts = { shadowLift: true };
+
+        const scene1 = createMoonScene({
+          phaseAngle: angle1, size: RENDER_SIZE, premium: true, earthshineIntensity: 0.42,
+        });
+        const mat1 = scene1.material as THREE.MeshStandardMaterial;
+        mat1.map = colorMap; mat1.bumpMap = displacementMap; mat1.displacementMap = displacementMap;
+        mat1.needsUpdate = true;
+        scenesToDispose.push(scene1);
+
+        const scene2 = createMoonScene({
+          phaseAngle: angle2, size: RENDER_SIZE, premium: true, earthshineIntensity: 0.42,
+        });
+        const mat2 = scene2.material as THREE.MeshStandardMaterial;
+        mat2.map = colorMap; mat2.bumpMap = displacementMap; mat2.displacementMap = displacementMap;
+        mat2.needsUpdate = true;
+        scenesToDispose.push(scene2);
+
+        const landscape = await loadImage("/Landspace.png");
+        const SLOW_ROT = Math.PI * 2;
+
+        const b2Input = {
+          name1: tc.name1, date1: tc.date1, name2: tc.name2, date2: tc.date2,
+          serif, sans, contentLine,
+          score: computedScore,
+          person1PhaseName: compat.person1.phaseName,
+          person2PhaseName: compat.person2.phaseName,
+          skipGrain: true,
+        };
+
+        blob = await encodeVideo({
+          width: outW, height: outH, fps: FPS, totalFrames: TOTAL, bitrate: 4_000_000,
+          onProgress: (pct) => setVideoPct(pct),
+          renderFrame: (fi, _c, ctx) => {
+            const rot = (fi / TOTAL) * SLOW_ROT;
+
+            scene1.moon.rotation.y = rot;
+            const il1 = (1 - Math.cos((angle1 * Math.PI) / 180)) / 2;
+            threeRenderer.toneMappingExposure = 1.25 * (il1 > 0.85 ? 0.95 : 1);
+            threeRenderer.render(scene1.scene, scene1.camera);
+            const mc1 = postProcessPremium(webglCanvas, slOpts);
+
+            scene2.moon.rotation.y = rot;
+            const il2 = (1 - Math.cos((angle2 * Math.PI) / 180)) / 2;
+            threeRenderer.toneMappingExposure = 1.25 * (il2 > 0.85 ? 0.95 : 1);
+            threeRenderer.render(scene2.scene, scene2.camera);
+            const mc2 = postProcessPremium(webglCanvas, slOpts);
+
+            const full = composeB2(mc1, mc2, b2Input, landscape);
+            ctx.drawImage(full, 0, 0, B2_W, B2_H, 0, 0, outW, outH);
+            mc1.width = 0; mc1.height = 0;
+            mc2.width = 0; mc2.height = 0;
+            full.width = 0; full.height = 0;
+          },
+        });
+      }
+
+      for (const s of scenesToDispose) {
+        s.colorMap.dispose();
+        s.displacementMap.dispose();
+        s.material.dispose();
+      }
+      threeRenderer.dispose();
+      colorMap.dispose();
+      displacementMap.dispose();
+
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${tc.id}-story.mp4`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+
+      if (videoURL) URL.revokeObjectURL(videoURL);
+      setVideoURL(url);
+
+      const sizeMB = (blob.size / 1024 / 1024).toFixed(2);
+      const info = `${outW}×${outH} | ${FPS}fps | ${DURATION}s | ${sizeMB}MB | H.264 High`;
+      console.log(`[MP4] ${tc.id}: ${info} (${blob.size} bytes)`);
+      setVideoInfo(info);
+      setVideoStatus("done");
+    } catch (e) {
+      setErrMsg(e instanceof Error ? e.message : String(e));
+      setVideoStatus("error");
     } finally {
       rendering.current = false;
     }
@@ -369,6 +611,10 @@ export default function TestAllPage() {
                             setSavedPath(null);
                             setErrMsg(null);
                           }
+                          setVideoStatus("idle");
+                          setVideoInfo(null);
+                          setVideoPct(0);
+                          if (videoURL) { URL.revokeObjectURL(videoURL); setVideoURL(null); }
                         }}
                         style={{
                           display: "block",
@@ -401,36 +647,66 @@ export default function TestAllPage() {
               );
             })}
 
-            <button
-              onClick={generate}
-              disabled={!selected || status === "rendering"}
-              style={{
-                width: "100%",
-                marginTop: 8,
-                background:
-                  selected && status !== "rendering"
-                    ? "linear-gradient(135deg,#6b2fd4,#d4537e)"
-                    : "rgba(255,255,255,0.06)",
-                color:
-                  selected && status !== "rendering"
-                    ? "#fff"
-                    : "#4a4560",
-                border: "none",
-                borderRadius: 12,
-                padding: "14px 20px",
-                fontSize: 15,
-                fontWeight: 600,
-                cursor:
-                  selected && status !== "rendering"
-                    ? "pointer"
-                    : "not-allowed",
-                fontFamily: "inherit",
-              }}
-            >
-              {status === "rendering"
-                ? "Rendering…"
-                : "Generate"}
-            </button>
+            <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
+              <button
+                onClick={generate}
+                disabled={!selected || rendering.current}
+                style={{
+                  flex: 1,
+                  background:
+                    selected && !rendering.current
+                      ? "linear-gradient(135deg,#6b2fd4,#d4537e)"
+                      : "rgba(255,255,255,0.06)",
+                  color:
+                    selected && !rendering.current
+                      ? "#fff"
+                      : "#4a4560",
+                  border: "none",
+                  borderRadius: 12,
+                  padding: "14px 20px",
+                  fontSize: 15,
+                  fontWeight: 600,
+                  cursor:
+                    selected && !rendering.current
+                      ? "pointer"
+                      : "not-allowed",
+                  fontFamily: "inherit",
+                }}
+              >
+                {status === "rendering" ? "Rendering…" : "Generate"}
+              </button>
+              {selectedCase && selectedCase.product !== "a1" && (
+                <button
+                  onClick={generateMP4}
+                  disabled={!selected || rendering.current}
+                  style={{
+                    flex: 1,
+                    background:
+                      selected && !rendering.current
+                        ? "linear-gradient(135deg,#2f8cd4,#53d4a0)"
+                        : "rgba(255,255,255,0.06)",
+                    color:
+                      selected && !rendering.current
+                        ? "#fff"
+                        : "#4a4560",
+                    border: "none",
+                    borderRadius: 12,
+                    padding: "14px 20px",
+                    fontSize: 15,
+                    fontWeight: 600,
+                    cursor:
+                      selected && !rendering.current
+                        ? "pointer"
+                        : "not-allowed",
+                    fontFamily: "inherit",
+                  }}
+                >
+                  {videoStatus === "encoding"
+                    ? `MP4 ${Math.round(videoPct * 100)}%`
+                    : "MP4 Story"}
+                </button>
+              )}
+            </div>
           </div>
 
           {/* Right: result */}
@@ -443,6 +719,21 @@ export default function TestAllPage() {
                 </div>
                 <div style={{ fontSize: 12, color: "#4a4560", marginTop: 4 }}>
                   Three.js + composition. 5–15 seconds.
+                </div>
+              </div>
+            )}
+
+            {videoStatus === "encoding" && status !== "rendering" && (
+              <div style={{ textAlign: "center", padding: "60px 0" }}>
+                <div style={{ fontSize: 48 }}>&#127909;</div>
+                <div style={{ fontSize: 16, marginTop: 12, color: "#e8e4f0" }}>
+                  Encoding MP4… {Math.round(videoPct * 100)}%
+                </div>
+                <div style={{ fontSize: 12, color: "#4a4560", marginTop: 4 }}>
+                  3D moon rotation · {90} frames · WebCodecs H.264
+                </div>
+                <div style={{ maxWidth: 200, margin: "16px auto 0", background: "rgba(255,255,255,0.06)", borderRadius: 4, height: 6, overflow: "hidden" }}>
+                  <div style={{ background: "linear-gradient(90deg,#2f8cd4,#53d4a0)", width: `${videoPct * 100}%`, height: "100%", transition: "width 0.2s" }} />
                 </div>
               </div>
             )}
@@ -530,6 +821,61 @@ export default function TestAllPage() {
                     Saved: {savedPath}
                   </div>
                 )}
+
+                {videoStatus === "encoding" && (
+                  <div style={{ marginTop: 12 }}>
+                    <div style={{ fontSize: 11, color: "#53d4a0", marginBottom: 4 }}>
+                      Encoding MP4… {Math.round(videoPct * 100)}%
+                    </div>
+                    <div style={{ background: "rgba(255,255,255,0.06)", borderRadius: 4, height: 6, overflow: "hidden" }}>
+                      <div style={{ background: "linear-gradient(90deg,#2f8cd4,#53d4a0)", width: `${videoPct * 100}%`, height: "100%", transition: "width 0.2s" }} />
+                    </div>
+                  </div>
+                )}
+
+                {videoInfo && (
+                  <div
+                    style={{
+                      marginTop: 10,
+                      fontSize: 10,
+                      color: "#53d4a0",
+                      fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace",
+                    }}
+                  >
+                    MP4: {videoInfo}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {videoInfo && status !== "done" && (
+              <div
+                style={{
+                  marginTop: 10,
+                  fontSize: 10,
+                  color: "#53d4a0",
+                  fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace",
+                  textAlign: "center",
+                }}
+              >
+                MP4: {videoInfo}
+              </div>
+            )}
+
+            {videoURL && (
+              <div style={{ marginTop: 16, textAlign: "center" }}>
+                <video
+                  src={videoURL}
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  style={{
+                    maxWidth: 270,
+                    borderRadius: 12,
+                    border: "0.5px solid rgba(255,255,255,0.1)",
+                  }}
+                />
               </div>
             )}
           </div>

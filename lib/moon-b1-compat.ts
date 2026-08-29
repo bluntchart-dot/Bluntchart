@@ -2,7 +2,7 @@
  * B1 — Astrology Compatibility
  * Two individual birth Moons + one large hero Moon.
  * Hero illumination = astrology compatibility %.
- * Names + % + relationship line.
+ * Simple starfield + half natal chart image at bottom.
  */
 
 import {
@@ -33,13 +33,49 @@ export interface B1Input {
   score: number;
   person1PhaseName: string;
   person2PhaseName: string;
+  skipGrain?: boolean;
+}
+
+function drawRandomStars(
+  ctx: CanvasRenderingContext2D,
+  w: number,
+  h: number,
+  seed: number,
+  exclusions: { x: number; y: number; r: number }[]
+) {
+  const rand = createPRNG(seed + 888);
+
+  function blocked(x: number, y: number): boolean {
+    for (const z of exclusions) {
+      const dx = x - z.x;
+      const dy = y - z.y;
+      if (dx * dx + dy * dy < z.r * z.r) return true;
+    }
+    return false;
+  }
+
+  for (let i = 0; i < 120; i++) {
+    const x = 60 + rand() * (w - 120);
+    const y = 60 + rand() * (h - 200);
+    if (blocked(x, y)) continue;
+
+    const sz = 0.4 + rand() * 1.2;
+    const lum = 140 + rand() * 100;
+    const a = 0.12 + rand() * 0.40;
+
+    ctx.beginPath();
+    ctx.arc(x, y, sz, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(${lum},${lum + 4},${lum + 10},${a})`;
+    ctx.fill();
+  }
 }
 
 export function composeB1(
   moon1: HTMLCanvasElement,
   moon2: HTMLCanvasElement,
   heroMoon: HTMLCanvasElement,
-  input: B1Input
+  input: B1Input,
+  natalImg?: HTMLImageElement
 ): HTMLCanvasElement {
   const canvas = document.createElement("canvas");
   canvas.width = MASTER_W;
@@ -51,52 +87,38 @@ export function composeB1(
   const W = MASTER_W;
   const H = MASTER_H;
 
-  const smallGap = 260;
+  const smallGap = 400;
   const m1x = W / 2 - smallGap / 2 - MOON_SMALL / 2;
   const m2x = W / 2 + smallGap / 2 + MOON_SMALL / 2;
   const smallY = 480;
   const bigY = 1560;
 
-  // Background
   drawBackground(ctx, W, H, bigY - 60);
 
-  // Stars
   const seed = hashString(name1 + name2 + date1 + date2);
-  drawStarField(ctx, W, H, seed, [
+  const moonExclusions = [
     { x: m1x, y: smallY, r: MOON_SMALL / 2 + 40 },
     { x: m2x, y: smallY, r: MOON_SMALL / 2 + 40 },
     { x: W / 2, y: bigY, r: MOON_HERO_B1 / 2 + 60 },
     { x: W / 2, y: bigY + MOON_HERO_B1 / 2 + 200, r: 400 },
-  ]);
+  ];
 
-  // Constellation lines
-  const rand = createPRNG(seed + 77);
-  ctx.save();
-  ctx.strokeStyle = "rgba(200, 200, 220, 0.06)";
-  ctx.lineWidth = 1;
-  const starPoints: [number, number][] = [];
-  for (let i = 0; i < 8; i++) {
-    starPoints.push([
-      W * 0.15 + rand() * W * 0.7,
-      bigY - MOON_HERO_B1 * 0.4 + rand() * MOON_HERO_B1 * 0.8,
-    ]);
-  }
-  for (let i = 0; i < starPoints.length - 1; i++) {
-    if (rand() > 0.45) continue;
-    ctx.beginPath();
-    ctx.moveTo(starPoints[i][0], starPoints[i][1]);
-    ctx.lineTo(starPoints[i + 1][0], starPoints[i + 1][1]);
-    ctx.stroke();
-  }
-  for (const [sx, sy] of starPoints) {
-    ctx.beginPath();
-    ctx.arc(sx, sy, 2, 0, Math.PI * 2);
-    ctx.fillStyle = "rgba(200, 200, 220, 0.12)";
-    ctx.fill();
-  }
-  ctx.restore();
+  drawStarField(ctx, W, H, seed, moonExclusions);
+  drawRandomStars(ctx, W, H, seed, moonExclusions);
 
-  // Border
+  // Half natal chart image from the bottom
+  if (natalImg) {
+    ctx.save();
+    ctx.globalAlpha = 0.08;
+    const imgW = W * 0.85;
+    const imgH = imgW * (natalImg.height / natalImg.width);
+    const imgX = (W - imgW) / 2;
+    const imgY = H - imgH + Math.round(imgH * 0.35);
+    ctx.drawImage(natalImg, imgX, imgY, imgW, imgH);
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
   drawBorder(ctx, W, H);
 
   ctx.textAlign = "center";
@@ -159,18 +181,28 @@ export function composeB1(
   // Hero moon
   ctx.drawImage(heroMoon, W / 2 - MOON_HERO_B1 / 2, bigY - MOON_HERO_B1 / 2, MOON_HERO_B1, MOON_HERO_B1);
 
-  // Score — golden
-  const scoreY = bigY + MOON_HERO_B1 / 2 + 50;
+  // Text shadow for visibility over natal chart
+  ctx.shadowColor = "rgba(0, 0, 0, 0.8)";
+  ctx.shadowBlur = 24;
+  ctx.shadowOffsetX = 0;
+  ctx.shadowOffsetY = 3;
+
+  // Score — golden (shifted 5% down)
+  const scoreY = bigY + MOON_HERO_B1 / 2 + 50 + Math.round(H * 0.05);
 
   ctx.save();
   ctx.font = `700 200px ${serif}`;
   ctx.fillStyle = "rgba(212, 168, 83, 0.10)";
   ctx.filter = "blur(10px)";
+  ctx.shadowBlur = 0;
   ctx.letterSpacing = "6px";
   ctx.fillText(score + "%", W / 2 + 3, scoreY);
   ctx.letterSpacing = "0px";
   ctx.restore();
 
+  ctx.shadowColor = "rgba(0, 0, 0, 0.8)";
+  ctx.shadowBlur = 24;
+  ctx.shadowOffsetY = 3;
   ctx.font = `700 200px ${serif}`;
   ctx.fillStyle = "#d4a853";
   ctx.letterSpacing = "6px";
@@ -191,13 +223,16 @@ export function composeB1(
   ctx.fillStyle = "rgba(245, 243, 240, 0.88)";
   ctx.fillText(`"${contentLine}"`, W / 2, contentY);
 
+  // Clear shadow before brand/grain
+  ctx.shadowColor = "transparent";
+  ctx.shadowBlur = 0;
+
   // Brand
   ctx.font = `300 26px ${sans}`;
   ctx.fillStyle = "rgba(140, 138, 155, 0.38)";
   ctx.fillText("bluntchart.com", W / 2, H - 110);
 
-  // Grain overlay
-  drawGrainOverlay(ctx, W, H, seed);
+  if (!input.skipGrain) drawGrainOverlay(ctx, W, H, seed);
 
   return canvas;
 }
