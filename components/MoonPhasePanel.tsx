@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import { Cormorant_Garamond, DM_Sans } from "next/font/google";
 import { calculateCompatibility } from "@/lib/moon-phase";
@@ -614,6 +614,14 @@ export default function MoonPhasePanel({ initialProduct, onBack }: Props) {
     videoBlobRef.current = null;
   }
 
+  const canVideo = product !== "a1";
+  useEffect(() => {
+    if (stage === "done" && canVideo && videoStatus === "idle" && files.length > 0) {
+      generateMP4();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [stage, files]);
+
   // ── Rendering state ──
   if (stage === "rendering") {
     return (
@@ -1025,29 +1033,14 @@ function MoonPhaseResult({
             Animated Story (MP4)
           </div>
 
-          {videoStatus === "idle" && (
-            <button
-              onClick={onGenerateMP4}
-              style={{
-                width: "100%",
-                background: "rgba(201, 168, 76, 0.15)",
-                color: "#c9a84c",
-                border: "0.5px solid rgba(201, 168, 76, 0.3)",
-                borderRadius: 10, padding: "14px 18px",
-                fontSize: 14, fontWeight: 600,
-                cursor: "pointer", fontFamily: "inherit",
-              }}
-            >
-              Generate MP4 Story
-            </button>
-          )}
-
-          {videoStatus === "encoding" && (
+          {(videoStatus === "idle" || videoStatus === "encoding") && (
             <div>
               <div style={{
-                fontSize: 13, color: "#c9a84c", marginBottom: 8,
+                fontSize: 13, color: "#c9a84c", marginBottom: 8, textAlign: "center",
               }}>
-                Encoding… {Math.round(videoPct * 100)}%
+                {videoStatus === "idle"
+                  ? "Preparing video…"
+                  : `Encoding… ${Math.round(videoPct * 100)}%`}
               </div>
               <div style={{
                 width: "100%", height: 6, borderRadius: 3,
@@ -1061,7 +1054,7 @@ function MoonPhaseResult({
                   transition: "width 0.3s",
                 }} />
               </div>
-              <div style={{ fontSize: 11, color: "#4a4560", marginTop: 6 }}>
+              <div style={{ fontSize: 11, color: "#4a4560", marginTop: 6, textAlign: "center" }}>
                 {videoPct < 0.85
                   ? "Rendering frames (Three.js + composition)…"
                   : "Encoding H.264…"}
@@ -1071,12 +1064,15 @@ function MoonPhaseResult({
 
           {videoStatus === "done" && videoURL && (
             <div>
-              <div style={{ textAlign: "center", marginBottom: 12 }}>
+              <div style={{
+                display: "flex", justifyContent: "center",
+                marginBottom: 14,
+              }}>
                 {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
                 <video
                   src={videoURL} autoPlay loop muted playsInline
                   style={{
-                    maxWidth: 320, maxHeight: 400, borderRadius: 12,
+                    width: "100%", maxWidth: 520, borderRadius: 12,
                     border: "0.5px solid rgba(255,255,255,0.1)",
                   }}
                 />
