@@ -354,7 +354,7 @@ export default function TestAllPage() {
       const contentLine = getContentLine(computedScore, tc.name1, tc.date1, tc.name2, tc.date2);
 
       const FPS = 15;
-      const TOTAL = 279;
+      const TOTAL = 399;
       const RENDER_SIZE = 1024;
 
       const webglCanvas = document.createElement("canvas");

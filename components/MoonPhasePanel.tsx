@@ -329,7 +329,7 @@ export default function MoonPhasePanel({ initialProduct, onBack }: Props) {
       const contentLine = getContentLine(computedScore, name1.trim(), dob1, name2.trim(), dob2);
 
       const FPS = 15;
-      const TOTAL = 279;
+      const TOTAL = 399;
       const RENDER_SIZE = 1024;
 
       const webglCanvas = document.createElement("canvas");
