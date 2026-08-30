@@ -354,8 +354,7 @@ export default function TestAllPage() {
       const contentLine = getContentLine(computedScore, tc.name1, tc.date1, tc.name2, tc.date2);
 
       const FPS = 24;
-      const DURATION = 5;
-      const TOTAL = FPS * DURATION;
+      const TOTAL = 150;
       const RENDER_SIZE = 1024;
 
       const webglCanvas = document.createElement("canvas");
@@ -482,7 +481,6 @@ export default function TestAllPage() {
         scenesToDispose.push(scene2);
 
         const landscape = await loadImage("/Landspace.png");
-        const SLOW_ROT = Math.PI * 2;
 
         const b2Input = {
           name1: tc.name1, date1: tc.date1, name2: tc.name2, date2: tc.date2,
@@ -497,7 +495,7 @@ export default function TestAllPage() {
           width: outW, height: outH, fps: FPS, totalFrames: TOTAL, bitrate: 4_000_000,
           onProgress: (pct) => setVideoPct(pct),
           renderFrame: (fi, _c, ctx) => {
-            const rot = (fi / TOTAL) * SLOW_ROT;
+            const rot = (fi / TOTAL) * Math.PI * 2;
 
             scene1.moon.rotation.y = rot;
             const il1 = (1 - Math.cos((angle1 * Math.PI) / 180)) / 2;
@@ -541,7 +539,7 @@ export default function TestAllPage() {
       setVideoURL(url);
 
       const sizeMB = (blob.size / 1024 / 1024).toFixed(2);
-      const info = `${outW}×${outH} | ${FPS}fps | ${DURATION}s | ${sizeMB}MB | H.264 High`;
+      const info = `${outW}×${outH} | ${FPS}fps | ${(TOTAL / FPS).toFixed(1)}s | ${sizeMB}MB | H.264 High`;
       console.log(`[MP4] ${tc.id}: ${info} (${blob.size} bytes)`);
       setVideoInfo(info);
       setVideoStatus("done");

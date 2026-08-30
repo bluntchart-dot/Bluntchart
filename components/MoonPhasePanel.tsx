@@ -331,8 +331,7 @@ export default function MoonPhasePanel({ initialProduct, onBack }: Props) {
       const contentLine = getContentLine(computedScore, name1.trim(), dob1, name2.trim(), dob2);
 
       const FPS = 24;
-      const DURATION = 5;
-      const TOTAL = FPS * DURATION;
+      const TOTAL = 150;
       const RENDER_SIZE = 1024;
 
       const webglCanvas = document.createElement("canvas");
@@ -454,8 +453,6 @@ export default function MoonPhasePanel({ initialProduct, onBack }: Props) {
         scenesToDispose.push(scene2);
 
         const landscape = await loadImage("/Landspace.png");
-        const SLOW_ROT = Math.PI * 2;
-
         const b2Input = {
           name1: name1.trim(), date1: dob1, name2: name2.trim(), date2: dob2,
           serif, sans, contentLine, score: computedScore,
@@ -468,7 +465,7 @@ export default function MoonPhasePanel({ initialProduct, onBack }: Props) {
           width: outW, height: outH, fps: FPS, totalFrames: TOTAL, bitrate: 4_000_000,
           onProgress: (pct) => setVideoPct(pct),
           renderFrame: (fi, _c, ctx) => {
-            const rot = (fi / TOTAL) * SLOW_ROT;
+            const rot = (fi / TOTAL) * Math.PI * 2;
 
             scene1.moon.rotation.y = rot;
             const il1 = (1 - Math.cos((angle1 * Math.PI) / 180)) / 2;
@@ -506,7 +503,7 @@ export default function MoonPhasePanel({ initialProduct, onBack }: Props) {
       setVideoURL(url);
 
       const sizeMB = (blob.size / 1024 / 1024).toFixed(2);
-      setVideoInfo(`${outW}×${outH} | ${FPS}fps | ${DURATION}s | ${sizeMB}MB | H.264`);
+      setVideoInfo(`${outW}×${outH} | ${FPS}fps | ${(TOTAL / FPS).toFixed(1)}s | ${sizeMB}MB | H.264`);
       setVideoStatus("done");
     } catch (e) {
       console.error("MP4 generation failed:", e);
