@@ -28,6 +28,7 @@ import {
   buildPrintPDF,
 } from "@/lib/moon-export";
 import LocationPicker, { type SelectedLocation } from "@/components/LocationPicker";
+import { calculateSynastry } from "@/lib/astro-compat";
 
 const cormorant = Cormorant_Garamond({
   subsets: ["latin"],
@@ -185,7 +186,13 @@ export default function MoonPhasePanel({ initialProduct, onBack }: Props) {
       await document.fonts.ready;
 
       const compat = calculateCompatibility(dob1, dob2);
-      const score = compat.score;
+      const isSynastry = product === "b1" || product === "b2";
+      const score = isSynastry
+        ? calculateSynastry(
+            dob1, place1Loc?.lat, place1Loc?.lng,
+            dob2, place2Loc?.lat, place2Loc?.lng
+          ).score
+        : compat.score;
       const contentLine = getContentLine(
         score, name1.trim(), dob1, name2.trim(), dob2
       );
@@ -235,15 +242,15 @@ export default function MoonPhasePanel({ initialProduct, onBack }: Props) {
       } else if (product === "b1") {
         const m1 = renderMoon(compat.person1.phaseAngle, MOON_SMALL, colorMap, displacementMap);
         const m2 = renderMoon(compat.person2.phaseAngle, MOON_SMALL, colorMap, displacementMap);
-        const heroAngle = scoreToPhaseAngle(compat.score);
-        const esOpts = compat.score < 25
-          ? { earthshineIntensity: 0.12 + ((25 - compat.score) / 25) * 0.04, shadowLift: true }
+        const heroAngle = scoreToPhaseAngle(score);
+        const esOpts = score < 25
+          ? { earthshineIntensity: 0.12 + ((25 - score) / 25) * 0.04, shadowLift: true }
           : { shadowLift: true };
         const hero = renderMoon(heroAngle, MOON_HERO_B1, colorMap, displacementMap, esOpts);
         const natalImg = await loadImage("/half natal.png");
         master = composeB1(m1, m2, hero, {
           ...composeInput,
-          score: compat.score,
+          score: score,
           person1PhaseName: compat.person1.phaseName,
           person2PhaseName: compat.person2.phaseName,
         }, natalImg);
@@ -254,7 +261,7 @@ export default function MoonPhasePanel({ initialProduct, onBack }: Props) {
         const landscape = await loadImage("/Landspace.png");
         master = composeB2(m1, m2, {
           ...composeInput,
-          score: compat.score,
+          score: score,
           person1PhaseName: compat.person1.phaseName,
           person2PhaseName: compat.person2.phaseName,
         }, landscape);
@@ -325,7 +332,13 @@ export default function MoonPhasePanel({ initialProduct, onBack }: Props) {
       ]);
 
       const compat = calculateCompatibility(dob1, dob2);
-      const computedScore = compat.score;
+      const isSynastry = product === "b1" || product === "b2";
+      const computedScore = isSynastry
+        ? calculateSynastry(
+            dob1, place1Loc?.lat, place1Loc?.lng,
+            dob2, place2Loc?.lat, place2Loc?.lng
+          ).score
+        : compat.score;
       const contentLine = getContentLine(computedScore, name1.trim(), dob1, name2.trim(), dob2);
 
       const FPS = 15;
