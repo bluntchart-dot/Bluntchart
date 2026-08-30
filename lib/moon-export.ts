@@ -18,7 +18,6 @@ export const FORMATS: ExportFormat[] = [
   { id: "print-pdf", label: "Print-Ready PDF", width: 2400, height: 3000, ext: "pdf" },
   { id: "wallpaper", label: "Phone Wallpaper", width: 1290, height: 2796, ext: "png" },
   { id: "story", label: "Instagram Story", width: 1080, height: 1920, ext: "png" },
-  { id: "square", label: "Square Social", width: 1080, height: 1080, ext: "png" },
 ];
 
 export function buildFilename(
