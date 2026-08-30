@@ -17,6 +17,7 @@ import {
   drawGrainOverlay,
   drawMoonGlow,
   fmtDate,
+  fmtLocation,
   createPRNG,
 } from "@/lib/moon-artwork";
 
@@ -33,6 +34,8 @@ export interface B1Input {
   score: number;
   person1PhaseName: string;
   person2PhaseName: string;
+  person1Location?: string;
+  person2Location?: string;
   skipGrain?: boolean;
 }
 
@@ -83,7 +86,7 @@ export function composeB1(
   const ctx = canvas.getContext("2d")!;
 
   const { name1, name2, date1, date2, serif, sans, contentLine, score,
-          person1PhaseName, person2PhaseName } = input;
+          person1Location, person2Location } = input;
   const W = MASTER_W;
   const H = MASTER_H;
 
@@ -142,23 +145,25 @@ export function composeB1(
   ctx.letterSpacing = "0px";
 
   // Dates
-  const dateY = nameY + 78;
-  ctx.font = `italic 300 28px ${sans}`;
+  const dateY = nameY + 110;
+  ctx.font = `italic 300 36px ${sans}`;
   ctx.fillStyle = "rgba(200, 198, 192, 0.55)";
   ctx.fillText(fmtDate(date1), m1x, dateY);
   ctx.fillText(fmtDate(date2), m2x, dateY);
 
-  // Phase labels
-  const phaseY = dateY + 38;
-  ctx.font = `500 20px ${sans}`;
-  ctx.fillStyle = "rgba(218, 185, 90, 0.55)";
-  ctx.letterSpacing = "3px";
-  ctx.fillText(person1PhaseName, m1x, phaseY);
-  ctx.fillText(person2PhaseName, m2x, phaseY);
-  ctx.letterSpacing = "0px";
+  // Location labels
+  if (person1Location || person2Location) {
+    const locY = dateY + 48;
+    ctx.font = `500 22px ${sans}`;
+    ctx.fillStyle = "rgba(218, 185, 90, 0.55)";
+    ctx.letterSpacing = "3px";
+    if (person1Location) ctx.fillText(fmtLocation(person1Location), m1x, locY);
+    if (person2Location) ctx.fillText(fmtLocation(person2Location), m2x, locY);
+    ctx.letterSpacing = "0px";
+  }
 
   // Connector
-  const connY = phaseY + 48;
+  const connY = dateY + (person1Location || person2Location ? 90 : 60);
   ctx.strokeStyle = "rgba(218, 185, 90, 0.16)";
   ctx.lineWidth = 1;
   ctx.beginPath();

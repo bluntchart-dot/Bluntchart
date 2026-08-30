@@ -116,23 +116,14 @@ export function composeA1(
   ctx.letterSpacing = "0px";
 
   // Dates
-  const dateY = nameY + 78;
-  ctx.font = `italic 300 28px ${sans}`;
+  const dateY = nameY + 110;
+  ctx.font = `italic 300 36px ${sans}`;
   ctx.fillStyle = "rgba(200, 198, 192, 0.55)";
   ctx.fillText(fmtDate(date1), m1x, dateY);
   ctx.fillText(fmtDate(date2), m2x, dateY);
 
-  // Phase labels
-  const phaseY = dateY + 38;
-  ctx.font = `500 20px ${sans}`;
-  ctx.fillStyle = "rgba(218, 185, 90, 0.55)";
-  ctx.letterSpacing = "3px";
-  ctx.fillText(compat.person1.phaseName, m1x, phaseY);
-  ctx.fillText(compat.person2.phaseName, m2x, phaseY);
-  ctx.letterSpacing = "0px";
-
   // Connector
-  const connY = phaseY + 48;
+  const connY = dateY + 60;
   ctx.strokeStyle = "rgba(218, 185, 90, 0.16)";
   ctx.lineWidth = 1;
   ctx.beginPath();

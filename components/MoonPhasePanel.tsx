@@ -253,6 +253,8 @@ export default function MoonPhasePanel({ initialProduct, onBack }: Props) {
           score: score,
           person1PhaseName: compat.person1.phaseName,
           person2PhaseName: compat.person2.phaseName,
+          person1Location: place1Loc?.shortName,
+          person2Location: place2Loc?.shortName,
         }, natalImg);
       } else {
         const sl = { shadowLift: true };
@@ -423,6 +425,8 @@ export default function MoonPhasePanel({ initialProduct, onBack }: Props) {
           serif, sans, contentLine, score: computedScore,
           person1PhaseName: compat.person1.phaseName,
           person2PhaseName: compat.person2.phaseName,
+          person1Location: place1Loc?.shortName,
+          person2Location: place2Loc?.shortName,
           skipGrain: true,
         };
 

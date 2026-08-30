@@ -158,7 +158,7 @@ export function composeA2(
   ctx.letterSpacing = "0px";
 
   // Dates
-  ctx.font = `italic 300 36px ${sans}`;
+  ctx.font = `italic 300 47px ${sans}`;
   ctx.fillStyle = "rgba(200, 198, 192, 0.50)";
   ctx.fillText(fmtDate(date1) + "   ·   " + fmtDate(date2), W / 2, 300);
 

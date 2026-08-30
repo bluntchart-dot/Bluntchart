@@ -251,6 +251,12 @@ export function fmtDate(d: string): string {
   });
 }
 
+export function fmtLocation(shortName: string): string {
+  const parts = shortName.split(",").map(s => s.trim());
+  if (parts.length >= 2) return `${parts[0]}, ${parts[parts.length - 1]}`;
+  return shortName;
+}
+
 export function scoreToPhaseAngle(score: number): number {
   const illum = Math.max(0, Math.min(100, score)) / 100;
   const cosA = Math.max(-1, Math.min(1, 1 - 2 * illum));
