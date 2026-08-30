@@ -126,7 +126,6 @@ export default function MoonPhasePanel({ initialProduct, onBack }: Props) {
   const [dob2, setDob2] = useState("");
   const [place2Text, setPlace2Text] = useState("");
   const [place2Loc, setPlace2Loc] = useState<SelectedLocation | null>(null);
-  const [mockScore, setMockScore] = useState(75);
   const [email, setEmail] = useState("");
   const [stage, setStage] = useState<Stage>("form");
   const [files, setFiles] = useState<GeneratedFile[]>([]);
@@ -142,7 +141,6 @@ export default function MoonPhasePanel({ initialProduct, onBack }: Props) {
   const rendering = useRef(false);
   const videoBlobRef = useRef<Blob | null>(null);
 
-  const needsMockScore = product === "b1" || product === "b2";
   const needsPlace = product === "b1" || product === "b2";
   const pInfo = PRODUCT_INFO[product];
 
@@ -187,7 +185,7 @@ export default function MoonPhasePanel({ initialProduct, onBack }: Props) {
       await document.fonts.ready;
 
       const compat = calculateCompatibility(dob1, dob2);
-      const score = needsMockScore ? mockScore : compat.score;
+      const score = compat.score;
       const contentLine = getContentLine(
         score, name1.trim(), dob1, name2.trim(), dob2
       );
@@ -237,15 +235,15 @@ export default function MoonPhasePanel({ initialProduct, onBack }: Props) {
       } else if (product === "b1") {
         const m1 = renderMoon(compat.person1.phaseAngle, MOON_SMALL, colorMap, displacementMap);
         const m2 = renderMoon(compat.person2.phaseAngle, MOON_SMALL, colorMap, displacementMap);
-        const heroAngle = scoreToPhaseAngle(mockScore);
-        const esOpts = mockScore < 25
-          ? { earthshineIntensity: 0.12 + ((25 - mockScore) / 25) * 0.04, shadowLift: true }
+        const heroAngle = scoreToPhaseAngle(compat.score);
+        const esOpts = compat.score < 25
+          ? { earthshineIntensity: 0.12 + ((25 - compat.score) / 25) * 0.04, shadowLift: true }
           : { shadowLift: true };
         const hero = renderMoon(heroAngle, MOON_HERO_B1, colorMap, displacementMap, esOpts);
         const natalImg = await loadImage("/half natal.png");
         master = composeB1(m1, m2, hero, {
           ...composeInput,
-          score: mockScore,
+          score: compat.score,
           person1PhaseName: compat.person1.phaseName,
           person2PhaseName: compat.person2.phaseName,
         }, natalImg);
@@ -256,7 +254,7 @@ export default function MoonPhasePanel({ initialProduct, onBack }: Props) {
         const landscape = await loadImage("/Landspace.png");
         master = composeB2(m1, m2, {
           ...composeInput,
-          score: mockScore,
+          score: compat.score,
           person1PhaseName: compat.person1.phaseName,
           person2PhaseName: compat.person2.phaseName,
         }, landscape);
@@ -327,7 +325,7 @@ export default function MoonPhasePanel({ initialProduct, onBack }: Props) {
       ]);
 
       const compat = calculateCompatibility(dob1, dob2);
-      const computedScore = needsMockScore ? mockScore : compat.score;
+      const computedScore = compat.score;
       const contentLine = getContentLine(computedScore, name1.trim(), dob1, name2.trim(), dob2);
 
       const FPS = 24;
@@ -782,7 +780,7 @@ export default function MoonPhasePanel({ initialProduct, onBack }: Props) {
         <div style={{
           display: "grid",
           gridTemplateColumns: needsPlace ? "1fr 1fr 1fr" : "1fr 1fr",
-          gap: 12, marginBottom: needsMockScore ? 20 : 24,
+          gap: 12, marginBottom: 24,
         }}>
           <div>
             <label style={lbl}>Name</label>
@@ -809,29 +807,6 @@ export default function MoonPhasePanel({ initialProduct, onBack }: Props) {
             </div>
           )}
         </div>
-
-        {/* Mock score (B1/B2 only) */}
-        {needsMockScore && (
-          <div style={{ marginBottom: 24 }}>
-            <div style={sectionLabel}>Mock astrology score</div>
-            <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-              <input
-                type="range" min={0} max={100} value={mockScore}
-                onChange={(e) => setMockScore(Number(e.target.value))}
-                style={{ flex: 1 }}
-              />
-              <input
-                type="number" min={0} max={100} value={mockScore}
-                onChange={(e) => setMockScore(Math.min(100, Math.max(0, Number(e.target.value))))}
-                style={{ ...inp, width: 70, textAlign: "center" }}
-              />
-              <span style={{ fontSize: 14, color: "#6b6585" }}>%</span>
-            </div>
-            <small style={{ fontSize: 11, color: "#3a3858", marginTop: 4, display: "block" }}>
-              Placeholder until the astrology engine is implemented
-            </small>
-          </div>
-        )}
 
         {/* Email */}
         <div style={sectionLabel}>Email</div>
