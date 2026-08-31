@@ -148,14 +148,18 @@ export function composeA1(
   ctx.drawImage(heroMoon, W / 2 - MOON_HERO_A1 / 2, bigY - MOON_HERO_A1 / 2, MOON_HERO_A1, MOON_HERO_A1);
   ctx.shadowBlur = 20;
 
-  // Content line — prominent, italic
-  const contentY = bigY + MOON_HERO_A1 / 2 + 100;
-  ctx.font = `italic 400 60px ${serif}`;
-  ctx.fillStyle = "rgba(245, 243, 240, 0.90)";
+  // Content line — prominent, italic, light golden for readability
+  ctx.shadowColor = "rgba(0, 0, 0, 0.85)";
+  ctx.shadowBlur = 28;
+  ctx.shadowOffsetX = 0;
+  ctx.shadowOffsetY = 4;
+  const contentY = bigY + MOON_HERO_A1 / 2 + 80;
+  ctx.font = `italic 400 84px ${serif}`;
+  ctx.fillStyle = "rgba(228, 210, 170, 0.92)";
   ctx.fillText(`"${contentLine}"`, W / 2, contentY);
 
   // Fixed secondary line
-  const secondaryY = contentY + 88;
+  const secondaryY = contentY + 110;
   ctx.font = `italic 300 34px ${serif}`;
   ctx.fillStyle = "rgba(218, 185, 90, 0.50)";
   ctx.fillText(SECONDARY_LINE, W / 2, secondaryY);

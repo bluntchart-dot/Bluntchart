@@ -131,9 +131,9 @@ export function composeB2(
   ctx.fillText(score + "%", W / 2 + 2, scoreY);
   ctx.letterSpacing = "0px";
 
-  // Content line — clean (+15% gap: 140 → 161)
+  // Content line
   const contentY = scoreY + 161;
-  ctx.font = `italic 400 46px ${serif}`;
+  ctx.font = `italic 400 64px ${serif}`;
   ctx.fillStyle = "rgba(245, 243, 240, 0.82)";
   ctx.fillText(`"${contentLine}"`, W / 2, contentY);
 

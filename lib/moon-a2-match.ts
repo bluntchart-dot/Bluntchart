@@ -39,7 +39,7 @@ function drawSparseStars(
     return false;
   }
 
-  for (let i = 0; i < 50; i++) {
+  for (let i = 0; i < 60; i++) {
     const x = rand() * w;
     const y = rand() * h;
     if (blocked(x, y)) continue;
@@ -54,8 +54,8 @@ function drawSparseStars(
     ctx.fill();
   }
 
-  // 6 brighter accent stars
-  for (let i = 0; i < 6; i++) {
+  // 7 brighter accent stars
+  for (let i = 0; i < 7; i++) {
     let x: number, y: number;
     do {
       x = rand() * w;
@@ -198,7 +198,7 @@ export function composeA2(
 
   // Relationship line — larger for emotional payoff
   const contentY = arcY + 40;
-  ctx.font = `italic 400 74px ${serif}`;
+  ctx.font = `italic 400 104px ${serif}`;
   ctx.fillStyle = "rgba(245, 243, 240, 0.90)";
   ctx.fillText(`"${contentLine}"`, W / 2, contentY);
 

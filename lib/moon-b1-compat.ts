@@ -57,7 +57,7 @@ function drawRandomStars(
     return false;
   }
 
-  for (let i = 0; i < 120; i++) {
+  for (let i = 0; i < 144; i++) {
     const x = 60 + rand() * (w - 120);
     const y = 60 + rand() * (h - 200);
     if (blocked(x, y)) continue;
@@ -216,7 +216,7 @@ export function composeB1(
 
   // "COMPATIBILITY" label
   const labelY = scoreY + 240;
-  ctx.font = `500 32px ${sans}`;
+  ctx.font = `700 32px ${sans}`;
   ctx.fillStyle = "rgba(212, 168, 83, 0.60)";
   ctx.letterSpacing = "14px";
   ctx.fillText("COMPATIBILITY", W / 2 + 7, labelY);
@@ -224,7 +224,7 @@ export function composeB1(
 
   // Relationship line
   const contentY = labelY + 90;
-  ctx.font = `italic 400 54px ${serif}`;
+  ctx.font = `italic 400 76px ${serif}`;
   ctx.fillStyle = "rgba(245, 243, 240, 0.88)";
   ctx.fillText(`"${contentLine}"`, W / 2, contentY);
 
