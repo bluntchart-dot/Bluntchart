@@ -20,6 +20,7 @@ import {
   drawCoverImage,
   fmtDate,
   createPRNG,
+  wrapTextToLines,
 } from "@/lib/moon-artwork";
 
 export const MOON_HERO_A1 = 1400;
@@ -148,21 +149,31 @@ export function composeA1(
   ctx.drawImage(heroMoon, W / 2 - MOON_HERO_A1 / 2, bigY - MOON_HERO_A1 / 2, MOON_HERO_A1, MOON_HERO_A1);
   ctx.shadowBlur = 20;
 
-  // Content line — prominent, italic, light golden for readability
+  // Fixed secondary line — now sized to match the (former) romantic-line size, drawn first
   ctx.shadowColor = "rgba(0, 0, 0, 0.85)";
   ctx.shadowBlur = 28;
   ctx.shadowOffsetX = 0;
   ctx.shadowOffsetY = 4;
-  const contentY = bigY + MOON_HERO_A1 / 2 + 80;
-  ctx.font = `italic 400 84px ${serif}`;
-  ctx.fillStyle = "rgba(228, 210, 170, 0.92)";
-  ctx.fillText(`"${contentLine}"`, W / 2, contentY);
+  const secondaryY = bigY + MOON_HERO_A1 / 2 + 80;
+  const contentMargin = 200;
+  ctx.font = `italic 300 84px ${serif}`;
+  ctx.fillStyle = "rgba(232, 208, 140, 0.65)";
+  const secondaryLines = wrapTextToLines(ctx, SECONDARY_LINE, W - contentMargin * 2);
+  const secondaryLineHeight = 96;
+  secondaryLines.forEach((line, i) => {
+    ctx.fillText(line, W / 2, secondaryY + i * secondaryLineHeight);
+  });
+  const secondaryBlockHeight = (secondaryLines.length - 1) * secondaryLineHeight;
 
-  // Fixed secondary line
-  const secondaryY = contentY + 110;
-  ctx.font = `italic 300 34px ${serif}`;
-  ctx.fillStyle = "rgba(218, 185, 90, 0.50)";
-  ctx.fillText(SECONDARY_LINE, W / 2, secondaryY);
+  // Content line — romantic quote, reduced 30%, drawn second/below the static line
+  const contentY = secondaryY + secondaryBlockHeight + secondaryLineHeight + 40;
+  ctx.font = `italic 400 59px ${serif}`;
+  ctx.fillStyle = "rgba(228, 210, 170, 0.92)";
+  const contentLines = wrapTextToLines(ctx, `"${contentLine}"`, W - contentMargin * 2);
+  const contentLineHeight = 74;
+  contentLines.forEach((line, i) => {
+    ctx.fillText(line, W / 2, contentY + i * contentLineHeight);
+  });
 
   // Brand
   ctx.font = `300 26px ${sans}`;

@@ -75,6 +75,15 @@ const TEST_CASES: TestCase[] = [
     description: "Near-identical phases (born 1 day apart)",
   },
   {
+    id: "a1-ross-rachel",
+    product: "a1",
+    name1: "Ross",
+    date1: "1991-12-13",
+    name2: "Rachel",
+    date2: "1990-03-20",
+    description: "82% — mirrored crescents facing each other, gap centered on hero moon",
+  },
+  {
     id: "a2-score-20",
     product: "a2",
     name1: "Aria",

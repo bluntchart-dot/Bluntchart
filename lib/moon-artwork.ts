@@ -242,6 +242,38 @@ export function renderMoon(
   return processed;
 }
 
+/**
+ * Wraps text onto at most two lines if it exceeds maxWidth, splitting at
+ * the word boundary that balances the two resulting line widths. Assumes
+ * ctx.font is already set to the target font.
+ */
+export function wrapTextToLines(
+  ctx: CanvasRenderingContext2D,
+  text: string,
+  maxWidth: number
+): string[] {
+  if (ctx.measureText(text).width <= maxWidth) return [text];
+
+  const words = text.split(" ");
+  if (words.length < 2) return [text];
+
+  let bestSplit = 1;
+  let bestMax = Infinity;
+  for (let i = 1; i < words.length; i++) {
+    const line1 = words.slice(0, i).join(" ");
+    const line2 = words.slice(i).join(" ");
+    const max = Math.max(
+      ctx.measureText(line1).width,
+      ctx.measureText(line2).width
+    );
+    if (max < bestMax) {
+      bestMax = max;
+      bestSplit = i;
+    }
+  }
+  return [words.slice(0, bestSplit).join(" "), words.slice(bestSplit).join(" ")];
+}
+
 export function fmtDate(d: string): string {
   return new Date(d + "T12:00:00Z").toLocaleDateString("en-US", {
     month: "long",
