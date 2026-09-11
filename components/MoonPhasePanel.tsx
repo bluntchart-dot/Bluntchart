@@ -123,8 +123,10 @@ export default function MoonPhasePanel({ initialProduct, onBack }: Props) {
   const [dob1, setDob1] = useState("");
   const [place1Text, setPlace1Text] = useState("");
   const [place1Loc, setPlace1Loc] = useState<SelectedLocation | null>(null);
+  const [time1, setTime1] = useState("");
   const [name2, setName2] = useState("");
   const [dob2, setDob2] = useState("");
+  const [time2, setTime2] = useState("");
   const [place2Text, setPlace2Text] = useState("");
   const [place2Loc, setPlace2Loc] = useState<SelectedLocation | null>(null);
   const [email, setEmail] = useState("");
@@ -190,7 +192,8 @@ export default function MoonPhasePanel({ initialProduct, onBack }: Props) {
       const score = isSynastry
         ? calculateSynastry(
             dob1, place1Loc?.lat, place1Loc?.lng,
-            dob2, place2Loc?.lat, place2Loc?.lng
+            dob2, place2Loc?.lat, place2Loc?.lng,
+            time1 || undefined, time2 || undefined
           ).score
         : compat.score;
       const contentLine = getContentLine(
@@ -303,7 +306,8 @@ export default function MoonPhasePanel({ initialProduct, onBack }: Props) {
       setStage("done");
     } catch (e) {
       console.error("Generation failed:", e);
-      setErr(e instanceof Error ? e.message : "Generation failed.");
+      const msg = e instanceof Error ? e.message : String(e);
+      setErr(msg || "Generation failed — check browser console for details.");
       setStage("form");
     } finally {
       rendering.current = false;
@@ -338,7 +342,8 @@ export default function MoonPhasePanel({ initialProduct, onBack }: Props) {
       const computedScore = isSynastry
         ? calculateSynastry(
             dob1, place1Loc?.lat, place1Loc?.lng,
-            dob2, place2Loc?.lat, place2Loc?.lng
+            dob2, place2Loc?.lat, place2Loc?.lng,
+            time1 || undefined, time2 || undefined
           ).score
         : compat.score;
       const contentLine = getContentLine(computedScore, name1.trim(), dob1, name2.trim(), dob2);
@@ -523,7 +528,8 @@ export default function MoonPhasePanel({ initialProduct, onBack }: Props) {
     } catch (e) {
       console.error("MP4 generation failed:", e);
       setVideoStatus("error");
-      setErr(e instanceof Error ? e.message : "MP4 generation failed.");
+      const msg = e instanceof Error ? e.message : String(e);
+      setErr(msg || "MP4 generation failed — check browser console for details.");
     } finally {
       rendering.current = false;
     }
@@ -763,7 +769,7 @@ export default function MoonPhasePanel({ initialProduct, onBack }: Props) {
         <div style={sectionLabel}>Person 1</div>
         <div style={{
           display: "grid",
-          gridTemplateColumns: needsPlace ? "1fr 1fr 1fr" : "1fr 1fr",
+          gridTemplateColumns: needsPlace ? "1fr 1fr 0.7fr 1fr" : "1fr 1fr",
           gap: 12, marginBottom: 20,
         }}>
           <div>
@@ -782,6 +788,16 @@ export default function MoonPhasePanel({ initialProduct, onBack }: Props) {
           </div>
           {needsPlace && (
             <div>
+              <label style={lbl}>Birth time <span style={{ opacity: 0.5, fontWeight: 400, textTransform: "none", letterSpacing: 0 }}>(optional)</span></label>
+              <input
+                type="time" value={time1}
+                onChange={(e) => setTime1(e.target.value)} style={inp}
+                placeholder="HH:MM"
+              />
+            </div>
+          )}
+          {needsPlace && (
+            <div>
               <label style={lbl}>Birth place</label>
               <LocationPicker
                 value={place1Text}
@@ -796,7 +812,7 @@ export default function MoonPhasePanel({ initialProduct, onBack }: Props) {
         <div style={sectionLabel}>Person 2</div>
         <div style={{
           display: "grid",
-          gridTemplateColumns: needsPlace ? "1fr 1fr 1fr" : "1fr 1fr",
+          gridTemplateColumns: needsPlace ? "1fr 1fr 0.7fr 1fr" : "1fr 1fr",
           gap: 12, marginBottom: 24,
         }}>
           <div>
@@ -813,6 +829,16 @@ export default function MoonPhasePanel({ initialProduct, onBack }: Props) {
               onChange={(e) => setDob2(e.target.value)} style={inp}
             />
           </div>
+          {needsPlace && (
+            <div>
+              <label style={lbl}>Birth time <span style={{ opacity: 0.5, fontWeight: 400, textTransform: "none", letterSpacing: 0 }}>(optional)</span></label>
+              <input
+                type="time" value={time2}
+                onChange={(e) => setTime2(e.target.value)} style={inp}
+                placeholder="HH:MM"
+              />
+            </div>
+          )}
           {needsPlace && (
             <div>
               <label style={lbl}>Birth place</label>
