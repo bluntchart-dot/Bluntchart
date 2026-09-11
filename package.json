@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "rm -rf .next/dev && next build",
     "start": "next start",
     "lint": "eslint"
   },
@@ -24,6 +24,7 @@
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "resend": "^6.12.3",
+    "suganthan-gsc-mcp": "^2.5.1",
     "three": "^0.185.1"
   },
   "devDependencies": {

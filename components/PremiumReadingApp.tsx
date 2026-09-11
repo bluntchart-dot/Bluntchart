@@ -264,7 +264,7 @@ export default function PremiumReadingApp({ eyebrow }: Props) {
         </div>
         <div style={{ fontSize: 13, color: "#4a4560" }}>
           {productType === "birth-chart-book" || productType === "in-depth-reading"
-            ? "This can take 60–120 seconds."
+            ? "This can take 90–180 seconds."
             : "This can take 30–60 seconds."}
         </div>
       </div>
