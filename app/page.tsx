@@ -69,7 +69,7 @@ const FAQS = [
   { q: "Do I need to know my exact birth time?", a: "Yes and here's why it matters. Your birth time determines your Rising sign and all 12 house placements. Without it, we can still do a reading, but you'll miss the layer that makes it feel eerily personal. Your birth certificate almost always has it. If you genuinely can't find it, use 12:00 noon and we'll note where the reading may be less precise." },
   { q: "Is this actually based on my chart or just my Sun sign?", a: "It's based on your full natal chart. Sun, Moon, Rising, Venus, Mars, Mercury, Saturn, Jupiter, plus the house positions and aspects between them. Planet positions use a high-precision ephemeris (Astronomy Engine), the same library-grade solar system model used in serious astronomy software. Your Sun sign is one of dozens of data points we use." },
   { q: "How is this different from Co-Star or The Pattern?", a: "Co-Star gives you daily notifications and brief, often cryptic text. The Pattern gives you broad personality archetypes. BluntChart gives you one deep, specific reading around 1,500 words written to your exact placements, in plain language, with a tone that doesn't soften what the chart actually says. It's not a daily app. It's a mirror." },
-  { q: "Can I get a refund if I don't like the reading?", a: "Because this is a personalized digital product generated instantly for you, we don't offer refunds after delivery. This is standard for custom digital goods. If something breaks or fails to generate, we'll fix it or refund immediately." },
+  { q: "Can I get a refund if I don't like the reading?", a: "All sales are final — each reading is a personalized digital product generated instantly from your unique birth details. This is standard for custom digital goods. If something goes wrong on our end (reading not delivered, generation error, corrupted content), contact us at hello@bluntchart.com and we'll investigate and fix the issue." },
   { q: "Is the reading AI-generated? Will it feel robotic?", a: "It's generated using AI, but the system behind it was built specifically to interpret your exact birth chart in a way that feels human, not generic. It's designed to sound like a brutally honest friend who actually understands you, not a horoscope app. The goal is simple. You read it and think how did it know that. Most people do." },
   { q: "Is this for entertainment or is it real?", a: "Both, honestly. Astrology is not science and we're clear about that. But the psychological patterns that good astrology surfaces are real. The reading is designed to make you think, not to predict your future. If it makes you more self-aware, that's real value regardless of how you feel about the stars." },
   { q: "Will my birth data be stored or sold?", a: "Your birth data is used solely to generate your reading. We don't sell it, share it with third parties, or use it for advertising. You can request deletion any time. Full details in our Privacy Policy." },
@@ -1009,11 +1009,11 @@ export default function HomePage() {
             <div style={{ position:"relative", zIndex:1 }}>
               <div className="price-badge-main" style={{ background:"linear-gradient(135deg, #6b2fd4, #d4537e)" }}>✦ NEW</div>
               <div className="price-title">In-Depth Birth Chart Book</div>
-              <p className="price-desc">49 pages. 14 chapters. Every planet, every house, every aspect — written in the same brutally honest voice, but nothing left unsaid.</p>
+              <p className="price-desc">10 chapters across 2 parts. Every planet, every house, every aspect — written in the same brutally honest voice, but nothing left unsaid.</p>
               <div className="price-num"><s style={{ opacity:0.4, fontSize:"0.6em" }}>$29</s> $24</div>
               <p className="price-sub">One-time · Delivered in minutes · Yours forever</p>
               <ul className="price-includes">
-                <li>14 chapters across your entire natal chart</li>
+                <li>10 chapters across transits + natal chart</li>
                 <li>Covers career, love, emotional patterns, purpose, current transits and more</li>
                 <li>Built from the same high-precision ephemeris engine</li>
                 <li>No account required</li>

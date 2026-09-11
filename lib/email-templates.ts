@@ -523,7 +523,7 @@ export function bookDeliveryMail({ firstName, readingUrl }: BaseVars): EmailTemp
 
 Your book is ready.
 
-Inside you'll find 14 chapters built entirely from your birth chart... your relationships, career, emotional patterns, strengths, blind spots and the habits you probably thought nobody noticed.
+Inside you'll find 10 chapters built entirely from your transits and birth chart... your relationships, career, emotional patterns, strengths, blind spots and the habits you probably thought nobody noticed.
 
 Some pages will feel validating.
 
@@ -549,7 +549,7 @@ ${textSignOff}`;
   const html = bookPreheader("your birth chart book is officially ready.") + bookWrap(`
     ${bHi(firstName)}
     ${bP("Your book is ready.")}
-    ${bP(`Inside you'll find ${bBold("14 chapters")} built entirely from your birth chart... your relationships, career, emotional patterns, strengths, blind spots and the habits you probably thought nobody noticed.`)}
+    ${bP(`Inside you'll find ${bBold("10 chapters")} built entirely from your transits and birth chart... your relationships, career, emotional patterns, strengths, blind spots and the habits you probably thought nobody noticed.`)}
     ${bP("Some pages will feel validating.")}
     ${bP("Some might make you close the tab for a minute.")}
     ${bP("Both are normal.")}

@@ -79,7 +79,7 @@ export default function TermsPage() {
         },
         {
           h:"5. Refund Policy",
-          body:<>Because readings are digital products generated and delivered immediately upon payment, all sales are final. If a technical error prevents your reading from being generated or delivered, contact us and we will regenerate it or issue a full refund &mdash; no questions asked. See our full <a href="/refunds">Refund Policy</a>.</>
+          body:<>Because readings are personalized digital products generated and delivered immediately upon payment, all sales are final and no refunds are offered. If a technical error prevents your reading from being generated or delivered, contact us at <a href="mailto:hello@bluntchart.com">hello@bluntchart.com</a> and we will investigate and resolve the issue, including regenerating your reading if necessary. See our full <a href="/refunds">Refund Policy</a>.</>
         },
         {
           h:"6. Intellectual Property",

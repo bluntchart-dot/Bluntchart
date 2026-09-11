@@ -43,7 +43,7 @@ function PageShell({ title, updated, banner, sections }: {
             <strong style={{color:"#5dcaa5"}}>Had an issue with your reading?</strong>
           </p>
           <p style={{fontSize:".88rem",color:"rgba(232,228,240,.5)",lineHeight:1.65}}>
-            Email us at <a href="mailto:hello@bluntchart.com">hello@bluntchart.com</a> with your order details. We&rsquo;ll fix it or refund you &mdash; no drama, no waiting.
+            Email us at <a href="mailto:hello@bluntchart.com">hello@bluntchart.com</a> with your order details. We&rsquo;ll look into it and make sure you get your reading &mdash; no drama, no waiting.
           </p>
         </div>
       </div>
@@ -63,31 +63,31 @@ export default function RefundsPage() {
       title="Refund Policy"
       updated="25 April 2026"
       banner={
-        <Banner text={<><strong style={{color:"#f0b84a"}}>Short version:</strong> All sales are final after delivery. If anything goes technically wrong &mdash; reading not delivered, error in generation &mdash; we will fix it or refund you in full, immediately.</>} />
+        <Banner text={<><strong style={{color:"#f0b84a"}}>Short version:</strong> All sales are final. No refunds. If anything goes technically wrong &mdash; reading not delivered, error in generation, corrupted content &mdash; contact us and we will investigate and deliver your product.</>} />
       }
       sections={[
         {
-          h:"Our Standard Policy",
-          body:<>BluntChart sells digital products &mdash; personalised astrology readings generated and delivered immediately upon payment. Because readings are created instantly and delivered digitally, they cannot be &ldquo;returned&rdquo; in the traditional sense. All sales are therefore final once a reading has been successfully delivered.<p style={{marginTop:12}}>This is standard practice for digital goods and is consistent with consumer protection regulations in most jurisdictions.</p></>
+          h:"Our Policy",
+          body:<>BluntChart sells personalised digital products &mdash; astrology readings generated and delivered immediately upon payment. Because each reading is created instantly from your unique birth details and delivered digitally, it cannot be &ldquo;returned&rdquo; in the traditional sense. <strong>All sales are final. We do not offer refunds.</strong><p style={{marginTop:12}}>This is standard practice for custom digital goods and is consistent with consumer protection regulations in most jurisdictions.</p></>
         },
         {
-          h:"When We Will Refund You",
+          h:"If Something Goes Wrong",
           body:<>
-            <p style={{marginBottom:12}}>We will issue a full refund, no questions asked, in any of the following cases:</p>
+            <p style={{marginBottom:12}}>If you experience any of the following issues, contact us and we will resolve it:</p>
             <ul>
-              <li>Your reading failed to generate due to a technical error on our end</li>
-              <li>Your reading was not delivered to your email and cannot be recovered</li>
-              <li>You were charged twice for the same reading</li>
-              <li>A payment processing error resulted in an incorrect charge</li>
-              <li>The reading content was clearly corrupted, incomplete, or blank</li>
+              <li>Your reading failed to generate due to a technical error on our end &mdash; we will regenerate it</li>
+              <li>Your reading was not delivered to your email &mdash; we will resend it</li>
+              <li>You were charged twice for the same reading &mdash; we will reverse the duplicate charge</li>
+              <li>A payment processing error resulted in an incorrect charge &mdash; we will correct it</li>
+              <li>The reading content was clearly corrupted, incomplete, or blank &mdash; we will regenerate it</li>
             </ul>
-            <p style={{marginTop:12}}>In these cases, contact us at <a href="mailto:hello@bluntchart.com">hello@bluntchart.com</a> with your order email and a brief description of the issue. We will respond within 24 hours and resolve it the same day.</p>
+            <p style={{marginTop:12}}>In all of these cases, we will make sure you receive your product. Contact us at <a href="mailto:hello@bluntchart.com">hello@bluntchart.com</a> with your order email and a brief description of the issue. We will respond within 24 hours.</p>
           </>
         },
         {
-          h:"When We Cannot Refund",
+          h:"What We Cannot Do",
           body:<>
-            <p style={{marginBottom:12}}>We are unable to offer refunds in the following situations:</p>
+            <p style={{marginBottom:12}}>We do not offer refunds in any situation, including but not limited to:</p>
             <ul>
               <li>You changed your mind after reading the content</li>
               <li>You disagree with the interpretation or tone of your reading</li>
@@ -95,24 +95,20 @@ export default function RefundsPage() {
               <li>You did not find the reading applicable to your life circumstances</li>
               <li>You purchased a reading as a gift and the recipient did not want it</li>
             </ul>
-            <p style={{marginTop:12}}>We take great care with the quality of our readings, but astrology is inherently interpretive. We cannot guarantee the content will resonate with every person.</p>
+            <p style={{marginTop:12}}>We take great care with the quality of our readings, but astrology is inherently interpretive. We cannot guarantee the content will resonate with every person. This does not entitle the buyer to a refund.</p>
           </>
         },
         {
           h:"Incorrect Birth Details",
-          body:<>If you entered incorrect birth details and notice before the reading is delivered, contact us immediately at <a href="mailto:hello@bluntchart.com">hello@bluntchart.com</a>. If we can intercept the generation, we will regenerate using the correct details at no extra charge. If the reading has already been delivered, we will offer one free regeneration as a goodwill gesture — though this is at our discretion, not a guaranteed right.</>
+          body:<>If you entered incorrect birth details and notice before the reading is delivered, contact us immediately at <a href="mailto:hello@bluntchart.com">hello@bluntchart.com</a>. If we can intercept the generation, we will regenerate using the correct details at no extra charge. If the reading has already been delivered, we may offer one free regeneration as a goodwill gesture &mdash; this is at our discretion, not a guaranteed right. Incorrect birth details do not qualify for a refund.</>
         },
         {
           h:"Chargebacks",
-          body:<>If you initiate a chargeback through your bank or payment provider without first contacting us, we reserve the right to contest the chargeback with evidence of delivery. We strongly encourage you to contact us first &mdash; we resolve legitimate issues quickly and without friction.</>
-        },
-        {
-          h:"Processing Refunds",
-          body:<>Approved refunds are processed within 5 business days. Depending on your bank, the funds may take an additional 3&ndash;10 business days to appear in your account. Refunds are issued to the original payment method only.</>
+          body:<>If you initiate a chargeback through your bank or payment provider without first contacting us, we reserve the right to contest the chargeback with full evidence of delivery. Chargebacks filed without prior contact will be disputed. We strongly encourage you to contact us first &mdash; we resolve legitimate delivery issues quickly and without friction.</>
         },
         {
           h:"Contact",
-          body:<>For any refund requests: <a href="mailto:hello@bluntchart.com">hello@bluntchart.com</a><br/>Please include your order email and a brief description of the issue.</>
+          body:<>For any issues with your reading: <a href="mailto:hello@bluntchart.com">hello@bluntchart.com</a><br/>Please include your order email and a brief description of the issue. We will look into it and ensure your product is delivered.</>
         },
       ]}
     />
