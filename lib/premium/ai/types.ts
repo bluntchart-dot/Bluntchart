@@ -39,7 +39,7 @@ export interface AiModelConfig {
   readonly upstreamId: string;
   /** Human label shown in the internal UI. */
   readonly label: string;
-  /** Enough headroom for 14 chapters of prose. Streamed. */
+  /** Enough headroom for 10 chapters of prose. Streamed. */
   readonly maxOutputTokens: number;
   /** Rough per-1M USD cost for internal telemetry only. */
   readonly costPerMTokIn: number;

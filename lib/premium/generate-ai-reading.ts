@@ -3,14 +3,14 @@
  *
  * V1.2 orchestration — Reader Insight Map pipeline.
  *
- * Normal path (2 AI calls):
+ * Normal path (3 AI calls):
  *   1. Chart calculation                            [TS]
  *   2. Signal extraction                            [TS]
  *   3. Selection                                    [TS]
  *   4. AI interpretation → insight map              [AI #1, Haiku]
  *   5. Deterministic validation                     [TS]
  *   6. Scheduler → chapter assignments              [TS]
- *   7. Main book generation                         [AI #2, requested model]
+ *   7. Parallel generation (transit + natal)         [AI #2+#3, requested model]
  *   8. QA scan (hard + soft)                        [TS]
  *   9. Assemble PremiumReading                      [TS]
  *
@@ -265,10 +265,11 @@ interface BuildRequestParams {
   assignments: Partial<Record<string, InsightAssignment[]>>;
   ledger: Ledger;
   regenGuidance?: Record<string, string>;
+  sectionFilter?: Set<string>;
 }
 
 function buildAiRequest(params: BuildRequestParams): AiGenerationRequest {
-  const { chart, name, product, assignments, ledger, regenGuidance } = params;
+  const { chart, name, product, assignments, ledger, regenGuidance, sectionFilter } = params;
   const def = getProduct(product);
   const guidelines = def.guidelines;
   const anchor = buildReaderAnchor(chart, name);
@@ -284,6 +285,7 @@ function buildAiRequest(params: BuildRequestParams): AiGenerationRequest {
 
   for (const section of def.activeSections) {
     if (section.pageType !== "chapter") continue;
+    if (sectionFilter && !sectionFilter.has(section.id)) continue;
     const g = guidelines[section.id];
     if (!g) continue;
     const inputs = section.chartInputs ?? [];
@@ -588,59 +590,85 @@ export async function generateAiReading(
     );
     seedKnownBannedImages(ledger);
 
-    /* Step 7: main book generation */
-    const aiRequest = buildAiRequest({
+    /* Step 7: parallel generation — transit + natal run concurrently */
+    const TRANSIT_IDS = new Set([
+      "whats-happening-now",
+      "when-does-it-get-better",
+      "whats-coming-next",
+    ]);
+    const allChapterIds = productDef.activeSections
+      .filter((s) => s.pageType === "chapter")
+      .map((s) => s.id);
+    const natalIds = new Set(allChapterIds.filter((id) => !TRANSIT_IDS.has(id)));
+
+    const baseParams = {
       chart,
       name: birth.name,
       product,
       assignments: assignments.assignments,
       ledger,
-    });
+    };
+
+    const transitRequest = buildAiRequest({ ...baseParams, sectionFilter: TRANSIT_IDS });
+    const natalRequest = buildAiRequest({ ...baseParams, sectionFilter: natalIds });
+
+    async function generateWithRetry(req: AiGenerationRequest, label: string) {
+      const s = Date.now();
+      let result = await provider.generate(req, model);
+      let ms = Date.now() - s;
+      let calls = 1;
+      if (!result.ok) {
+        const rs = Date.now();
+        result = await provider.generate(req, model);
+        ms += Date.now() - rs;
+        calls += 1;
+      }
+      return { result, ms, calls, label };
+    }
 
     const genStarted = Date.now();
-    const genResult = await provider.generate(aiRequest, model);
+    const [transitGen, natalGen] = await Promise.all([
+      generateWithRetry(transitRequest, "transit"),
+      generateWithRetry(natalRequest, "natal"),
+    ]);
     generateMs = Date.now() - genStarted;
-    totalAiCalls += 1;
+    totalAiCalls += transitGen.calls + natalGen.calls;
 
-    if (!genResult.ok) {
-      // One retry for main generation
-      const retryStarted = Date.now();
-      const retry = await provider.generate(aiRequest, model);
-      generateMs += Date.now() - retryStarted;
-      totalAiCalls += 1;
-
-      if (!retry.ok) {
-        await store.releaseLock(generationRequestId);
-        emit("GENERATION_FAILED", retry.error);
-        return {
-          ok: false,
-          error: retry.error,
-          errorCategory: "GENERATION_FAILED",
-          telemetry: retry.telemetry,
-        };
+    for (const gen of [transitGen, natalGen]) {
+      if (gen.result.ok) {
+        tokenAccum.input += gen.result.telemetry.inputTokens;
+        tokenAccum.output += gen.result.telemetry.outputTokens;
+        tokenAccum.cacheRead += gen.result.telemetry.cacheReadTokens;
+        tokenAccum.cacheCreation += gen.result.telemetry.cacheCreationTokens;
       }
-      Object.assign(genResult, retry);
     }
 
-    // Accumulate main gen tokens
-    if (genResult.ok) {
-      tokenAccum.input += genResult.telemetry.inputTokens;
-      tokenAccum.output += genResult.telemetry.outputTokens;
-      tokenAccum.cacheRead += genResult.telemetry.cacheReadTokens;
-      tokenAccum.cacheCreation += genResult.telemetry.cacheCreationTokens;
-    }
-
-    if (!genResult.ok) {
+    if (!transitGen.result.ok || !natalGen.result.ok) {
+      const failedLabel = !transitGen.result.ok ? "transit" : "natal";
+      const failedErr = !transitGen.result.ok
+        ? transitGen.result.error
+        : !natalGen.result.ok
+          ? natalGen.result.error
+          : "unknown";
+      const failedTelemetry = !transitGen.result.ok
+        ? transitGen.result.telemetry
+        : !natalGen.result.ok
+          ? natalGen.result.telemetry
+          : undefined;
       await store.releaseLock(generationRequestId);
-      emit("GENERATION_FAILED", "Post-retry generation still failed");
+      emit("GENERATION_FAILED", `${failedLabel} generation failed: ${failedErr}`);
       return {
         ok: false,
-        error: "Generation failed after retry",
-        errorCategory: "GENERATION_FAILED",
+        error: `${failedLabel} generation failed after retry`,
+        errorCategory: "GENERATION_FAILED" as ErrorCategory,
+        telemetry: failedTelemetry,
       };
     }
 
-    let bodies = { ...genResult.body.bodies };
+    let bodies = {
+      ...transitGen.result.body.bodies,
+      ...natalGen.result.body.bodies,
+    };
     let sections = renderSectionsFromBodies(chart, bodies, product);
 
     /* Step 8: QA */
