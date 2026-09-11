@@ -31,7 +31,7 @@ Every section you're about to read combines different parts of that blueprint to
 
 export const CHAPTER_BUILT_USING_TABLE = [
   /* ── Part I — Current Season ────────────────────────── */
-  { icon: "🌙", chapter: "What's Happening Now",      builtUsing: "Current Transits • Saturn • Pluto" },
+  { icon: "🌙", chapter: "What's Happening Now",      builtUsing: "Current Transits • Saturn • Pluto • Jupiter • Venus • Mars • Chiron" },
   { icon: "🌤️", chapter: "When Does It Get Better?",  builtUsing: "Jupiter & Venus Transits • Progressed Moon" },
   { icon: "⏳", chapter: "What's Coming Next",         builtUsing: "Upcoming Transits • Major Aspects" },
   /* ── Part II — Birth Chart ──────────────────────────── */
@@ -131,7 +131,7 @@ Ready when you are.`,
     title: "What's Happening Now",
     subtitle: "Why your life feels the way it does right now, and what's actually being activated.",
     chapterNumber: 1,
-    chartInputs: ["current-transits", "saturn", "pluto"],
+    chartInputs: ["current-transits", "saturn", "pluto", "jupiter", "venus", "mars", "chiron"],
   },
 
   {

@@ -20,25 +20,71 @@ export const IN_DEPTH_READING_MOCK_BODIES: MockMap = {
 
   "whats-happening-now": `Something shifted. You have been feeling it for months.
 
-Not a dramatic event necessarily. More like the ground changed texture. Conversations that used to flow started catching. A version of yourself that used to fit started feeling like someone else's coat.
+Not a dramatic event necessarily. More like the ground changed texture. Conversations that used to flow started catching. A version of yourself that used to fit started feeling like someone else's coat. You wake up, you go through the motions, and somewhere around 2pm you catch yourself thinking: what am I even doing here?
 
 Can I make a guess?
 
-There is someone around you right now, or recently, who feels different from your usual type. Calmer. More available. Your first instinct was probably that they are too calm. Too available. That the ease of it must mean it is not deep enough. That instinct is wrong.¹
+You have been Googling things. Not casually. The kind of searching that happens at midnight when nobody is watching. New jobs. New cities. "How to know if you should leave." You have not told anyone you are doing this, because saying it out loud makes it real, and you are not ready for real yet.
 
-Love right now. If you are with someone, the version of you managing everyone's feelings including your own is exhausted. The honest conversation you have been deferring is going to keep showing up until you have it. Have it. Kindly. But have it. If you are single, the sky is quietly walking you toward someone who does not require you to perform for their attention. Your first reaction may be that this person is boring. They are not boring. They are just not making you anxious, and you have been confusing anxiety with chemistry for a long time.
+That is exactly where you are supposed to be right now. Let me tell you why.
 
-Career right now. Something at work is asking to be renegotiated. Not the whole job, necessarily. But a role, a dynamic, a way of showing up that used to feel natural and now feels like a costume. You have been outgrowing it for about six months and pretending you have not. The pretending is what is making you tired, not the work itself.²
+Your career right now. This one is loud.
 
-The third thing. Your relationship with your own time has changed. The calendar that used to feel ambitious now feels suffocating. You are craving empty space, not more commitments. That craving is not laziness. It is the transit talking. Your nervous system is asking for room, and you keep filling the room before it opens.
+Something at work has been off for months and you keep telling yourself it is just a phase. It is not a phase. The role, the title, the team, the way people see you there, some piece of it has stopped fitting. Not because you failed. Because you outgrew it. You outgrew it about six months ago and you have been pretending you did not because starting over sounds exhausting and what if the next thing is worse?¹
 
-This season is not punishing you. It is reorganising you.
+Here is what the pretending looks like in your actual life. You sit through meetings you used to care about and now you are just waiting for them to end. You get praised for work that no longer excites you and the praise feels hollow. Someone asks "where do you see yourself in five years?" and your honest answer is "not here," but you smile and say something professional instead.
 
-What it is actually asking: stop maintaining things that are no longer true.
+The stagnation you are feeling is not laziness. It is your chart screaming that this chapter is done. Whether that means a new job, a promotion that changes the game, or starting something of your own, the pressure to move is only going to increase. The friction you are experiencing at work right now is not a sign to push harder. It is a sign that pushing harder in this direction has stopped working.
 
-¹ Venus transit through the 7th house opposing natal Mars — the pattern of confusing intensity with connection is being challenged by a transit that rewards availability over drama. This is a 4–6 month window.
-² Saturn transiting the 10th house — professional identity under slow pressure to mature. The discomfort is the maturation, not a sign that something is wrong.
-³ Pluto square natal Moon — emotional needs are being excavated. What used to be enough is no longer enough, and the gap between tolerable and wanted is becoming impossible to ignore.`,
+Be honest. You already know what the move is. You have known for weeks. The only thing keeping you from making it is the fear that wanting more makes you ungrateful for what you have. It does not. Wanting more makes you honest.
+
+Love right now. Okay, let us talk about this.
+
+If you are with someone, there is a conversation you have been avoiding. You know exactly which one. It is the one where you say what you actually need instead of what is easy to hear. You have been managing this relationship the way you manage everything, carefully, strategically, making sure nobody gets too uncomfortable. But you are uncomfortable. You have been for a while. And the energy it takes to keep pretending everything is fine is the same energy that is making you so tired by the end of the day.²
+
+The relationship is not necessarily bad. But it is incomplete. There is a piece of honesty missing, and that missing piece is taking up more space than the honesty itself would.
+
+If you are single, something interesting is developing. There is someone around you, or approaching, who does not fit your usual pattern. They are calmer. More present. More available. Your first instinct was probably that they are too calm. Too available. That the ease of it must mean it is not deep enough. That instinct is wrong. You have been confusing anxiety with chemistry for so long that actual safety feels boring to you. It is not boring. It is just new.
+
+Your money right now. Nobody talks about this part, but let us.
+
+There is a tightness around money that has been getting louder. Not necessarily that you are broke. More that the math does not feel like it is going anywhere. You are earning, you are spending, and at the end of the month the number looks roughly the same as it did six months ago. You keep thinking you should be further along than you are.³
+
+Part of this is real. The financial strain is connected to the career stagnation. When you feel stuck professionally, money feels stuck too, because it is. Your income is tied to a version of your career that has stopped growing. The money does not change until the career does.
+
+But part of it is also this: you have been spending emotionally. Not recklessly. But the small purchases you make when you feel stuck, the delivery order after a bad day, the thing you bought online because you deserved something, that pattern is your nervous system trying to create movement in a life that feels frozen. You are buying comfort because you cannot find it anywhere else right now.
+
+The financial pressure eases when the career clarity arrives. They are connected. Fix the direction, and the money follows.
+
+Your energy and well-being. Can we be honest about this?
+
+You are exhausted. Not the kind of tired that a vacation fixes. The kind where you wake up after a full night and your first thought is already heavy. The kind where people ask how you are and you say "good, just busy" because explaining the real answer would take longer than anyone has.⁴
+
+You have been carrying more than you are admitting. Emotionally. Mentally. The people around you are not seeing it because you are very, very good at looking fine. You have been doing fine for so long that nobody thinks to check.
+
+Here is what the exhaustion actually is. It is not burnout in the traditional sense. It is the weight of maintaining a version of your life that no longer matches who you are becoming. Every morning you wake up and perform a role that fit you two years ago, and the gap between who you are now and who that role requires you to be is where all your energy goes. You are not tired from doing too much. You are tired from pretending.
+
+The anxiety, the tension in your shoulders, the way your mind races at night, it is all the same thing. Your body is telling you something your brain has been ignoring: this version of things is not sustainable.
+
+Who you are becoming. This is the big one.
+
+Your old goals do not excite you anymore. The things that used to light you up, the career milestones, the relationship checkboxes, the version of success you were chasing two or three years ago, they feel flat now. Not wrong exactly. Just someone else's. Like you wrote a list of what you wanted when you were a slightly different person, and now that person is gone but the list is still on the fridge.⁵
+
+You are in the middle of becoming someone new, and the discomfort you feel is the transition. Old hobbies feel stale. Old friendships feel surface-level. The way you used to spend your weekends feels like someone else's life. You keep wondering if something is wrong with you, but nothing is wrong with you. Everything is right with you. The old version just ended, and the new one has not fully arrived yet.
+
+This is the part where most people panic and try to go back. They take the promotion they do not want. They text the ex. They book the trip they cannot afford. Do not do that. The discomfort is the doorway.
+
+This entire season, everything you just read, is asking you one thing.
+
+Stop maintaining what is no longer true. The job that does not fit. The conversation you are avoiding. The version of success that belongs to someone you used to be. The exhaustion of pretending.
+
+Let it fall. What is actually yours will not fall with it.
+
+¹ Saturn transiting the 10th house — professional identity under slow, sustained pressure to mature. The discomfort is the maturation itself, not a sign something is wrong. This transit lasts roughly 2.5 years and you are in the middle of it.
+² Pluto square natal Venus — relationships are being excavated. What used to feel like enough is no longer enough, and the gap between tolerable and genuinely wanted is becoming impossible to ignore.
+³ Jupiter retrograde through the 2nd house — financial expansion pauses and turns inward, forcing a re-evaluation of earning patterns and spending habits before the next growth phase.
+⁴ Mars conjunct natal Chiron — the wound of overperformance is being activated. The exhaustion is not random. It is targeted at the exact pattern of pushing through pain without asking for help.
+⁵ Pluto square natal Sun — identity is being rebuilt from the foundation. This is a once-in-a-lifetime transit that dismantles the old self so the real one can emerge. The feeling of "who am I becoming?" is not confusion. It is the transit working.`,
 
   "when-does-it-get-better": `I know. It has been heavy.
 
