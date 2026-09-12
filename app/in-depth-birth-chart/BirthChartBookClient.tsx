@@ -309,7 +309,7 @@ export default function BirthChartBookClient() {
           birth_lat: form.birth_lat,
           birth_lng: form.birth_lng,
           timezone: tz,
-          product_type: "birth-chart-book",
+          product_type: "in-depth-reading",
         }),
       });
 
@@ -320,7 +320,7 @@ export default function BirthChartBookClient() {
         return;
       }
 
-      const checkoutUrl = buildCheckoutUrl("birth-chart-book", {
+      const checkoutUrl = buildCheckoutUrl("in-depth-reading", {
         email: form.email.trim().toLowerCase(),
         sessionId: data.sessionId,
       });
@@ -354,23 +354,23 @@ export default function BirthChartBookClient() {
               <span className="bcb-admit-dot" />
               Personalized birth chart reading &nbsp;·&nbsp; 10 chapters &nbsp;·&nbsp; Ready in 10 minutes
             </div>
-            <h1 className="bcb-hero-h1">Your birth chart, read without a filter.</h1>
+            <h1 className="bcb-hero-h1">Your In-Depth Birth Chart Reading — Finally, One That Actually Sounds Like You</h1>
             <h2 className="bcb-hero-h2">
               You've Googled yourself.<br />
               <span className="bcb-ital">This is what you actually found.</span>
             </h2>
             <p className="bcb-hero-pain">
-              A personalized birth chart reading that goes beyond zodiac stereotypes.<br /><br />
-              You already know your Sun sign. You've probably read your Moon and Rising too. And somehow you still feel like none of it fully explains <em>you</em>.<br /><br />
-              This in-depth natal chart reading covers every planet, every house, every aspect — including your current astrology transits — and writes it like a story about someone who's actually you.
+              Let's be honest — you already know your Sun sign. You've probably read your Moon and Rising too. And somehow you still feel like none of it fully captures <em>you</em>.<br /><br />
+              What if your natal chart could actually explain why you keep repeating the same patterns? Why certain relationships feel fated? Why you feel stuck right now — or like something big is about to shift?<br /><br />
+              This in-depth birth chart reading covers every planet, every house, every aspect in your astrology chart — including your current transits — and turns it into a personalized story about someone who's actually you.
             </p>
             <div className="bcb-hero-proof">
-              <span className="bcb-proof-item"><span className="bcb-proof-icon">✦</span> 10 chapters: transits + natal chart</span>
-              <span className="bcb-proof-item"><span className="bcb-proof-icon">✦</span> Personalized to your chart</span>
-              <span className="bcb-proof-item"><span className="bcb-proof-icon" style={{ color: "#4CAF50" }}>⚡</span> Ready in 10 minutes</span>
+              <span className="bcb-proof-item"><span className="bcb-proof-icon">✦</span> 10 chapters: astrology transits + natal chart analysis</span>
+              <span className="bcb-proof-item"><span className="bcb-proof-icon">✦</span> Personalized to your exact birth chart</span>
+              <span className="bcb-proof-item"><span className="bcb-proof-icon" style={{ color: "#4CAF50" }}>⚡</span> Your reading is ready in 10 minutes</span>
             </div>
             <div className="bcb-hero-price">
-              <s className="bcb-hero-price-old">$29</s> $24 <span className="bcb-price-tag">launch price · one-time</span>
+              <s className="bcb-hero-price-old">$29</s> $24 <span className="bcb-price-tag">launch price | one-time payment</span>
             </div>
             <div className="bcb-hero-ctas">
               <button className="bcb-btn bcb-btn-gold" onClick={scrollToForm}>Get my in-depth reading →</button>
@@ -386,8 +386,8 @@ export default function BirthChartBookClient() {
               <div className="bcb-book-pages-pill">Ch 1 / 10</div>
               <div className="bcb-book-cover">
                 <div className="bcb-bcf-brand">BluntChart</div>
-                <div className="bcb-bcf-title">Your Story</div>
-                <div className="bcb-bcf-sub">Some stories are written by life.<br />This one was written by the sky.</div>
+                <div className="bcb-bcf-title">In-Depth Reading</div>
+                <div className="bcb-bcf-sub">Your birth chart, decoded.<br />10 chapters. One sitting.</div>
                 <div className="bcb-bcf-for">Prepared for</div>
                 <div className="bcb-bcf-name">You</div>
                 <div className="bcb-bcf-foot">about 20 min · one sitting or in pieces</div>
@@ -400,9 +400,9 @@ export default function BirthChartBookClient() {
       {/* TRUST BAR */}
       <div className="bcb-trust-bar">
         <div className="bcb-trust-inner">
-          <span className="bcb-trust-item"><span className="bcb-trust-dot">✦</span> 10-chapter birth chart analysis</span>
-          <span className="bcb-trust-item"><span className="bcb-trust-dot" style={{ color: "#4CAF50" }}>⚡</span> Ready in under 10 minutes</span>
-          <span className="bcb-trust-item"><span className="bcb-trust-dot">✦</span> Online book + downloadable PDF</span>
+          <span className="bcb-trust-item"><span className="bcb-trust-dot">✦</span> 10-chapter personalized natal chart reading</span>
+          <span className="bcb-trust-item"><span className="bcb-trust-dot" style={{ color: "#4CAF50" }}>⚡</span> Your birth chart reading — ready in minutes</span>
+          <span className="bcb-trust-item"><span className="bcb-trust-dot">✦</span> Online book + downloadable PDF report</span>
           <span className="bcb-trust-item"><span className="bcb-trust-dot">✦</span> We fix any issue, guaranteed</span>
         </div>
       </div>
@@ -411,13 +411,13 @@ export default function BirthChartBookClient() {
       <section className="bcb-section">
         <div className="bcb-wrap">
           <div style={{ textAlign: "center", marginBottom: 48 }}>
-            <span className="bcb-eyebrow">What's inside your natal chart reading</span>
-            <h2 className="bcb-section-title">10 Chapters of Personalized Birth Chart Analysis</h2>
+            <span className="bcb-eyebrow">What's inside your in-depth birth chart reading</span>
+            <h2 className="bcb-section-title">10 Chapters. Every Planet. Every House. Your Entire Natal Chart — Decoded.</h2>
             <p className="bcb-section-sub" style={{ margin: "0 auto", maxWidth: 820 }}>
-              This isn't a personality summary you'll forget tomorrow. Each chapter focuses on one part of your natal chart — the parts that quietly influence how you love, why you overthink, what motivates you, where you self-sabotage, and why certain patterns keep repeating.
+              Ever wonder why you keep attracting the same kind of people? Or why you feel stuck even when things are going well? Each chapter of this birth chart analysis focuses on one part of your astrology chart — the parts that quietly shape how you love, why you overthink, where you self-sabotage, and what keeps pulling you forward.
             </p>
             <p className="bcb-section-sub" style={{ margin: "20px auto 0", maxWidth: 820 }}>
-              Part I covers your current astrology transits — what's happening in your life right now and what's coming. Part II is your full birth chart analysis, written like someone spent years getting to know you.
+              Part I covers your current astrology transits — what's happening in your life <em>right now</em> and what's coming next. Part II is your full natal chart reading, written like someone spent years getting to know you. Ready to see what your chart actually says?
             </p>
           </div>
 
@@ -463,7 +463,7 @@ export default function BirthChartBookClient() {
           <div className="bcb-sample-tag">
             <span style={{ fontSize: 9 }}>●</span> Real chapter — from a real reading
           </div>
-          <h2 className="bcb-section-title">Read this. If it sounds like you, the rest of the book will too.</h2>
+          <h2 className="bcb-section-title">Does this sound like you? Read a real chapter from a real birth chart reading.</h2>
         </div>
         <div className="bcb-wrap">
           <div className="bcb-sample-frame">
@@ -506,8 +506,8 @@ export default function BirthChartBookClient() {
       <section className="bcb-section" style={{ background: "#111111" }}>
         <div className="bcb-wrap">
           <div style={{ textAlign: "center", marginBottom: 48 }}>
-            <span className="bcb-eyebrow">What people actually said</span>
-            <h2 className="bcb-section-title">The moment it clicks is different for everyone.</h2>
+            <span className="bcb-eyebrow">Real birth chart reading reviews</span>
+            <h2 className="bcb-section-title">Don't take our word for it — here's what people said about their readings.</h2>
           </div>
           <div className="bcb-reviews-grid">
             {REVIEWS.map((r, i) => (
@@ -524,8 +524,8 @@ export default function BirthChartBookClient() {
       {/* HOW IT'S MADE */}
       <section className="bcb-section">
         <div className="bcb-wrap" style={{ textAlign: "center" }}>
-          <span className="bcb-eyebrow">Transparency</span>
-          <h2 className="bcb-section-title">How your birth chart reading is built</h2>
+          <span className="bcb-eyebrow">How it works</span>
+          <h2 className="bcb-section-title">How is your personalized birth chart reading created?</h2>
           <div className="bcb-honest-img-wrap">
             <Image
               src="/BluntChart-your book PDF preview.png"
@@ -549,11 +549,11 @@ export default function BirthChartBookClient() {
       {/* PRICING + FORM */}
       <section id="pricing" className="bcb-section" ref={formRef}>
         <div className="bcb-wrap-md" style={{ textAlign: "center", marginBottom: 48 }}>
-          <span className="bcb-eyebrow">Personalized Birth Chart Reading</span>
+          <span className="bcb-eyebrow">Get Your Personalized Birth Chart Reading</span>
           <h2 className="bcb-section-title">
             {stage === "form" || stage === "submitting"
-              ? "Enter your birth details"
-              : <>Your natal chart reading. <span style={{ color: "var(--bcb-gold)" }}>A book you'll come back to for years.</span></>}
+              ? "Enter your birth details — your reading starts here"
+              : <>Your natal chart reading. <span style={{ color: "var(--bcb-gold)" }}>10 chapters. One sitting. Yours forever.</span></>}
           </h2>
         </div>
         <div className="bcb-wrap-md">
@@ -631,8 +631,8 @@ export default function BirthChartBookClient() {
           ) : (
             <div className="bcb-pricing-card" style={{ textAlign: "center" }}>
               <div className="bcb-pricing-badge">Launch Price</div>
-              <div className="bcb-pricing-product">Your Story</div>
-              <div className="bcb-pricing-tagline">10 chapters of personalized birth chart analysis. Every planet, every transit.</div>
+              <div className="bcb-pricing-product">In-Depth Birth Chart Reading</div>
+              <div className="bcb-pricing-tagline">10 chapters of personalized natal chart analysis. Every planet. Every transit. Your entire birth chart — decoded.</div>
               <div className="bcb-price-big">
                 <span className="bcb-price-struck">$29</span>
                 <span className="bcb-price-sym">$</span>
@@ -663,8 +663,8 @@ export default function BirthChartBookClient() {
       {/* FAQ */}
       <section className="bcb-section">
         <div className="bcb-wrap" style={{ textAlign: "center", marginBottom: 48 }}>
-          <span className="bcb-eyebrow">Frequently asked questions</span>
-          <h2 className="bcb-section-title">About your birth chart reading</h2>
+          <span className="bcb-eyebrow">Birth chart reading FAQ</span>
+          <h2 className="bcb-section-title">Questions about natal chart readings? We've got answers.</h2>
         </div>
         <div className="bcb-wrap-md">
           {FAQS.map((f, i) => (
@@ -676,22 +676,22 @@ export default function BirthChartBookClient() {
       {/* FINAL CTA */}
       <section className="bcb-final">
         <div className="bcb-wrap" style={{ textAlign: "center" }}>
-          <span className="bcb-eyebrow" style={{ display: "block", marginBottom: 20 }}>Ready?</span>
+          <span className="bcb-eyebrow" style={{ display: "block", marginBottom: 20 }}>Still reading?</span>
           <h2 className="bcb-final-h">
-            You've been trying to understand yourself<br />
-            <em>using a three-word summary.</em>
+            You already know your Sun sign.<br />
+            <em>What about the other 99% of your birth chart?</em>
           </h2>
-          <p className="bcb-final-sub">Your personalized birth chart reading has 10 chapters of actual answers.</p>
+          <p className="bcb-final-sub">Your personalized birth chart reading covers every planet, every house, every transit — 10 chapters of real natal chart analysis built from your exact birth details.</p>
           <div className="bcb-final-price">
             <span style={{ fontSize: 24, color: "rgba(240,233,220,0.25)", textDecoration: "line-through" }}>$29</span>{" "}
             <span style={{ color: "var(--bcb-gold)" }}>$24</span>{" "}
-            · launch price · ready in minutes
+            · launch price · your reading is ready in minutes
           </div>
           <button className="bcb-btn bcb-btn-gold" style={{ fontSize: 16, padding: "18px 48px" }} onClick={scrollToForm}>
             Get my in-depth birth chart reading →
           </button>
           <div style={{ marginTop: 16, fontSize: 12, color: "rgba(240,233,220,0.35)" }}>
-            🔒 No subscription. In your inbox in under 10 minutes.
+            No subscription. One-time payment. Delivered to your inbox in under 10 minutes.
           </div>
         </div>
       </section>

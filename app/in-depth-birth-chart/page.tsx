@@ -4,7 +4,7 @@ import BirthChartBookClient from "./BirthChartBookClient";
 export const metadata: Metadata = {
   title: "In-Depth Birth Chart Reading | Personalized Natal Chart Analysis | BluntChart",
   description:
-    "Get a personalized birth chart reading built from your exact planetary placements. 10 chapters covering current transits, natal chart analysis, career, love, money, and purpose. Delivered as an online book + PDF in under 10 minutes. $24.",
+    "Get a personalized birth chart reading built from your exact planetary placements. 10 chapters covering astrology transits, natal chart analysis, career, love, money, and purpose. Detailed birth chart interpretation delivered online + PDF in under 10 minutes. $24.",
   keywords: [
     "birth chart reading",
     "natal chart reading",
@@ -12,17 +12,26 @@ export const metadata: Metadata = {
     "personalized birth chart reading",
     "birth chart analysis",
     "natal chart analysis",
-    "astrology birth chart reading",
+    "astrology birth chart",
+    "birth chart astrology",
     "detailed birth chart reading",
     "astrology transits",
+    "birth chart reading online",
+    "personalized natal chart analysis",
     "birth chart report PDF",
     "in depth natal chart reading",
+    "birth chart interpretation",
+    "astrology chart reading",
+    "full birth chart reading",
+    "what is a birth chart reading",
+    "how accurate are birth chart readings",
+    "personalized astrology reading",
   ],
   openGraph: {
     title:
       "In-Depth Birth Chart Reading — Personalized Natal Chart Analysis",
     description:
-      "A personalized birth chart reading covering 10 chapters: your current transits, natal placements, career, love, money, and purpose. Built from real planetary positions. $24, delivered in minutes.",
+      "A personalized birth chart reading covering 10 chapters: your current astrology transits, natal chart placements, career, love, money, and purpose. Built from real planetary positions. $24, delivered in minutes.",
     url: "https://bluntchart.com/in-depth-birth-chart",
     siteName: "BluntChart",
     type: "website",
@@ -32,7 +41,7 @@ export const metadata: Metadata = {
     title:
       "In-Depth Birth Chart Reading | Personalized Natal Chart Analysis | BluntChart",
     description:
-      "A personalized birth chart reading: 10 chapters built from your exact planetary positions. Current transits + full natal chart analysis. Ready in under 10 minutes.",
+      "Your personalized birth chart reading: 10 chapters built from your exact planetary positions. Current astrology transits + full natal chart analysis. Ready in under 10 minutes.",
   },
   alternates: {
     canonical: "https://bluntchart.com/in-depth-birth-chart",
@@ -98,6 +107,30 @@ const faqJsonLd = {
       acceptedAnswer: {
         "@type": "Answer",
         text: "After purchase, your personalized birth chart reading generates in 5-10 minutes. You receive a link to a swipeable online book you can read immediately, plus a downloadable PDF version. No account required — it's yours permanently.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "What are astrology transits and why do they matter?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Astrology transits are the current movements of planets through the zodiac and how they interact with the positions of planets in your birth chart. They show what themes are active in your life right now — for example, Saturn transiting your 7th house might trigger serious relationship questions, while Jupiter crossing your Midheaven could bring career opportunities. BluntChart's in-depth reading dedicates three full chapters to your current transits so you understand what's happening now and what's coming next.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Is a birth chart reading the same as an astrology reading?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "A birth chart reading is a specific type of astrology reading that focuses on your natal chart — the positions of all planets at the exact time and place you were born. Other astrology readings might focus only on your Sun sign, your yearly forecast, or compatibility. A birth chart reading (also called a natal chart reading) is the most comprehensive and personalized form of astrology reading because it maps your entire planetary blueprint.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Can I get a birth chart reading without my exact birth time?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Yes, you can still get a birth chart reading without your exact birth time, but some parts will be less precise. Your birth time determines your Rising sign (Ascendant) and the house placements of all your planets, which affect career, relationships, and life themes. Without it, we use a noon chart as a default. Your planetary signs and aspects will still be accurate — only house-dependent interpretations will be approximate.",
       },
     },
   ],
