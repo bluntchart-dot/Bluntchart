@@ -4,7 +4,7 @@ import BirthChartBookClient from "./BirthChartBookClient";
 export const metadata: Metadata = {
   title: "In-Depth Birth Chart Reading | Personalized Natal Chart Analysis | BluntChart",
   description:
-    "Get a personalized birth chart reading built from your exact planetary placements. 10 chapters covering astrology transits, natal chart analysis, career, love, money, and purpose. Detailed birth chart interpretation delivered online + PDF in under 10 minutes. $24.",
+    "Get a personalized birth chart reading built from your exact planetary placements. 8 chapters, ~49 pages covering who you are, career, love, money, growth, current astrology transits, and actionable takeaways. Online book + PDF delivered in under 10 minutes. $24.",
   keywords: [
     "birth chart reading",
     "natal chart reading",
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
     title:
       "In-Depth Birth Chart Reading — Personalized Natal Chart Analysis",
     description:
-      "A personalized birth chart reading covering 10 chapters: your current astrology transits, natal chart placements, career, love, money, and purpose. Built from real planetary positions. $24, delivered in minutes.",
+      "A personalized birth chart reading: 8 chapters, ~49 pages covering career, love, money, growth, and current astrology transits. Built from real planetary positions. $24, delivered in minutes.",
     url: "https://bluntchart.com/in-depth-birth-chart",
     siteName: "BluntChart",
     type: "website",
@@ -41,7 +41,7 @@ export const metadata: Metadata = {
     title:
       "In-Depth Birth Chart Reading | Personalized Natal Chart Analysis | BluntChart",
     description:
-      "Your personalized birth chart reading: 10 chapters built from your exact planetary positions. Current astrology transits + full natal chart analysis. Ready in under 10 minutes.",
+      "Your personalized birth chart reading: 8 chapters, ~49 pages built from your exact planetary positions. Career, love, money, transits + actionable takeaways. Ready in under 10 minutes.",
   },
   alternates: {
     canonical: "https://bluntchart.com/in-depth-birth-chart",
@@ -53,7 +53,7 @@ const productJsonLd = {
   "@type": "Product",
   name: "In-Depth Birth Chart Reading",
   description:
-    "Personalized birth chart reading and natal chart analysis covering 10 chapters across your current astrology transits and birth chart placements. Delivered as an online book + downloadable PDF. Generated from real ephemeris data.",
+    "Personalized birth chart reading and natal chart analysis: 8 chapters, ~49 pages covering personality, career, love, money, emotional growth, current astrology transits, and actionable takeaways. Delivered as an online book + downloadable PDF.",
   brand: { "@type": "Brand", name: "BluntChart" },
   offers: {
     "@type": "Offer",
@@ -106,7 +106,7 @@ const faqJsonLd = {
       name: "How is this birth chart reading delivered?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "After purchase, your personalized birth chart reading generates in 5-10 minutes. You receive a link to a swipeable online book you can read immediately, plus a downloadable PDF version. No account required — it's yours permanently.",
+        text: "After purchase, your personalized birth chart reading generates in under 10 minutes. You receive a link to a swipeable online book (8 chapters, ~49 pages) you can read immediately, plus a downloadable PDF version. No account required — it's yours permanently.",
       },
     },
     {
@@ -114,7 +114,7 @@ const faqJsonLd = {
       name: "What are astrology transits and why do they matter?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Astrology transits are the current movements of planets through the zodiac and how they interact with the positions of planets in your birth chart. They show what themes are active in your life right now — for example, Saturn transiting your 7th house might trigger serious relationship questions, while Jupiter crossing your Midheaven could bring career opportunities. BluntChart's in-depth reading dedicates three full chapters to your current transits so you understand what's happening now and what's coming next.",
+        text: "Astrology transits are the current movements of planets through the zodiac and how they interact with the positions of planets in your birth chart. They show what themes are active in your life right now — for example, Saturn transiting your 7th house might trigger serious relationship questions, while Jupiter crossing your Midheaven could bring career opportunities. BluntChart's in-depth reading includes two dedicated transit chapters — what's active in your life right now and what's approaching — plus transit timing woven into the career, love, and money chapters so you know when to act.",
       },
     },
     {

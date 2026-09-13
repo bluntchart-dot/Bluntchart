@@ -178,7 +178,7 @@ const FAQS = [
   },
   {
     q: "I've seen birth chart readings on Etsy for $8-$15. Why is this more?",
-    a: "Three real differences. First, depth: most Etsy readings are 10-20 pages of bullet points covering Sun, Moon, Rising. This is 10 chapters across 2 parts — your current transits and your full natal chart analysis — covering career, money, love patterns, purpose, and emotional blind spots. Second, format: this isn't a flat PDF. It's a swipeable book experience you read online, plus a downloadable PDF. Third, sourcing: every paragraph cites the actual planet and house behind it.",
+    a: "Three real differences. First, depth: most Etsy readings are 10-20 pages of bullet points covering Sun, Moon, Rising. This is 8 chapters, ~49 pages — your current transits and your full natal chart analysis — covering career, love, money, emotional patterns, and actionable takeaways. Second, format: this isn't a flat PDF. It's a swipeable book experience you read online, plus a downloadable PDF. Third, sourcing: every paragraph cites the actual planet and house behind it.",
   },
   {
     q: "Is this birth chart reading written by AI or a human astrologer?",
@@ -232,19 +232,17 @@ const REVIEWS = [
 /* ─── CHAPTERS ──────────────────────────────────────────────────────── */
 
 const CHAPTERS_LEFT = [
-  { num: "01", name: "What's Happening Now", sub: "Current Transits · Saturn · Pluto · Jupiter · Venus · Mars · Chiron" },
-  { num: "02", name: "When Does It Get Better?", sub: "Jupiter & Venus Transits · Progressed Moon" },
-  { num: "03", name: "What's Coming Next", sub: "Upcoming Transits · Major Aspects" },
-  { num: "04", name: "Who You Are", sub: "Sun · Moon · Rising · Mercury" },
-  { num: "05", name: "Purpose & Destiny", sub: "North Node · Saturn · Chiron · Sun" },
+  { num: "01", name: "Who You Are", sub: "Sun · Moon · Rising · Mercury · Hidden strengths · What people misunderstand", question: "Why do people misread you — and what are you actually like underneath?" },
+  { num: "02", name: "Purpose, Career & Success", sub: "Midheaven · Saturn · Jupiter · 10th House · North Node", question: "What career fits your chart — and when is the right time to make a move?" },
+  { num: "03", name: "Love, Relationships & Intimacy", sub: "Venus · Mars · Moon · 5th & 7th Houses · Relationship patterns", question: "Why do your relationships follow the same pattern — and what do you actually need?" },
+  { num: "04", name: "Money & Wealth", sub: "Jupiter · 2nd House · Venus · Saturn · Income paths", question: "How does your chart say you build wealth — and when should you be cautious?" },
 ];
 
 const CHAPTERS_RIGHT = [
-  { num: "06", name: "Career & Success", sub: "Midheaven · Saturn · Jupiter · 10th House" },
-  { num: "07", name: "Love, Relationships & Intimacy", sub: "Venus · Mars · Moon · 5th & 7th Houses" },
-  { num: "08", name: "Money & Wealth", sub: "Jupiter · 2nd House · Venus · Saturn" },
-  { num: "09", name: "Growth & Emotional Well-being", sub: "Saturn · Pluto · 12th House · Chiron" },
-  { num: "10", name: "What To Do With All of This", sub: "Synthesis · Actionable Takeaways" },
+  { num: "05", name: "Growth & Emotional Well-being", sub: "Saturn · Pluto · 12th House · Chiron · Blind spots", question: "Why does anxiety keep showing up — and what actually brings you peace?" },
+  { num: "06", name: "Your Life Right Now", sub: "Current Transits · What's ending · What's beginning · What demands attention", question: "Why does life feel the way it does right now — and what area needs your focus?" },
+  { num: "07", name: "What's Coming Next", sub: "Upcoming Transits · Easier periods · Opportunities · What to prepare for", question: "When does it get better — and what opportunities are approaching?" },
+  { num: "08", name: "What To Do With All of This", sub: "Synthesis · Actionable Takeaways · What to stop · What to start", question: "What matters most right now — and what should you actually do next?" },
 ];
 
 /* ─── GUMROAD CHECKOUT ──────────────────────────────────────────────── */
@@ -340,7 +338,7 @@ export default function BirthChartBookClient() {
       <nav className="bcb-nav">
         <Link href="/" className="bcb-nav-logo">BluntChart</Link>
         <div className="bcb-nav-right">
-          <span className="bcb-nav-price">Launch price · <s style={{ opacity: 0.4, fontSize: 11 }}>$29</s> $24</span>
+          <span className="bcb-nav-price">$24 · one-time · 49-page reading</span>
           <button className="bcb-nav-btn" onClick={scrollToForm}>Get my reading →</button>
         </div>
       </nav>
@@ -349,48 +347,53 @@ export default function BirthChartBookClient() {
       <section className="bcb-hero">
         <div className="bcb-hero-glow" />
         <div className="bcb-hero-inner">
-          <div className="bcb-hero-content">
+          <div className="bcb-hero-top">
             <div className="bcb-hero-admit">
               <span className="bcb-admit-dot" />
-              Personalized birth chart reading &nbsp;·&nbsp; 10 chapters &nbsp;·&nbsp; Ready in 10 minutes
+              Personalized birth chart reading &nbsp;·&nbsp; 8 chapters &nbsp;·&nbsp; ~49 pages &nbsp;·&nbsp; Ready in 10 minutes
             </div>
-            <h1 className="bcb-hero-h1">Your In-Depth Birth Chart Reading — Finally, One That Actually Sounds Like You</h1>
+            <h1 className="bcb-hero-h1">Your In-Depth Birth Chart Reading</h1>
             <h2 className="bcb-hero-h2">
-              You've Googled yourself.<br />
-              <span className="bcb-ital">This is what you actually found.</span>
+              8 chapters. ~49 pages. Every planet, every house, every transit.<br />
+              <span className="bcb-ital">Personalized to the minute you were born.</span>
             </h2>
-            <p className="bcb-hero-pain">
-              Let's be honest — you already know your Sun sign. You've probably read your Moon and Rising too. And somehow you still feel like none of it fully captures <em>you</em>.<br /><br />
-              What if your natal chart could actually explain why you keep repeating the same patterns? Why certain relationships feel fated? Why you feel stuck right now — or like something big is about to shift?<br /><br />
-              This in-depth birth chart reading covers every planet, every house, every aspect in your astrology chart — including your current transits — and turns it into a personalized story about someone who's actually you.
-            </p>
-            <div className="bcb-hero-proof">
-              <span className="bcb-proof-item"><span className="bcb-proof-icon">✦</span> 10 chapters: astrology transits + natal chart analysis</span>
-              <span className="bcb-proof-item"><span className="bcb-proof-icon">✦</span> Personalized to your exact birth chart</span>
-              <span className="bcb-proof-item"><span className="bcb-proof-icon" style={{ color: "#4CAF50" }}>⚡</span> Your reading is ready in 10 minutes</span>
-            </div>
-            <div className="bcb-hero-price">
-              <s className="bcb-hero-price-old">$29</s> $24 <span className="bcb-price-tag">launch price | one-time payment</span>
-            </div>
-            <div className="bcb-hero-ctas">
-              <button className="bcb-btn bcb-btn-gold" onClick={scrollToForm}>Get my in-depth reading →</button>
-              <a href="#sample" className="bcb-btn bcb-btn-ghost">Read a real sample first</a>
-            </div>
-            <div className="bcb-hero-nosub">🔒 No recurring charges. No upsells. Yours forever.</div>
           </div>
+          <div className="bcb-hero-split">
+            <div className="bcb-hero-content">
+              <p className="bcb-hero-pain">
+                You already know your Sun sign. You've probably read your Moon and Rising too. But none of it has actually <em>explained</em> you.<br /><br />
+                Why do you keep ending up in the same situations? Why does something feel off even when things are going well? What's actually supposed to come next?<br /><br />
+                This birth chart reading goes through your entire natal chart — personality, career, love, money, growth, and your current astrology transits — and gives you real answers across 8 chapters and ~49 pages.
+              </p>
+              <div className="bcb-hero-proof">
+                <span className="bcb-proof-item"><span className="bcb-proof-icon">✦</span> 8 chapters · ~49 pages of personalized analysis</span>
+                <span className="bcb-proof-item"><span className="bcb-proof-icon">✦</span> Birth chart + current astrology transits</span>
+                <span className="bcb-proof-item"><span className="bcb-proof-icon">✦</span> Online book + downloadable PDF</span>
+                <span className="bcb-proof-item"><span className="bcb-proof-icon" style={{ color: "#4CAF50" }}>⚡</span> Ready in under 10 minutes</span>
+              </div>
+              <div className="bcb-hero-price">
+                $24 <span className="bcb-price-tag">one-time payment · yours forever</span>
+              </div>
+              <div className="bcb-hero-ctas">
+                <button className="bcb-btn bcb-btn-gold" onClick={scrollToForm}>Get my birth chart reading →</button>
+                <a href="#chapters" className="bcb-btn bcb-btn-ghost">See what's inside</a>
+              </div>
+              <div className="bcb-hero-nosub">No subscription. No upsells. Delivered to your inbox.</div>
+            </div>
 
-          {/* BOOK VISUAL */}
-          <div className="bcb-hero-visual">
-            <div className="bcb-book-mockup">
-              <div className="bcb-book-spine" />
-              <div className="bcb-book-pages-pill">Ch 1 / 10</div>
-              <div className="bcb-book-cover">
-                <div className="bcb-bcf-brand">BluntChart</div>
-                <div className="bcb-bcf-title">In-Depth Reading</div>
-                <div className="bcb-bcf-sub">Your birth chart, decoded.<br />10 chapters. One sitting.</div>
-                <div className="bcb-bcf-for">Prepared for</div>
-                <div className="bcb-bcf-name">You</div>
-                <div className="bcb-bcf-foot">about 20 min · one sitting or in pieces</div>
+            {/* BOOK VISUAL */}
+            <div className="bcb-hero-visual">
+              <div className="bcb-book-mockup">
+                <div className="bcb-book-spine" />
+                <div className="bcb-book-pages-pill">~49 pages</div>
+                <div className="bcb-book-cover">
+                  <div className="bcb-bcf-brand">BluntChart</div>
+                  <div className="bcb-bcf-title">In-Depth Reading</div>
+                  <div className="bcb-bcf-sub">Your birth chart, decoded.<br />8 chapters. ~49 pages.</div>
+                  <div className="bcb-bcf-for">Prepared for</div>
+                  <div className="bcb-bcf-name">You</div>
+                  <div className="bcb-bcf-foot">about 20 min · one sitting or in pieces</div>
+                </div>
               </div>
             </div>
           </div>
@@ -400,38 +403,36 @@ export default function BirthChartBookClient() {
       {/* TRUST BAR */}
       <div className="bcb-trust-bar">
         <div className="bcb-trust-inner">
-          <span className="bcb-trust-item"><span className="bcb-trust-dot">✦</span> 10-chapter personalized natal chart reading</span>
-          <span className="bcb-trust-item"><span className="bcb-trust-dot" style={{ color: "#4CAF50" }}>⚡</span> Your birth chart reading — ready in minutes</span>
-          <span className="bcb-trust-item"><span className="bcb-trust-dot">✦</span> Online book + downloadable PDF report</span>
-          <span className="bcb-trust-item"><span className="bcb-trust-dot">✦</span> We fix any issue, guaranteed</span>
+          <span className="bcb-trust-item"><span className="bcb-trust-dot">✦</span> 8 chapters · ~49 pages of natal chart analysis</span>
+          <span className="bcb-trust-item"><span className="bcb-trust-dot" style={{ color: "#4CAF50" }}>⚡</span> Birth chart reading — ready in minutes</span>
+          <span className="bcb-trust-item"><span className="bcb-trust-dot">✦</span> Online book + downloadable PDF</span>
+          <span className="bcb-trust-item"><span className="bcb-trust-dot">✦</span> Real planetary data · real ephemeris</span>
         </div>
       </div>
 
       {/* WHAT'S INSIDE */}
-      <section className="bcb-section">
+      <section id="chapters" className="bcb-section">
         <div className="bcb-wrap">
           <div style={{ textAlign: "center", marginBottom: 48 }}>
-            <span className="bcb-eyebrow">What's inside your in-depth birth chart reading</span>
-            <h2 className="bcb-section-title">10 Chapters. Every Planet. Every House. Your Entire Natal Chart — Decoded.</h2>
+            <span className="bcb-eyebrow">What's inside your birth chart reading</span>
+            <h2 className="bcb-section-title">8 Chapters. ~49 Pages. Every Question You've Been Asking — Answered.</h2>
             <p className="bcb-section-sub" style={{ margin: "0 auto", maxWidth: 820 }}>
-              Ever wonder why you keep attracting the same kind of people? Or why you feel stuck even when things are going well? Each chapter of this birth chart analysis focuses on one part of your astrology chart — the parts that quietly shape how you love, why you overthink, where you self-sabotage, and what keeps pulling you forward.
-            </p>
-            <p className="bcb-section-sub" style={{ margin: "20px auto 0", maxWidth: 820 }}>
-              Part I covers your current astrology transits — what's happening in your life <em>right now</em> and what's coming next. Part II is your full natal chart reading, written like someone spent years getting to know you. Ready to see what your chart actually says?
+              Each chapter covers one part of your natal chart — and answers a specific question you've probably been Googling. Your birth chart has the answers. This reading connects them into one story.
             </p>
           </div>
 
-          {/* 3D BOOK TOC */}
+          {/* INTERACTIVE CHAPTER GRID */}
           <div className="bcb-toc-grid">
             <div className="bcb-toc-book">
               <div className="bcb-toc-spine" />
               <div className="bcb-toc-inner">
-                <span className="bcb-chapter-tag">Part I · Your Current Season + Birth Chart</span>
+                <span className="bcb-chapter-tag">Part I · Your Birth Chart</span>
                 {CHAPTERS_LEFT.map((ch) => (
                   <div key={ch.num} className="bcb-chapter-row">
                     <span className="bcb-chapter-num">{ch.num}</span>
                     <div>
                       <div className="bcb-chapter-name">{ch.name}</div>
+                      <div className="bcb-chapter-question">{ch.question}</div>
                       <div className="bcb-chapter-planets">{ch.sub}</div>
                     </div>
                   </div>
@@ -441,17 +442,38 @@ export default function BirthChartBookClient() {
             <div className="bcb-toc-book">
               <div className="bcb-toc-spine" />
               <div className="bcb-toc-inner">
-                <span className="bcb-chapter-tag">Part II cont. + Closer</span>
+                <span className="bcb-chapter-tag">Part II · Your Transits + Takeaways</span>
                 {CHAPTERS_RIGHT.map((ch) => (
                   <div key={ch.num} className="bcb-chapter-row">
                     <span className="bcb-chapter-num">{ch.num}</span>
                     <div>
                       <div className="bcb-chapter-name">{ch.name}</div>
+                      <div className="bcb-chapter-question">{ch.question}</div>
                       <div className="bcb-chapter-planets">{ch.sub}</div>
                     </div>
                   </div>
                 ))}
               </div>
+            </div>
+          </div>
+
+          {/* NUMBERS BAR */}
+          <div className="bcb-numbers-bar">
+            <div className="bcb-number-item">
+              <div className="bcb-number-big">8</div>
+              <div className="bcb-number-label">Chapters</div>
+            </div>
+            <div className="bcb-number-item">
+              <div className="bcb-number-big">~49</div>
+              <div className="bcb-number-label">Pages (PDF)</div>
+            </div>
+            <div className="bcb-number-item">
+              <div className="bcb-number-big">Every</div>
+              <div className="bcb-number-label">Planet & House</div>
+            </div>
+            <div className="bcb-number-item">
+              <div className="bcb-number-big">&lt;10 min</div>
+              <div className="bcb-number-label">Delivery time</div>
             </div>
           </div>
         </div>
@@ -461,27 +483,27 @@ export default function BirthChartBookClient() {
       <section id="sample" className="bcb-section" style={{ background: "#111111" }}>
         <div className="bcb-wrap" style={{ textAlign: "center" }}>
           <div className="bcb-sample-tag">
-            <span style={{ fontSize: 9 }}>●</span> Real chapter — from a real reading
+            <span style={{ fontSize: 9 }}>●</span> Real excerpt — from a real reading
           </div>
-          <h2 className="bcb-section-title">Does this sound like you? Read a real chapter from a real birth chart reading.</h2>
+          <h2 className="bcb-section-title">Here's what a real birth chart reading looks like.</h2>
+          <p className="bcb-section-sub" style={{ margin: "0 auto 48px", maxWidth: 720 }}>
+            This is an actual excerpt from Chapter 1 (Who You Are) of a real customer's reading. Every reading is different because every natal chart is different.
+          </p>
         </div>
         <div className="bcb-wrap">
           <div className="bcb-sample-frame">
             <div className="bcb-sample-chrome">
-              <span>Your Reading · Welcome</span>
+              <span>Chapter 1 · Who You Are</span>
               <span style={{ color: "rgba(240,233,220,0.2)" }}>BluntChart</span>
             </div>
             <div className="bcb-sample-body">
-              <div className="bcb-sample-ey">Welcome</div>
-              <div className="bcb-sample-h">Before We Begin</div>
-              <div className="bcb-sample-sub">I already know something about you.</div>
+              <div className="bcb-sample-ey">Chapter 1</div>
+              <div className="bcb-sample-h">Who You Are</div>
+              <div className="bcb-sample-sub">The face you show, the person underneath, and the gap between the two.</div>
               <div className="bcb-sample-text">
-                <p>You've been trying to understand yourself for a long time now.</p>
-                <p>Not in some dramatic, soul-searching way. More like... you just notice things. You notice when something that's supposed to make you happy doesn't. You notice that you keep ending up in the same situations with different people. You notice the gap between how you come across and how you actually feel inside.</p>
-                <p>And you've Googled it. You've read your Sun sign, your Moon sign, maybe even your Rising. But it always feels like reading about someone who's almost you... close enough to be interesting, but never close enough to actually help.</p>
-                <p>Here's what I think is going on. You're harder on yourself than anyone around you realizes. There's a version of you that lives in your head... the one who has it together, who doesn't second-guess everything, who doesn't care so much about what other people think. And you've been quietly measuring the distance between that person and the one you actually are.</p>
-                <p>You give people way too many chances. You replay conversations hours later and only then realize what actually happened. You forgive things you probably shouldn't, and then feel stupid about it later.</p>
-                <p>None of that is random. Your chart shows exactly where all of it comes from... and honestly, once you see it laid out, a lot of things are going to make sense for the first time.</p>
+                <p>You lead with warmth. People feel safe around you fast — maybe faster than you realize. There's something about how you hold space for people that makes them open up, tell you things they don't tell anyone else, and then lean on you like you've been close for years.</p>
+                <p>But that warmth has a cost you don't talk about. You absorb more than you should. You carry other people's emotions home like luggage and spend the rest of the night wondering if you said the right thing, gave enough, or somehow made it worse.</p>
+                <p>Here's the part that most people miss about you: you're not soft. Not really. That gentleness is real, but underneath it there's someone who watches everything, processes everything, and rarely forgets anything important. You just don't show that side because you've learned that people prefer the version of you that makes them feel comfortable.</p>
               </div>
             </div>
             <div className="bcb-sample-fade" />
@@ -489,14 +511,14 @@ export default function BirthChartBookClient() {
               <div className="bcb-sample-callout">
                 <span style={{ color: "var(--bcb-gold)", fontSize: 16, flexShrink: 0 }}>↳</span>
                 <div>
-                  <strong style={{ color: "rgba(240,233,220,0.75)", display: "block", marginBottom: 4 }}>What comes next is specific to your chart.</strong>
-                  The next 10 chapters are your full natal chart reading — current astrology transits, birth chart placements, career path, love patterns, money story, emotional blind spots, and actionable takeaways.
+                  <strong style={{ color: "rgba(240,233,220,0.75)", display: "block", marginBottom: 4 }}>This is one paragraph from one chapter.</strong>
+                  Your full reading has 8 chapters and ~49 pages covering who you are, career, love and relationship patterns, money, emotional growth, current transits, what's coming next, and actionable takeaways.
                 </div>
               </div>
             </div>
             <div className="bcb-sample-footer">
-              <span style={{ fontStyle: "italic", color: "rgba(240,233,220,0.45)" }}>Yours is ready in under 10 minutes.</span>
-              <button className="bcb-btn bcb-btn-gold" style={{ padding: "12px 24px", fontSize: 14 }} onClick={scrollToForm}>Get the full reading — <s style={{ opacity: 0.5 }}>$29</s> $24 →</button>
+              <span style={{ fontStyle: "italic", color: "rgba(240,233,220,0.45)" }}>Your personalized reading is ready in under 10 minutes.</span>
+              <button className="bcb-btn bcb-btn-gold" style={{ padding: "12px 24px", fontSize: 14 }} onClick={scrollToForm}>Get my birth chart reading — $24 →</button>
             </div>
           </div>
         </div>
@@ -537,10 +559,10 @@ export default function BirthChartBookClient() {
           </div>
           <div className="bcb-honest-card">
             <p className="bcb-honest-p" style={{ marginBottom: 0 }}>Your natal chart is calculated from the exact positions of every planet at the moment and place you were born — using real ephemeris data, not approximations. The interpretive framework was built by human astrologers. The personalized narrative is generated by AI from your specific placements and current transits.</p>
-            <p className="bcb-honest-p" style={{ marginTop: 14, marginBottom: 0 }}>We say this clearly because you deserve to know how your birth chart reading is made.</p>
+            <p className="bcb-honest-p" style={{ marginTop: 14, marginBottom: 0 }}>We tell you this upfront because most sellers don't. You deserve to know how your reading is made.</p>
             <div className="bcb-info-box" style={{ marginTop: 24 }}>
-              <div className="bcb-info-label">What this means for your reading</div>
-              <div className="bcb-info-text">A $140 astrologer consultation takes a week. This personalized birth chart analysis gets you the same depth in minutes — the chart math is the same, the astrological framework is the same, and every paragraph is built from your actual planetary placements.</div>
+              <div className="bcb-info-label">How this compares to a traditional astrologer</div>
+              <div className="bcb-info-text">A 1-hour astrologer consultation costs $100-$200 and takes 1-2 weeks to book. This birth chart reading gives you 8 chapters, ~49 pages of personalized analysis in under 10 minutes — same planetary data, same astrological framework, every paragraph built from your actual placements. The depth is the same. The delivery is instant.</div>
             </div>
           </div>
         </div>
@@ -553,7 +575,7 @@ export default function BirthChartBookClient() {
           <h2 className="bcb-section-title">
             {stage === "form" || stage === "submitting"
               ? "Enter your birth details — your reading starts here"
-              : <>Your natal chart reading. <span style={{ color: "var(--bcb-gold)" }}>10 chapters. One sitting. Yours forever.</span></>}
+              : <>Your natal chart reading. <span style={{ color: "var(--bcb-gold)" }}>8 chapters. ~49 pages. Yours forever.</span></>}
           </h2>
         </div>
         <div className="bcb-wrap-md">
@@ -621,7 +643,7 @@ export default function BirthChartBookClient() {
                   style={{ width: "100%", fontSize: 16, padding: "18px", marginTop: 8 }}
                   disabled={stage === "submitting"}
                 >
-                  {stage === "submitting" ? "Saving birth details..." : <>Continue to payment — <s style={{ opacity: 0.5 }}>$29</s> $24 →</>}
+                  {stage === "submitting" ? "Saving birth details..." : "Continue to payment — $24 →"}
                 </button>
                 <div style={{ textAlign: "center", marginTop: 12, fontSize: 13, color: "rgba(240,233,220,0.4)" }}>
                   🔒 Your data is only used to generate your reading.
@@ -630,27 +652,26 @@ export default function BirthChartBookClient() {
             </div>
           ) : (
             <div className="bcb-pricing-card" style={{ textAlign: "center" }}>
-              <div className="bcb-pricing-badge">Launch Price</div>
+              <div className="bcb-pricing-badge">One-time purchase</div>
               <div className="bcb-pricing-product">In-Depth Birth Chart Reading</div>
-              <div className="bcb-pricing-tagline">10 chapters of personalized natal chart analysis. Every planet. Every transit. Your entire birth chart — decoded.</div>
+              <div className="bcb-pricing-tagline">8 chapters. ~49 pages of personalized natal chart analysis. Birth chart + current astrology transits.</div>
               <div className="bcb-price-big">
-                <span className="bcb-price-struck">$29</span>
                 <span className="bcb-price-sym">$</span>
                 <span className="bcb-price-num">24</span>
               </div>
-              <div className="bcb-price-once">one-time · no subscription</div>
+              <div className="bcb-price-once">one-time · no subscription · yours forever</div>
               <div className="bcb-price-includes">
                 <div className="bcb-price-inc-label">What you get</div>
-                <div className="bcb-price-inc-item"><span className="bcb-inc-check">✦</span> 3 chapters on your current astrology transits</div>
-                <div className="bcb-price-inc-item"><span className="bcb-inc-check">✦</span> 6 chapters of natal chart analysis</div>
-                <div className="bcb-price-inc-item"><span className="bcb-inc-check">✦</span> Actionable takeaways chapter</div>
-                <div className="bcb-price-inc-item"><span className="bcb-inc-check">✦</span> Online book + downloadable PDF report</div>
+                <div className="bcb-price-inc-item"><span className="bcb-inc-check">✦</span> 5 chapters of natal chart analysis (who you are, career, love, money, growth)</div>
+                <div className="bcb-price-inc-item"><span className="bcb-inc-check">✦</span> 2 chapters on your current astrology transits + what's coming next</div>
+                <div className="bcb-price-inc-item"><span className="bcb-inc-check">✦</span> Actionable takeaways chapter with specific next steps</div>
+                <div className="bcb-price-inc-item"><span className="bcb-inc-check">✦</span> ~49 pages · online book + downloadable PDF</div>
                 <div className="bcb-price-inc-item"><span className="bcb-inc-check" style={{ color: "#4CAF50" }}>⚡</span> Ready in under 10 minutes</div>
-                <div className="bcb-price-inc-item"><span className="bcb-inc-check">✓</span> Personalized from your exact birth details</div>
-                <div className="bcb-price-inc-item"><span className="bcb-inc-check">✓</span> Lifetime access</div>
+                <div className="bcb-price-inc-item"><span className="bcb-inc-check">✓</span> Built from your exact birth time, date, and location</div>
+                <div className="bcb-price-inc-item"><span className="bcb-inc-check">✓</span> Lifetime access · no account needed</div>
               </div>
               <button className="bcb-btn bcb-btn-gold" style={{ width: "100%", fontSize: 16, padding: "18px" }} onClick={scrollToForm}>
-                Get my in-depth birth chart reading — <s style={{ opacity: 0.5 }}>$29</s> $24 →
+                Get my birth chart reading — $24 →
               </button>
               <div style={{ marginTop: 14, fontSize: 13, color: "rgba(240,233,220,0.4)" }}>
                 🔒 All sales final. We fix any delivery issue.
@@ -676,22 +697,21 @@ export default function BirthChartBookClient() {
       {/* FINAL CTA */}
       <section className="bcb-final">
         <div className="bcb-wrap" style={{ textAlign: "center" }}>
-          <span className="bcb-eyebrow" style={{ display: "block", marginBottom: 20 }}>Still reading?</span>
+          <span className="bcb-eyebrow" style={{ display: "block", marginBottom: 20 }}>Still here?</span>
           <h2 className="bcb-final-h">
-            You already know your Sun sign.<br />
-            <em>What about the other 99% of your birth chart?</em>
+            Your Sun sign is 1 out of 40+ placements<br />
+            <em>in your natal chart.</em>
           </h2>
-          <p className="bcb-final-sub">Your personalized birth chart reading covers every planet, every house, every transit — 10 chapters of real natal chart analysis built from your exact birth details.</p>
+          <p className="bcb-final-sub">8 chapters. ~49 pages. Every planet, every house, every transit — personalized birth chart analysis built from the exact minute you were born.</p>
           <div className="bcb-final-price">
-            <span style={{ fontSize: 24, color: "rgba(240,233,220,0.25)", textDecoration: "line-through" }}>$29</span>{" "}
             <span style={{ color: "var(--bcb-gold)" }}>$24</span>{" "}
-            · launch price · your reading is ready in minutes
+            · one-time payment · ready in minutes
           </div>
           <button className="bcb-btn bcb-btn-gold" style={{ fontSize: 16, padding: "18px 48px" }} onClick={scrollToForm}>
-            Get my in-depth birth chart reading →
+            Get my birth chart reading →
           </button>
           <div style={{ marginTop: 16, fontSize: 12, color: "rgba(240,233,220,0.35)" }}>
-            No subscription. One-time payment. Delivered to your inbox in under 10 minutes.
+            No subscription. Online book + PDF. Delivered to your inbox in under 10 minutes.
           </div>
         </div>
       </section>
@@ -758,8 +778,11 @@ const bcbStyles = `
   }
   .bcb-hero-inner {
     max-width: 1080px; margin: 0 auto; width: 100%;
-    display: grid; grid-template-columns: 1fr 440px; gap: 64px; align-items: center;
     position: relative; z-index: 1;
+  }
+  .bcb-hero-top { text-align: center; margin-bottom: 48px; }
+  .bcb-hero-split {
+    display: grid; grid-template-columns: 1fr 440px; gap: 64px; align-items: center;
   }
   .bcb-hero-content { position: relative; z-index: 1; }
   .bcb-hero-admit {
@@ -913,6 +936,11 @@ const bcbStyles = `
     color: rgba(240,233,220,0.8); line-height: 1.4; transition: color 0.2s;
   }
   .bcb-chapter-row:hover .bcb-chapter-name { color: var(--bcb-gold); }
+  .bcb-chapter-question {
+    font-family: var(--font-display), Georgia, serif; font-style: italic;
+    font-size: 12px; color: var(--bcb-gold-dim); margin-top: 4px; line-height: 1.5;
+  }
+  .bcb-chapter-row:hover .bcb-chapter-question { color: var(--bcb-gold); }
   .bcb-chapter-planets { font-size: 11px; color: var(--bcb-cream-mute); margin-top: 3px; }
 
   /* SAMPLE */
@@ -1049,9 +1077,22 @@ const bcbStyles = `
   .bcb-final-sub { font-size: 17px; color: var(--bcb-cream-mute); margin-bottom: 12px; font-weight: 300; }
   .bcb-final-price { font-family: var(--font-display), Georgia, serif; font-size: 34px; margin-bottom: 32px; }
 
+  /* NUMBERS BAR */
+  .bcb-numbers-bar {
+    display: flex; justify-content: center; gap: 48px; flex-wrap: wrap;
+    margin-top: 56px; padding: 32px 24px;
+    border-top: 1px solid var(--bcb-border); border-bottom: 1px solid var(--bcb-border);
+  }
+  .bcb-number-item { text-align: center; }
+  .bcb-number-big {
+    font-family: var(--font-display), Georgia, serif; font-size: 32px; font-weight: 700;
+    color: var(--bcb-gold); line-height: 1;
+  }
+  .bcb-number-label { font-size: 12px; color: var(--bcb-cream-mute); margin-top: 6px; letter-spacing: 0.04em; }
+
   /* RESPONSIVE */
   @media (max-width: 900px) {
-    .bcb-hero-inner { grid-template-columns: 1fr; }
+    .bcb-hero-split { grid-template-columns: 1fr; }
     .bcb-hero-visual { order: -1; }
     .bcb-book-mockup { width: 300px; }
     .bcb-toc-grid { grid-template-columns: 1fr; }
