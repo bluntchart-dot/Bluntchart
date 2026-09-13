@@ -20,6 +20,7 @@ export const metadata: Metadata = {
     images: [{ url: "https://bluntchart.com/og-mercury-retrograde-2026.png", width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image", title: "Saturn Return Calculator | BluntChart", description: "When is your Saturn Return? Find your Saturn sign and exact dates. Free." },
+  robots: { index: true, follow: true },
 };
 
 const jsonLdFaq = {"@context":"https://schema.org","@type":"FAQPage",mainEntity:[
@@ -34,7 +35,7 @@ const jsonLdBreadcrumb = {"@context":"https://schema.org","@type":"BreadcrumbLis
   {"@type":"ListItem",position:1,name:"BluntChart",item:"https://bluntchart.com"},
   {"@type":"ListItem",position:2,name:"Saturn Return Calculator",item:"https://bluntchart.com/saturn-return-calculator"},
 ]};
-const jsonLdTool = {"@context":"https://schema.org","@type":"WebApplication",name:"Saturn Return Calculator",url:"https://bluntchart.com/saturn-return-calculator",applicationCategory:"LifestyleApplication",description:"Free Saturn Return calculator that finds your Saturn sign, return dates, and provides a brutally honest reading.",offers:{"@type":"Offer",price:"0",priceCurrency:"USD"},operatingSystem:"Web"};
+const jsonLdTool = {"@context":"https://schema.org","@type":"WebApplication",name:"Saturn Return Calculator",url:"https://bluntchart.com/saturn-return-calculator",applicationCategory:"LifestyleApplication",description:"Free Saturn Return calculator that finds your Saturn sign, return dates, and provides a brutally honest reading.",offers:{"@type":"Offer",price:"0",priceCurrency:"USD"},operatingSystem:"Web",about:{"@type":"Thing",name:"Saturn return",description:"An astrological transit occurring approximately every 29.5 years when Saturn returns to the zodiac position it occupied at the time of a person's birth, traditionally associated with major life transitions between ages 27–30."}};
 
 const FAQS = [
   { q:"When is my Saturn Return?", a:"Your Saturn Return happens when Saturn returns to the zodiac sign it occupied at your birth — roughly every 29.5 years. First return: ages 27–30. Second: ages 56–60. Enter your birth date in the calculator above to find your exact window. Saturn is currently in Aries (Feb 2026 – Apr 2028), meaning those born April 1996 to June 1998 are in their first return right now." },
@@ -98,7 +99,7 @@ export default function SaturnReturnCalculatorPage() {
           <p>Meanwhile, those born 1993–1996 (Saturn in Pisces) have just completed their first return. If you survived a spiritual crisis, an addiction reckoning, or a fundamental dissolution of your old identity between 2023 and early 2026 — that was Saturn. You made it through. Now build on what&apos;s left.</p>
 
           <h2>How does Saturn Return interact with <em>your full birth chart?</em></h2>
-          <p>The calculator above tells you your Saturn <strong>sign</strong> — which determines the theme of your return. But which <strong>house</strong> Saturn occupies in your natal chart determines where the return lands. Saturn in Aries in your 4th house tests your home and family foundations. The exact same Saturn in your 10th house tests your career and public image. Same sign, completely different crisis.</p>
+          <p>The calculator above tells you your Saturn <strong>sign</strong> — which determines the theme of your return. For a deeper dive into what each sign means, how long the transit lasts, and how to navigate it, read the full <a href="/saturn-return">Saturn Return guide</a>. But which <strong>house</strong> Saturn occupies in your natal chart determines where the return lands. Saturn in Aries in your 4th house tests your home and family foundations. The exact same Saturn in your 10th house tests your career and public image. Same sign, completely different crisis.</p>
           <p>Then there are <strong>aspects</strong> — the angles Saturn makes to your other natal planets. Saturn conjunct your Moon? Emotional reckoning. Saturn square your Venus? Relationship restructuring. Saturn opposite your Sun? Identity overhaul. The sign tells you what. The house tells you where. The aspects tell you how intense. You need your <a href="/free-birth-chart">full birth chart</a> to see the complete picture.</p>
 
           <h2>Saturn Return <em>FAQ</em></h2>
@@ -118,6 +119,7 @@ export default function SaturnReturnCalculatorPage() {
 
         <article className="prose"><h2>Related <em>free tools</em></h2></article>
         <div className="related-grid">
+          <a className="related-card" href="/saturn-return"><div className="related-card-title">Saturn Return Guide</div><div className="related-card-desc">The complete guide — meaning, ages, all 12 signs, and how to survive it.</div></a>
           <a className="related-card" href="/free-birth-chart"><div className="related-card-title">Free Birth Chart</div><div className="related-card-desc">Full natal chart — find your Saturn house placement and aspects.</div></a>
           <a className="related-card" href="/rising-sign-calculator"><div className="related-card-title">Rising Sign Calculator</div><div className="related-card-desc">Your Ascendant determines which house Saturn occupies.</div></a>
           <a className="related-card" href="/mercury-retrograde-2026"><div className="related-card-title">Mercury Retrograde 2026</div><div className="related-card-desc">All three retrograde dates, shadow periods, and sign effects.</div></a>
