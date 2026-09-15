@@ -495,7 +495,7 @@ export default function BirthChartBookClient() {
                   <div className="bcb-bcf-title">In-Depth Reading</div>
                   <div className="bcb-bcf-sub">Your birth chart, decoded.<br />8 chapters. 40+ pages.</div>
                   <div className="bcb-bcf-for">Prepared for</div>
-                  <div className="bcb-bcf-name">You</div>
+                  <div className="bcb-bcf-name">{form.name.trim() || "You"}</div>
                   <div className="bcb-bcf-foot">about 20 min · one sitting or in pieces</div>
                 </div>
               </div>
@@ -698,6 +698,23 @@ export default function BirthChartBookClient() {
                     placeholder="City where you were born"
                   />
                 </div>
+                {form.name.trim() && (
+                  <div className="bcb-form-preview">
+                    <div className="bcb-form-preview-book">
+                      <div className="bcb-fpb-spine" />
+                      <div className="bcb-fpb-cover">
+                        <div className="bcb-fpb-brand">BluntChart</div>
+                        <div className="bcb-fpb-title">In-Depth Reading</div>
+                        <div className="bcb-fpb-for">Prepared for</div>
+                        <div className="bcb-fpb-name">{form.name.trim()}</div>
+                      </div>
+                    </div>
+                    <div className="bcb-form-preview-text">
+                      <div className="bcb-fpt-label">Your reading is being prepared</div>
+                      <div className="bcb-fpt-detail">8 chapters · 40+ pages · personalized to your chart</div>
+                    </div>
+                  </div>
+                )}
                 {error && <div className="bcb-form-error">{error}</div>}
                 <button
                   type="submit"
@@ -1133,6 +1150,35 @@ const bcbStyles = `
   .bcb-form-input::placeholder { color: rgba(240,233,220,0.25); }
   .bcb-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
   .bcb-form-error { color: #e54; font-size: 14px; padding: 10px 14px; background: rgba(229,68,68,0.08); border-radius: 10px; }
+
+  /* FORM LIVE PREVIEW */
+  .bcb-form-preview {
+    display: flex; align-items: center; gap: 16px;
+    background: rgba(191,151,90,0.06); border: 1px solid rgba(191,151,90,0.15);
+    border-radius: 12px; padding: 14px 18px; margin-top: 4px;
+    animation: bcb-qp-in 0.3s ease-out;
+  }
+  .bcb-form-preview-book {
+    width: 56px; min-width: 56px; aspect-ratio: 0.72; border-radius: 2px 6px 6px 2px;
+    border: 1px solid rgba(191,151,90,0.2); overflow: hidden; position: relative;
+    box-shadow: -2px 0 0 rgba(191,151,90,0.08);
+  }
+  .bcb-fpb-spine {
+    position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+    background: linear-gradient(90deg, rgba(191,151,90,0.4), rgba(191,151,90,0.1));
+  }
+  .bcb-fpb-cover {
+    background: #0D0D0D; height: 100%;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 6px 4px; text-align: center;
+  }
+  .bcb-fpb-brand { font-size: 4px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--bcb-gold); margin-bottom: 4px; }
+  .bcb-fpb-title { font-family: var(--font-display), Georgia, serif; font-size: 7px; font-weight: 700; color: var(--bcb-gold); line-height: 1.1; margin-bottom: 6px; }
+  .bcb-fpb-for { font-size: 4px; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(240,233,220,0.25); }
+  .bcb-fpb-name { font-family: var(--font-display), Georgia, serif; font-size: 6px; color: var(--bcb-cream); line-height: 1.2; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+  .bcb-form-preview-text { flex: 1; }
+  .bcb-fpt-label { font-size: 13px; font-weight: 600; color: var(--bcb-gold); margin-bottom: 2px; }
+  .bcb-fpt-detail { font-size: 12px; color: var(--bcb-cream-mute); }
 
   /* FAQ */
   .bcb-faq-item { border-bottom: 1px solid var(--bcb-border); overflow: hidden; }
