@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import SaturnCalculator from "../saturn-return-calculator/SaturnCalculator";
 
 export const metadata: Metadata = {
   title: "Saturn Return: What It Is, When It Hits & How to Survive It | BluntChart",
@@ -150,10 +151,10 @@ export default function SaturnReturnGuidePage() {
             <span className="g">BluntChart</span>
           </Link>
           <div className="nav-links">
-            <Link href="/#try-it">Get Reading</Link>
             <Link href="/free-birth-chart">Free Chart</Link>
             <Link href="/saturn-return-calculator">Saturn Calculator</Link>
-            <Link className="ncta" href="/#try-it">Full Reading $15</Link>
+            <Link href="/#try-it">Get Reading</Link>
+            <Link className="ncta" href="/in-depth-birth-chart">In-Depth Reading $24</Link>
           </div>
         </div>
       </nav>
@@ -179,7 +180,10 @@ export default function SaturnReturnGuidePage() {
             This is the complete guide to understanding what&apos;s happening, when it hits your sign,
             and how to get through it without losing yourself.
           </p>
-          <Link className="cta-btn" href="/saturn-return-calculator">Find Your Saturn Return Dates →</Link>
+          <div style={{ display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap" as const }}>
+            <Link className="cta-btn" href="#calculator">Find Your Saturn Return Dates →</Link>
+            <Link className="cta-btn-s" href="/in-depth-birth-chart" style={{ display: "inline-block", padding: "14px 28px", background: "transparent", border: "1px solid rgba(240,184,74,0.3)", color: "var(--gold)", fontWeight: 600, fontSize: ".95rem", borderRadius: 8, textDecoration: "none", transition: "all .2s" }}>Full Chart Reading — $24</Link>
+          </div>
         </div>
       </header>
 
@@ -255,11 +259,12 @@ export default function SaturnReturnGuidePage() {
             ))}
           </div>
 
-          {/* CTA BOX */}
+          {/* CTA BOX — conversion to in-depth reading */}
           <div className="cta-box">
-            <h3>Find your exact Saturn Return dates</h3>
-            <p>Enter your birth date and get your Saturn sign, return window, and a brutally honest reading of what Saturn is testing. Free, no signup.</p>
-            <Link className="cta-btn" href="/saturn-return-calculator">Open Saturn Return Calculator →</Link>
+            <h3>Your Saturn sign is one data point. Your chart tells the full story.</h3>
+            <p>Saturn&apos;s sign tells you <em>what</em> is being tested. But which house Saturn occupies determines <em>where</em> in your life it lands — career, love, family, identity. A full natal chart reading maps all of it: your Saturn house, aspects, and how this transit interacts with your Sun, Moon, and Rising.</p>
+            <Link className="cta-btn" href="/in-depth-birth-chart">Get Your Full Birth Chart Reading →</Link>
+            <div style={{ fontSize: ".78rem", color: "rgba(232,228,240,.35)", marginTop: 12 }}>8 chapters · ~49 pages · Delivered in under 10 minutes · $24</div>
           </div>
 
           <article className="prose">
@@ -309,18 +314,14 @@ export default function SaturnReturnGuidePage() {
             <h3>4. Build from what survives</h3>
             <p>The point of Saturn Return isn&apos;t destruction. It&apos;s clearing space. Whatever is still standing after the transit — the relationship that deepened, the career that refocused, the identity that simplified — is your foundation. Build on it.</p>
             <h3>5. Get your full chart read</h3>
-            <p>Your Saturn sign tells you <em>what</em> gets tested. Your house placement tells you <em>where</em> in your life it lands. Your aspects tell you <em>how intense</em> it will be. A <Link href="/free-birth-chart">full birth chart</Link> reading maps all three — and a <Link href="/#try-it">BluntChart reading</Link> interprets them without sugarcoating.</p>
+            <p>Your Saturn sign tells you <em>what</em> gets tested. Your house placement tells you <em>where</em> in your life it lands. Your aspects tell you <em>how intense</em> it will be. A <Link href="/in-depth-birth-chart">full birth chart reading</Link> maps all three — 8 chapters covering your identity, career, relationships, growth edges, and current transits (including your Saturn Return). Delivered in under 10 minutes. No sugarcoating.</p>
 
             {/* ── SECTION: CALCULATOR ──────────────────────────────────────────── */}
             <h2 id="calculator">Free Saturn Return <em>calculator</em></h2>
             <p>Enter your birth date to find your Saturn sign, your exact return dates, and a no-nonsense interpretation of what Saturn is confronting you with — in the same brutally honest voice BluntChart is known for.</p>
           </article>
 
-          <div className="cta-box">
-            <h3>♄ Saturn Return Calculator</h3>
-            <p>Your Saturn sign. Your return window. What it&apos;s actually testing. Enter your birth date — takes 10 seconds.</p>
-            <Link className="cta-btn" href="/saturn-return-calculator">Calculate Your Saturn Return →</Link>
-          </div>
+          <SaturnCalculator />
 
           {/* ── FAQ ───────────────────────────────────────────────────────────────── */}
           <article className="prose">
@@ -339,9 +340,23 @@ export default function SaturnReturnGuidePage() {
             ))}
           </div>
 
+          {/* ── CONVERSION: IN-DEPTH READING ─────────────────────────────────────── */}
+          <div className="cta-box" style={{ maxWidth: 780 }}>
+            <div style={{ fontSize: ".68rem", fontWeight: 700, letterSpacing: ".14em", textTransform: "uppercase" as const, color: "var(--gold)", marginBottom: 14 }}>The next step after Saturn Return</div>
+            <h3>Your Saturn Return told you something is off. Your birth chart tells you exactly what.</h3>
+            <p>This guide covers the universal pattern. A BluntChart reading covers <em>yours</em>. It maps your Saturn house placement, the aspects it makes to your other planets, and how this transit interacts with your entire natal chart. 8 chapters, ~49 pages, delivered in under 10 minutes.</p>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: 12, margin: "20px auto 24px", maxWidth: 520, textAlign: "left" as const }}>
+              <div style={{ fontSize: ".82rem", color: "rgba(232,228,240,.6)", lineHeight: 1.55 }}>✦ Saturn house &amp; aspects<br/>✦ Career &amp; money patterns<br/>✦ Relationship blueprint<br/>✦ Current transits (incl. Saturn)</div>
+              <div style={{ fontSize: ".82rem", color: "rgba(232,228,240,.6)", lineHeight: 1.55 }}>✦ Identity &amp; purpose<br/>✦ Growth edges &amp; blind spots<br/>✦ Actionable takeaways<br/>✦ PDF + online book format</div>
+            </div>
+            <Link className="cta-btn" href="/in-depth-birth-chart">Get Your In-Depth Reading — $24 →</Link>
+            <div style={{ fontSize: ".78rem", color: "rgba(232,228,240,.35)", marginTop: 12 }}>One-time payment · No subscription · Delivered instantly</div>
+          </div>
+
           {/* ── RELATED TOOLS ─────────────────────────────────────────────────────── */}
           <article className="prose"><h2>Related <em>free tools & guides</em></h2></article>
           <div className="related-grid">
+            <Link className="related-card" href="/in-depth-birth-chart" style={{ borderColor: "rgba(107,47,212,.25)", background: "linear-gradient(135deg,rgba(107,47,212,.08),rgba(212,83,126,.04))" }}><div className="related-card-title">In-Depth Birth Chart Reading</div><div className="related-card-desc">8 chapters, ~49 pages. Your Saturn house, aspects, transits, and full chart — $24.</div></Link>
             <Link className="related-card" href="/saturn-return-calculator"><div className="related-card-title">Saturn Return Calculator</div><div className="related-card-desc">Find your Saturn sign and exact return dates. Free, instant.</div></Link>
             <Link className="related-card" href="/free-birth-chart"><div className="related-card-title">Free Birth Chart</div><div className="related-card-desc">Full natal chart — see your Saturn house placement and aspects.</div></Link>
             <Link className="related-card" href="/rising-sign-calculator"><div className="related-card-title">Rising Sign Calculator</div><div className="related-card-desc">Your Ascendant determines which house Saturn occupies.</div></Link>

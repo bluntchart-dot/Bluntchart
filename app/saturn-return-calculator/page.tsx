@@ -72,7 +72,7 @@ export default function SaturnReturnCalculatorPage() {
         @media(max-width:768px){.nav-links{display:none}.fi{flex-direction:column;gap:28px}.fb2{flex-direction:column;align-items:flex-start}.related-grid{grid-template-columns:1fr}.c{padding:0 16px}}
       `}</style>
 
-      <nav className="nav"><div className="c nav-i"><a className="logo" href="/"><img src="/mascot.png" alt="BluntChart" width={34} height={34} style={{borderRadius:"50%"}}/><span className="g">BluntChart</span></a><div className="nav-links"><a href="/#try-it">Get Reading</a><a href="/free-birth-chart">Free Chart</a><a href="/mercury-retrograde-2026">Mercury Rx 2026</a><a className="ncta" href="/#try-it">Full Reading $15</a></div></div></nav>
+      <nav className="nav"><div className="c nav-i"><a className="logo" href="/"><img src="/mascot.png" alt="BluntChart" width={34} height={34} style={{borderRadius:"50%"}}/><span className="g">BluntChart</span></a><div className="nav-links"><a href="/free-birth-chart">Free Chart</a><a href="/saturn-return">Saturn Return Guide</a><a href="/#try-it">Get Reading</a><a className="ncta" href="/in-depth-birth-chart">In-Depth Reading $24</a></div></div></nav>
 
       <div className="c"><nav className="breadcrumb" aria-label="Breadcrumb"><a href="/">BluntChart</a><span style={{margin:"0 8px",opacity:.4}}>/</span><span style={{color:"var(--white)"}}>Saturn Return Calculator</span></nav></div>
 
@@ -100,7 +100,7 @@ export default function SaturnReturnCalculatorPage() {
 
           <h2>How does Saturn Return interact with <em>your full birth chart?</em></h2>
           <p>The calculator above tells you your Saturn <strong>sign</strong> — which determines the theme of your return. For a deeper dive into what each sign means, how long the transit lasts, and how to navigate it, read the full <a href="/saturn-return">Saturn Return guide</a>. But which <strong>house</strong> Saturn occupies in your natal chart determines where the return lands. Saturn in Aries in your 4th house tests your home and family foundations. The exact same Saturn in your 10th house tests your career and public image. Same sign, completely different crisis.</p>
-          <p>Then there are <strong>aspects</strong> — the angles Saturn makes to your other natal planets. Saturn conjunct your Moon? Emotional reckoning. Saturn square your Venus? Relationship restructuring. Saturn opposite your Sun? Identity overhaul. The sign tells you what. The house tells you where. The aspects tell you how intense. You need your <a href="/free-birth-chart">full birth chart</a> to see the complete picture.</p>
+          <p>Then there are <strong>aspects</strong> — the angles Saturn makes to your other natal planets. Saturn conjunct your Moon? Emotional reckoning. Saturn square your Venus? Relationship restructuring. Saturn opposite your Sun? Identity overhaul. The sign tells you what. The house tells you where. The aspects tell you how intense. An <a href="/in-depth-birth-chart">in-depth birth chart reading</a> maps all three — 8 chapters covering who you are, career, relationships, growth edges, and your current transits including Saturn Return.</p>
 
           <h2>Saturn Return <em>FAQ</em></h2>
         </article>
@@ -119,6 +119,7 @@ export default function SaturnReturnCalculatorPage() {
 
         <article className="prose"><h2>Related <em>free tools</em></h2></article>
         <div className="related-grid">
+          <a className="related-card" href="/in-depth-birth-chart" style={{borderColor:"rgba(107,47,212,.25)",background:"linear-gradient(135deg,rgba(107,47,212,.08),rgba(212,83,126,.04))"}}><div className="related-card-title">In-Depth Birth Chart Reading</div><div className="related-card-desc">Your Saturn house, aspects, transits + full chart — 8 chapters, ~49 pages. $24.</div></a>
           <a className="related-card" href="/saturn-return"><div className="related-card-title">Saturn Return Guide</div><div className="related-card-desc">The complete guide — meaning, ages, all 12 signs, and how to survive it.</div></a>
           <a className="related-card" href="/free-birth-chart"><div className="related-card-title">Free Birth Chart</div><div className="related-card-desc">Full natal chart — find your Saturn house placement and aspects.</div></a>
           <a className="related-card" href="/rising-sign-calculator"><div className="related-card-title">Rising Sign Calculator</div><div className="related-card-desc">Your Ascendant determines which house Saturn occupies.</div></a>

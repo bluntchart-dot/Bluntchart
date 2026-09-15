@@ -296,19 +296,23 @@ export default function SaturnCalculator() {
             <div style={{ fontFamily:"var(--font-display)", fontSize:"clamp(1.3rem,3vw,1.6rem)", fontWeight:800, marginBottom:12, color:"#e8e4f0" }}>
               This is the summary. <span style={{ fontStyle:"italic", background:"linear-gradient(135deg,#f0b84a,#d4537e)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent" }}>Your chart tells the full story.</span>
             </div>
-            <p style={{ fontSize:".95rem", color:"rgba(232,228,240,0.55)", maxWidth:480, margin:"0 auto 24px", lineHeight:1.7 }}>
-              Saturn&apos;s sign is one data point. Which house it&apos;s in, what it aspects, and how it interacts with your Sun, Moon, and Rising — that&apos;s what determines how your return actually plays out. A BluntChart reading maps all of it.
+            <p style={{ fontSize:".95rem", color:"rgba(232,228,240,0.55)", maxWidth:480, margin:"0 auto 16px", lineHeight:1.7 }}>
+              Saturn&apos;s sign tells you <em>what</em> is being tested. Your house placement tells you <em>where</em> it lands — career, relationships, identity, home. Your aspects tell you <em>how intense</em>. A full reading maps all of it.
             </p>
-            <a href="/#try-it" style={{
+            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:8, maxWidth:340, margin:"0 auto 22px", textAlign:"left" as const }}>
+              <div style={{ fontSize:".78rem", color:"rgba(232,228,240,.5)", lineHeight:1.6 }}>✦ Saturn house &amp; aspects<br/>✦ Career &amp; money<br/>✦ Relationship patterns<br/>✦ Current transits</div>
+              <div style={{ fontSize:".78rem", color:"rgba(232,228,240,.5)", lineHeight:1.6 }}>✦ Identity &amp; purpose<br/>✦ Growth edges<br/>✦ Actionable takeaways<br/>✦ PDF + online book</div>
+            </div>
+            <a href="/in-depth-birth-chart" style={{
               display:"inline-flex", alignItems:"center", gap:8, padding:"14px 30px",
               background:"linear-gradient(135deg,#6b2fd4,#d4537e)", color:"#fff",
               fontFamily:"inherit", fontSize:".88rem", fontWeight:700, letterSpacing:".04em",
               textTransform:"uppercase" as const, textDecoration:"none", borderRadius:10,
             }}>
-              Get My Free Preview ✨
+              Get Your In-Depth Reading — $24
             </a>
             <div style={{ fontSize:".78rem", color:"rgba(232,228,240,.35)", marginTop:12 }}>
-              Two free insights. $15 one-time for the full reading.
+              8 chapters · ~49 pages · Delivered in under 10 minutes
             </div>
           </div>
 
