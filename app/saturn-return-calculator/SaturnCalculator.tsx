@@ -288,6 +288,20 @@ export default function SaturnCalculator() {
             </div>
           </div>
 
+          {/* SIGN GUIDE LINK */}
+          <a href={`/saturn-return-in-${result.sign.toLowerCase()}`} style={{
+            display:"block", background:"rgba(240,184,74,0.05)", border:"0.5px solid rgba(240,184,74,0.2)",
+            borderRadius:14, padding:"18px 22px", marginBottom:24, textDecoration:"none",
+            transition:"border-color .2s",
+          }}>
+            <div style={{ fontFamily:"var(--font-display)", fontSize:"1.05rem", fontWeight:700, color:"#e8e4f0", marginBottom:4 }}>
+              Read the full Saturn Return in {result.sign} guide →
+            </div>
+            <div style={{ fontSize:".82rem", color:"rgba(232,228,240,0.5)", lineHeight:1.5 }}>
+              Deep dive into what Saturn in {result.sign} tests, the crisis it triggers, how it affects relationships and career, and how to survive it.
+            </div>
+          </a>
+
           {/* CTA */}
           <div style={{
             background:"linear-gradient(165deg,rgba(107,47,212,0.06),rgba(212,83,126,0.04))",
