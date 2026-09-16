@@ -5,6 +5,10 @@ import { useEffect, useRef, useState } from "react";
 
 const FAQS = [
   {
+    q: "What is the moon phase soulmate trend?",
+    a: "The moon phase soulmate trend started on TikTok, where couples overlay their individual birth moon phases to see if they combine into a full moon — interpreted as a sign of being soulmates. It has generated over 147 million views. The original process required 13 steps across two apps. BluntChart replaces that with one form using real ephemeris math.",
+  },
+  {
     q: "Is this actually accurate, or just a filter?",
     a: "The moon phase itself is a real calculation from your birth date, not an illustration or a filter. The illumination percentage and phase name shown are computed the same way an ephemeris would derive them — this isn't the CapCut template redrawn, it's the actual math behind it.",
   },
@@ -21,8 +25,8 @@ const FAQS = [
     a: "Yes — the original trend started with couples but spread to best friends and even pets. The card works exactly the same either way; just enter both birthdays.",
   },
   {
-    q: "What happens when I join the waitlist?",
-    a: "You get the HD, watermark-free card the moment the full Compatibility Reading launches, plus the real moon-sign read added to your verdict. Waitlist members get launch pricing first — Sun, Moon, Venus, Mars, the fight decoder, all of it.",
+    q: "What does the compatibility percentage mean?",
+    a: "The score shows how closely the two birth moon illuminations combine toward a full moon (100%). It's a visual metric from the TikTok trend — by actual astrology, moon sign is the compatibility signal that matters. A low score doesn't mean incompatible; it just means your birth moons happened to be at different points in the lunar cycle.",
   },
   {
     q: "What's actually different between this card and the full Compatibility Reading?",
@@ -290,12 +294,12 @@ export default function MoonPhaseMatchClient() {
         .mpm .mc-sub{font-size:12px;color:var(--dim);margin-top:6px;position:relative}
         .mpm .moon-row{display:flex;align-items:center;justify-content:center;gap:6px;margin:30px 0 6px;position:relative}
         .mpm .moon-cell{flex:1;max-width:130px}
-        .mpm .moon-cell svg{width:100%;height:auto;display:block}
+        .mpm .moon-cell svg{width:100%;height:auto;display:block;filter:drop-shadow(0 0 24px rgba(255,92,138,.45))}
         .mpm .moon-cell .ph{font-family:'Space Grotesk';font-size:12px;margin-top:10px}
         .mpm .moon-cell .nm{font-size:10px;color:var(--dim);letter-spacing:.08em;text-transform:uppercase}
         .mpm .moon-plus{font-family:'Instrument Serif',Georgia,serif;font-style:italic;color:var(--pink);font-size:26px}
         .mpm .merge{margin:22px auto 4px;max-width:220px;position:relative}
-        .mpm .merge svg{width:100%;height:auto;display:block;filter:drop-shadow(0 0 30px rgba(255,179,199,.22))}
+        .mpm .merge svg{width:100%;height:auto;display:block;filter:drop-shadow(0 0 55px rgba(255,92,138,.6))}
         .mpm .merge-label{font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--dim);margin-top:12px}
         .mpm .mc-verdict{margin-top:18px;font-family:'Instrument Serif',Georgia,serif;font-style:italic;font-size:16px;line-height:1.55;color:var(--cream);min-height:70px}
         .mpm .mc-verdict b{color:var(--pink);font-style:normal;font-family:'Space Grotesk';font-weight:700}
@@ -303,6 +307,9 @@ export default function MoonPhaseMatchClient() {
         .mpm .mc-foot b{color:var(--cream);font-family:'Space Grotesk'}
         .mpm .mc-foot .verified{display:inline-flex;align-items:center;gap:5px}
         .mpm .mc-foot .verified svg{width:11px;height:11px;flex:none}
+
+        .mpm .mc-watermark{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;overflow:hidden;z-index:5}
+        .mpm .mc-watermark span{font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;color:rgba(255,92,138,0.18);transform:rotate(-30deg);letter-spacing:.12em;white-space:nowrap;text-transform:lowercase}
 
         .mpm .ctarow{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;max-width:460px;margin:26px auto 0}
         .mpm .ctabtn{flex:1;min-width:170px;text-align:center;padding:15px 18px;border-radius:14px;font-family:'Space Grotesk';font-weight:700;font-size:14px;text-decoration:none;cursor:pointer;border:1px solid var(--line);background:transparent;color:inherit}
@@ -381,14 +388,14 @@ export default function MoonPhaseMatchClient() {
           </div>
         </div>
         <div className="wrap crumb">
-          <Link href="/">BluntChart</Link> / <b>Moon Phase Match</b>
+          <Link href="/">BluntChart</Link> / <b>Moon Phase Soulmate Calculator</b>
         </div>
 
         {/* ================= HERO ================= */}
         <div className="wrap"><div className="hero">
-          <div className="eyebrow">✦ 147M+ views on TikTok · zero CapCut required ✦</div>
-          <h1>Your moon phase, <em>matched to theirs.</em></h1>
-          <p className="hero-sub">The trend, minus the thirteen steps. Enter two birthdays — we calculate both real moon phases and hand you one merged card, already shareable.</p>
+          <div className="eyebrow">✦ 147M+ views on TikTok · real ephemeris · zero CapCut ✦</div>
+          <h1>Moon phase soulmate calculator: <em>yours matched to theirs.</em></h1>
+          <p className="hero-sub">Enter two birthdays — we calculate both real birth moon phases using actual ephemeris data and hand you one merged compatibility card, already shareable.</p>
 
           <form className="matchform" id="matchForm">
             <div className="formrow">
@@ -399,7 +406,7 @@ export default function MoonPhaseMatchClient() {
               <div className="fgroup"><label>Their first name</label><input type="text" id="d2Name" defaultValue="Jake" /></div>
               <div className="fgroup"><label>Their birthday</label><input type="date" id="d2Date" defaultValue="1996-03-02" /></div>
             </div>
-            <button type="submit" className="revealbtn">Reveal our match ✨</button>
+            <button type="submit" className="revealbtn">Reveal our moon match ✨</button>
           </form>
           <div className="trustrow">Just two birthdays. No sign-in. No CapCut.</div>
 
@@ -418,21 +425,29 @@ export default function MoonPhaseMatchClient() {
               <i style={{ top: "78%", left: "90%", width: 3, height: 3, animationDelay: "1.1s" }}></i>
             </div>
 
+            {/* Watermark overlay */}
+            <div className="mc-watermark" aria-hidden="true">
+              <span>bluntchart.com · moon match</span>
+            </div>
+
             <div className="mc-label">✦ Moon Phase Match ✦</div>
             <div className="mc-names"><span id="outName1">Emma</span> <span>&amp;</span> <span id="outName2">Jake</span></div>
             <div className="mc-sub" id="outDates">Jun 14, 1998 &nbsp;×&nbsp; Mar 2, 1996</div>
 
             <div className="moon-row">
               <div className="moon-cell">
+                {/* Moon A — Her birth moon */}
                 <svg viewBox="0 0 200 200">
                   <defs>
                     <filter id="aSoft"><feGaussianBlur stdDeviation={2.2} /></filter>
-                    <filter id="aTex"><feGaussianBlur stdDeviation={3} /></filter>
-                    <radialGradient id="aLit" cx="35%" cy="30%" r="75%">
-                      <stop offset="0%" stopColor="#fff6f1" /><stop offset="55%" stopColor="#f2dfe6" /><stop offset="100%" stopColor="#c9aebd" />
+                    <radialGradient id="aLit" cx="38%" cy="32%" r="72%">
+                      <stop offset="0%" stopColor="#fff4fa" />
+                      <stop offset="30%" stopColor="#ffc2d8" />
+                      <stop offset="68%" stopColor="#ff7aac" />
+                      <stop offset="100%" stopColor="#ff4d8a" />
                     </radialGradient>
                     <radialGradient id="aDark" cx="60%" cy="42%" r="70%">
-                      <stop offset="0%" stopColor="#26111c" /><stop offset="100%" stopColor="#170a12" />
+                      <stop offset="0%" stopColor="#1e0c18" /><stop offset="100%" stopColor="#100610" />
                     </radialGradient>
                     <clipPath id="aClip"><circle cx={100} cy={100} r={78} /></clipPath>
                     <mask id="aMask"><rect width={200} height={200} fill="black" />
@@ -443,12 +458,6 @@ export default function MoonPhaseMatchClient() {
                   <circle cx={100} cy={100} r={78} fill="url(#aDark)" />
                   <g mask="url(#aMask)" clipPath="url(#aClip)">
                     <circle cx={100} cy={100} r={78} fill="url(#aLit)" />
-                    <g filter="url(#aTex)" opacity={.55}>
-                      <ellipse cx={78} cy={85} rx={22} ry={16} fill="#7d5f72" />
-                      <ellipse cx={120} cy={70} rx={14} ry={11} fill="#7d5f72" />
-                      <ellipse cx={110} cy={125} rx={26} ry={18} fill="#7d5f72" />
-                      <ellipse cx={70} cy={135} rx={12} ry={9} fill="#7d5f72" />
-                    </g>
                   </g>
                   <circle cx={100} cy={100} r={78} fill="none" stroke="#5e3a49" strokeWidth={1.5} />
                 </svg>
@@ -459,15 +468,18 @@ export default function MoonPhaseMatchClient() {
               <div className="moon-plus">+</div>
 
               <div className="moon-cell">
+                {/* Moon B — His birth moon */}
                 <svg viewBox="0 0 200 200">
                   <defs>
                     <filter id="bSoft"><feGaussianBlur stdDeviation={2.2} /></filter>
-                    <filter id="bTex"><feGaussianBlur stdDeviation={3} /></filter>
-                    <radialGradient id="bLit" cx="35%" cy="30%" r="75%">
-                      <stop offset="0%" stopColor="#fff6f1" /><stop offset="55%" stopColor="#f2dfe6" /><stop offset="100%" stopColor="#c9aebd" />
+                    <radialGradient id="bLit" cx="38%" cy="32%" r="72%">
+                      <stop offset="0%" stopColor="#fff4fa" />
+                      <stop offset="30%" stopColor="#ffc2d8" />
+                      <stop offset="68%" stopColor="#ff7aac" />
+                      <stop offset="100%" stopColor="#ff4d8a" />
                     </radialGradient>
                     <radialGradient id="bDark" cx="60%" cy="42%" r="70%">
-                      <stop offset="0%" stopColor="#26111c" /><stop offset="100%" stopColor="#170a12" />
+                      <stop offset="0%" stopColor="#1e0c18" /><stop offset="100%" stopColor="#100610" />
                     </radialGradient>
                     <clipPath id="bClip"><circle cx={100} cy={100} r={78} /></clipPath>
                     <mask id="bMask"><rect width={200} height={200} fill="black" />
@@ -478,11 +490,6 @@ export default function MoonPhaseMatchClient() {
                   <circle cx={100} cy={100} r={78} fill="url(#bDark)" />
                   <g mask="url(#bMask)" clipPath="url(#bClip)">
                     <circle cx={100} cy={100} r={78} fill="url(#bLit)" />
-                    <g filter="url(#bTex)" opacity={.55}>
-                      <ellipse cx={88} cy={80} rx={20} ry={15} fill="#7d5f72" />
-                      <ellipse cx={70} cy={118} rx={24} ry={17} fill="#7d5f72" />
-                      <ellipse cx={115} cy={135} rx={13} ry={10} fill="#7d5f72" />
-                    </g>
                   </g>
                   <circle cx={100} cy={100} r={78} fill="none" stroke="#5e3a49" strokeWidth={1.5} />
                 </svg>
@@ -495,12 +502,14 @@ export default function MoonPhaseMatchClient() {
               <svg viewBox="0 0 240 240">
                 <defs>
                   <filter id="mSoft"><feGaussianBlur stdDeviation={2.4} /></filter>
-                  <filter id="mTex"><feGaussianBlur stdDeviation={3} /></filter>
-                  <radialGradient id="mLit" cx="35%" cy="30%" r="75%">
-                    <stop offset="0%" stopColor="#fff6f1" /><stop offset="55%" stopColor="#f2dfe6" /><stop offset="100%" stopColor="#c9aebd" />
+                  <radialGradient id="mLit" cx="38%" cy="32%" r="72%">
+                    <stop offset="0%" stopColor="#fff4fa" />
+                    <stop offset="30%" stopColor="#ffc2d8" />
+                    <stop offset="68%" stopColor="#ff7aac" />
+                    <stop offset="100%" stopColor="#ff4d8a" />
                   </radialGradient>
                   <radialGradient id="mDark" cx="60%" cy="42%" r="70%">
-                    <stop offset="0%" stopColor="#26111c" /><stop offset="100%" stopColor="#170a12" />
+                    <stop offset="0%" stopColor="#1e0c18" /><stop offset="100%" stopColor="#100610" />
                   </radialGradient>
                   <linearGradient id="mRing" x1={0} y1={0} x2={1} y2={1}>
                     <stop offset="0%" stopColor="#ff5c8a" /><stop offset="100%" stopColor="#ff3b52" />
@@ -523,17 +532,9 @@ export default function MoonPhaseMatchClient() {
                 <circle cx={120} cy={120} r={82} fill="url(#mDark)" />
                 <g mask="url(#mMaskA)" clipPath="url(#mClip)">
                   <circle cx={120} cy={120} r={82} fill="url(#mLit)" />
-                  <g filter="url(#mTex)" opacity={.5}>
-                    <ellipse cx={98} cy={102} rx={24} ry={17} fill="#7d5f72" />
-                    <ellipse cx={128} cy={150} rx={28} ry={19} fill="#7d5f72" />
-                  </g>
                 </g>
                 <g mask="url(#mMaskB)" clipPath="url(#mClip)">
                   <circle cx={120} cy={120} r={82} fill="url(#mLit)" />
-                  <g filter="url(#mTex)" opacity={.5}>
-                    <ellipse cx={140} cy={88} rx={15} ry={11} fill="#7d5f72" />
-                    <ellipse cx={85} cy={150} rx={13} ry={10} fill="#7d5f72" />
-                  </g>
                 </g>
                 <circle cx={120} cy={120} r={82} fill="none" stroke="#5e3a49" strokeWidth={1.5} />
 
@@ -557,9 +558,9 @@ export default function MoonPhaseMatchClient() {
 
           <div className="ctarow">
             <button type="button" className="ctabtn ghost" onClick={handleShare} disabled={shareState === "busy"}>
-              {shareState === "busy" ? "Preparing…" : "Share free"}<small>Watermarked, standard res</small>
+              {shareState === "busy" ? "Preparing…" : "Share card"}<small>Free · with watermark</small>
             </button>
-            <Link href="/#waitlist" className="ctabtn solid">$9 — Unlock HD<small>+ the real astrology read</small></Link>
+            <Link href="/#waitlist" className="ctabtn solid">$3 — Remove Watermark<small>+ real moon sign read</small></Link>
           </div>
         </div></div>
 
@@ -567,7 +568,7 @@ export default function MoonPhaseMatchClient() {
         <div className="wrap"><section>
           <div className="kicker">The DIY version vs. this</div>
           <h2>You could screenshot this yourself. <em>Or not.</em></h2>
-          <p className="lede">This is the actual 13-step process the trend currently requires — and the one step it takes here.</p>
+          <p className="lede">This is the actual 13-step process the moon phase soulmate trend currently requires — and the one step it takes here.</p>
           <div className="compare">
             <div className="cpanel bad">
               <h3>The TikTok way</h3>
@@ -585,8 +586,8 @@ export default function MoonPhaseMatchClient() {
               <h3>The BluntChart way</h3>
               <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
                 <li>Enter two birthdays</li>
-                <li>We calculate both real moon phases</li>
-                <li>Get one merged, designed card</li>
+                <li>We calculate both real birth moon phases</li>
+                <li>Get one merged, designed compatibility card</li>
                 <li>Share it or download the HD version</li>
               </ul>
               <div className="steps">1 step · 0 apps · one card built to be posted</div>
@@ -599,12 +600,12 @@ export default function MoonPhaseMatchClient() {
           <div className="kicker">The part everyone skips</div>
           <h2>A moon <em>phase</em> is not a moon <em>sign.</em> We check both.</h2>
           <div className="edu">
-            <p><b>Your moon phase</b> is a simple physical fact — how much of the moon was lit on the night you were born. Everyone born that day, anywhere on Earth, shares it. It&apos;s why the TikTok version works off nothing but a date.</p>
-            <p><b>Your moon sign</b> is which zodiac sign the moon was passing through at your exact birth time — the placement that actually governs emotional wiring, what you need to feel safe, and how you fight. It&apos;s the difference between a pretty picture and an actual insight.</p>
-            <p>The free card above is the phase — real, calculated, still just the picture. The full unlock adds the sign-level read, the same data your Compatibility Reading is built on.</p>
+            <p><b>Your birth moon phase</b> is a physical fact — how much of the moon was illuminated on the day you were born. Everyone born that day, anywhere on Earth, shares it. It&apos;s why the moon phase soulmate calculator works with nothing but a date of birth.</p>
+            <p><b>Your moon sign</b> is which zodiac sign the moon was passing through at your exact birth time — the placement that actually governs emotional wiring, what you need to feel safe, and how you fight. Moon sign compatibility is what separates a pretty card from a real insight.</p>
+            <p>The free card above shows your birth moon phase — real, calculated from an ephemeris, still just one piece of the picture. The full unlock adds the moon sign read, the same data your Compatibility Reading is built on.</p>
             <div className="edu-grid">
-              <div className="edu-card"><h4>Moon phase</h4><p>Physical fact. Same for everyone born that day. Needs only a date.</p></div>
-              <div className="edu-card"><h4>Moon sign</h4><p>Astrological placement. Unique to your exact birth time. Needs a chart.</p></div>
+              <div className="edu-card"><h4>Birth moon phase</h4><p>Physical fact. Identical for everyone born that day. Needs only a date of birth — no birth time required.</p></div>
+              <div className="edu-card"><h4>Moon sign</h4><p>Astrological placement. Unique to your exact birth time and location. Needs a full natal chart calculation.</p></div>
             </div>
           </div>
         </section></div>
@@ -613,7 +614,7 @@ export default function MoonPhaseMatchClient() {
         <div className="wrap"><section>
           <div className="kicker">Where the moon sign read actually comes from</div>
           <h2>The card is one placement. <em>The reading is all eleven.</em></h2>
-          <p className="lede">Same two birthdays, same real ephemeris — just the full chart instead of one crescent. Here&apos;s an unedited piece of Module 4.</p>
+          <p className="lede">Same two birthdays, same real ephemeris — just the full chart instead of one phase. Here&apos;s an unedited piece of Module 4.</p>
 
           <div className="decoder-preview">
             <div className="dlabel">Fight Decoder · your most common fight, translated live</div>
@@ -636,8 +637,8 @@ export default function MoonPhaseMatchClient() {
           </div>
 
           <div className="unlock-cta">
-            <p>Your $9 unlock already counts toward it — add $15 for the rest.</p>
-            <Link href="/#waitlist" className="ctabtn solid" style={{ display: "inline-block" }}>See the full Compatibility Reading — $24</Link>
+            <p>Your $3 unlock includes the moon sign read. Add the full Compatibility Reading for $15 more.</p>
+            <Link href="/#waitlist" className="ctabtn solid" style={{ display: "inline-block" }}>See the full Compatibility Reading — $15</Link>
           </div>
         </section></div>
 
@@ -646,7 +647,7 @@ export default function MoonPhaseMatchClient() {
           <div className="kicker">People keep sending it to their friends</div>
           <h2>Real reactions. <em>Unfiltered,</em> because that&apos;s the whole point.</h2>
           <div className="tgrid">
-            <div className="tcard"><div className="stars2">★★★★★</div><p>&quot;I&apos;ve done this trend four separate times with different DIY sites. This is the first one that looked like something instead of a screenshot collage.&quot;</p><div className="who"><b>Priya M.</b> · posted hers in under a minute</div></div>
+            <div className="tcard"><div className="stars2">★★★★★</div><p>&quot;I&apos;ve done this trend four separate times with different DIY sites. This is the first moon phase soulmate calculator that looked like something instead of a screenshot collage.&quot;</p><div className="who"><b>Priya M.</b> · posted hers in under a minute</div></div>
             <div className="tcard"><div className="stars2">★★★★★</div><p>&quot;Ours only made it to 61%. I was ready to be sad about it until I read the actual astrology line. Rude, but fair.&quot;</p><div className="who"><b>Jordan K.</b> · Gemini Sun, Pisces Moon</div></div>
             <div className="tcard"><div className="stars2">★★★★★</div><p>&quot;Did this for my best friend, not a partner. Nobody tells you it works for that too. Now it&apos;s both our lock screens.&quot;</p><div className="who"><b>Ade O.</b> · friendship match, 84%</div></div>
           </div>
@@ -655,18 +656,18 @@ export default function MoonPhaseMatchClient() {
         {/* ================= PRICING ================= */}
         <div className="wrap"><section id="pricing">
           <div className="kicker">The card above is already yours</div>
-          <h2>Watermarked and free, <em>no time limit.</em> One thing costs $9.</h2>
-          <p className="lede">Nothing to buy to use it. Share it as many times as you want. Here&apos;s what unlocking adds.</p>
+          <h2>Watermarked and free, <em>no time limit.</em> One thing costs $3.</h2>
+          <p className="lede">Nothing to buy to use it. Share it as many times as you want. Here&apos;s what removing the watermark adds.</p>
           <div className="offerbox">
             <div className="tag2">One-time · no subscription</div>
-            <div className="price">$9<span> · not $24</span></div>
+            <div className="price">$3<span> · one-time</span></div>
             <ul>
-              <li>HD download, no watermark</li>
-              <li>The real astrology paragraph — Moon sign, not just phase</li>
+              <li>HD download, watermark removed</li>
+              <li>The real moon sign read — not just phase</li>
               <li>Yours forever, share it anywhere</li>
-              <li>Counts as a $9 credit toward your full Compatibility Reading</li>
+              <li>Priority access to moon phase print products</li>
             </ul>
-            <Link href="/#waitlist" className="btn3">Join the waitlist — unlock at launch</Link>
+            <Link href="/#waitlist" className="btn3">Unlock for $3 — Remove Watermark</Link>
           </div>
         </section></div>
 
