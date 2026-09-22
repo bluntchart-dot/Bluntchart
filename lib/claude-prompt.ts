@@ -128,7 +128,7 @@ function buildPlanetDetail(
    FULL CHART CONTEXT  — unchanged
 ══════════════════════════════════════════════════════════════════════ */
 
-function buildRichChartContext(birth: BirthData, chart: ChartData): string {
+export function buildRichChartContext(birth: BirthData, chart: ChartData): string {
   const name = birth.name ?? "this person";
 
   const sun     = buildPlanetDetail("Sun",     chart);
@@ -141,12 +141,19 @@ function buildRichChartContext(birth: BirthData, chart: ChartData): string {
   const uranus  = buildPlanetDetail("Uranus",  chart);
   const neptune = buildPlanetDetail("Neptune", chart);
   const pluto   = buildPlanetDetail("Pluto",   chart);
+  const northNode = buildPlanetDetail("North Node", chart);
+  const southNode = buildPlanetDetail("South Node", chart);
+  const chiron    = buildPlanetDetail("Chiron",     chart);
+
+  const countable = chart.planets.filter(
+    (p) => p.name !== "North Node" && p.name !== "South Node"
+  );
 
   const risingSign = chart.ascendant.sign;
   const mcSign     = chart.midheaven.sign;
 
   const signCounts: Record<string, string[]> = {};
-  chart.planets.forEach((p) => {
+  countable.forEach((p) => {
     if (!signCounts[p.sign]) signCounts[p.sign] = [];
     signCounts[p.sign].push(p.name);
   });
@@ -155,7 +162,7 @@ function buildRichChartContext(birth: BirthData, chart: ChartData): string {
     .map(([sign, ps]) => `${ps.join(" + ")} all in ${sign}. heavily shaped by ${sign} energy: ${SIGN_FLAVOR[sign]?.split(";")[0] ?? sign}`);
 
   const houseCounts: Record<number, string[]> = {};
-  chart.planets.forEach((p) => {
+  countable.forEach((p) => {
     if (!houseCounts[p.house]) houseCounts[p.house] = [];
     houseCounts[p.house].push(p.name);
   });
@@ -164,7 +171,7 @@ function buildRichChartContext(birth: BirthData, chart: ChartData): string {
     .map(([h, ps]) => `${ps.join(" + ")} all in House ${h} (${HOUSE_MEANING[Number(h)] ?? ""})`);
 
   const elCount: Record<string, number> = {};
-  chart.planets.forEach((p) => {
+  countable.forEach((p) => {
     const el = ELEMENT_MAP[p.sign] ?? "Unknown";
     elCount[el] = (elCount[el] ?? 0) + 1;
   });
@@ -175,7 +182,7 @@ function buildRichChartContext(birth: BirthData, chart: ChartData): string {
   );
 
   const modCount: Record<string, number> = {};
-  chart.planets.forEach((p) => {
+  countable.forEach((p) => {
     const m = MODALITY_MAP[p.sign] ?? "Unknown";
     modCount[m] = (modCount[m] ?? 0) + 1;
   });
@@ -192,7 +199,7 @@ function buildRichChartContext(birth: BirthData, chart: ChartData): string {
   );
 
   const retrogradeList = chart.planets
-    .filter((p) => p.retrograde)
+    .filter((p) => p.retrograde && p.name !== "North Node" && p.name !== "South Node")
     .map((p) => `${p.name} Rx in ${p.sign}. turned inward, harder to express, often overcompensated`);
 
   const keyAspects = chart.aspects
@@ -241,6 +248,14 @@ ${planetLine("URANUS (rebellion, disruption, where they break patterns)", uranus
 ${planetLine("NEPTUNE (illusion, idealism, where they lose themselves)", neptune)}
 
 ${planetLine("PLUTO (power, transformation, what they can't control)", pluto)}
+
+DESTINY & HEALING
+
+${planetLine("NORTH NODE (life direction, growth edge, what to move toward)", northNode)}
+
+${planetLine("SOUTH NODE (comfort zone, past patterns, what to release)", southNode)}
+
+${planetLine("CHIRON (deepest wound, healing path, where growth comes from pain)", chiron)}
 
 KEY CHART PATTERNS
 

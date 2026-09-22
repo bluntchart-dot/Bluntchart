@@ -10,6 +10,8 @@ export const DB = {
   reviews: "reviews",
   blogRuns: "blog_runs",
   blogPosts: "blog_posts",
+  etsyOrders: "etsy_orders",
+  etsyState: "etsy_state",
 } as const;
 
 /** Placeholder until Gumroad webhook provides the real sale id (unique per checkout). */

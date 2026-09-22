@@ -6,6 +6,7 @@ export interface BirthData {
   lng: number;
   timezone: string;
   placeName: string;
+  birthTimeApproximate?: boolean;
 }
 
 export interface PlanetPosition {

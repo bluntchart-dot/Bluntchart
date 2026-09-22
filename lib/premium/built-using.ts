@@ -10,6 +10,7 @@
 
 import type { ChartData, PlanetPosition } from "@/lib/types";
 import type { BuiltUsingItem, ChartInput } from "./types";
+import { getTransitAspects } from "@/lib/chart-calculator";
 
 /* ─── Symbol table ─────────────────────────────────────────────────── */
 
@@ -134,9 +135,27 @@ export function buildBuiltUsing(
       }
 
       case "north-node":
-      case "south-node":
+      case "south-node": {
+        const nodeName = input === "north-node" ? "North Node" : "South Node";
+        const p = findPlanet(chart, nodeName);
+        if (p) {
+          items.push({
+            symbol: input === "north-node" ? "☊" : "☋",
+            label: formatPlanetLabel(nodeName, p),
+            meaning: MEANINGS[input],
+          });
+        }
+        break;
+      }
       case "chiron": {
-        // Not currently produced by our chart calculator. Skip until we add them.
+        const p = findPlanet(chart, "Chiron");
+        if (p) {
+          items.push({
+            symbol: "⚷",
+            label: formatPlanetLabel("Chiron", p),
+            meaning: MEANINGS[input],
+          });
+        }
         break;
       }
 
@@ -177,8 +196,20 @@ export function buildBuiltUsing(
       }
 
       case "current-transits": {
-        // Transit engine not built yet. Skip until it ships; Part II
-        // sections are `disabled: true` in the blueprint anyway.
+        const transits = getTransitAspects(chart);
+        const top = transits[0];
+        if (top) {
+          const sym =
+            top.type === "trine" ? "△" :
+            top.type === "square" ? "□" :
+            top.type === "opposition" ? "☍" :
+            top.type === "sextile" ? "✶" : "☌";
+          items.push({
+            symbol: sym,
+            label: `Transit ${top.transitPlanet} ${top.type} ${top.natalBody}`,
+            meaning: MEANINGS["current-transits"],
+          });
+        }
         break;
       }
     }

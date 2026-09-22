@@ -1,3 +1,9 @@
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+// Love-letter path runs synchronous Gemini generation (~15-25s).
+// Without this, Vercel's default timeout (10-15s) kills the function mid-generation.
+export const maxDuration = 60;
+
 import { createSupabaseAdmin } from "@/lib/supabase-admin";
 import { buildPaidReadingPayload } from "@/lib/build-paid-reading";
 import { loadBirthLeadByEmail } from "@/lib/db/checkout-flow";

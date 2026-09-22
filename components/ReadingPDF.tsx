@@ -44,6 +44,7 @@ const TAG_BG = "#ede8f5";
 
 /* ── Life-area tags ── */
 const SECTION_TAGS: Record<string, string> = {
+  sun: "IDENTITY",
   rising: "PERSONALITY",
   moon: "EMOTIONS",
   venus: "LOVE",
@@ -51,8 +52,8 @@ const SECTION_TAGS: Record<string, string> = {
   mercury: "MIND",
   saturn: "CAREER & GROWTH",
   jupiter: "CONFIDENCE",
+  "your love pattern": "RELATIONSHIPS",
   "the full picture": "YOUR LIFE NOW",
-  "your love pattern": "LOVE",
   "what is actually going on with your career": "CAREER",
   "your real relationship with money": "MONEY",
   "who you actually are": "IDENTITY & PURPOSE",

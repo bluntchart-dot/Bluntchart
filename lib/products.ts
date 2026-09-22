@@ -74,6 +74,98 @@ const PRODUCTS: Record<string, ProductConfig> = {
     accessPath: "/my-reading",
     hasCheckoutFlow: false,
   },
+  "brutally-honest-reading": {
+    type: "brutally-honest-reading", gumroadPermalink: "", gumroadCheckoutUrl: "",
+    priceDollars: "4.99", priceCents: 499, accessPath: "/my-reading", hasCheckoutFlow: false,
+  },
+  "love-reading": {
+    type: "love-reading", gumroadPermalink: "", gumroadCheckoutUrl: "",
+    priceDollars: "3.99", priceCents: 399, accessPath: "/my-reading", hasCheckoutFlow: false,
+  },
+  "career-reading": {
+    type: "career-reading", gumroadPermalink: "", gumroadCheckoutUrl: "",
+    priceDollars: "5.99", priceCents: 599, accessPath: "/my-reading", hasCheckoutFlow: false,
+  },
+  "shadow-reading": {
+    type: "shadow-reading", gumroadPermalink: "", gumroadCheckoutUrl: "",
+    priceDollars: "4.99", priceCents: 499, accessPath: "/my-reading", hasCheckoutFlow: false,
+  },
+  "money-reading": {
+    type: "money-reading", gumroadPermalink: "", gumroadCheckoutUrl: "",
+    priceDollars: "4.99", priceCents: 499, accessPath: "/my-reading", hasCheckoutFlow: false,
+  },
+  "moon-reading": {
+    type: "moon-reading", gumroadPermalink: "", gumroadCheckoutUrl: "",
+    priceDollars: "4.99", priceCents: 499, accessPath: "/my-reading", hasCheckoutFlow: false,
+  },
+  "saturn-return": {
+    type: "saturn-return", gumroadPermalink: "", gumroadCheckoutUrl: "",
+    priceDollars: "4.99", priceCents: 499, accessPath: "/my-reading", hasCheckoutFlow: false,
+  },
+  "year-ahead": {
+    type: "year-ahead", gumroadPermalink: "", gumroadCheckoutUrl: "",
+    priceDollars: "7.99", priceCents: 799, accessPath: "/my-reading", hasCheckoutFlow: false,
+  },
+  "gift-reading": {
+    type: "gift-reading", gumroadPermalink: "", gumroadCheckoutUrl: "",
+    priceDollars: "3.99", priceCents: 399, accessPath: "/my-reading", hasCheckoutFlow: false,
+  },
+  "three-card-tarot": {
+    type: "three-card-tarot", gumroadPermalink: "", gumroadCheckoutUrl: "",
+    priceDollars: "3.99", priceCents: 399, accessPath: "/my-reading", hasCheckoutFlow: false,
+  },
+  "yes-no-tarot": {
+    type: "yes-no-tarot", gumroadPermalink: "", gumroadCheckoutUrl: "",
+    priceDollars: "1.99", priceCents: 199, accessPath: "/my-reading", hasCheckoutFlow: false,
+  },
+  "daily-tarot": {
+    type: "daily-tarot", gumroadPermalink: "", gumroadCheckoutUrl: "",
+    priceDollars: "1.99", priceCents: 199, accessPath: "/my-reading", hasCheckoutFlow: false,
+  },
+  "monthly-transit": {
+    type: "monthly-transit", gumroadPermalink: "", gumroadCheckoutUrl: "",
+    priceDollars: "4.99", priceCents: 499, accessPath: "/my-reading", hasCheckoutFlow: false,
+  },
+  "soulmate-reading": {
+    type: "soulmate-reading", gumroadPermalink: "", gumroadCheckoutUrl: "",
+    priceDollars: "5.99", priceCents: 599, accessPath: "/my-reading", hasCheckoutFlow: false,
+  },
+  "hidden-feelings": {
+    type: "hidden-feelings", gumroadPermalink: "", gumroadCheckoutUrl: "",
+    priceDollars: "4.99", priceCents: 499, accessPath: "/my-reading", hasCheckoutFlow: false,
+  },
+  "ex-love-reading": {
+    type: "ex-love-reading", gumroadPermalink: "", gumroadCheckoutUrl: "",
+    priceDollars: "4.99", priceCents: 499, accessPath: "/my-reading", hasCheckoutFlow: false,
+  },
+  "blunt-love": {
+    type: "blunt-love", gumroadPermalink: "", gumroadCheckoutUrl: "",
+    priceDollars: "4.99", priceCents: 499, accessPath: "/my-reading", hasCheckoutFlow: false,
+  },
+  "blunt-career": {
+    type: "blunt-career", gumroadPermalink: "", gumroadCheckoutUrl: "",
+    priceDollars: "4.99", priceCents: 499, accessPath: "/my-reading", hasCheckoutFlow: false,
+  },
+  "big-three-mini": {
+    type: "big-three-mini", gumroadPermalink: "", gumroadCheckoutUrl: "",
+    priceDollars: "3.99", priceCents: 399, accessPath: "/my-reading", hasCheckoutFlow: false,
+  },
+  "life-purpose": {
+    type: "life-purpose", gumroadPermalink: "", gumroadCheckoutUrl: "",
+    priceDollars: "5.99", priceCents: 599, accessPath: "/my-reading", hasCheckoutFlow: false,
+  },
+  "personality-decoded": {
+    type: "personality-decoded", gumroadPermalink: "", gumroadCheckoutUrl: "",
+    priceDollars: "4.99", priceCents: 499, accessPath: "/my-reading", hasCheckoutFlow: false,
+  },
+  "blind-reading": {
+    type: "blind-reading", gumroadPermalink: "", gumroadCheckoutUrl: "",
+    priceDollars: "3.99", priceCents: 399, accessPath: "/my-reading", hasCheckoutFlow: false,
+  },
+  "situationship-reality-check": {
+    type: "situationship-reality-check", gumroadPermalink: "", gumroadCheckoutUrl: "",
+    priceDollars: "4.99", priceCents: 499, accessPath: "/my-reading", hasCheckoutFlow: false,
+  },
 };
 
 export function getProduct(type: ProductType): ProductConfig {

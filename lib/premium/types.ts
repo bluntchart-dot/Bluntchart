@@ -29,9 +29,30 @@ export const READING_VERSION = "premium-1.0.0" as const;
 export type ReadingProduct =
   | "birth-chart"
   | "in-depth-reading"
-  | "compatibility"     // reserved, not implemented
-  | "year-ahead"        // reserved, not implemented
-  | "gift-reading";     // reserved, not implemented
+  | "compatibility"
+  | "year-ahead"
+  | "gift-reading"
+  | "brutally-honest-reading"
+  | "love-reading"
+  | "career-reading"
+  | "shadow-reading"
+  | "three-card-tarot"
+  | "yes-no-tarot"
+  | "daily-tarot"
+  | "saturn-return"
+  | "moon-reading"
+  | "money-reading"
+  | "monthly-transit"
+  | "soulmate-reading"
+  | "hidden-feelings"
+  | "ex-love-reading"
+  | "blunt-love"
+  | "blunt-career"
+  | "big-three-mini"
+  | "life-purpose"
+  | "personality-decoded"
+  | "blind-reading"
+  | "situationship-reality-check";
 
 /* ─────────────────────────────────────────────────────────────────────
    SECTION IDENTITY

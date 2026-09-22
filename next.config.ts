@@ -10,6 +10,12 @@ const nextConfig: NextConfig = {
         destination: "/founder",
         permanent: true,
       },
+      // Without-year URL that Google indexed before the page was named with the year.
+      {
+        source: "/mercury-retrograde-in-scorpio",
+        destination: "/mercury-retrograde-in-scorpio-2026",
+        permanent: true,
+      },
     ];
   },
   async headers() {

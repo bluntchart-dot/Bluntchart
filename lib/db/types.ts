@@ -1,6 +1,36 @@
 /** Row shapes aligned with your Supabase schema (see dashboard ERD). */
 
-export type ProductType = "reading" | "birth-chart-book" | "in-depth-reading" | "compatibility" | "transit" | "future-love-letter";
+export type ProductType =
+  | "reading"
+  | "birth-chart-book"
+  | "in-depth-reading"
+  | "compatibility"
+  | "transit"
+  | "future-love-letter"
+  // Quick-tier products (Etsy expansion)
+  | "brutally-honest-reading"
+  | "love-reading"
+  | "career-reading"
+  | "shadow-reading"
+  | "three-card-tarot"
+  | "yes-no-tarot"
+  | "daily-tarot"
+  | "saturn-return"
+  | "moon-reading"
+  | "money-reading"
+  | "monthly-transit"
+  | "year-ahead"
+  | "gift-reading"
+  | "soulmate-reading"
+  | "hidden-feelings"
+  | "ex-love-reading"
+  | "blunt-love"
+  | "blunt-career"
+  | "big-three-mini"
+  | "life-purpose"
+  | "personality-decoded"
+  | "blind-reading"
+  | "situationship-reality-check";
 
 export type CheckoutStep =
   | "form_submitted"

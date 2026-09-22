@@ -20,6 +20,7 @@
 
 import type { ChartData, PlanetPosition } from "@/lib/types";
 import type { ChartInput } from "./types";
+import { getTransitAspects } from "@/lib/chart-calculator";
 
 function findPlanet(chart: ChartData, name: string): PlanetPosition | null {
   return chart.planets.find((p) => p.name === name) ?? null;
@@ -85,6 +86,7 @@ function buildSilentReference(chart: ChartData): string {
   const planets = [
     "Sun", "Moon", "Mercury", "Venus", "Mars",
     "Jupiter", "Saturn", "Pluto",
+    "North Node", "South Node", "Chiron",
   ];
   for (const name of planets) {
     const l = factLine(chart, name);
@@ -158,21 +160,34 @@ export function buildSectionChartContext(
   chart: ChartData,
   inputs: readonly ChartInput[]
 ): string {
-  void chart;
   const territories: string[] = [];
   for (const input of inputs) {
     const t = TERRITORY[input];
     if (t) territories.push(`- ${t}`);
   }
+
+  const parts: string[] = [];
   if (territories.length === 0) {
-    return "This chapter is a synthesis chapter. Draw on the reader's overall shape from the anchor above.";
+    parts.push("This chapter is a synthesis chapter. Draw on the reader's overall shape from the anchor above.");
+  } else {
+    parts.push("Emotional territory this chapter draws on:");
+    parts.push(territories.join("\n"));
+    parts.push("");
+    parts.push("Specific placements are in the silent chart reference in the anchor above. Do not narrate them here.");
   }
-  return [
-    "Emotional territory this chapter draws on:",
-    territories.join("\n"),
-    "",
-    "Specific placements are in the silent chart reference in the anchor above. Do not narrate them here.",
-  ].join("\n");
+
+  if (inputs.includes("current-transits")) {
+    const transits = getTransitAspects(chart);
+    if (transits.length > 0) {
+      parts.push("");
+      parts.push("Current sky to this chart (top transit aspects right now):");
+      for (const t of transits.slice(0, 6)) {
+        parts.push(`- Transit ${t.transitPlanet} in ${t.transitSign} ${t.transitDegree}° ${t.type} natal ${t.natalBody} in ${t.natalSign} (${t.orb}° orb)`);
+      }
+    }
+  }
+
+  return parts.join("\n");
 }
 
 /**
