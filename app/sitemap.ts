@@ -193,6 +193,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly",
       priority: 0.85,
     },
+    {
+      url: `${BASE_URL}/birth-chart-statistics`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.85,
+    },
     // ── Patterns cluster (/why-*) ──
     {
       url: `${BASE_URL}/why-you-attract-the-wrong-person`,
