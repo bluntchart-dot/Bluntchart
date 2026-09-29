@@ -186,6 +186,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly",
       priority: 0.8,
     },
+    // ── Citation hub / statistics ──
+    {
+      url: `${BASE_URL}/astrology-statistics`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.85,
+    },
     // ── Patterns cluster (/why-*) ──
     {
       url: `${BASE_URL}/why-you-attract-the-wrong-person`,
