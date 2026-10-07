@@ -700,7 +700,10 @@ export default function AstrologyStatisticsPage() {
           <p className="tbl-note">
             Source: SSA daily births 2000–2014 via FiveThirtyEight; zodiac aggregation by BluntChart.
             Bar scale starts at 7% to make differences visible. Sign boundaries use conventional dates;
-            actual cusp dates shift by up to a day year to year. Free to cite with a link to this page.
+            actual cusp dates shift by up to a day year to year. Using the Sun&apos;s exact ingress times
+            instead, Leo, Virgo and Cancer are nearly tied, with Leo slightly ahead; see our{" "}
+            <a href="/birth-chart-statistics#sun" style={{ color: "var(--gold)" }}>birth chart statistics</a>.
+            Free to cite with a link to this page.
           </p>
 
           {/* ── MARKET ── */}
