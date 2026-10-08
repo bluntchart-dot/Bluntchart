@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 import {
-  StatsPage, JsonLd, Crumbs, PageHeader, Toc, Section, P, Cite, StatList, Table, Bar, Pending, Cta,
-  LinkList, Faq, SourceList, PageFoot, faqJsonLd, breadcrumbJsonLd, articleJsonLd, HUB_PATH, type Stat,
+  StatsPage, JsonLd, Hero, Body, Section, P, Cite, StatTiles, Figure, BarChart, Pending, Cta, Cards, Faq,
+  SourceList, PageFoot, faqJsonLd, breadcrumbJsonLd, articleJsonLd, HUB_PATH, type Stat,
 } from "@/components/stats/StatsUI";
 import { S, ASTROLOGY_STATS_URL as PAGE_URL, DATA_HUB_URL } from "@/lib/stats-sources";
 
 const PUBLISHED_ISO = "2026-09-29";
-const UPDATED_ISO = "2026-10-07";
-const UPDATED_LABEL = "October 7, 2026";
+const UPDATED_ISO = "2026-10-08";
+const UPDATED_LABEL = "October 8, 2026";
 const TITLE = "Astrology Statistics 2026: 50+ Facts, Trends & Market Data";
 
 export const metadata: Metadata = {
@@ -38,102 +38,102 @@ export const metadata: Metadata = {
 // ─── DATA ──────────────────────────────────────────────────────────────────────
 
 const KEY: Stat[] = [
-  { value: "27%", label: "of US adults say they believe in astrology", source: S.pew2025 },
-  { value: "28%", label: "consult astrology or a horoscope at least once a year", source: S.pew2025 },
-  { value: "43%", label: "of US women aged 18–49 believe in astrology", source: S.pew2025 },
-  { value: "88%", label: "of Americans know their zodiac sign", source: S.ipsos2019 },
-  { value: "Cancer", label: "is the most common US zodiac sign (9.00% of births)", source: S.bcZodiac },
-  { value: "$15.16B", label: "estimated global astrology market in 2025", source: S.mrfr },
+  { value: "27%", label: "of US adults say they believe in astrology", source: S.pew2025, icon: "users" },
+  { value: "28%", label: "consult astrology or a horoscope at least once a year", source: S.pew2025, icon: "moon" },
+  { value: "43%", label: "of US women aged 18–49 believe in astrology", source: S.pew2025, icon: "users" },
+  { value: "88%", label: "of Americans know their zodiac sign", source: S.ipsos2019, icon: "star" },
+  { value: "Cancer", label: "is the most common US zodiac sign, at 9.00% of births", source: S.bcZodiac, icon: "sun" },
+  { value: "$15.2B", label: "estimated global astrology market in 2025", source: S.mrfr, icon: "coins" },
 ];
 
 const BELIEF: Stat[] = [
-  { value: "27%", label: "of US adults believe in astrology (Oct 2024), statistically unchanged from 29% in 2017", source: S.pew2025 },
-  { value: "24%", label: "believe in astrology in Gallup’s May 2025 poll; 55% don’t and about 20% are unsure", source: S.gallup2025 },
-  { value: "~1 in 10", label: "Americans consult tarot cards at least once a year; 6% consult a fortune teller", source: S.pew2025 },
+  { value: "27%", label: "believe in astrology (Oct 2024), statistically unchanged from 29% in 2017", source: S.pew2025 },
+  { value: "24%", label: "believe in Gallup’s May 2025 poll; 55% don’t and about 20% are unsure", source: S.gallup2025 },
   { value: "20%", label: "engage with astrology, tarot or fortune telling mostly “just for fun”", source: S.pew2025 },
   { value: "1%", label: "rely “a lot” on these practices when making major life decisions", source: S.pew2025 },
 ];
 
-const DEMO: { group: string; value: string; metric: string; source: keyof typeof S }[] = [
-  { group: "LGBT adults", value: "54%", metric: "consult astrology yearly", source: "pew2025" },
-  { group: "Women, 18–49", value: "46%", metric: "consult astrology yearly", source: "pew2025" },
-  { group: "Women, 18–49", value: "43%", metric: "believe in astrology", source: "pew2025" },
-  { group: "Women, all ages", value: "37%", metric: "consult astrology yearly", source: "pew2025" },
-  { group: "Adults under 30", value: "37%", metric: "believe in astrology", source: "yougov2022" },
-  { group: "Hispanic Americans", value: "32%", metric: "believe in astrology", source: "yougov2022" },
-  { group: "Black Americans", value: "31%", metric: "believe in astrology", source: "yougov2022" },
-  { group: "Catholics", value: "31%", metric: "believe in astrology", source: "yougov2022" },
-  { group: "Women", value: "30%", metric: "believe in astrology", source: "yougov2022" },
-  { group: "Men", value: "25%", metric: "believe in astrology", source: "yougov2022" },
-  { group: "White Americans", value: "25%", metric: "believe in astrology", source: "yougov2022" },
-  { group: "Protestants", value: "22%", metric: "believe in astrology", source: "yougov2022" },
-  { group: "Adults 65+", value: "16%", metric: "believe in astrology", source: "yougov2022" },
-  { group: "Atheists", value: "10%", metric: "believe in astrology", source: "yougov2022" },
+const BELIEVE_BY_GROUP = [
+  { label: "Adults under 30", value: 37 },
+  { label: "Hispanic Americans", value: 32 },
+  { label: "Black Americans", value: 31 },
+  { label: "Catholics", value: 31 },
+  { label: "Women", value: 30 },
+  { label: "All US adults", value: 27 },
+  { label: "Men", value: 25 },
+  { label: "White Americans", value: 25 },
+  { label: "Protestants", value: 22 },
+  { label: "Adults 65+", value: 16 },
+  { label: "Atheists", value: 10 },
+];
+
+const CONSULT_BY_GROUP = [
+  { label: "LGBT adults", value: 54 },
+  { label: "Women 18–49", value: 46 },
+  { label: "All women", value: 37 },
+  { label: "All US adults", value: 28 },
 ];
 
 const ZODIAC = [
-  { sign: "Cancer", dates: "Jun 21 – Jul 22", births: 5595033, share: 9.0 },
-  { sign: "Virgo", dates: "Aug 23 – Sep 22", births: 5574916, share: 8.96 },
-  { sign: "Leo", dates: "Jul 23 – Aug 22", births: 5521329, share: 8.88 },
-  { sign: "Gemini", dates: "May 21 – Jun 20", births: 5267980, share: 8.47 },
-  { sign: "Libra", dates: "Sep 23 – Oct 22", births: 5228627, share: 8.41 },
-  { sign: "Taurus", dates: "Apr 20 – May 20", births: 5161756, share: 8.3 },
-  { sign: "Scorpio", dates: "Oct 23 – Nov 21", births: 5114444, share: 8.22 },
-  { sign: "Pisces", dates: "Feb 19 – Mar 20", births: 5051808, share: 8.12 },
-  { sign: "Sagittarius", dates: "Nov 22 – Dec 21", births: 5023366, share: 8.08 },
-  { sign: "Aquarius", dates: "Jan 20 – Feb 18", births: 5001409, share: 8.04 },
-  { sign: "Aries", dates: "Mar 21 – Apr 19", births: 4983157, share: 8.01 },
-  { sign: "Capricorn", dates: "Dec 22 – Jan 19", births: 4663199, share: 7.5 },
+  { sign: "Cancer", share: 9.0 }, { sign: "Virgo", share: 8.96 }, { sign: "Leo", share: 8.88 },
+  { sign: "Gemini", share: 8.47 }, { sign: "Libra", share: 8.41 }, { sign: "Taurus", share: 8.3 },
+  { sign: "Scorpio", share: 8.22 }, { sign: "Pisces", share: 8.12 }, { sign: "Sagittarius", share: 8.08 },
+  { sign: "Aquarius", share: 8.04 }, { sign: "Aries", share: 8.01 }, { sign: "Capricorn", share: 7.5 },
 ];
 
 const MARKET: Stat[] = [
-  { value: "$15.16B", label: "global astrology market in 2025, projected to reach $27.15B by 2035 (6.0% CAGR)", source: S.mrfr },
-  { value: "~45%", label: "of the global astrology market is in North America", source: S.mrfr },
-  { value: "$5.69B", label: "astrology app market in 2026, projected to reach $11.71B by 2030", source: S.tbrc },
-  { value: "$7.11B", label: "an alternative 2025 app-market estimate, projected to $13.48B by 2032", source: S.markntel },
-  { value: "$2.3B", label: "US psychic services revenue in 2025 (astrology, tarot, mediumship)", source: S.ibis },
-  { value: "+85%", label: "Astrotalk (India) FY25 revenue growth, to ₹1,214 crore", source: S.astrotalk },
+  { value: "$15.16B", label: "global astrology market in 2025, projected to reach $27.15B by 2035", source: S.mrfr, icon: "coins" },
+  { value: "~45%", label: "of the global market is in North America", source: S.mrfr, icon: "globe" },
+  { value: "$5.69B", label: "astrology app market in 2026, projected to reach $11.71B by 2030", source: S.tbrc, icon: "phone" },
+  { value: "$2.3B", label: "US psychic services revenue in 2025 (astrology, tarot, mediumship)", source: S.ibis, icon: "chart" },
+  { value: "+85%", label: "Astrotalk (India) FY25 revenue growth, to ₹1,214 crore", source: S.astrotalk, icon: "trend" },
+  { value: "$7.11B", label: "an alternative 2025 app-market estimate, projected to $13.48B by 2032", source: S.markntel, icon: "coins" },
 ];
 
-const APPS = [
-  { app: "Co–Star", rating: "4.8", ratings: "206K", price: "$8.99/mo" },
-  { app: "Nebula", rating: "4.6", ratings: "171K", price: "$2.99–$49.99/mo" },
-  { app: "CHANI", rating: "4.9", ratings: "59K", price: "$11.99/mo" },
-  { app: "The Pattern", rating: "4.0", ratings: "15K", price: "$14.99/mo" },
+const APP_RATINGS = [
+  { label: "Co–Star", value: 206, display: "206K", tip: "Co–Star: 206K ratings · 4.8 stars" },
+  { label: "Nebula", value: 171, display: "171K", tip: "Nebula: 171K ratings · 4.6 stars" },
+  { label: "CHANI", value: 59, display: "59K", tip: "CHANI: 59K ratings · 4.9 stars" },
+  { label: "The Pattern", value: 15, display: "15K", tip: "The Pattern: 15K ratings · 4.0 stars" },
 ];
 
 const APP_STATS: Stat[] = [
-  { value: "20M+", label: "Co–Star downloads by April 2021", source: S.axios2021 },
-  { value: "1 in 4", label: "US women aged 18–25 had downloaded Co–Star by 2021, per the company", source: S.axios2021 },
-  { value: "$15M", label: "Co–Star Series A led by Spark Capital (2021)", source: S.axios2021 },
-  { value: "$5.2M", label: "Co–Star seed round (2019)", source: S.techcrunch2019 },
-  { value: "Top 2", label: "CHANI and Co–Star led US astrology apps by revenue in Q1 2026", source: S.statista2026 },
+  { value: "20M+", label: "Co–Star downloads by April 2021", source: S.axios2021, icon: "download" },
+  { value: "1 in 4", label: "US women aged 18–25 had downloaded Co–Star by 2021, per the company", source: S.axios2021, icon: "users" },
+  { value: "$15M", label: "Co–Star Series A led by Spark Capital (2021)", source: S.axios2021, icon: "coins" },
+  { value: "$5.2M", label: "Co–Star seed round (2019)", source: S.techcrunch2019, icon: "coins" },
+  { value: "Top 2", label: "CHANI and Co–Star led US astrology apps by revenue in Q1 2026", source: S.statista2026, icon: "star" },
 ];
 
 const HABITS: Stat[] = [
   { value: "53%", label: "of people who know their sign say they identify with it", source: S.ipsos2019 },
-  { value: "5%", label: "of Americans check their horoscope often", source: S.ipsos2019 },
-  { value: "31%", label: "of 18–34-year-olds use horoscopes to understand their lives, vs 11% of those 55+", source: S.ipsos2019 },
+  { value: "31% vs 11%", label: "of 18–34s vs over-55s use horoscopes to understand their lives", source: S.ipsos2019 },
   { value: "32%", label: "of horoscope users use them to check relationship compatibility", source: S.ipsos2019 },
+  { value: "5%", label: "of Americans check their horoscope often", source: S.ipsos2019 },
 ];
 
 const SOCIAL: Stat[] = [
-  { value: "2.1M", label: "r/astrology subscribers in September 2026 (2,102,160)", source: S.redditlist },
-  { value: "Feb 2025", label: "the month r/astrology passed 2 million subscribers", source: S.redditlist },
-  { value: "+75,159", label: "r/astrology’s biggest single month of growth (January 2025)", source: S.redditlist },
+  { value: "2.1M", label: "r/astrology subscribers in September 2026", source: S.redditlist, icon: "message" },
+  { value: "Feb 2025", label: "the month r/astrology passed 2 million subscribers", source: S.redditlist, icon: "trend" },
+  { value: "+75K", label: "r/astrology’s biggest single month of growth (January 2025)", source: S.redditlist, icon: "users" },
 ];
 
-const SCIENCE: Stat[] = [
-  { value: "60%", label: "of Americans said astrology is “not at all scientific” in 2016; 37% said it is “sort of” or “very” scientific", source: S.nsf2018 },
+const SCIENCE = [
+  { label: "Not at all scientific", value: 60 },
+  { label: "Sort of scientific", value: 29 },
+  { label: "Very scientific", value: 8 },
+];
+
+const SCIENCE_STATS: Stat[] = [
   { value: "54%", label: "of 18–24-year-olds rejected astrology as unscientific, the lowest of any age group", source: S.nsf2018 },
-  { value: "76% vs 57%", label: "of college graduates vs high-school graduates called astrology unscientific", source: S.nsf2018 },
+  { value: "76% vs 57%", label: "of college graduates vs high-school graduates called it unscientific", source: S.nsf2018 },
 ];
 
-const GLOBAL: Stat[] = [
-  { value: "47%", label: "of adults in South Africa consult a fortune teller or horoscope, the highest of 35 countries", source: S.pewGlobal },
-  { value: "45%", label: "of adults in India do the same", source: S.pewGlobal },
-  { value: "4%", label: "in Greece, the lowest of the 35 countries", source: S.pewGlobal },
-  { value: "8%", label: "of Britons believe horoscopes can predict the future (vs 14% of Americans asked the same question)", source: S.yougovUK2015 },
+const WORLD = [
+  { label: "South Africa", value: 47 },
+  { label: "India", value: 45 },
+  { label: "United States", value: 9, display: "~9%" },
+  { label: "Greece", value: 4 },
 ];
 
 const FAQS = [
@@ -147,7 +147,7 @@ const FAQS = [
 ];
 
 const SOURCES = [
-  S.pew2025, S.gallup2025, S.yougov2022, S.ipsos2019, S.nsf2018, S.pewGlobal, S.yougovUK2015, S.ssa,
+  S.pew2025, S.gallup2025, S.gallup2005, S.yougov2022, S.ipsos2019, S.nsf2018, S.pewGlobal, S.ssa,
   S.mrfr, S.tbrc, S.markntel, S.ibis, S.astrotalk, S.appstore, S.techcrunch2019, S.axios2021, S.statista2026, S.redditlist,
 ];
 
@@ -177,21 +177,18 @@ export default function AstrologyStatisticsPage() {
         distribution: { "@type": "DataDownload", encodingFormat: "text/csv", contentUrl: "https://bluntchart.com/data/us-births-by-zodiac-sign-2000-2014.csv" },
       }} />
 
-      <Crumbs items={[{ label: "BluntChart", href: "/" }, { label: "Astrology Data", href: HUB_PATH }, { label: "Astrology Statistics" }]} />
-      <PageHeader
+      <Hero
+        crumbs={[{ label: "BluntChart", href: "/" }, { label: "Astrology Data", href: HUB_PATH }, { label: "Astrology Statistics" }]}
         kicker="Report"
         title={TITLE}
         lede="How many people believe in astrology, who they are, how big the industry is, and which zodiac sign is most common. Every number links to its original source."
         updatedIso={UPDATED_ISO}
         updatedLabel={UPDATED_LABEL}
-        meta={`${SOURCES.length} sources`}
+        pills={[{ icon: "book", text: `${SOURCES.length} sources` }, { icon: "chart", text: "50+ statistics" }]}
       />
 
-      <Section id="key" title="Key statistics">
-        <StatList stats={KEY} />
-      </Section>
-
-      <Toc items={[
+      <Body toc={[
+        { id: "key", label: "Key statistics" },
         { id: "belief", label: "How many people believe" },
         { id: "demographics", label: "Belief by demographic" },
         { id: "zodiac-births", label: "Most common zodiac signs" },
@@ -199,131 +196,134 @@ export default function AstrologyStatisticsPage() {
         { id: "apps", label: "Astrology apps" },
         { id: "habits", label: "Horoscope habits" },
         { id: "social", label: "Online communities" },
-        { id: "science", label: "Is astrology seen as scientific?" },
+        { id: "science", label: "Is it seen as scientific?" },
         { id: "global", label: "Around the world" },
         { id: "faq", label: "FAQ" },
         { id: "sources", label: "Sources" },
-      ]} />
+      ]}>
+        <Section id="key" icon="star" title="Key statistics">
+          <StatTiles stats={KEY} highlightFirst />
+        </Section>
 
-      <Section id="belief" title="How many people believe in astrology?" answer="About 1 in 4 US adults: 27% in Pew’s 2024 survey and 24% in Gallup’s 2025 poll.">
-        <StatList stats={BELIEF} />
-        <P>
-          Belief has barely moved despite the rise of astrology apps. Gallup recorded 25% in 1990 and 28%
-          in 2001 (<Cite source={S.gallup2005} />). Our <a href="/astrology-data#popularity">data hub</a>{" "}
-          charts the full 35-year trend.
-        </P>
-      </Section>
+        <Section id="belief" icon="users" title="How many people believe in astrology?"
+          answer={<><b>About 1 in 4</b> US adults: 27% in Pew’s 2024 survey and 24% in Gallup’s 2025 poll.</>}>
+          <StatTiles stats={BELIEF} />
+          <P>
+            Belief has barely moved despite the rise of astrology apps. Gallup recorded 25% in 1990 and 28% in
+            2001 (<Cite source={S.gallup2005} />). See the full <a href="/astrology-data#popularity">35-year trend</a>.
+          </P>
+        </Section>
 
-      <Section id="demographics" title="Astrology belief by demographic" answer="Gender and age matter most. Younger women and LGBT adults are the most engaged groups.">
-        <Table note="Pew and YouGov use different questions and samples, so compare figures within a source rather than across sources.">
-          <thead><tr><th>Group</th><th>Share</th><th>Measure</th><th>Source</th></tr></thead>
-          <tbody>
-            {DEMO.map((r) => (
-              <tr key={r.group + r.metric}>
-                <td className="b">{r.group}</td>
-                <td className="n">{r.value}</td>
-                <td>{r.metric}</td>
-                <td><Cite source={S[r.source]} /></td>
-              </tr>
-            ))}
-          </tbody>
-        </Table>
-      </Section>
+        <Section id="demographics" icon="users" title="Astrology belief by demographic"
+          answer={<>Age and gender matter most. <b>Younger adults, women and LGBT adults</b> are the most engaged.</>}>
+          <Figure title="Who believes in astrology" subtitle="Share of each group who say they believe in astrology, US, 2022." sources={[S.yougov2022]}>
+            <BarChart label="Belief in astrology by group" rows={BELIEVE_BY_GROUP} max={40} ticks={[0, 20, 40]} highlight={["All US adults"]} />
+          </Figure>
+          <Figure title="Who consults astrology" subtitle="Share who consult astrology or a horoscope at least once a year, US, 2024." sources={[S.pew2025]}>
+            <BarChart label="Yearly astrology use by group" rows={CONSULT_BY_GROUP} max={60} ticks={[0, 30, 60]} highlight={["All US adults"]} />
+          </Figure>
+        </Section>
 
-      <Section id="zodiac-births" title="What is the most common zodiac sign?" answer="Cancer, at 9.00% of US births. Capricorn is the rarest, at 7.50%.">
-        <P>
-          We grouped 62,187,024 US births from 2000–2014 (<Cite source={S.ssa} />) by the standard
-          calendar dates for each sign. The late-summer signs lead because August, July and September are
-          the busiest birth months. Capricorn trails because its season includes Christmas and New
-          Year’s Day, the two least common birthdays.
-        </P>
-        <Table note={<>Bar scale starts at 7%. Using exact Sun ingress times instead of calendar dates, Leo, Virgo and Cancer are nearly tied (see <a href="/astrology-data/birth-chart-statistics#sun">birth chart statistics</a>). <a href="/data/us-births-by-zodiac-sign-2000-2014.csv">Download CSV</a>.</>}>
-          <thead><tr><th>Sign</th><th>Dates</th><th>Births</th><th>Share</th><th style={{ width: "28%" }}></th></tr></thead>
-          <tbody>
-            {ZODIAC.map((z) => (
-              <tr key={z.sign}>
-                <td className="b"><a href={`/sun-in-${z.sign.toLowerCase()}`} style={{ color: "inherit", textDecoration: "none" }}>{z.sign}</a></td>
-                <td className="n">{z.dates}</td>
-                <td>{z.births.toLocaleString("en-US")}</td>
-                <td className="n">{z.share.toFixed(2)}%</td>
-                <td><Bar value={z.share} min={7} max={9} /></td>
-              </tr>
-            ))}
-          </tbody>
-        </Table>
-      </Section>
+        <Section id="zodiac-births" icon="sun" title="What is the most common zodiac sign?"
+          answer={<><b>Cancer</b>, at 9.00% of US births. Capricorn is the rarest, at 7.50%.</>}>
+          <Figure
+            title="US births by zodiac sign, 2000–2014"
+            subtitle="62,187,024 births grouped by the standard calendar dates for each sign."
+            sources={[S.ssa, S.bcZodiac]}
+            note={<a href="/data/us-births-by-zodiac-sign-2000-2014.csv" download>Download CSV</a>}
+          >
+            <BarChart label="Share of US births by zodiac sign" max={10} ticks={[0, 5, 10]} highlight={["Cancer"]}
+              rows={ZODIAC.map((z) => ({ label: z.sign, value: z.share, href: `/sun-in-${z.sign.toLowerCase()}` }))} />
+          </Figure>
+          <P>
+            The signs are close: every sign holds between 7.5% and 9.0% of births. Summer signs lead because
+            July, August and September are the busiest birth months. Capricorn trails because its season
+            includes Christmas and New Year’s Day, the two least common birthdays. Using exact Sun ingress
+            times instead, Leo, Virgo and Cancer are nearly tied (see{" "}
+            <a href="/astrology-data/birth-chart-statistics#sun">birth chart statistics</a>).
+          </P>
+        </Section>
 
-      <Section id="market" title="Astrology market size" answer="Roughly $15 billion globally in 2025. Apps are the fastest-growing segment.">
-        <StatList stats={MARKET} />
-        <P>Firms define “the astrology market” differently, so cite the firm along with the number.</P>
-      </Section>
+        <Section id="market" icon="coins" title="Astrology market size"
+          answer={<>Roughly <b>$15 billion</b> globally in 2025. Apps are the fastest-growing part.</>}>
+          <StatTiles stats={MARKET} />
+          <P>Research firms define “the astrology market” differently, so always cite the firm along with the number.</P>
+        </Section>
 
-      <Section id="apps" title="Astrology app statistics" answer="Co–Star is the most-downloaded astrology app. CHANI and Co–Star led US revenue in Q1 2026.">
-        <StatList stats={APP_STATS} />
-        <Table note={<>Source: <Cite source={S.appstore} />. Rating counts are a rough proxy for user base. See our <a href="/astrology-app-alternatives">app comparison</a>.</>}>
-          <thead><tr><th>App</th><th>Rating</th><th>Ratings</th><th>Price</th></tr></thead>
-          <tbody>
-            {APPS.map((a) => (
-              <tr key={a.app}><td className="b">{a.app}</td><td className="n">{a.rating}</td><td>{a.ratings}</td><td className="n">{a.price}</td></tr>
-            ))}
-          </tbody>
-        </Table>
-      </Section>
+        <Section id="apps" icon="phone" title="Astrology app statistics"
+          answer={<><b>Co–Star</b> is the most-downloaded astrology app. CHANI and Co–Star led US revenue in Q1 2026.</>}>
+          <Figure title="App Store ratings count, US" subtitle="Number of ratings, a rough proxy for each app’s user base. Hover for star rating." sources={[S.appstore]}>
+            <BarChart label="App Store ratings: Co–Star 206K, Nebula 171K, CHANI 59K, The Pattern 15K" rows={APP_RATINGS} max={220} format={(v) => `${v}K`} />
+          </Figure>
+          <StatTiles stats={APP_STATS} />
+          <P>Compare features in our <a href="/astrology-app-alternatives">astrology app guide</a>.</P>
+        </Section>
 
-      <Cta
-        text={<><strong>You’re one of the 88% who know their sign.</strong> Your Moon and Rising say more. Get the full chart, calculated from your exact birth time.</>}
-        href="/free-birth-chart"
-        label="Free birth chart"
-      />
+        <Cta
+          title="You’re one of the 88% who know their sign."
+          text="Your Moon and Rising say more. Get the full chart, calculated from your exact birth time."
+          href="/free-birth-chart"
+          label="Free birth chart"
+        />
 
-      <Section id="habits" title="Zodiac sign and horoscope habits" answer="Most Americans know their sign, but only about half identify with it.">
-        <StatList stats={HABITS} />
-      </Section>
+        <Section id="habits" icon="moon" title="Zodiac sign and horoscope habits"
+          answer={<><b>88%</b> of Americans know their sign, but only about half identify with it.</>}>
+          <StatTiles stats={HABITS} />
+        </Section>
 
-      <Section id="social" title="Astrology online communities" answer="Reddit’s r/astrology has more than 2.1 million members.">
-        <StatList stats={SOCIAL} />
-        <Pending title="TikTok and Instagram">
-          Hashtag view counts are widely quoted but no longer shown consistently by TikTok, and we couldn’t
-          verify a current figure from a primary source.
-        </Pending>
-      </Section>
+        <Section id="social" icon="message" title="Astrology online communities"
+          answer={<>Reddit’s r/astrology has <b>more than 2.1 million</b> members.</>}>
+          <StatTiles stats={SOCIAL} />
+          <Pending title="TikTok and Instagram">
+            Hashtag view counts are widely quoted, but TikTok no longer shows them consistently and we couldn’t
+            verify a current figure from a primary source.
+          </Pending>
+        </Section>
 
-      <Section id="science" title="Do people think astrology is scientific?" answer="Most don’t: 60% of Americans called it “not at all scientific” in 2016.">
-        <StatList stats={SCIENCE} />
-      </Section>
+        <Section id="science" icon="flask" title="Do people think astrology is scientific?"
+          answer={<>Most don’t: <b>60%</b> of Americans called it “not at all scientific” in 2016.</>}>
+          <Figure title="Is astrology scientific?" subtitle="US adults, 2016 General Social Survey." sources={[S.nsf2018]}>
+            <BarChart label="Not at all scientific 60%, sort of scientific 29%, very scientific 8%" rows={SCIENCE} max={100} ticks={[0, 50, 100]} />
+          </Figure>
+          <StatTiles stats={SCIENCE_STATS} />
+        </Section>
 
-      <Section id="global" title="Astrology around the world" answer="Use is highest in South Africa and India and lowest in Greece.">
-        <StatList stats={GLOBAL} />
-        <P>
-          Pew’s 35-country question covers fortune tellers and horoscopes together, so its US figure (about
-          9%) is lower than the US-only survey above (<Cite source={S.pewGlobal} />).
-        </P>
-      </Section>
+        <Section id="global" icon="globe" title="Astrology around the world"
+          answer={<>Use is highest in <b>South Africa and India</b> and lowest in Greece.</>}>
+          <Figure title="Adults who consult a fortune teller or horoscope" subtitle="Same question asked in 35 countries. Selected countries shown." sources={[S.pewGlobal]}>
+            <BarChart label="South Africa 47%, India 45%, United States about 9%, Greece 4%" rows={WORLD} max={50} ticks={[0, 25, 50]} highlight={["South Africa", "India"]} />
+          </Figure>
+          <P>
+            This cross-national question covers fortune tellers and horoscopes together, so the US figure here
+            (~9%) is lower than the US-only survey above.
+          </P>
+        </Section>
 
-      <Section id="faq" title="FAQ">
-        <Faq items={FAQS} />
-      </Section>
+        <Section id="faq" icon="help" title="FAQ">
+          <Faq items={FAQS} />
+        </Section>
 
-      <SourceList sources={SOURCES} citeAs={`BluntChart. “${TITLE}.” Updated ${UPDATED_LABEL}. ${PAGE_URL}`}>
-        <P>
-          We use primary sources (survey organisations, government data, company announcements and public
-          app listings) over secondary roundups. Market sizes come from commercial research firms. We quote
-          their published headline numbers and name the firm. Zodiac births sum SSA daily counts for
-          2000–2014 into signs using conventional start dates (Aquarius Jan 20, Pisces Feb 19, Aries Mar 21,
-          Taurus Apr 20, Gemini May 21, Cancer Jun 21, Leo Jul 23, Virgo Aug 23, Libra Sep 23, Scorpio Oct
-          23, Sagittarius Nov 22, Capricorn Dec 22). Anything we couldn’t verify is marked “Data pending”.
-        </P>
-      </SourceList>
+        <SourceList sources={SOURCES} citeAs={`BluntChart. “${TITLE}.” Updated ${UPDATED_LABEL}. ${PAGE_URL}`}>
+          <P>
+            We use primary sources (survey organisations, government data, company announcements and public app
+            listings) over secondary roundups. Market sizes come from commercial research firms. We quote their
+            published headline numbers and name the firm. Zodiac births sum SSA daily counts for 2000–2014 into
+            signs using conventional start dates (Aquarius Jan 20, Pisces Feb 19, Aries Mar 21, Taurus Apr 20,
+            Gemini May 21, Cancer Jun 21, Leo Jul 23, Virgo Aug 23, Libra Sep 23, Scorpio Oct 23, Sagittarius
+            Nov 22, Capricorn Dec 22). Anything we couldn’t verify is marked “Data pending”.
+          </P>
+        </SourceList>
 
-      <Section title="Related">
-        <LinkList items={[
-          { href: HUB_PATH, title: "Astrology data hub", desc: "All BluntChart reports and downloadable datasets." },
-          { href: "/astrology-data/birth-chart-statistics", title: "Birth chart statistics", desc: "The most common Rising signs and Big Three combinations from 62M births." },
-          { href: "/big-three-calculator", title: "Big Three calculator", desc: "Your Sun, Moon and Rising signs." },
-        ]} />
-      </Section>
+        <Section icon="layers" title="Related">
+          <Cards items={[
+            { href: HUB_PATH, icon: "database", title: "Astrology data hub", desc: "All BluntChart reports and downloadable datasets." },
+            { href: "/astrology-data/birth-chart-statistics", icon: "sunrise", title: "Birth chart statistics", desc: "The most common Rising signs and Big Three combinations." },
+            { href: "/big-three-calculator", icon: "star", title: "Big Three calculator", desc: "Find your Sun, Moon and Rising signs." },
+          ]} />
+        </Section>
 
-      <PageFoot updatedIso={UPDATED_ISO} updatedLabel={UPDATED_LABEL} />
+        <PageFoot updatedIso={UPDATED_ISO} updatedLabel={UPDATED_LABEL} />
+      </Body>
     </StatsPage>
   );
 }
