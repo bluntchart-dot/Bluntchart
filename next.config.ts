@@ -16,6 +16,17 @@ const nextConfig: NextConfig = {
         destination: "/mercury-retrograde-in-scorpio-2026",
         permanent: true,
       },
+      // Statistics reports moved under the /astrology-data hub.
+      {
+        source: "/astrology-statistics",
+        destination: "/astrology-data/astrology-statistics",
+        permanent: true,
+      },
+      {
+        source: "/birth-chart-statistics",
+        destination: "/astrology-data/birth-chart-statistics",
+        permanent: true,
+      },
     ];
   },
   async headers() {

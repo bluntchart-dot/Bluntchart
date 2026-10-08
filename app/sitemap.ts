@@ -186,15 +186,21 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly",
       priority: 0.8,
     },
-    // ── Citation hub / statistics ──
+    // ── Astrology data hub + statistics reports ──
     {
-      url: `${BASE_URL}/astrology-statistics`,
+      url: `${BASE_URL}/astrology-data`,
       lastModified: now,
       changeFrequency: "monthly",
       priority: 0.85,
     },
     {
-      url: `${BASE_URL}/birth-chart-statistics`,
+      url: `${BASE_URL}/astrology-data/astrology-statistics`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.85,
+    },
+    {
+      url: `${BASE_URL}/astrology-data/birth-chart-statistics`,
       lastModified: now,
       changeFrequency: "monthly",
       priority: 0.85,

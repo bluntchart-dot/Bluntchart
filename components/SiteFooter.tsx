@@ -193,7 +193,7 @@ export default function SiteFooter() {
             </div>
           </div>
 
-          {/* ─── COL 3 · Alternatives (+ Company) ─── */}
+          {/* ─── COL 3 · Alternatives (+ Company, Data & Research) ─── */}
           <div className="bcf-col">
             <div className="bcf-sec">
               <h4>Alternatives</h4>
@@ -212,6 +212,14 @@ export default function SiteFooter() {
                 <li><Link href="/about">About</Link></li>
                 <li><Link href="/founder">Meet the Founder</Link></li>
                 <li><Link href="/reviews">Reviews</Link></li>
+              </ul>
+            </div>
+            <div className="bcf-sec">
+              <h4>Data &amp; Research</h4>
+              <ul>
+                <li><Link href="/astrology-data" className="hl">Astrology Data Hub</Link></li>
+                <li><Link href="/astrology-data/astrology-statistics">Astrology Statistics</Link></li>
+                <li><Link href="/astrology-data/birth-chart-statistics">Birth Chart Statistics</Link></li>
               </ul>
             </div>
           </div>
