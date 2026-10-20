@@ -258,13 +258,15 @@ function validateDatasets(obj: Record<string, unknown>) {
   const datasets: Record<string, unknown>[] = [];
   if (obj["@type"] === "Dataset") datasets.push(obj);
   if (Array.isArray(obj.dataset)) datasets.push(...(obj.dataset as Record<string, unknown>[]));
+  const errors: string[] = [];
   for (const ds of datasets) {
     const desc = ds.description;
     if (typeof desc === "string" && desc.length < 50)
-      console.warn(`[JsonLd] Dataset "${ds.name}" description is ${desc.length} chars (Google requires 50–5000)`);
+      errors.push(`Dataset "${ds.name}" description is ${desc.length} chars (Google requires 50–5000)`);
     if (!ds.creator)
-      console.warn(`[JsonLd] Dataset "${ds.name}" is missing the "creator" field`);
+      errors.push(`Dataset "${ds.name}" is missing the "creator" field`);
   }
+  if (errors.length) throw new Error(`[JsonLd] Structured data errors:\n${errors.join("\n")}`);
 }
 
 export function JsonLd({ data }: { data: object }) {
