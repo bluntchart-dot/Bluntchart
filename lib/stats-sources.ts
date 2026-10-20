@@ -8,6 +8,7 @@ import type { Source } from "@/components/stats/StatsUI";
 export const DATA_HUB_URL = "https://bluntchart.com/astrology-data";
 export const ASTROLOGY_STATS_URL = `${DATA_HUB_URL}/astrology-statistics`;
 export const BIRTH_CHART_STATS_URL = `${DATA_HUB_URL}/birth-chart-statistics`;
+export const ZODIAC_STATS_URL = `${DATA_HUB_URL}/zodiac-sign-statistics`;
 
 export const S = {
   pew2025: {
@@ -139,6 +140,11 @@ export const S = {
     name: "Wyman AJ, Vyse S. “Science Versus the Stars: A Double-Blind Test of the Validity of the NEO Five-Factor Inventory and Computer-Generated Astrological Natal Charts.” Journal of General Psychology 135(3), 287–300 (2008).",
     short: "Wyman & Vyse, 2008",
     url: "https://www.tandfonline.com/doi/abs/10.3200/GENP.135.3.287-300",
+  },
+  hypebae2021: {
+    name: "Hypebae, \"Google Reveals the Most-Searched Zodiac Signs\" (May 2021). Ranking based on Google U.S. search interest data.",
+    short: "Google via Hypebae, 2021",
+    url: "https://hypebae.com/2021/5/google-trending-searches-astrology-horoscope-zodiac-sign-ranking-list",
   },
   // BluntChart's own analyses, cited by their report pages.
   bcZodiac: {

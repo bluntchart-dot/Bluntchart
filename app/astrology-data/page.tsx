@@ -3,7 +3,7 @@ import {
   StatsPage, JsonLd, Hero, Body, Section, P, StatTiles, Figure, BarChart, ColumnChart, Cards, Faq, SourceList,
   PageFoot, faqJsonLd, breadcrumbJsonLd, type Stat,
 } from "@/components/stats/StatsUI";
-import { S, DATA_HUB_URL as PAGE_URL, ASTROLOGY_STATS_URL, BIRTH_CHART_STATS_URL } from "@/lib/stats-sources";
+import { S, DATA_HUB_URL as PAGE_URL, ASTROLOGY_STATS_URL, BIRTH_CHART_STATS_URL, ZODIAC_STATS_URL } from "@/lib/stats-sources";
 
 const UPDATED_ISO = "2026-10-08";
 const UPDATED_LABEL = "October 8, 2026";
@@ -51,10 +51,16 @@ const REPORTS = [
     desc: "Original research: the most common Rising signs and Big Three combinations from 62 million US births.",
     meta: "Original dataset · 62.2M births",
   },
+  {
+    href: "/astrology-data/zodiac-sign-statistics",
+    icon: "star" as const,
+    title: "Zodiac Sign Statistics",
+    desc: "Which sign is most common by birth, most Googled, and most searched during its season? All 12 ranked.",
+    meta: "6.8M Wikipedia views · 7 sources",
+  },
 ];
 
 const UPCOMING = [
-  { icon: "star" as const, title: "Zodiac Sign Statistics", desc: "Popularity, birth rates and search data for all 12 signs.", meta: "Coming soon" },
   { icon: "loop" as const, title: "Saturn Return Statistics", desc: "Age, search trends and life-event data.", meta: "Coming soon" },
   { icon: "phone" as const, title: "Astrology App Statistics", desc: "Downloads, revenue and ratings compared.", meta: "Coming soon" },
 ];
@@ -101,7 +107,8 @@ const DATASETS = [
   { href: "/data/us-births-by-zodiac-sign-2000-2014.csv", icon: "download" as const, title: "US births by zodiac sign", desc: "Births and share per sign for 62.2M US births (2000–2014), by calendar dates and exact Sun ingress.", meta: "CSV · 12 rows" },
   { href: "/data/us-sun-moon-rising-distribution-2000-2014.csv", icon: "download" as const, title: "Sun, Moon & Rising distribution", desc: "Share of US births under each Sun, Moon and Rising sign, weighted by CDC birth times.", meta: "CSV · 12 rows" },
   { href: "/data/us-big-three-combinations-2000-2014.csv", icon: "download" as const, title: "All 1,728 Big Three combinations", desc: "Every Sun–Moon–Rising combination, ranked, with share and “1 in N” odds.", meta: "CSV · 1,728 rows" },
-  { href: "/data/rising-sign-share-by-latitude.csv", icon: "download" as const, title: "Rising sign share by latitude", desc: "How often each sign rises from 25°N to 48°N.", meta: "CSV · 12 rows" },
+  { href: "/data/rising-sign-share-by-latitude.csv", icon: "download" as const, title: "Rising sign share by latitude", desc: "How often each zodiac sign appears on the Ascendant from 25°N to 48°N latitude, based on ephemeris calculations.", meta: "CSV · 12 rows" },
+  { href: "/data/zodiac-sign-wikipedia-pageviews-2025-2026.csv", icon: "download" as const, title: "Zodiac sign Wikipedia pageviews", desc: "Monthly English Wikipedia pageviews for all 12 zodiac sign articles, Sep 2025 – Aug 2026, from the Wikimedia Pageviews API.", meta: "CSV · 12 rows" },
 ];
 
 const FAQS = [
@@ -131,6 +138,7 @@ export default function AstrologyDataHub() {
         hasPart: [
           { "@type": "Article", name: "Astrology Statistics 2026: 50+ Facts, Trends & Market Data", url: ASTROLOGY_STATS_URL },
           { "@type": "Article", name: "Birth Chart Statistics: Data on Readings, Popularity & Trends", url: BIRTH_CHART_STATS_URL },
+          { "@type": "Article", name: "Zodiac Sign Statistics: Popularity, Birth Rates & Search Data", url: ZODIAC_STATS_URL },
         ],
       }} />
       <JsonLd data={{
@@ -144,6 +152,7 @@ export default function AstrologyDataHub() {
           "@type": "Dataset",
           name: d.title,
           description: d.desc,
+          creator: { "@type": "Organization", name: "BluntChart", url: "https://bluntchart.com" },
           license: "https://creativecommons.org/licenses/by/4.0/",
           isBasedOn: S.ssa.url,
           distribution: { "@type": "DataDownload", encodingFormat: "text/csv", contentUrl: `https://bluntchart.com${d.href}` },

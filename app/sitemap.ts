@@ -21,6 +21,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "weekly",
       priority: 0.95,
     },
+    {
+      url: `${BASE_URL}/compatibility-reading`,
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.95,
+    },
 
     // ── Free tool pages ──
     {
@@ -201,6 +207,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
     {
       url: `${BASE_URL}/astrology-data/birth-chart-statistics`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.85,
+    },
+    {
+      url: `${BASE_URL}/astrology-data/zodiac-sign-statistics`,
       lastModified: now,
       changeFrequency: "monthly",
       priority: 0.85,

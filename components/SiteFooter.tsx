@@ -170,7 +170,7 @@ export default function SiteFooter() {
             <div className="bcf-sec">
               <h4>Readings</h4>
               <ul>
-                <li><Link href="/#try-it" className="hl">Birth Chart · $15</Link></li>
+                <li><Link href="/in-depth-birth-chart" className="hl">In-Depth Reading · $24</Link></li>
                 <li><Link href="/in-depth-birth-chart" className="hl">In-Depth Reading · $24</Link></li>
                 <li><Link href="/#waitlist">Compatibility · Soon</Link></li>
                 <li><Link href="/#waitlist">Year Ahead · Soon</Link></li>
@@ -220,6 +220,7 @@ export default function SiteFooter() {
                 <li><Link href="/astrology-data" className="hl">Astrology Data Hub</Link></li>
                 <li><Link href="/astrology-data/astrology-statistics">Astrology Statistics</Link></li>
                 <li><Link href="/astrology-data/birth-chart-statistics">Birth Chart Statistics</Link></li>
+                <li><Link href="/astrology-data/zodiac-sign-statistics">Zodiac Sign Statistics</Link></li>
               </ul>
             </div>
           </div>
