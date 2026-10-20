@@ -14,7 +14,7 @@ const data: AlternativePageData = {
     "<b>Flat $15</b>",
     "<b>No</b> per-minute",
     "<b>~1,500 words</b> you keep",
-    "Free preview, no card",
+    "In-depth reading, no subscription",
   ],
   answerBox: (
     <p>
@@ -45,7 +45,7 @@ const data: AlternativePageData = {
     { feature: "Brutally honest tone", bluntchart: { text: "zero filter", kind: "yes" }, competitor: { text: "Varies by reader", kind: "lim" } },
     { feature: "Full natal chart interpreted", bluntchart: { text: "planets, houses, aspects", kind: "yes" }, competitor: { text: "Depends on time bought", kind: "lim" } },
     { feature: "Live human, ask-anything", bluntchart: { text: "it's a written reading", kind: "no" }, competitor: { text: "its whole point", kind: "yes" } },
-    { feature: "Free preview before paying", bluntchart: { text: "2 insights, no card", kind: "yes" }, competitor: { text: "Paid intro", kind: "lim" } },
+    { feature: "In-depth reading, no subscription", bluntchart: { text: "2 insights, no card", kind: "yes" }, competitor: { text: "Paid intro", kind: "lim" } },
   ],
   comparisonFootnote: "Per-minute rates and intro offers vary by reader and change over time; comparison reflects publicly reported pricing at time of writing.",
   differenceH2: <>Everything a good reading would surface — <em>without watching the clock.</em></>,
@@ -82,7 +82,7 @@ const data: AlternativePageData = {
     { icon: "🔒", title: "Never sold", note: "Your birth data stays yours" },
     { icon: "💵", title: "Flat $15", note: "No meter, no surprises" },
     { icon: "♾️", title: "Yours forever", note: "Re-read it any time" },
-    { icon: "🎁", title: "Free preview", note: "No account, no card" },
+    { icon: "🎁", title: "In-depth reading", note: "No account, no card" },
   ],
   ctaBandH2: <>Skip the meter. <em>Keep the reading.</em></>,
   ctaBandBody: "Two free insights, no account, no card. The full reading is a flat $15 — no per-minute surprises, yours forever.",

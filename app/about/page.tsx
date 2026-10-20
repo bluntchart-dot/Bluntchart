@@ -224,11 +224,11 @@ export default function AboutPage() {
             <span className="ab-logo-g">BluntChart</span>
           </Link>
           <ul className="ab-nl">
-            <li><Link href="/#try-it">Try Free</Link></li>
+            <li><Link href="/in-depth-birth-chart">Try Free</Link></li>
             <li><Link href="/free-birth-chart-readings">How It Works</Link></li>
             <li><Link href="/zodiac-signs">Zodiac Signs</Link></li>
             <li><Link href="/about" className="on">About</Link></li>
-            <li><Link className="ab-ncta" href="/#try-it">Get Reading $15</Link></li>
+            <li><Link className="ab-ncta" href="/in-depth-birth-chart">In-Depth Reading $24</Link></li>
           </ul>
         </div>
       </nav>
@@ -424,7 +424,7 @@ export default function AboutPage() {
                 <strong>Zodiac Signs Guide</strong>
                 <span>Honest, jargon-free breakdowns of all twelve signs.</span>
               </Link>
-              <Link href="/#try-it">
+              <Link href="/in-depth-birth-chart">
                 <strong>Get Your Reading</strong>
                 <span>Two free personalized insights, then the full reading for $15.</span>
               </Link>
@@ -460,8 +460,8 @@ export default function AboutPage() {
               Two personalized insights, free. The full reading — with your natal chart wheel,
               eight more insights, and your shareable identity card — is a one-time $15.
             </p>
-            <Link className="ab-bp" href="/#try-it">
-              Get My Free Preview ✨
+            <Link className="ab-bp" href="/in-depth-birth-chart">
+              Get My In-Depth Reading ✨
             </Link>
           </div>
         </section>

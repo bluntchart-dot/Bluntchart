@@ -206,12 +206,12 @@ export default function FreeBirthChartClient() {
             <span className="g">BluntChart</span>
           </Link>
           <div className="fbc-nav-links" style={{ display:"flex", alignItems:"center", gap:24 }}>
-            <Link href="/#try-it" style={{ fontSize:13, color:"rgba(232,228,240,0.55)", textDecoration:"none", fontWeight:500 }}>
+            <Link href="/in-depth-birth-chart" style={{ fontSize:13, color:"rgba(232,228,240,0.55)", textDecoration:"none", fontWeight:500 }}>
               Get Full Reading
             </Link>
             <Link href="/" style={{ fontSize:13, color:"#F0B84A", textDecoration:"none", fontWeight:600,
               border:"1px solid rgba(240,184,74,0.18)", padding:"6px 15px", borderRadius:4 }}>
-              Full Reading $15
+              In-Depth Reading $24
             </Link>
           </div>
         </div>
@@ -371,8 +371,8 @@ export default function FreeBirthChartClient() {
                 horoscope language. 10 specific insights written to your exact placements. ~1,500 words
                 that feel like they were written by someone who actually knows you.
               </p>
-              <Link href="/#try-it" className="fbc-cta-btn">
-                Get My Full Reading · $15 ✦
+              <Link href="/in-depth-birth-chart" className="fbc-cta-btn">
+                Get My In-Depth Reading · $24 ✦
               </Link>
               <p style={{ fontSize:12, color:"#3a3858", marginTop:12 }}>
                 One-time payment · No subscription · Emailed instantly · Includes shareable card
@@ -418,11 +418,11 @@ export default function FreeBirthChartClient() {
                 fontStyle:"italic" }}>
                 "Your chart already knows why you're like this. BluntChart just says it out loud."
               </p>
-              <Link href="/#try-it" style={{ display:"inline-flex", alignItems:"center", gap:8,
+              <Link href="/in-depth-birth-chart" style={{ display:"inline-flex", alignItems:"center", gap:8,
                 padding:"14px 30px", background:"linear-gradient(135deg,#6b2fd4,#d4537e)", color:"#fff",
                 fontWeight:700, fontSize:14, letterSpacing:"0.04em", textTransform:"uppercase" as const,
                 textDecoration:"none", borderRadius:10, transition:"opacity .2s" }}>
-                Get My Full Reading — $15 ✨
+                Get My In-Depth Reading — $24 ✨
               </Link>
             </div>
           </div>
@@ -572,7 +572,7 @@ export default function FreeBirthChartClient() {
             <p className="fbc-p">A traditional automated report works by looking up pre-written paragraphs: Venus in Scorpio returns paragraph 47, Moon in the 8th returns paragraph 112, and they&apos;re stapled together. The result reads disjointed because it <em>is</em> disjointed — nothing in it accounts for how those two placements interact.</p>
             <p className="fbc-p">A well-built AI reading works from the whole chart at once. It can register that your Venus in Scorpio sits in the 8th house, squares Saturn, and is ruled by a Pluto that&apos;s conjunct your Ascendant — and describe what that combination does to how you attach to people. That synthesis is what a human astrologer does and what template reports have never managed.</p>
             <p className="fbc-p">The limitation is equally real. AI will not tell you it doesn&apos;t know. Ask a general-purpose chatbot to read your chart and it will frequently calculate the placements incorrectly and then interpret the wrong chart with total confidence. The calculation has to come from a real ephemeris, not from the language model.</p>
-            <p className="fbc-p">That&apos;s how BluntChart is built: exact astronomical calculation first, then interpretation over the complete chart. And it&apos;s written to say the thing a paid astrologer would soften. <Link href="/#try-it">Your chart is above — what it actually means is a different question →</Link></p>
+            <p className="fbc-p">That&apos;s how BluntChart is built: exact astronomical calculation first, then interpretation over the complete chart. And it&apos;s written to say the thing a paid astrologer would soften. <Link href="/in-depth-birth-chart">Your chart is above — what it actually means is a different question →</Link></p>
           </div>
 
         </div>
@@ -606,7 +606,7 @@ export default function FreeBirthChartClient() {
               { feature:"One-time payment, no subscription", us:true, them:"Subscription" },
               { feature:"Shareable identity card", us:true, them:false },
               { feature:"~1,500 words specific to your chart", us:true, them:"Generic text" },
-              { feature:"Free preview before you pay", us:true, them:false },
+              { feature:"In-depth reading, no subscription", us:true, them:false },
             ].map((row, i, arr) => (
               <div key={i} style={{ display:"grid", gridTemplateColumns:"1fr 140px 140px", borderBottom: i < arr.length-1 ? "0.5px solid rgba(255,255,255,0.05)" : "none" }}>
                 <div style={{ padding:"15px 20px", fontSize:14, color:"#e8e4f0", fontWeight:500 }}>{row.feature}</div>
@@ -661,8 +661,8 @@ export default function FreeBirthChartClient() {
             ))}
           </div>
           <div style={{ textAlign:"center", marginTop:32 }}>
-            <Link href="/#try-it" style={{ display:"inline-flex", alignItems:"center", gap:8, padding:"14px 30px", background:"linear-gradient(135deg,#6b2fd4,#d4537e)", color:"#fff", fontWeight:700, fontSize:14, letterSpacing:"0.04em", textTransform:"uppercase" as const, textDecoration:"none", borderRadius:10 }}>
-              Get My Full Reading — $15 ✨
+            <Link href="/in-depth-birth-chart" style={{ display:"inline-flex", alignItems:"center", gap:8, padding:"14px 30px", background:"linear-gradient(135deg,#6b2fd4,#d4537e)", color:"#fff", fontWeight:700, fontSize:14, letterSpacing:"0.04em", textTransform:"uppercase" as const, textDecoration:"none", borderRadius:10 }}>
+              Get My In-Depth Reading — $24 ✨
             </Link>
           </div>
         </div>
@@ -718,8 +718,8 @@ export default function FreeBirthChartClient() {
             The chart above shows you where everything is. A BluntChart reading tells you what it
             actually means — in plain language, no sugarcoating.
           </p>
-          <Link href="/#try-it" className="fbc-cta-btn" style={{ maxWidth:360 }}>
-            Get My Full Reading · $15 ✦
+          <Link href="/in-depth-birth-chart" className="fbc-cta-btn" style={{ maxWidth:360 }}>
+            Get My In-Depth Reading · $24 ✦
           </Link>
         </div>
       </section>

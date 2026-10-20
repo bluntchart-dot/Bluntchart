@@ -129,7 +129,7 @@ export function PatternPageShell({
           <div className="pp-nav-links">
             <Link href="/free-birth-chart">Birth Chart</Link>
             <Link href="/moon-sign-calculator">Moon Sign</Link>
-            <Link href="/#try-it" className="pp-cta">Full Reading $15</Link>
+            <Link href="/in-depth-birth-chart" className="pp-cta">In-Depth Reading $24</Link>
           </div>
         </div>
       </nav>
@@ -190,7 +190,7 @@ export function ChartCTA({
     <div className="pp-cta-block">
       <h3>{headline}</h3>
       <p>{body}</p>
-      <Link href="/#try-it" className="pp-cta-btn">Get my reading — $15 ✦</Link>
+      <Link href="/in-depth-birth-chart" className="pp-cta-btn">Get my in-depth reading — $24 ✦</Link>
     </div>
   );
 }

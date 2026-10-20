@@ -93,7 +93,7 @@ export default function VirgoPage() {
             <li><Link href="/free-birth-chart">Free Birth Chart</Link></li>
             <li><Link href="/#reveals">What We Reveal</Link></li>
             <li><Link href="/#reviews">Reviews</Link></li>
-            <li><Link href="/#try-it" className="ncta">Get Reading $15</Link></li>
+            <li><Link href="/in-depth-birth-chart" className="ncta">In-Depth Reading $24</Link></li>
           </ul>
         </div>
       </nav>
@@ -310,7 +310,7 @@ export default function VirgoPage() {
             <p style={{ fontSize:16, color:"var(--dim)", lineHeight:1.72, maxWidth:500, margin:"0 auto 24px" }}>
               Your Virgo Sun interacts with your Moon, Rising, Venus, Mars, and house placements in ways that generic sign descriptions can&apos;t capture. A BluntChart reading tells you what YOUR specific chart says — ~1,500 words, brutally honest, no horoscope fluff.
             </p>
-            <Link href="/#try-it" className="cta" style={{ maxWidth:380 }}>Get My Full Reading · $15 ✦</Link>
+            <Link href="/in-depth-birth-chart" className="cta" style={{ maxWidth:380 }}>Get My In-Depth Reading · $24 ✦</Link>
           </div>
         </div>
       </section>
@@ -395,7 +395,7 @@ export default function VirgoPage() {
             Your Virgo Sun is one placement.<br/><em style={{ fontStyle:"italic", background:"linear-gradient(135deg,#8ec5a0,#5dcaa5)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", backgroundClip:"text" }}>Your full chart tells the real story.</em>
           </h2>
           <p style={{ fontSize:16, color:"var(--dim)", maxWidth:480, margin:"0 auto 24px", lineHeight:1.72 }}>10 insights from your exact birth chart. Brutally honest, ~1,500 words, specific to you.</p>
-          <Link href="/#try-it" className="cta" style={{ maxWidth:380 }}>Get My Full Reading · $15 ✦</Link>
+          <Link href="/in-depth-birth-chart" className="cta" style={{ maxWidth:380 }}>Get My In-Depth Reading · $24 ✦</Link>
         </div>
       </section>
 

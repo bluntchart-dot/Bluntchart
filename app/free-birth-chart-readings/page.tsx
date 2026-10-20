@@ -89,7 +89,7 @@ const FAQS_BIRTH_CHART = [
   },
   {
     q: "Can I get a birth chart without creating an account?",
-    a: "Yes. BluntChart requires no account, no app download, and no subscription. Enter your birth details, get your free preview instantly. If you want the full reading, it's a one-time $15 payment — delivered to your email immediately. No strings.",
+    a: "Yes. BluntChart requires no account, no app download, and no subscription. Enter your birth details and get your in-depth reading — delivered to your email immediately. No strings.",
   },
 ];
 
@@ -374,11 +374,11 @@ export default function FreeBirthChartPage() {
             <span className="g">BluntChart</span>
           </Link>
           <ul className="nl">
-            <li><Link href="/#try-it">Try Free</Link></li>
+            <li><Link href="/in-depth-birth-chart">Try Free</Link></li>
             <li><Link href="/#reveals">What We Reveal</Link></li>
             <li><Link href="/#reviews">Reviews</Link></li>
             <li><Link href="/#compare">vs Co-Star</Link></li>
-            <li><Link className="ncta" href="/#try-it">Get Reading $15</Link></li>
+            <li><Link className="ncta" href="/in-depth-birth-chart">In-Depth Reading $24</Link></li>
           </ul>
         </div>
       </nav>
@@ -430,7 +430,7 @@ export default function FreeBirthChartPage() {
             </p>
 
             <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 14, flexWrap: "wrap", animation: "fadeUp .6s .25s ease both" }}>
-              <Link className="bp" href="/#try-it">Calculate My Free Birth Chart ✨</Link>
+              <Link className="bp" href="/in-depth-birth-chart">Calculate My Free Birth Chart ✨</Link>
               <a className="bs" href="#what-you-get">See What You Get ↓</a>
             </div>
 
@@ -604,16 +604,16 @@ export default function FreeBirthChartPage() {
             </div>
             <div className="hiw-step">
               <div className="hiw-num">3</div>
-              <div className="hiw-title">Read your free preview</div>
+              <div className="hiw-title">Get your in-depth reading</div>
               <div className="hiw-desc">
-                Two brutally honest insights based on your exact placements. No generic
-                copy. If the preview alone makes you pause, imagine what the full reading does.
+                A brutally honest, full natal chart reading based on your exact placements. No generic
+                copy. 8 chapters, 40+ pages — everything your chart is actually saying.
               </div>
             </div>
           </div>
 
           <div style={{ textAlign: "center", marginTop: 48 }}>
-            <Link className="bp" href="/#try-it">
+            <Link className="bp" href="/in-depth-birth-chart">
               Calculate My Birth Chart — Free ✨
             </Link>
             <div style={{ fontSize: 12, color: "#3a3858", marginTop: 10 }}>
@@ -640,7 +640,7 @@ export default function FreeBirthChartPage() {
               </div>
               <h2>The two free insights<br /><em>are just the door.</em></h2>
               <p>
-                You&apos;ll read your free preview and feel something shift. A quiet recognition.
+                You&apos;ll read your in-depth reading and feel something shift. A quiet recognition.
                 The feeling of being seen by something that shouldn&apos;t know you that well.
               </p>
               <p style={{ maxWidth: 520, margin: "0 auto 8px", fontSize: ".95rem", color: "rgba(232,228,240,0.5)", lineHeight: 1.75 }}>
@@ -664,11 +664,11 @@ export default function FreeBirthChartPage() {
               </div>
 
               <div style={{ marginTop: 28, display: "flex", flexDirection: "column", alignItems: "center", gap: 10 }}>
-                <Link className="bp" href="/#try-it" style={{ textDecoration: "none", fontSize: ".9rem", padding: "16px 36px" }}>
-                  Start with my free preview ✨
+                <Link className="bp" href="/in-depth-birth-chart" style={{ textDecoration: "none", fontSize: ".9rem", padding: "16px 36px" }}>
+                  Get my in-depth reading ✨
                 </Link>
                 <span style={{ fontSize: ".76rem", color: "rgba(232,228,240,0.3)" }}>
-                  Free preview first — no payment until you&apos;re ready
+                  8 chapters, 40+ pages — delivered in minutes
                 </span>
               </div>
             </div>
@@ -833,7 +833,7 @@ export default function FreeBirthChartPage() {
               Enter your birth details. Get your natal chart with exact degrees and placements.
               Read two truths your chart picked for you — completely free.
             </p>
-            <Link className="bp" href="/#try-it" style={{ textDecoration: "none" }}>
+            <Link className="bp" href="/in-depth-birth-chart" style={{ textDecoration: "none" }}>
               Get My Free Birth Chart ✨
             </Link>
             <div style={{ marginTop: 12, fontSize: ".78rem", color: "#3a3858" }}>

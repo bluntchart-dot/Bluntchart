@@ -382,9 +382,9 @@ export default function MoonPhaseMatchClient() {
         <div className="wrap topbar">
           <Link href="/" className="logo">Blunt<b>Chart</b></Link>
           <div className="navlinks">
-            <Link href="/#try-it">Birth Chart</Link>
+            <Link href="/in-depth-birth-chart">Birth Chart</Link>
             <Link href="/#waitlist">Compatibility</Link>
-            <Link href="/#try-it">Full Reading $15</Link>
+            <Link href="/in-depth-birth-chart">In-Depth Reading $24</Link>
           </div>
         </div>
         <div className="wrap crumb">

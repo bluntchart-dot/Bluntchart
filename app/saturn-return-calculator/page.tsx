@@ -72,7 +72,7 @@ export default function SaturnReturnCalculatorPage() {
         @media(max-width:768px){.nav-links{display:none}.fi{flex-direction:column;gap:28px}.fb2{flex-direction:column;align-items:flex-start}.related-grid{grid-template-columns:1fr}.c{padding:0 16px}}
       `}</style>
 
-      <nav className="nav"><div className="c nav-i"><a className="logo" href="/"><img src="/mascot.png" alt="BluntChart" width={34} height={34} style={{borderRadius:"50%"}}/><span className="g">BluntChart</span></a><div className="nav-links"><a href="/free-birth-chart">Free Chart</a><a href="/saturn-return">Saturn Return Guide</a><a href="/#try-it">Get Reading</a><a className="ncta" href="/in-depth-birth-chart">In-Depth Reading $24</a></div></div></nav>
+      <nav className="nav"><div className="c nav-i"><a className="logo" href="/"><img src="/mascot.png" alt="BluntChart" width={34} height={34} style={{borderRadius:"50%"}}/><span className="g">BluntChart</span></a><div className="nav-links"><a href="/free-birth-chart">Free Chart</a><a href="/saturn-return">Saturn Return Guide</a><a href="/in-depth-birth-chart">Get Reading</a><a className="ncta" href="/in-depth-birth-chart">In-Depth Reading $24</a></div></div></nav>
 
       <div className="c"><nav className="breadcrumb" aria-label="Breadcrumb"><a href="/">BluntChart</a><span style={{margin:"0 8px",opacity:.4}}>/</span><span style={{color:"var(--white)"}}>Saturn Return Calculator</span></nav></div>
 

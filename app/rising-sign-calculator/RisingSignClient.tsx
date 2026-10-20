@@ -225,7 +225,7 @@ export default function RisingSignClient() {
           </Link>
           <div className="rs-nav-links" style={{ display:"flex", alignItems:"center", gap:24 }}>
             <Link href="/free-birth-chart" style={{ fontSize:13, color:"rgba(232,228,240,0.55)", textDecoration:"none", fontWeight:500 }}>Free Birth Chart</Link>
-            <Link href="/#try-it" style={{ fontSize:13, color:"#F0B84A", textDecoration:"none", fontWeight:600, border:"1px solid rgba(240,184,74,0.18)", padding:"6px 15px", borderRadius:4 }}>Full Reading $15</Link>
+            <Link href="/in-depth-birth-chart" style={{ fontSize:13, color:"#F0B84A", textDecoration:"none", fontWeight:600, border:"1px solid rgba(240,184,74,0.18)", padding:"6px 15px", borderRadius:4 }}>In-Depth Reading $24</Link>
           </div>
         </div>
       </nav>
@@ -394,7 +394,7 @@ export default function RisingSignClient() {
                 placements — Venus, Mars, Saturn, houses, aspects. ~1,500 words that feel like they were
                 written by someone who actually knows you.
               </p>
-              <Link href="/#try-it" className="rs-cta">Get My Full Reading · $15 ✦</Link>
+              <Link href="/in-depth-birth-chart" className="rs-cta">Get My In-Depth Reading · $24 ✦</Link>
               <p style={{ fontSize:12, color:"#3a3858", marginTop:12 }}>One-time · No subscription · Emailed instantly</p>
             </div>
 
@@ -411,11 +411,11 @@ export default function RisingSignClient() {
               <p style={{ fontSize:15, color:"rgba(232,228,240,0.55)", marginBottom:16, fontFamily:"var(--font-display)", fontStyle:"italic" }}>
                 &ldquo;Your chart already knows why you&apos;re like this. BluntChart just says it out loud.&rdquo;
               </p>
-              <Link href="/#try-it" style={{ display:"inline-flex", alignItems:"center", gap:8,
+              <Link href="/in-depth-birth-chart" style={{ display:"inline-flex", alignItems:"center", gap:8,
                 padding:"14px 30px", background:"linear-gradient(135deg,#6b2fd4,#d4537e)", color:"#fff",
                 fontWeight:700, fontSize:14, letterSpacing:"0.04em", textTransform:"uppercase" as const,
                 textDecoration:"none", borderRadius:10 }}>
-                Get My Full Reading — $15 ✨
+                Get My In-Depth Reading — $24 ✨
               </Link>
             </div>
           </div>
@@ -582,7 +582,7 @@ export default function RisingSignClient() {
               <li><Link href="/natal-chart"><strong>How to read a natal chart</strong></Link> — the complete step-by-step guide.</li>
               <li><Link href="/zodiac-signs"><strong>All 12 zodiac signs</strong></Link> — traits for every Rising sign.</li>
             </ul>
-            <p className="rs-p"><Link href="/#try-it"><strong>Your Rising sign is the mask. A full reading shows the face behind it →</strong></Link></p>
+            <p className="rs-p"><Link href="/in-depth-birth-chart"><strong>Your Rising sign is the mask. A full reading shows the face behind it →</strong></Link></p>
           </div>
 
         </div>
@@ -626,8 +626,8 @@ export default function RisingSignClient() {
             ))}
           </div>
           <div style={{ textAlign:"center", marginTop:32 }}>
-            <Link href="/#try-it" style={{ display:"inline-flex", alignItems:"center", gap:8, padding:"14px 30px", background:"linear-gradient(135deg,#6b2fd4,#d4537e)", color:"#fff", fontWeight:700, fontSize:14, letterSpacing:"0.04em", textTransform:"uppercase" as const, textDecoration:"none", borderRadius:10 }}>
-              Get My Full Reading — $15 ✨
+            <Link href="/in-depth-birth-chart" style={{ display:"inline-flex", alignItems:"center", gap:8, padding:"14px 30px", background:"linear-gradient(135deg,#6b2fd4,#d4537e)", color:"#fff", fontWeight:700, fontSize:14, letterSpacing:"0.04em", textTransform:"uppercase" as const, textDecoration:"none", borderRadius:10 }}>
+              Get My In-Depth Reading — $24 ✨
             </Link>
           </div>
         </div>
@@ -670,7 +670,7 @@ export default function RisingSignClient() {
             10 brutally honest insights. Venus, Mars, Saturn, houses, aspects — everything your chart says
             about you, in plain language.
           </p>
-          <Link href="/#try-it" className="rs-cta" style={{ maxWidth:360 }}>Get My Full Reading · $15 ✦</Link>
+          <Link href="/in-depth-birth-chart" className="rs-cta" style={{ maxWidth:360 }}>Get My In-Depth Reading · $24 ✦</Link>
         </div>
       </section>
 </>

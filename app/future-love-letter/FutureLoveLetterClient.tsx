@@ -49,11 +49,11 @@ function Navbar() {
           <span className={`fll-nav-ham-line${menuOpen ? " open" : ""}`} />
         </button>
         <ul className={`fll-nav-links${menuOpen ? " fll-nav-links-open" : ""}`}>
-          <li><Link href="/#try-it" onClick={() => setMenuOpen(false)}>Try Free</Link></li>
+          <li><Link href="/in-depth-birth-chart" onClick={() => setMenuOpen(false)}>Try Free</Link></li>
           <li><Link href="/free-birth-chart-readings" onClick={() => setMenuOpen(false)}>How It Works</Link></li>
           <li><Link href="/zodiac-signs" onClick={() => setMenuOpen(false)}>Zodiac Signs</Link></li>
           <li><Link href="/future-love-letter" onClick={() => setMenuOpen(false)}>Love-letter</Link></li>
-          <li><Link href="/#try-it" className="fll-nav-cta" onClick={() => setMenuOpen(false)}>Get Reading $15</Link></li>
+          <li><Link href="/in-depth-birth-chart" className="fll-nav-cta" onClick={() => setMenuOpen(false)}>In-Depth Reading $24</Link></li>
         </ul>
       </div>
     </nav>

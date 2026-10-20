@@ -215,11 +215,11 @@ export default function FounderPage() {
             <span className="fd-logo-g">BluntChart</span>
           </Link>
           <ul className="fd-nl">
-            <li><Link href="/#try-it">Try Free</Link></li>
+            <li><Link href="/in-depth-birth-chart">Try Free</Link></li>
             <li><Link href="/free-birth-chart-readings">How It Works</Link></li>
             <li><Link href="/zodiac-signs">Zodiac Signs</Link></li>
             <li><Link href="/about" className="on">About</Link></li>
-            <li><Link className="fd-ncta" href="/#try-it">Get Reading $15</Link></li>
+            <li><Link className="fd-ncta" href="/in-depth-birth-chart">In-Depth Reading $24</Link></li>
           </ul>
         </div>
       </nav>
@@ -517,8 +517,8 @@ export default function FounderPage() {
               Two personalized insights, free. The full reading — with your natal chart wheel,
               eight more insights, and your shareable identity card — is a one-time $15.
             </p>
-            <Link className="fd-bp" href="/#try-it">
-              Get My Free Preview ✨
+            <Link className="fd-bp" href="/in-depth-birth-chart">
+              Get My In-Depth Reading ✨
             </Link>
           </div>
         </section>

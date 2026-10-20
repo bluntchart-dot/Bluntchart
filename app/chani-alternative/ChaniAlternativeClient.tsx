@@ -14,7 +14,7 @@ const data: AlternativePageData = {
     "<b>$15</b> one-time",
     "<b>No</b> subscription",
     "<b>No</b> affirmations",
-    "Free preview, no card",
+    "In-depth reading, no subscription",
   ],
   answerBox: (
     <p>
@@ -44,7 +44,7 @@ const data: AlternativePageData = {
     { feature: "Something you keep & re-read", bluntchart: { text: "emailed + share card", kind: "yes" }, competitor: { text: "Lives in the app, weekly", kind: "lim" } },
     { feature: "Meditations, rituals, mindfulness", bluntchart: { text: "not the point", kind: "no" }, competitor: { text: "its strength", kind: "yes" } },
     { feature: "Full natal chart interpreted at once", bluntchart: { text: "planets, houses, aspects", kind: "yes" }, competitor: { text: "Unfolds gradually", kind: "lim" } },
-    { feature: "Free preview before paying", bluntchart: { text: "2 insights, no card", kind: "yes" }, competitor: { text: "Limited free tier", kind: "lim" } },
+    { feature: "In-depth reading, no subscription", bluntchart: { text: "2 insights, no card", kind: "yes" }, competitor: { text: "Limited free tier", kind: "lim" } },
   ],
   comparisonFootnote: "App pricing varies by platform and region and changes over time; comparison reflects publicly reported features and pricing at time of writing.",
   differenceH2: <>The parts a gentle app <em>won&apos;t say out loud.</em></>,
@@ -81,7 +81,7 @@ const data: AlternativePageData = {
     { icon: "🔒", title: "Never sold", note: "Your birth data stays yours" },
     { icon: "🚫", title: "No subscription", note: "One-time $15, that's it" },
     { icon: "🪞", title: "Blunt, not gentle", note: "The unvarnished version" },
-    { icon: "🎁", title: "Free preview", note: "No account, no card" },
+    { icon: "🎁", title: "In-depth reading", note: "No account, no card" },
   ],
   ctaBandH2: <>Done being told to <em>breathe through it?</em></>,
   ctaBandBody: "Two free insights, no account, no card. The full, unfiltered reading is $15 — once. No gentle framing included.",

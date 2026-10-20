@@ -11,27 +11,37 @@
 import type { ReadingProduct } from "@/lib/premium/types";
 import { isBundle, getBundleProducts } from "@/lib/pipeline/bundles";
 
+export type MoonProductId = "a1" | "a2" | "b1" | "b2";
+
 export type ListingResolution =
   | { type: "product"; product: ReadingProduct }
-  | { type: "bundle"; bundleId: string; products: readonly ReadingProduct[] };
+  | { type: "bundle"; bundleId: string; products: readonly ReadingProduct[] }
+  | { type: "moon"; moonProduct: MoonProductId };
 
 const ETSY_LISTING_MAP: Record<string, string> = {
-  // Populate these when actual Etsy listings are created.
-  // Single products:
-  // "1234567890": "brutally-honest-reading",
-  // Bundles:
-  // "1234567895": "self-discovery-bundle",
+  // Moon products
+  "4570776019": "moon:a1",
+  "4571550208": "moon:a2",
+  "4576708707": "moon:b1",
+  "4576709700": "moon:b2",
 };
 
 export function resolveListingId(listingId: string | number): ListingResolution | null {
   const val = ETSY_LISTING_MAP[String(listingId)];
   if (!val) return null;
+  if (val.startsWith("moon:")) {
+    return { type: "moon", moonProduct: val.slice(5) as MoonProductId };
+  }
   if (isBundle(val)) {
     const products = getBundleProducts(val);
     if (!products) return null;
     return { type: "bundle", bundleId: val, products };
   }
   return { type: "product", product: val as ReadingProduct };
+}
+
+export function isMoonProduct(val: string): boolean {
+  return val.startsWith("moon:");
 }
 
 export function productFromListingId(listingId: string | number): ReadingProduct | null {
@@ -52,6 +62,16 @@ export function getAllMappings(): Record<string, string> {
  * Attempts to determine product from listing title keywords
  * when the listing ID isn't in the map. Fallback only.
  */
+export function guessMoonFromTitle(title: string): MoonProductId | null {
+  const t = title.toLowerCase();
+  if (!t.includes("moon") || !t.includes("phase")) return null;
+  if (t.includes("compatibility") && t.includes("couple")) return "b1";
+  if (t.includes("astrology") && t.includes("compatibility")) return "b2";
+  if (t.includes("soulmate") && t.includes("match")) return "a2";
+  if (t.includes("soulmate")) return "a1";
+  return null;
+}
+
 export function guessProductFromTitle(title: string): ReadingProduct | null {
   const t = title.toLowerCase();
 

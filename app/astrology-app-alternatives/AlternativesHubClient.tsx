@@ -138,7 +138,7 @@ export default function AlternativesHubClient() {
             <Link href="/free-birth-chart">Free birth chart</Link>
             <a href="#glance">Compare</a>
             <a href="#faq">FAQ</a>
-            <Link href="/#try-it" className="ah-cta">Get reading · $15</Link>
+            <Link href="/in-depth-birth-chart" className="ah-cta">In-depth reading · $24</Link>
           </div>
         </div>
       </nav>
@@ -157,7 +157,7 @@ export default function AlternativesHubClient() {
             different job: one deep natal chart reading, ~1,500 words in plain language, a flat one-time <b>$15</b>, no subscription trap.
           </p>
           <div className="ah-cta-row">
-            <Link href="/#try-it" className="ah-btn ah-btn-primary">Get my free preview ✨</Link>
+            <Link href="/in-depth-birth-chart" className="ah-btn ah-btn-primary">Get my in-depth reading ✨</Link>
             <a href="#glance" className="ah-btn ah-btn-ghost">Compare all 5 at a glance ↓</a>
           </div>
 
@@ -351,7 +351,7 @@ export default function AlternativesHubClient() {
           <div className="ah-band">
             <h2>One reading. One time. <em>Fifteen dollars.</em></h2>
             <p>Two free insights, no account, no card. If it reads you, the full thing is $15 — once. No subscription, no auto-renewal, nothing to cancel.</p>
-            <Link href="/#try-it" className="ah-btn ah-btn-primary">Read my chart — free preview ✨</Link>
+            <Link href="/in-depth-birth-chart" className="ah-btn ah-btn-primary">Read my chart — in-depth reading ✨</Link>
             <p style={{ marginTop: 18, fontSize: 13, color: "rgba(232,228,240,0.4)" }}>
               For entertainment purposes only · Not professional advice
             </p>

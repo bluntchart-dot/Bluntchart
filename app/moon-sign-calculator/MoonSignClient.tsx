@@ -186,7 +186,7 @@ export default function MoonSignClient() {
           <div className="ms-nav-links" style={{ display:"flex", alignItems:"center", gap:24 }}>
             <Link href="/free-birth-chart" style={{ fontSize:13, color:"var(--dim)", textDecoration:"none" }}>Birth Chart</Link>
             <Link href="/rising-sign-calculator" style={{ fontSize:13, color:"var(--dim)", textDecoration:"none" }}>Rising Sign</Link>
-            <Link href="/#try-it" style={{ fontSize:13, color:"#F0B84A", textDecoration:"none", fontWeight:600, border:"1px solid var(--gold-dim)", padding:"6px 15px", borderRadius:4 }}>Full Reading $15</Link>
+            <Link href="/in-depth-birth-chart" style={{ fontSize:13, color:"#F0B84A", textDecoration:"none", fontWeight:600, border:"1px solid var(--gold-dim)", padding:"6px 15px", borderRadius:4 }}>In-Depth Reading $24</Link>
           </div>
         </div>
       </nav>
@@ -279,7 +279,7 @@ export default function MoonSignClient() {
                 A BluntChart reading analyzes your Moon alongside Venus, Mars, Saturn, houses, and aspects — revealing
                 why you attract who you attract, why you sabotage what you build, and what your chart says you actually need.
               </p>
-              <Link href="/#try-it" className="ms-cta">Get My Full Reading · $15 ✦</Link>
+              <Link href="/in-depth-birth-chart" className="ms-cta">Get My In-Depth Reading · $24 ✦</Link>
               <p style={{ fontSize:12, color:"#3a3858", marginTop:12 }}>One-time · No subscription · Emailed instantly · ~1,500 words</p>
             </div>
 
@@ -340,7 +340,7 @@ export default function MoonSignClient() {
               <div className="ms-sign"><h4>Aquarius Moon</h4><p>You observe your own feelings from a slight distance, as though they belong to someone you&apos;re studying. Detachment isn&apos;t coldness — it&apos;s how you stay functional — but people close to you experience it as absence. You care enormously about people in general and find individual emotional demands claustrophobic.</p></div>
               <div className="ms-sign"><h4>Pisces Moon</h4><p>You absorb the emotional state of whatever room you&apos;re in and frequently can&apos;t tell which feelings started as yours. Empathy is close to involuntary. Boundaries are the lifelong project. You need solitude and something to escape into — art, water, sleep, fiction.</p></div>
             </div>
-            <p className="ms-p">If yours landed uncomfortably close, that&apos;s the point. The <Link href="/#try-it">full reading</Link> takes your Moon sign, the house it sits in, and every aspect to it, and tells you where the pattern came from. If Scorpio, Capricorn or Aquarius Moon landed particularly close, the withdrawal side of it has its own page: <Link href="/why-do-i-push-people-away">why do I push people away when I get close?</Link></p>
+            <p className="ms-p">If yours landed uncomfortably close, that&apos;s the point. The <Link href="/in-depth-birth-chart">full reading</Link> takes your Moon sign, the house it sits in, and every aspect to it, and tells you where the pattern came from. If Scorpio, Capricorn or Aquarius Moon landed particularly close, the withdrawal side of it has its own page: <Link href="/why-do-i-push-people-away">why do I push people away when I get close?</Link></p>
           </div>
 
           {/* Why Moon sign differs between sites */}
@@ -428,7 +428,7 @@ export default function MoonSignClient() {
               <li><Link href="/free-birth-chart"><strong>Free birth chart</strong></Link> — the full wheel, houses and aspects.</li>
               <li><Link href="/natal-chart"><strong>How to read a natal chart</strong></Link> — including what your Moon&apos;s house placement means.</li>
             </ul>
-            <p className="ms-p"><Link href="/#try-it"><strong>Your Moon sign is how you feel. A full reading tells you why →</strong></Link></p>
+            <p className="ms-p"><Link href="/in-depth-birth-chart"><strong>Your Moon sign is how you feel. A full reading tells you why →</strong></Link></p>
           </div>
 
         </div>
@@ -454,7 +454,7 @@ export default function MoonSignClient() {
             ))}
           </div>
           <div style={{ textAlign:"center", marginTop:32 }}>
-            <Link href="/#try-it" style={{ display:"inline-flex", alignItems:"center", gap:8, padding:"14px 30px", background:"linear-gradient(135deg,#6b2fd4,#d4537e)", color:"#fff", fontWeight:700, fontSize:14, letterSpacing:"0.04em", textTransform:"uppercase" as const, textDecoration:"none", borderRadius:10 }}>Get My Full Reading — $15 ✨</Link>
+            <Link href="/in-depth-birth-chart" style={{ display:"inline-flex", alignItems:"center", gap:8, padding:"14px 30px", background:"linear-gradient(135deg,#6b2fd4,#d4537e)", color:"#fff", fontWeight:700, fontSize:14, letterSpacing:"0.04em", textTransform:"uppercase" as const, textDecoration:"none", borderRadius:10 }}>Get My In-Depth Reading — $24 ✨</Link>
           </div>
         </div>
       </section>
@@ -480,7 +480,7 @@ export default function MoonSignClient() {
             Your Moon sign is how you feel.<br/><em style={{ fontStyle:"italic", background:"linear-gradient(135deg,#c4a8ff,#d4537e)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", backgroundClip:"text" }}>A full reading tells you why.</em>
           </h2>
           <p style={{ fontSize:14, color:"var(--dim)", maxWidth:460, margin:"0 auto 24px", lineHeight:1.72 }}>10 brutally honest insights. Venus, Mars, Saturn, houses, aspects — every pattern, named and explained.</p>
-          <Link href="/#try-it" className="ms-cta" style={{ maxWidth:360 }}>Get My Full Reading · $15 ✦</Link>
+          <Link href="/in-depth-birth-chart" className="ms-cta" style={{ maxWidth:360 }}>Get My In-Depth Reading · $24 ✦</Link>
         </div>
       </section>
 </>

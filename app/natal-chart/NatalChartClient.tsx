@@ -117,7 +117,7 @@ export default function NatalChartClient() {
           <div className="nc-nav-links" style={{ display:"flex", alignItems:"center", gap:24 }}>
             <Link href="/free-birth-chart" style={{ fontSize:13, color:"var(--dim)", textDecoration:"none" }}>Birth Chart</Link>
             <Link href="/big-three-calculator" style={{ fontSize:13, color:"var(--dim)", textDecoration:"none" }}>Big Three</Link>
-            <Link href="/#try-it" style={{ fontSize:13, color:"#F0B84A", textDecoration:"none", fontWeight:600, border:"1px solid var(--gold-dim)", padding:"6px 15px", borderRadius:4 }}>Full Reading $15</Link>
+            <Link href="/in-depth-birth-chart" style={{ fontSize:13, color:"#F0B84A", textDecoration:"none", fontWeight:600, border:"1px solid var(--gold-dim)", padding:"6px 15px", borderRadius:4 }}>In-Depth Reading $24</Link>
           </div>
         </div>
       </nav>
@@ -202,7 +202,7 @@ export default function NatalChartClient() {
                 The chart above shows WHERE everything is. A BluntChart reading tells you WHAT it means — in plain
                 language, specific to your exact placements. 10 insights, ~1,500 words, zero sugarcoating.
               </p>
-              <Link href="/#try-it" className="nc-cta">Get My Full Reading · $15 ✦</Link>
+              <Link href="/in-depth-birth-chart" className="nc-cta">Get My In-Depth Reading · $24 ✦</Link>
               <p style={{ fontSize:12, color:"#3a3858", marginTop:12 }}>One-time · No subscription · Emailed instantly</p>
             </div>
 
@@ -389,7 +389,7 @@ export default function NatalChartClient() {
               <li><Link href="/rising-sign-calculator"><strong>Rising sign calculator</strong></Link> — your Ascendant and chart ruler.</li>
               <li><Link href="/zodiac-signs"><strong>The 12 zodiac signs</strong></Link> — traits, dates, elements and rulers for every sign.</li>
             </ul>
-            <p className="nc-p">And if you&apos;d rather not learn to read it yourself — <Link href="/#try-it">a full reading translates the whole chart into plain language →</Link></p>
+            <p className="nc-p">And if you&apos;d rather not learn to read it yourself — <Link href="/in-depth-birth-chart">a full reading translates the whole chart into plain language →</Link></p>
           </div>
 
         </div>
@@ -417,7 +417,7 @@ export default function NatalChartClient() {
             ))}
           </div>
           <div style={{ textAlign:"center", marginTop:32 }}>
-            <Link href="/#try-it" style={{ display:"inline-flex", alignItems:"center", gap:8, padding:"14px 30px", background:"linear-gradient(135deg,#6b2fd4,#d4537e)", color:"#fff", fontWeight:700, fontSize:14, letterSpacing:"0.04em", textTransform:"uppercase" as const, textDecoration:"none", borderRadius:10 }}>Get My Full Reading — $15 ✨</Link>
+            <Link href="/in-depth-birth-chart" style={{ display:"inline-flex", alignItems:"center", gap:8, padding:"14px 30px", background:"linear-gradient(135deg,#6b2fd4,#d4537e)", color:"#fff", fontWeight:700, fontSize:14, letterSpacing:"0.04em", textTransform:"uppercase" as const, textDecoration:"none", borderRadius:10 }}>Get My In-Depth Reading — $24 ✨</Link>
           </div>
         </div>
       </section>
@@ -443,7 +443,7 @@ export default function NatalChartClient() {
             Your natal chart is the map.<br/><em style={{ fontStyle:"italic", background:"linear-gradient(135deg,#f0b84a,#d4537e)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", backgroundClip:"text" }}>BluntChart reads it out loud.</em>
           </h2>
           <p style={{ fontSize:14, color:"var(--dim)", maxWidth:460, margin:"0 auto 24px", lineHeight:1.72 }}>10 brutally honest insights from your exact placements. ~1,500 words. No sugarcoating.</p>
-          <Link href="/#try-it" className="nc-cta" style={{ maxWidth:360 }}>Get My Full Reading · $15 ✦</Link>
+          <Link href="/in-depth-birth-chart" className="nc-cta" style={{ maxWidth:360 }}>Get My In-Depth Reading · $24 ✦</Link>
         </div>
       </section>
 </>

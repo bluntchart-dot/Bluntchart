@@ -153,7 +153,7 @@ export default function SaturnReturnGuidePage() {
           <div className="nav-links">
             <Link href="/free-birth-chart">Free Chart</Link>
             <Link href="/saturn-return-calculator">Saturn Calculator</Link>
-            <Link href="/#try-it">Get Reading</Link>
+            <Link href="/in-depth-birth-chart">Get Reading</Link>
             <Link className="ncta" href="/in-depth-birth-chart">In-Depth Reading $24</Link>
           </div>
         </div>

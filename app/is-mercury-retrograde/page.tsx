@@ -262,10 +262,10 @@ export default function IsMercuryRetrogradePage() {
             <span className="g">BluntChart</span>
           </a>
           <div className="nav-links">
-            <a href="/#try-it">Get Reading</a>
+            <a href="/in-depth-birth-chart">Get Reading</a>
             <a href="/free-birth-chart">Free Chart</a>
             <a href="/mercury-retrograde-2026">2026 Dates</a>
-            <a className="ncta" href="/#try-it">Full Reading $15</a>
+            <a className="ncta" href="/in-depth-birth-chart">In-Depth Reading $24</a>
           </div>
         </div>
       </nav>
@@ -364,7 +364,7 @@ export default function IsMercuryRetrogradePage() {
                 under real pressure. That&apos;s what a BluntChart reading tells you — specific to
                 your exact birth time and place.
               </p>
-              <a className="bp" href="/#try-it">Get My Free Preview ✨</a>
+              <a className="bp" href="/in-depth-birth-chart">Get My In-Depth Reading ✨</a>
               <div style={{ fontSize: ".78rem", color: "rgba(232,228,240,.35)", marginTop: 12 }}>
                 Two free insights before you pay. $15 one-time for the full reading.
               </div>

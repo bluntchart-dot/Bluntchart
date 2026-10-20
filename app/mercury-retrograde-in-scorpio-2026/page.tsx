@@ -135,7 +135,7 @@ export default function MercuryRetrogradeScorpio2026Page() {
         @media(max-width:480px){.dates-grid{grid-template-columns:1fr}.cta-section{padding:36px 20px}}
       `}</style>
 
-      <nav className="nav"><div className="c nav-i"><a className="logo" href="/"><img src="/mascot.png" alt="BluntChart" width={34} height={34} style={{borderRadius:"50%"}}/><span className="g">BluntChart</span></a><div className="nav-links"><a href="/#try-it">Get Reading</a><a href="/mercury-retrograde-2026">All 2026 Dates</a><a href="/free-birth-chart">Free Chart</a><a className="ncta" href="/#try-it">Full Reading $15</a></div></div></nav>
+      <nav className="nav"><div className="c nav-i"><a className="logo" href="/"><img src="/mascot.png" alt="BluntChart" width={34} height={34} style={{borderRadius:"50%"}}/><span className="g">BluntChart</span></a><div className="nav-links"><a href="/in-depth-birth-chart">Get Reading</a><a href="/mercury-retrograde-2026">All 2026 Dates</a><a href="/free-birth-chart">Free Chart</a><a className="ncta" href="/in-depth-birth-chart">In-Depth Reading $24</a></div></div></nav>
 
       <div className="c"><nav className="breadcrumb" aria-label="Breadcrumb"><a href="/">BluntChart</a><span style={{margin:"0 8px",opacity:.4}}>/</span><a href="/mercury-retrograde-2026">Mercury Retrograde 2026</a><span style={{margin:"0 8px",opacity:.4}}>/</span><span style={{color:"var(--white)"}}>In Scorpio</span></nav></div>
 
@@ -202,8 +202,8 @@ export default function MercuryRetrogradeScorpio2026Page() {
 
           <div className="cta-section">
             <h2>Scorpio retrograde doesn&apos;t play.<br/><em>Neither does your chart.</em></h2>
-            <p>Generic retrograde advice won&apos;t cut it for the most intense transit of the year. Your natal chart shows exactly which house is activated, which planets are aspected, and where the transformation wants to happen. Get your free preview — two specific, unfiltered insights from your exact birth chart.</p>
-            <a className="bp" href="/#try-it">Get My Free Preview ✨</a>
+            <p>Generic retrograde advice won&apos;t cut it for the most intense transit of the year. Your natal chart shows exactly which house is activated, which planets are aspected, and where the transformation wants to happen. Get your in-depth reading — two specific, unfiltered insights from your exact birth chart.</p>
+            <a className="bp" href="/in-depth-birth-chart">Get My In-Depth Reading ✨</a>
             <div style={{fontSize:".78rem",color:"rgba(232,228,240,.35)",marginTop:12}}>Two free insights. $15 one-time for the full reading.</div>
           </div>
 

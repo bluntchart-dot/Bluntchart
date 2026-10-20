@@ -5,6 +5,9 @@ import { DB } from "@/lib/db/tables";
 import { dbLog, dbError } from "@/lib/db/log";
 import { routeToGeneration } from "@/lib/pipeline/router";
 import { isTarotProduct } from "@/lib/premium/products/registry";
+import { sendEmail } from "@/lib/send-email";
+import { moonPhaseDeliveryMail } from "@/lib/email-templates";
+import { sendMessage } from "@/lib/etsy/client";
 import type { ReadingProduct } from "@/lib/premium/types";
 
 export const runtime = "nodejs";
@@ -88,6 +91,85 @@ export async function GET(req: NextRequest) {
         ok: true,
         elapsed_ms: Date.now() - startedAt,
         message: "Order already claimed by another worker",
+      });
+    }
+
+    // ── Moon product: no AI generation, just build token + send email ──
+    if (product.startsWith("moon-")) {
+      const moonProduct = product.replace("moon-", "");
+      const moonData = row.birth_data as { name1: string; dob1: string; name2: string; dob2: string } | null;
+
+      if (!moonData?.name1 || !moonData?.dob1 || !moonData?.name2 || !moonData?.dob2) {
+        await supabase.from(DB.etsyOrders).update({
+          status: "error",
+          generation_error: "Missing moon birth data (names/DOBs)",
+          updated_at: new Date().toISOString(),
+        }).eq("id", row.id);
+
+        return NextResponse.json({ ok: false, elapsed_ms: Date.now() - startedAt, orderId: row.id, error: "Missing moon data" });
+      }
+
+      const token = Buffer.from(JSON.stringify({
+        n1: moonData.name1.trim(),
+        d1: moonData.dob1,
+        n2: moonData.name2.trim(),
+        d2: moonData.dob2,
+        product: moonProduct,
+      })).toString("base64");
+
+      const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://bluntchart.com";
+      const deliveryUrl = `${siteUrl}/moon-phase/delivery?t=${encodeURIComponent(token)}`;
+
+      const { subject, html, text } = moonPhaseDeliveryMail({
+        name1: moonData.name1.trim(),
+        name2: moonData.name2.trim(),
+        deliveryUrl,
+      });
+
+      let emailSent = false;
+      if (row.buyer_email) {
+        const emailResult = await sendEmail({ to: row.buyer_email, subject, html, text });
+        emailSent = emailResult.ok;
+        if (!emailResult.ok) {
+          dbError("etsy-fulfill", "moon delivery email failed (will try Etsy message)", emailResult.error ?? "unknown", { orderId: row.id });
+        }
+      }
+
+      let messageSent = false;
+      if (row.buyer_user_id) {
+        const etsyMsg = `Your Moon Phase Card for ${moonData.name1.trim()} & ${moonData.name2.trim()} is ready! 🌙\n\nDownload all formats here:\n${deliveryUrl}\n\nThe link works forever — it regenerates your artwork on-the-fly.\n\nxx BluntChart`;
+        messageSent = await sendMessage(row.buyer_user_id, etsyMsg);
+        if (!messageSent) {
+          dbError("etsy-fulfill", "moon Etsy message failed", "sendMessage returned false", { orderId: row.id });
+        }
+      }
+
+      if (!emailSent && !messageSent) {
+        await supabase.from(DB.etsyOrders).update({
+          status: "error",
+          delivery_url: deliveryUrl,
+          generation_error: "Both email and Etsy message delivery failed",
+          updated_at: new Date().toISOString(),
+        }).eq("id", row.id);
+
+        return NextResponse.json({ ok: false, elapsed_ms: Date.now() - startedAt, orderId: row.id, error: "All delivery channels failed", deliveryUrl });
+      }
+
+      await supabase.from(DB.etsyOrders).update({
+        status: "complete",
+        delivery_url: deliveryUrl,
+        updated_at: new Date().toISOString(),
+      }).eq("id", row.id);
+
+      dbLog("etsy-fulfill", "moon delivery complete", { orderId: row.id, product, deliveryUrl, emailSent, messageSent });
+
+      return NextResponse.json({
+        ok: true,
+        elapsed_ms: Date.now() - startedAt,
+        orderId: row.id,
+        product,
+        status: "complete",
+        deliveryUrl,
       });
     }
 

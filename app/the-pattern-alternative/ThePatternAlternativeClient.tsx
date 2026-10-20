@@ -14,7 +14,7 @@ const data: AlternativePageData = {
     "<b>$15</b> one-time",
     "<b>No</b> subscription",
     "<b>Shows</b> your chart",
-    "Free preview, no card",
+    "In-depth reading, no subscription",
   ],
   answerBox: (
     <p>
@@ -45,7 +45,7 @@ const data: AlternativePageData = {
     { feature: "Something you keep & re-read", bluntchart: { text: "emailed + share card", kind: "yes" }, competitor: { text: "lives in the app", kind: "no" } },
     { feature: "You can learn the astrology", bluntchart: { text: "explained in plain terms", kind: "yes" }, competitor: { text: "jargon removed entirely", kind: "no" } },
     { feature: "Relationship / compatibility depth", bluntchart: { text: "In-reading now · dedicated soon", kind: "lim" }, competitor: { text: "its strength", kind: "yes" } },
-    { feature: "Free preview before paying", bluntchart: { text: "2 insights, no card", kind: "yes" }, competitor: { text: "Free trial → paywall", kind: "lim" } },
+    { feature: "In-depth reading, no subscription", bluntchart: { text: "2 insights, no card", kind: "yes" }, competitor: { text: "Free trial → paywall", kind: "lim" } },
   ],
   comparisonFootnote: "App pricing and paywalls in this category change often; comparison reflects publicly reported features and pricing at time of writing.",
   differenceH2: <>The pattern, and the <em>placement</em> underneath it.</>,
@@ -81,7 +81,7 @@ const data: AlternativePageData = {
     { icon: "🔒", title: "Never sold", note: "Your birth data stays yours" },
     { icon: "🚫", title: "No subscription", note: "One-time $15, that's it" },
     { icon: "✍️", title: "Your exact chart", note: "Shown, not hidden" },
-    { icon: "🎁", title: "Free preview", note: "No account, no card" },
+    { icon: "🎁", title: "In-depth reading", note: "No account, no card" },
   ],
   ctaBandH2: <>Stop feeling the pattern. <em>See it.</em></>,
   ctaBandBody: "Two free insights, no account, no card. The full reading — chart, placements, and the honest why — is $15, once.",

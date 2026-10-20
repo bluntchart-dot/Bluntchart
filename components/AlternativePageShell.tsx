@@ -212,7 +212,7 @@ export function AlternativePageShell({ data }: { data: AlternativePageData }) {
           <div className="alt-nav-links">
             <Link href="/astrology-app-alternatives">All alternatives</Link>
             <Link href="/free-birth-chart">Free birth chart</Link>
-            <Link href="/#try-it" className="alt-nav-cta">Get reading · $15</Link>
+            <Link href="/in-depth-birth-chart" className="alt-nav-cta">In-Depth Reading · $24</Link>
           </div>
         </div>
       </nav>
@@ -238,7 +238,7 @@ export function AlternativePageShell({ data }: { data: AlternativePageData }) {
           <h1 className="alt-h1">{data.h1}</h1>
           <p className="alt-sub">{data.subtitle}</p>
           <div className="alt-cta-row">
-            <Link href="/#try-it" className="alt-btn alt-btn-primary">Get my free preview ✨</Link>
+            <Link href="/in-depth-birth-chart" className="alt-btn alt-btn-primary">Get my in-depth reading ✨</Link>
             <a href="#compare" className="alt-btn alt-btn-ghost">See the full comparison ↓</a>
           </div>
           <div className="alt-trust">
@@ -379,7 +379,7 @@ export function AlternativePageShell({ data }: { data: AlternativePageData }) {
             </div>
           </div>
           <div style={{ textAlign: "center", marginTop: 26 }}>
-            <Link href="/#try-it" className="alt-btn alt-btn-primary">Unlock my reading — free preview ✨</Link>
+            <Link href="/in-depth-birth-chart" className="alt-btn alt-btn-primary">Unlock my in-depth reading ✨</Link>
           </div>
         </div>
       </section>
@@ -447,7 +447,7 @@ export function AlternativePageShell({ data }: { data: AlternativePageData }) {
           <div className="alt-band">
             <h2>{data.ctaBandH2}</h2>
             <p>{data.ctaBandBody}</p>
-            <Link href="/#try-it" className="alt-btn alt-btn-primary">Read my chart — free preview ✨</Link>
+            <Link href="/in-depth-birth-chart" className="alt-btn alt-btn-primary">Read my chart — in-depth reading ✨</Link>
             <p style={{ marginTop: 18, fontSize: 13, color: "rgba(232,228,240,0.4)" }}>For entertainment purposes only · Not professional advice</p>
           </div>
         </div>

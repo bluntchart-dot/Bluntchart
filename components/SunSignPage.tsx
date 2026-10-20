@@ -166,7 +166,7 @@ export default function SunSignPage({ page }: { page: SunSignPageData }) {
           <div style={{ display: "flex", alignItems: "center", gap: 24 }}>
             <Link href="/zodiac-signs" style={{ fontSize: 13, color: "rgba(232,228,240,0.55)", textDecoration: "none", fontWeight: 500 }}>Zodiac Signs</Link>
             <Link href="/free-birth-chart" style={{ fontSize: 13, color: "rgba(232,228,240,0.55)", textDecoration: "none", fontWeight: 500 }}>Free Birth Chart</Link>
-            <Link href="/#try-it" style={{ fontSize: 13, color: "#F0B84A", textDecoration: "none", fontWeight: 600, border: "1px solid rgba(240,184,74,0.18)", padding: "6px 15px", borderRadius: 4 }}>Get Reading $15</Link>
+            <Link href="/in-depth-birth-chart" style={{ fontSize: 13, color: "#F0B84A", textDecoration: "none", fontWeight: 600, border: "1px solid rgba(240,184,74,0.18)", padding: "6px 15px", borderRadius: 4 }}>In-Depth Reading $24</Link>
           </div>
         </div>
       </nav>

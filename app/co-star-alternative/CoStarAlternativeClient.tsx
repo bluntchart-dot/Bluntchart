@@ -14,7 +14,7 @@ const data: AlternativePageData = {
     "<b>$15</b> one-time",
     "<b>No</b> subscription",
     "<b>~1,500 words</b> specific to your chart",
-    "Free preview, no card",
+    "In-depth reading, no subscription",
   ],
   answerBox: (
     <p>
@@ -45,7 +45,7 @@ const data: AlternativePageData = {
     { feature: "Explains why", bluntchart: { text: "", kind: "yes" }, competitor: { text: "Blunt, but rarely explains", kind: "lim" } },
     { feature: "Something you keep & re-read", bluntchart: { text: "emailed, plus share card", kind: "yes" }, competitor: { text: "it's a feed", kind: "no" } },
     { feature: "High-precision ephemeris", bluntchart: { text: "Astronomy Engine", kind: "yes" }, competitor: { text: "NASA data", kind: "yes" } },
-    { feature: "Free preview before you pay", bluntchart: { text: "2 insights, no card", kind: "yes" }, competitor: { text: "free tier", kind: "yes" } },
+    { feature: "In-depth reading, no subscription", bluntchart: { text: "2 insights, no card", kind: "yes" }, competitor: { text: "free tier", kind: "yes" } },
     { feature: "Daily horoscope & friend charts", bluntchart: { text: "Not the point", kind: "lim" }, competitor: { text: "its strength", kind: "yes" } },
   ],
   comparisonFootnote: "App pricing and paywalls in this category change often; figures reflect widely reported pricing at time of writing. Check the App Store for Co-Star's current subscription price.",
@@ -83,7 +83,7 @@ const data: AlternativePageData = {
     { icon: "🔒", title: "Never sold", note: "Your birth data stays yours" },
     { icon: "⚡", title: "Instant", note: "Emailed the moment you pay" },
     { icon: "✍️", title: "Your exact chart", note: "Not a sun-sign template" },
-    { icon: "🎁", title: "Free preview", note: "No account, no card" },
+    { icon: "🎁", title: "In-depth reading", note: "No account, no card" },
   ],
   ctaBandH2: <>Your chart already knows. <em>Time you did too.</em></>,
   ctaBandBody: "Two free insights, no account, no card. If it reads you the way beta testers said it did, the full thing is $15 — once.",

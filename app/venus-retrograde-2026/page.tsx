@@ -132,7 +132,7 @@ export default function VenusRetrograde2026Page() {
         @media(max-width:480px){.dates-grid{grid-template-columns:1fr}.cta-section{padding:36px 20px}}
       `}</style>
 
-      <nav className="nav"><div className="c nav-i"><a className="logo" href="/"><img src="/mascot.png" alt="BluntChart" width={34} height={34} style={{borderRadius:"50%"}}/><span className="g">BluntChart</span></a><div className="nav-links"><a href="/#try-it">Get Reading</a><a href="/mercury-retrograde-2026">Mercury Rx 2026</a><a href="/free-birth-chart">Free Chart</a><a className="ncta" href="/#try-it">Full Reading $15</a></div></div></nav>
+      <nav className="nav"><div className="c nav-i"><a className="logo" href="/"><img src="/mascot.png" alt="BluntChart" width={34} height={34} style={{borderRadius:"50%"}}/><span className="g">BluntChart</span></a><div className="nav-links"><a href="/in-depth-birth-chart">Get Reading</a><a href="/mercury-retrograde-2026">Mercury Rx 2026</a><a href="/free-birth-chart">Free Chart</a><a className="ncta" href="/in-depth-birth-chart">In-Depth Reading $24</a></div></div></nav>
 
       <div className="c"><nav className="breadcrumb" aria-label="Breadcrumb"><a href="/">BluntChart</a><span style={{margin:"0 8px",opacity:.4}}>/</span><span style={{color:"var(--white)"}}>Venus Retrograde 2026</span></nav></div>
 
@@ -225,7 +225,7 @@ export default function VenusRetrograde2026Page() {
           <div className="cta-section">
             <h2>Venus retrograde tests your patterns.<br/><em>Your chart maps them.</em></h2>
             <p>Your Venus sign, house, and aspects determine exactly how this retrograde hits you. Not everyone-born-in-October. <em>You.</em> A BluntChart reading maps your specific attraction pattern, your relationship blind spots, and what Saturn, Venus, and the rest of your chart are actually saying about your love life.</p>
-            <a className="bp" href="/#try-it">Get My Free Preview ✨</a>
+            <a className="bp" href="/in-depth-birth-chart">Get My In-Depth Reading ✨</a>
             <div style={{fontSize:".78rem",color:"rgba(232,228,240,.35)",marginTop:12}}>Two free insights from your exact birth chart. $15 for the full reading.</div>
           </div>
 

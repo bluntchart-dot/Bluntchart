@@ -8,6 +8,7 @@ import {
   parseEtsyOrder,
   parseEtsyOrderOrBundle,
   buildMissingDataMessage,
+  buildMoonMissingDataMessage,
 } from "@/lib/etsy/order-parser";
 
 export const runtime = "nodejs";
@@ -62,6 +63,37 @@ export async function GET(req: NextRequest) {
       }
 
       const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://bluntchart.com";
+
+      if (parsed.type === "moon") {
+        const m = parsed.moon;
+        const alreadyExists = await checkDuplicate(supabase, m.receiptId, `moon-${m.moonProduct}`);
+        if (alreadyExists) {
+          results.push({ receiptId: m.receiptId, skipped: true, reason: "already processed" });
+          continue;
+        }
+
+        if (m.missingFields.length > 0) {
+          const msg = buildMoonMissingDataMessage(m.missingFields);
+          const sent = await sendMessage(m.buyerUserId, msg);
+          await insertEtsyOrder(supabase, {
+            receiptId: m.receiptId, buyerEmail: m.buyerEmail, buyerUserId: m.buyerUserId,
+            listingId: m.listingId, product: `moon-${m.moonProduct}`, amountCents: m.amountCents,
+            status: "awaiting_info", rawPersonalization: m.rawPersonalization,
+            birthData: null, question: null, siteUrl,
+          });
+          results.push({ receiptId: m.receiptId, product: `moon-${m.moonProduct}`, status: "awaiting_info", missingFields: m.missingFields, messageSent: sent });
+          continue;
+        }
+
+        await insertEtsyOrder(supabase, {
+          receiptId: m.receiptId, buyerEmail: m.buyerEmail, buyerUserId: m.buyerUserId,
+          listingId: m.listingId, product: `moon-${m.moonProduct}`, amountCents: m.amountCents,
+          status: "queued", rawPersonalization: m.rawPersonalization,
+          birthData: m.moonData as any, question: null, siteUrl,
+        });
+        results.push({ receiptId: m.receiptId, product: `moon-${m.moonProduct}`, status: "queued" });
+        continue;
+      }
 
       if (parsed.type === "bundle") {
         const b = parsed.bundle;

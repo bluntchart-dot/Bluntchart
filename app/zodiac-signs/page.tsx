@@ -214,7 +214,7 @@ export default function ZodiacSignsPage() {
           <Link href="/" className="zs-logo"><Image src="/mascot.png" alt="BluntChart" width={34} height={34} style={{ borderRadius:"50%" }}/><span className="g">BluntChart</span></Link>
           <div className="zs-nav-links" style={{ display:"flex", alignItems:"center", gap:24 }}>
             <Link href="/free-birth-chart" style={{ fontSize:13, color:"var(--dim)", textDecoration:"none" }}>Free Birth Chart</Link>
-            <Link href="/#try-it" style={{ fontSize:13, color:"#F0B84A", textDecoration:"none", fontWeight:600, border:"1px solid var(--gold-dim)", padding:"6px 15px", borderRadius:4 }}>Full Reading $15</Link>
+            <Link href="/in-depth-birth-chart" style={{ fontSize:13, color:"#F0B84A", textDecoration:"none", fontWeight:600, border:"1px solid var(--gold-dim)", padding:"6px 15px", borderRadius:4 }}>In-Depth Reading $24</Link>
           </div>
         </div>
       </nav>
@@ -509,7 +509,7 @@ export default function ZodiacSignsPage() {
               <span className="zs-tldr-l">Short answer</span>
               <p className="zs-tldr-t">No. Your Sun sign — also called your star sign in the UK, Ireland and Australia — is the most widely known placement, but it&apos;s one of dozens in your complete birth chart. Your Moon sign governs your emotional nature; your Rising sign shapes how others perceive you; Venus reveals your love style; Mars drives your ambition and conflict approach. A full natal chart reading analyses all of these together.</p>
             </div>
-            <p className="zs-p">Two people with the same Sun sign can have completely different personalities. If you want the full picture, get your <Link href="/free-birth-chart">free birth chart</Link>, find your <Link href="/big-three-calculator">Big Three</Link>, or try a <Link href="/#try-it">BluntChart full reading</Link> — a written interpretation of your entire natal chart in plain language.</p>
+            <p className="zs-p">Two people with the same Sun sign can have completely different personalities. If you want the full picture, get your <Link href="/free-birth-chart">free birth chart</Link>, find your <Link href="/big-three-calculator">Big Three</Link>, or try a <Link href="/in-depth-birth-chart">BluntChart full reading</Link> — a written interpretation of your entire natal chart in plain language.</p>
           </div>
 
         </div>
@@ -537,7 +537,7 @@ export default function ZodiacSignsPage() {
               { feature:"One-time payment, no subscription", us:true, them:"Subscription" },
               { feature:"Full natal chart wheel included", us:true, them:false },
               { feature:"Shareable identity card", us:true, them:false },
-              { feature:"Free preview before you pay", us:true, them:false },
+              { feature:"In-depth reading, no subscription", us:true, them:false },
             ].map((row, i, arr) => (
               <div key={i} style={{ display:"grid", gridTemplateColumns:"1fr 140px 140px", borderBottom: i < arr.length-1 ? "0.5px solid rgba(255,255,255,0.05)" : "none" }}>
                 <div style={{ padding:"15px 20px", fontSize:14, color:"var(--white)", fontWeight:500 }}>{row.feature}</div>
@@ -584,7 +584,7 @@ export default function ZodiacSignsPage() {
             ))}
           </div>
           <div style={{ textAlign:"center", marginTop:32 }}>
-            <Link href="/#try-it" style={{ display:"inline-flex", alignItems:"center", gap:8, padding:"14px 30px", background:"linear-gradient(135deg,#6b2fd4,#d4537e)", color:"#fff", fontWeight:700, fontSize:14, letterSpacing:"0.04em", textTransform:"uppercase" as const, textDecoration:"none", borderRadius:10 }}>Get My Full Reading — $15 ✨</Link>
+            <Link href="/in-depth-birth-chart" style={{ display:"inline-flex", alignItems:"center", gap:8, padding:"14px 30px", background:"linear-gradient(135deg,#6b2fd4,#d4537e)", color:"#fff", fontWeight:700, fontSize:14, letterSpacing:"0.04em", textTransform:"uppercase" as const, textDecoration:"none", borderRadius:10 }}>Get My In-Depth Reading — $24 ✨</Link>
           </div>
         </div>
       </section>
@@ -626,7 +626,7 @@ export default function ZodiacSignsPage() {
             Your Sun sign is the headline.<br/><em style={{ fontStyle:"italic", background:"linear-gradient(135deg,#f0b84a,#d4537e)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", backgroundClip:"text" }}>Your full chart is the story.</em>
           </h2>
           <p style={{ fontSize:14, color:"var(--dim)", maxWidth:480, margin:"0 auto 24px", lineHeight:1.72 }}>A BluntChart reading goes beyond your zodiac sign. 10 insights from your exact birth chart — brutally honest, ~1,500 words, specific to you.</p>
-          <Link href="/#try-it" style={{ display:"inline-flex", alignItems:"center", gap:8, padding:"16px 32px", background:"linear-gradient(135deg,#f0b84a,#e8854a)", color:"#0d0800", fontWeight:700, fontSize:15, textDecoration:"none", borderRadius:12 }}>Get My Full Reading · $15 ✦</Link>
+          <Link href="/in-depth-birth-chart" style={{ display:"inline-flex", alignItems:"center", gap:8, padding:"16px 32px", background:"linear-gradient(135deg,#f0b84a,#e8854a)", color:"#0d0800", fontWeight:700, fontSize:15, textDecoration:"none", borderRadius:12 }}>Get My In-Depth Reading · $24 ✦</Link>
         </div>
       </section>
 </>

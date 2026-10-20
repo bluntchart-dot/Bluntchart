@@ -296,7 +296,7 @@ export default function FightCardClient() {
         <div className="wrap topbar">
           <Link href="/" className="logo">Blunt<b>Chart</b></Link>
           <div className="navlinks">
-            <Link href="/#try-it">Birth Chart</Link>
+            <Link href="/in-depth-birth-chart">Birth Chart</Link>
             <Link href="/#waitlist">Compatibility</Link>
             <Link href="/moon-phase-soulmate-calculator">Moon Phase Match</Link>
           </div>

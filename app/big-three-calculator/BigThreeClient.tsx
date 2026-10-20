@@ -152,7 +152,7 @@ export default function BigThreeClient() {
           <div className="b3-nav-links" style={{ display:"flex", alignItems:"center", gap:24 }}>
             <Link href="/free-birth-chart" style={{ fontSize:13, color:"var(--dim)", textDecoration:"none" }}>Free Birth Chart</Link>
             <Link href="/rising-sign-calculator" style={{ fontSize:13, color:"var(--dim)", textDecoration:"none" }}>Rising Sign</Link>
-            <Link href="/#try-it" style={{ fontSize:13, color:"#F0B84A", textDecoration:"none", fontWeight:600, border:"1px solid var(--gold-dim)", padding:"6px 15px", borderRadius:4 }}>Full Reading $15</Link>
+            <Link href="/in-depth-birth-chart" style={{ fontSize:13, color:"#F0B84A", textDecoration:"none", fontWeight:600, border:"1px solid var(--gold-dim)", padding:"6px 15px", borderRadius:4 }}>In-Depth Reading $24</Link>
           </div>
         </div>
       </nav>
@@ -250,7 +250,7 @@ export default function BigThreeClient() {
                 Venus. Mars. Saturn. Houses. Aspects. A BluntChart reading doesn&apos;t stop at the Big Three — it tells
                 you what every major placement actually means for YOUR life, in plain language, no sugarcoating.
               </p>
-              <Link href="/#try-it" className="b3-cta">Get My Full Reading · $15 ✦</Link>
+              <Link href="/in-depth-birth-chart" className="b3-cta">Get My In-Depth Reading · $24 ✦</Link>
               <p style={{ fontSize:12, color:"#3a3858", marginTop:12 }}>One-time · No subscription · Emailed instantly · ~1,500 words</p>
             </div>
 
@@ -415,7 +415,7 @@ export default function BigThreeClient() {
               <li><Link href="/natal-chart"><strong>How to read a natal chart</strong></Link> — the step-by-step guide.</li>
               <li><Link href="/zodiac-signs"><strong>All 12 zodiac signs</strong></Link> — traits, dates, elements and rulers.</li>
             </ul>
-            <p className="b3-p"><Link href="/#try-it"><strong>Or skip the learning curve — get your Big Three read out loud →</strong></Link></p>
+            <p className="b3-p"><Link href="/in-depth-birth-chart"><strong>Or skip the learning curve — get your Big Three read out loud →</strong></Link></p>
           </div>
 
         </div>
@@ -485,7 +485,7 @@ export default function BigThreeClient() {
             ))}
           </div>
           <div style={{ textAlign:"center", marginTop:32 }}>
-            <Link href="/#try-it" style={{ display:"inline-flex", alignItems:"center", gap:8, padding:"14px 30px", background:"linear-gradient(135deg,#6b2fd4,#d4537e)", color:"#fff", fontWeight:700, fontSize:14, letterSpacing:"0.04em", textTransform:"uppercase" as const, textDecoration:"none", borderRadius:10 }}>Get My Full Reading — $15 ✨</Link>
+            <Link href="/in-depth-birth-chart" style={{ display:"inline-flex", alignItems:"center", gap:8, padding:"14px 30px", background:"linear-gradient(135deg,#6b2fd4,#d4537e)", color:"#fff", fontWeight:700, fontSize:14, letterSpacing:"0.04em", textTransform:"uppercase" as const, textDecoration:"none", borderRadius:10 }}>Get My In-Depth Reading — $24 ✨</Link>
           </div>
         </div>
       </section>
@@ -511,7 +511,7 @@ export default function BigThreeClient() {
             Your Big Three is the headline.<br/><em style={{ fontStyle:"italic", background:"linear-gradient(135deg,#f0b84a,#d4537e)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", backgroundClip:"text" }}>The full reading is the article.</em>
           </h2>
           <p style={{ fontSize:14, color:"var(--dim)", maxWidth:460, margin:"0 auto 24px", lineHeight:1.72 }}>10 brutally honest insights. Venus, Mars, Saturn, houses, aspects — everything, in plain language.</p>
-          <Link href="/#try-it" className="b3-cta" style={{ maxWidth:360 }}>Get My Full Reading · $15 ✦</Link>
+          <Link href="/in-depth-birth-chart" className="b3-cta" style={{ maxWidth:360 }}>Get My In-Depth Reading · $24 ✦</Link>
         </div>
       </section>
 </>

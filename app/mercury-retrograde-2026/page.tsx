@@ -493,9 +493,9 @@ export default function MercuryRetrograde2026Page() {
             <span className="g">BluntChart</span>
           </a>
           <div className="nav-links">
-            <a href="/#try-it">Get Reading</a>
+            <a href="/in-depth-birth-chart">Get Reading</a>
             <a href="/free-birth-chart">Free Chart</a>
-            <a className="ncta" href="/#try-it">Full Reading $15</a>
+            <a className="ncta" href="/in-depth-birth-chart">In-Depth Reading $24</a>
           </div>
         </div>
       </nav>
@@ -859,9 +859,9 @@ export default function MercuryRetrograde2026Page() {
                 <p>
                   Your Mercury placement — sign, house, and aspects — determines exactly how
                   retrograde hits you. Not your Sun sign. Not everyone-born-in-March.{" "}
-                  <em>Your chart.</em> Get your free preview and see what your Mercury actually says.
+                  <em>Your chart.</em> Get your in-depth reading and see what your Mercury actually says.
                 </p>
-                <a className="bp" href="/#try-it">Get My Free Preview ✨</a>
+                <a className="bp" href="/in-depth-birth-chart">Get My In-Depth Reading ✨</a>
               </div>
 
               <h2>How does Mercury retrograde affect each <em>zodiac sign in 2026?</em></h2>
@@ -998,7 +998,7 @@ export default function MercuryRetrograde2026Page() {
                   genuinely under pressure. That&apos;s what a BluntChart reading tells you — specific
                   to your exact birth time and place.
                 </p>
-                <a className="bp" href="/#try-it">Get My Free Preview ✨</a>
+                <a className="bp" href="/in-depth-birth-chart">Get My In-Depth Reading ✨</a>
                 <div style={{ fontSize:".78rem", color:"rgba(232,228,240,.35)", marginTop:12 }}>
                   Two free insights before you pay. $15 one-time for the full reading.
                 </div>

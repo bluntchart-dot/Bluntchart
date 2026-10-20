@@ -14,6 +14,11 @@ import {
   buildFilename,
   buildPrintPDF,
 } from "@/lib/moon-export";
+import {
+  generateMoonStoryHtml,
+  buildMoonStoryFilename,
+  type MoonStoryProduct,
+} from "@/lib/moon-story-html";
 
 const cormorant = Cormorant_Garamond({
   subsets: ["latin"],
@@ -68,7 +73,7 @@ function DeliveryInner() {
       return;
     }
 
-    let parsed: { n1: string; d1: string; n2: string; d2: string };
+    let parsed: { n1: string; d1: string; n2: string; d2: string; p?: string };
     try {
       parsed = JSON.parse(atob(t));
     } catch {
@@ -77,7 +82,7 @@ function DeliveryInner() {
       return;
     }
 
-    const { n1, d1, n2, d2 } = parsed;
+    const { n1, d1, n2, d2, p } = parsed;
     if (!n1 || !d1 || !n2 || !d2) {
       setErrMsg("Incomplete delivery data.");
       setStatus("error");
@@ -85,7 +90,7 @@ function DeliveryInner() {
     }
 
     setNames({ n1, n2 });
-    generate(n1, d1, n2, d2);
+    generate(n1, d1, n2, d2, p || "a1");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -93,7 +98,8 @@ function DeliveryInner() {
     name1: string,
     date1: string,
     name2: string,
-    date2: string
+    date2: string,
+    product: string
   ) {
     try {
       await document.fonts.ready;
@@ -194,6 +200,31 @@ function DeliveryInner() {
         });
       }
 
+      const storyHtml = generateMoonStoryHtml({
+        product: product as MoonStoryProduct,
+        name1: name1.trim(),
+        date1,
+        name2: name2.trim(),
+        date2,
+      });
+      const storyBlob = new Blob([storyHtml], { type: "text/html" });
+      const storyDataURL = await new Promise<string>((res, rej) => {
+        const reader = new FileReader();
+        reader.onload = () => res(reader.result as string);
+        reader.onerror = () => rej(new Error("Failed to read story blob"));
+        reader.readAsDataURL(storyBlob);
+      });
+      generated.push({
+        id: "moon-story",
+        label: product === "a1" || product === "a2"
+          ? "Your Moon Story (printable)"
+          : "Your Cosmic Story (printable)",
+        filename: buildMoonStoryFilename(product as MoonStoryProduct, name1.trim(), name2.trim()),
+        dataURL: storyDataURL,
+        width: 0,
+        height: 0,
+      });
+
       setFiles(generated);
       setStatus("ready");
     } catch (e) {
@@ -280,22 +311,33 @@ function DeliveryInner() {
           {files.map((f) => (
             <div key={f.id} style={s.card}>
               <div style={s.cardLabel}>{f.label}</div>
-              {f.id !== "print-pdf" ? (
+              {f.id === "print-pdf" || f.id === "moon-story" ? (
+                <div style={s.pdfPlaceholder}>
+                  {f.id === "moon-story" ? (
+                    <>
+                      <span style={{ fontSize: 28, marginRight: 8 }}>📖</span>
+                      <span>Printable Story Page</span>
+                    </>
+                  ) : (
+                    <>PDF — {f.width}×{f.height}</>
+                  )}
+                </div>
+              ) : (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
                   src={f.dataURL}
                   alt={f.label}
                   style={s.cardImg}
                 />
-              ) : (
-                <div style={s.pdfPlaceholder}>
-                  PDF — {f.width}×{f.height}
-                </div>
               )}
               <div style={s.cardMeta}>
                 {f.filename}
-                <br />
-                {f.width}×{f.height}
+                {f.width > 0 && (
+                  <>
+                    <br />
+                    {f.width}×{f.height}
+                  </>
+                )}
               </div>
               <button onClick={() => download(f)} style={s.downloadBtn}>
                 Download

@@ -245,7 +245,7 @@ export function StatsPage({ children }: { children: ReactNode }) {
           <div className="sx-nav-l">
             <Link href={HUB_PATH}>Data hub</Link>
             <Link href="/free-birth-chart">Free chart</Link>
-            <Link href="/#try-it">Full reading</Link>
+            <Link href="/in-depth-birth-chart">Full reading</Link>
           </div>
         </div>
       </nav>
@@ -254,7 +254,21 @@ export function StatsPage({ children }: { children: ReactNode }) {
   );
 }
 
+function validateDatasets(obj: Record<string, unknown>) {
+  const datasets: Record<string, unknown>[] = [];
+  if (obj["@type"] === "Dataset") datasets.push(obj);
+  if (Array.isArray(obj.dataset)) datasets.push(...(obj.dataset as Record<string, unknown>[]));
+  for (const ds of datasets) {
+    const desc = ds.description;
+    if (typeof desc === "string" && desc.length < 50)
+      console.warn(`[JsonLd] Dataset "${ds.name}" description is ${desc.length} chars (Google requires 50–5000)`);
+    if (!ds.creator)
+      console.warn(`[JsonLd] Dataset "${ds.name}" is missing the "creator" field`);
+  }
+}
+
 export function JsonLd({ data }: { data: object }) {
+  if (process.env.NODE_ENV === "development") validateDatasets(data as Record<string, unknown>);
   return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }} />;
 }
 

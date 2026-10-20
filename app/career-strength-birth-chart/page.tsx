@@ -276,7 +276,7 @@ export default function CareerStrengthPage() {
               <li><a href="/zodiac-signs">Zodiac Signs</a></li>
               <li><a href="/saturn-return-calculator">Saturn Return</a></li>
               <li><a href="/mercury-retrograde-2026">Mercury Rx 2026</a></li>
-              <li><a className="ncta" href="/#try-it">Full Reading $15</a></li>
+              <li><a className="ncta" href="/in-depth-birth-chart">In-Depth Reading $24</a></li>
             </ul>
           </div>
         </nav>

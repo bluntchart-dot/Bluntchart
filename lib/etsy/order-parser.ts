@@ -7,7 +7,7 @@
  */
 
 import type { EtsyReceipt, EtsyTransaction, EtsyVariation } from "./client";
-import { productFromListingId, guessProductFromTitle, resolveListingId, guessBundleFromTitle, type ListingResolution } from "./listing-map";
+import { productFromListingId, guessProductFromTitle, resolveListingId, guessBundleFromTitle, guessMoonFromTitle, type ListingResolution, type MoonProductId } from "./listing-map";
 import { getBundleProducts } from "@/lib/pipeline/bundles";
 import type { ReadingProduct } from "@/lib/premium/types";
 
@@ -41,9 +41,22 @@ export interface ParsedEtsyBundle {
   rawPersonalization: Record<string, string>;
 }
 
+export interface ParsedMoonOrder {
+  receiptId: number;
+  buyerEmail: string;
+  buyerUserId: number;
+  moonProduct: MoonProductId;
+  listingId: number;
+  amountCents: number;
+  moonData: { name1: string; dob1: string; name2: string; dob2: string } | null;
+  missingFields: string[];
+  rawPersonalization: Record<string, string>;
+}
+
 export type ParsedEtsyResult =
   | { type: "single"; order: ParsedEtsyOrder }
-  | { type: "bundle"; bundle: ParsedEtsyBundle };
+  | { type: "bundle"; bundle: ParsedEtsyBundle }
+  | { type: "moon"; moon: ParsedMoonOrder };
 
 export interface ParsedBirthData {
   name: string;
@@ -266,6 +279,8 @@ function resolveProduct(tx: EtsyTransaction): ReadingProduct | null {
 function resolveProductOrBundle(tx: EtsyTransaction): ListingResolution | null {
   const fromMap = resolveListingId(tx.listing_id);
   if (fromMap) return fromMap;
+  const moonId = guessMoonFromTitle(tx.title);
+  if (moonId) return { type: "moon", moonProduct: moonId };
   const bundleId = guessBundleFromTitle(tx.title);
   if (bundleId) {
     const products = getBundleProducts(bundleId);
@@ -276,11 +291,74 @@ function resolveProductOrBundle(tx: EtsyTransaction): ListingResolution | null {
   return null;
 }
 
+function extractMoonFields(variations: EtsyVariation[]): Record<string, string> {
+  const fields: Record<string, string> = {};
+  for (const v of variations) {
+    const label = v.formatted_name.toLowerCase().trim();
+    const value = v.formatted_value.trim();
+    if (!value) continue;
+
+    if (label.includes("person 1") || label.includes("his") || label.includes("name 1") || label.includes("first person")) {
+      if (label.includes("name")) fields.name1 = value;
+      else if (label.includes("date") || label.includes("dob") || label.includes("birth")) fields.dob1 = value;
+    } else if (label.includes("person 2") || label.includes("her") || label.includes("name 2") || label.includes("second person")) {
+      if (label.includes("name")) fields.name2 = value;
+      else if (label.includes("date") || label.includes("dob") || label.includes("birth")) fields.dob2 = value;
+    } else if (label.includes("email") || label.includes("e-mail")) {
+      fields.email = value;
+    } else if ((label.includes("name") || label.includes("full name")) && !fields.name1) {
+      fields.name1 = value;
+    } else if ((label.includes("date") || label.includes("dob") || label.includes("birthday")) && !fields.dob1) {
+      fields.dob1 = value;
+    }
+  }
+  return fields;
+}
+
 export function parseEtsyOrderOrBundle(receipt: EtsyReceipt): ParsedEtsyResult | null {
   if (!receipt.transactions?.length) return null;
   const tx = receipt.transactions[0];
   const resolution = resolveProductOrBundle(tx);
   if (!resolution) return null;
+
+  const priceCents = tx.price
+    ? Math.round((tx.price.amount / tx.price.divisor) * 100)
+    : 0;
+
+  if (resolution.type === "moon") {
+    const moonFields = extractMoonFields(tx.variations ?? []);
+    const missing: string[] = [];
+    if (!moonFields.name1) missing.push("Person 1 name");
+    if (!moonFields.dob1) missing.push("Person 1 date of birth");
+    if (!moonFields.name2) missing.push("Person 2 name");
+    if (!moonFields.dob2) missing.push("Person 2 date of birth");
+
+    let moonData: ParsedMoonOrder["moonData"] = null;
+    if (missing.length === 0) {
+      const d1 = parseDate(moonFields.dob1);
+      const d2 = parseDate(moonFields.dob2);
+      if (!d1) missing.push("Person 1 date of birth (could not parse)");
+      if (!d2) missing.push("Person 2 date of birth (could not parse)");
+      if (d1 && d2) {
+        moonData = { name1: moonFields.name1, dob1: d1, name2: moonFields.name2, dob2: d2 };
+      }
+    }
+
+    return {
+      type: "moon",
+      moon: {
+        receiptId: receipt.receipt_id,
+        buyerEmail: moonFields.email || receipt.buyer_email,
+        buyerUserId: receipt.buyer_user_id,
+        moonProduct: resolution.moonProduct,
+        listingId: tx.listing_id,
+        amountCents: priceCents,
+        moonData,
+        missingFields: missing,
+        rawPersonalization: moonFields,
+      },
+    };
+  }
 
   const rawFields = extractFromVariations(tx.variations ?? []);
   const missing: string[] = [];
@@ -288,10 +366,6 @@ export function parseEtsyOrderOrBundle(receipt: EtsyReceipt): ParsedEtsyResult |
   if (!rawFields.dob) missing.push("date of birth");
   if (!rawFields.birth_time) missing.push("time of birth");
   if (!rawFields.birth_place) missing.push("city/country of birth");
-
-  const priceCents = tx.price
-    ? Math.round((tx.price.amount / tx.price.divisor) * 100)
-    : 0;
 
   let birthData: ParsedBirthData | null = null;
   if (missing.length === 0) {
@@ -362,4 +436,18 @@ ${missing.map((f) => `• ${f.charAt(0).toUpperCase() + f.slice(1)}`).join("\n")
 Please reply to this message with the missing details and I will get your reading to you as quickly as possible!
 
 (For time of birth: if you are not sure, "morning", "afternoon", or "evening" works. If you really do not know, I will use noon as a default.)`;
+}
+
+export function buildMoonMissingDataMessage(
+  missing: string[]
+): string {
+  return `Hi there! Thank you so much for your Moon Phase order! 🌙
+
+I need a few details to create your personalized moon artwork:
+
+${missing.map((f) => `• ${f}`).join("\n")}
+
+Please reply with both people's names and dates of birth (e.g. "John Smith, March 15 1992 and Jane Doe, July 22 1990").
+
+I'll have your artwork ready within 24 hours once I receive these details!`;
 }

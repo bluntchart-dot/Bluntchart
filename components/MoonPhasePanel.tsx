@@ -29,6 +29,11 @@ import {
 } from "@/lib/moon-export";
 import LocationPicker, { type SelectedLocation } from "@/components/LocationPicker";
 import { calculateSynastry } from "@/lib/astro-compat";
+import {
+  generateMoonStoryHtml,
+  buildMoonStoryFilename,
+  type MoonStoryProduct,
+} from "@/lib/moon-story-html";
 
 const cormorant = Cormorant_Garamond({
   subsets: ["latin"],
@@ -301,6 +306,31 @@ export default function MoonPhasePanel({ initialProduct, onBack }: Props) {
           width: fmt.width, height: fmt.height,
         });
       }
+
+      const storyHtml = generateMoonStoryHtml({
+        product: product as MoonStoryProduct,
+        name1: name1.trim(),
+        date1: dob1,
+        name2: name2.trim(),
+        date2: dob2,
+      });
+      const storyBlob = new Blob([storyHtml], { type: "text/html" });
+      const storyDataURL = await new Promise<string>((res, rej) => {
+        const reader = new FileReader();
+        reader.onload = () => res(reader.result as string);
+        reader.onerror = () => rej(new Error("Failed to read story blob"));
+        reader.readAsDataURL(storyBlob);
+      });
+      generated.push({
+        id: "moon-story",
+        label: product === "a1" || product === "a2"
+          ? "Your Moon Story (printable)"
+          : "Your Cosmic Story (printable)",
+        filename: buildMoonStoryFilename(product as MoonStoryProduct, name1.trim(), name2.trim()),
+        dataURL: storyDataURL,
+        width: 0,
+        height: 0,
+      });
 
       setFiles(generated);
       setStage("done");
@@ -1004,7 +1034,23 @@ function MoonPhaseResult({
               <div style={{ fontSize: 12, fontWeight: 600, color: "#c9a84c", marginBottom: 6 }}>
                 {f.label}
               </div>
-              {f.id !== "print-pdf" ? (
+              {f.id === "print-pdf" || f.id === "moon-story" ? (
+                <div style={{
+                  width: "100%", height: 140,
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  flexDirection: "column", gap: 4,
+                  background: f.id === "moon-story" ? "rgba(184,149,62,0.08)" : "rgba(201, 168, 76, 0.06)",
+                  borderRadius: 4, marginBottom: 6,
+                  color: "#6b6585", fontSize: 12,
+                  fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace",
+                }}>
+                  {f.id === "moon-story" ? (
+                    <><span style={{ fontSize: 28 }}>📖</span><span>Printable Story Page</span></>
+                  ) : (
+                    <>PDF — {f.width}×{f.height}</>
+                  )}
+                </div>
+              ) : (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
                   src={f.dataURL} alt={f.label}
@@ -1013,24 +1059,13 @@ function MoonPhaseResult({
                     borderRadius: 4, marginBottom: 6,
                   }}
                 />
-              ) : (
-                <div style={{
-                  width: "100%", height: 140,
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  background: "rgba(201, 168, 76, 0.06)",
-                  borderRadius: 4, marginBottom: 6,
-                  color: "#6b6585", fontSize: 12,
-                  fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace",
-                }}>
-                  PDF — {f.width}×{f.height}
-                </div>
               )}
               <div style={{
                 fontSize: 10, color: "#515672",
                 fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace",
                 wordBreak: "break-all", lineHeight: 1.5,
               }}>
-                {f.filename}<br />{f.width}×{f.height}
+                {f.filename}{f.width > 0 && <><br />{f.width}×{f.height}</>}
               </div>
             </div>
           ))}
