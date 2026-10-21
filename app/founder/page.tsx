@@ -14,7 +14,7 @@ export const metadata: Metadata = {
     "best astrology website",
     "affordable birth chart",
     "ai birth chart",
-    "swiss ephemeris astrology",
+    "astronomical ephemeris astrology",
   ],
   alternates: { canonical: "https://bluntchart.com/founder" },
   openGraph: {
@@ -45,7 +45,7 @@ const FOUNDER_FAQS = [
   },
   {
     q: "Does BluntChart use AI?",
-    a: "Yes. Some parts of BluntChart use AI to help explain complex birth chart patterns in clear, everyday language. Every reading still begins with your actual birth chart, calculated using Swiss Ephemeris — the AI helps translate, it does not invent your chart or replace the astrology behind it.",
+    a: "Yes. Some parts of BluntChart use AI to help explain complex birth chart patterns in clear, everyday language. Every reading still begins with your actual birth chart, calculated using Astronomy Engine with NASA JPL planetary data — the AI helps translate, it does not invent your chart or replace the astrology behind it.",
   },
   {
     q: "Why is BluntChart affordable?",
@@ -78,7 +78,7 @@ export default function FounderPage() {
         url: "https://bluntchart.com/founder",
         image: "https://bluntchart.com/founder.jpeg",
         description:
-          "Ishika is the founder of BluntChart, a personalized birth chart reading platform that explains natal charts in plain, honest English using Swiss Ephemeris calculations.",
+          "Ishika is the founder of BluntChart, a personalized birth chart reading platform that explains natal charts in plain, honest English using high-precision astronomical calculations backed by NASA JPL planetary data.",
         sameAs: [
           "https://www.instagram.com/bluntchart/",
           "https://www.tiktok.com/@bluntchart",
@@ -350,15 +350,15 @@ export default function FounderPage() {
         {/* ── WHY SWISS EPHEMERIS ── */}
         <section className="fd-sec">
           <article className="fd-wrap">
-            <h2 className="fd-h2">Why <em>Swiss Ephemeris</em></h2>
+            <h2 className="fd-h2">Why <em>Astronomy Engine</em></h2>
             <p className="fd-lede">
-              I use Swiss Ephemeris because accuracy has to come before interpretation —
+              I use Astronomy Engine because accuracy has to come before interpretation —
               if the chart isn&apos;t right, nothing built on top of it will be either.
             </p>
 
             <p className="fd-line">Before anything is interpreted, the chart itself has to be accurate.</p>
             <p className="fd-line">
-              That&apos;s why every reading starts with Swiss Ephemeris — one of the most trusted astronomical calculation systems used in professional astrology.
+              That&apos;s why every reading starts with Astronomy Engine — a high-precision astronomical computation library backed by NASA JPL planetary data, accurate to arc-second precision.
             </p>
             <p className="fd-line">If the chart isn&apos;t right, nothing built on top of it will be either.</p>
             <p className="fd-line">Accuracy comes first.</p>
@@ -479,7 +479,7 @@ export default function FounderPage() {
               </Link>
               <Link href="/free-birth-chart">
                 <strong>Free Birth Chart</strong>
-                <span>Calculate your natal chart with Swiss Ephemeris precision.</span>
+                <span>Calculate your natal chart with arc-second precision.</span>
               </Link>
               <Link href="/free-birth-chart-readings">
                 <strong>How Readings Work</strong>

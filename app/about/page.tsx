@@ -12,7 +12,7 @@ export const metadata: Metadata = {
     "honest astrology",
     "birth chart readings",
     "personalized natal chart",
-    "swiss ephemeris astrology",
+    "astronomical ephemeris astrology",
     "no daily horoscope",
     "astrology in plain english",
   ],
@@ -41,7 +41,7 @@ export const metadata: Metadata = {
 const ABOUT_FAQS = [
   {
     q: "What is BluntChart?",
-    a: "BluntChart is a personalized birth chart reading platform that explains your natal chart in plain, honest English. It uses high-precision astronomical calculations from Swiss Ephemeris and none of the jargon that usually makes astrology confusing.",
+    a: "BluntChart is a personalized birth chart reading platform that explains your natal chart in plain, honest English. It uses high-precision astronomical calculations powered by NASA JPL planetary data, accurate to arc-second precision, and none of the jargon that usually makes astrology confusing.",
   },
   {
     q: "Does BluntChart publish daily horoscopes?",
@@ -52,8 +52,8 @@ const ABOUT_FAQS = [
     a: "Because your birth time determines your Rising sign and all twelve house placements. Even people born on the same day can have very different charts if they were born a few hours apart, so the more accurate your birth time, the more meaningful your reading becomes.",
   },
   {
-    q: "What is the Swiss Ephemeris?",
-    a: "The Swiss Ephemeris is a high-precision astronomical calculation system used by professional astrologers worldwide. It provides the exact planetary positions needed to build an accurate natal chart before any interpretation begins.",
+    q: "What calculation system does BluntChart use?",
+    a: "BluntChart uses Astronomy Engine, a high-precision astronomical computation library backed by NASA JPL planetary data. It calculates planetary positions accurate to arc-second precision — the same level of accuracy used by professional astrologers worldwide. It provides the exact planetary positions needed to build an accurate natal chart before any interpretation begins.",
   },
   {
     q: "Is a birth chart the same as a horoscope?",
@@ -89,7 +89,7 @@ export default function AboutPage() {
         url: "https://bluntchart.com",
         logo: "https://bluntchart.com/mascot.png",
         description:
-          "BluntChart is a personalized birth chart reading platform that explains your natal chart in plain, honest English using Swiss Ephemeris calculations.",
+          "BluntChart is a personalized birth chart reading platform that explains your natal chart in plain, honest English using high-precision astronomical calculations backed by NASA JPL planetary data.",
         founder: { "@id": "https://bluntchart.com/founder#person" },
         sameAs: [
           "https://www.instagram.com/bluntchart/",
@@ -307,7 +307,7 @@ export default function AboutPage() {
               <span className="ab-def-label">What is BluntChart?</span>
               <strong>BluntChart</strong> is a personalized birth chart reading platform that
               explains your natal chart in plain, honest English — using high-precision
-              astronomical calculations from <strong>Swiss Ephemeris</strong> and none of the
+              astronomical calculations backed by <strong>NASA JPL planetary data</strong> and none of the
               jargon that usually makes astrology confusing.
             </aside>
           </article>
@@ -378,16 +378,16 @@ export default function AboutPage() {
         {/* ── SWISS EPHEMERIS ── */}
         <section className="ab-sec">
           <article className="ab-wrap">
-            <h2 className="ab-h2">Why we use <em>Swiss Ephemeris</em></h2>
+            <h2 className="ab-h2">Why we use <em>Astronomy Engine</em></h2>
             <p className="ab-lede">
-              We use Swiss Ephemeris because it is the most trusted astronomical
-              calculation system in professional astrology — giving us the exact
-              planetary positions your chart depends on.
+              We use Astronomy Engine because it is a high-precision astronomical
+              computation library backed by NASA JPL planetary data — giving us the exact
+              planetary positions your chart depends on, accurate to arc-second precision.
             </p>
 
             <p className="ab-line">Every birth chart starts with accurate astronomical calculations.</p>
             <p className="ab-line">
-              That&apos;s why we use Swiss Ephemeris — the same calculation system trusted by professional astrologers around the world.
+              That&apos;s why we use Astronomy Engine — a proven, open-source computation library trusted by developers and astronomers worldwide.
             </p>
             <p className="ab-line">
               It gives us the exact planetary positions needed to create your natal chart before anything is explained.
@@ -418,7 +418,7 @@ export default function AboutPage() {
             <div className="ab-links">
               <Link href="/free-birth-chart">
                 <strong>Free Birth Chart Calculator</strong>
-                <span>Calculate your natal chart with Swiss Ephemeris precision.</span>
+                <span>Calculate your natal chart with arc-second precision.</span>
               </Link>
               <Link href="/zodiac-signs">
                 <strong>Zodiac Signs Guide</strong>

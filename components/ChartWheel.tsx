@@ -98,7 +98,7 @@ interface Props {
 
 export default function ChartWheel({ chart }: Props) {
   /* ────────────────────────────────────────────────────────────────────────
-     PROPORTIONS — modeled after astro.com / Swiss Ephemeris charts:
+     PROPORTIONS — modeled after traditional astrology chart layouts:
        Outer ring   (zodiac signs):   R_OUTER → R_ZODIAC_IN   (~14% of radius)
        Degree ticks:                  inside the zodiac ring
        Planet band:                   R_PLANET (between zodiac & inner circle)

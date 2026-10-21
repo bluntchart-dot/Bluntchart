@@ -45,7 +45,7 @@ const FAQS = [
   },
   {
     q: "How accurate is this birth chart calculator?",
-    a: "The calculator uses astronomy-engine, a high-precision astronomical library. Planetary longitudes are accurate to arc-second and match the Swiss Ephemeris used by professional astrologers. The Ascendant is computed from the historical timezone for your birth date and location. You can check any placement against an independent source and it will agree — the only variable is house system.",
+    a: "The calculator uses Astronomy Engine, a high-precision astronomical computation library backed by NASA JPL planetary data. Planetary longitudes are accurate to arc-second precision. The Ascendant is computed from the historical timezone for your birth date and location. You can check any placement against an independent source and it will agree — the only variable is house system.",
   },
   {
     q: "What is a chart ruler?",
@@ -557,7 +557,7 @@ export default function FreeBirthChartClient() {
               <p className="fbc-tldr-t">The astronomy is exact and independently verifiable. The interpretation is a framework, not a measurement. Anyone claiming certainty about interpretation is overselling. A good reading is one specific enough to be uncomfortable rather than vague enough to be universally agreeable — which is the entire reason BluntChart exists.</p>
             </div>
             <p className="fbc-p">Two separate questions get bundled together here, and separating them is the honest answer.</p>
-            <p className="fbc-p"><strong style={{ color:"#e8e4f0" }}>Is the calculation accurate?</strong> Yes, and this is verifiable. BluntChart uses a high-precision astronomical ephemeris. Planetary longitudes are accurate to arc-seconds and match the Swiss Ephemeris. You can check any placement against an independent source and it will agree.</p>
+            <p className="fbc-p"><strong style={{ color:"#e8e4f0" }}>Is the calculation accurate?</strong> Yes, and this is verifiable. BluntChart uses Astronomy Engine, a high-precision astronomical computation library backed by NASA JPL planetary data. Planetary longitudes are accurate to arc-second precision. You can check any placement against an independent source and it will agree.</p>
             <p className="fbc-p"><strong style={{ color:"#e8e4f0" }}>Is the interpretation accurate?</strong> That&apos;s a different kind of claim, and anyone selling you certainty here is selling you something. Astrology has no accepted mechanism and no controlled study has demonstrated predictive validity. What it demonstrably <em>is</em> good at is providing structured, specific language for patterns in personality and behaviour — a vocabulary for things people often struggle to articulate.</p>
             <p className="fbc-p">Our position is straightforward: the astronomy is exact, the interpretation is a framework, and a good reading is one that describes you specifically enough to be uncomfortable rather than vaguely enough to be universally agreeable. That second part is where most astrology fails, and it&apos;s the entire reason BluntChart exists.</p>
           </div>
