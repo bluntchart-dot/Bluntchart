@@ -3,7 +3,7 @@ import {
   StatsPage, JsonLd, Hero, Body, Section, P, StatTiles, Figure, BarChart, ColumnChart, Cards, Faq, SourceList,
   PageFoot, faqJsonLd, breadcrumbJsonLd, type Stat,
 } from "@/components/stats/StatsUI";
-import { S, DATA_HUB_URL as PAGE_URL, ASTROLOGY_STATS_URL, BIRTH_CHART_STATS_URL, ZODIAC_STATS_URL } from "@/lib/stats-sources";
+import { S, DATA_HUB_URL as PAGE_URL, ASTROLOGY_STATS_URL, BIRTH_CHART_STATS_URL, ZODIAC_STATS_URL, SATURN_RETURN_STATS_URL } from "@/lib/stats-sources";
 
 const UPDATED_ISO = "2026-10-08";
 const UPDATED_LABEL = "October 8, 2026";
@@ -58,10 +58,16 @@ const REPORTS = [
     desc: "Which sign is most common by birth, most Googled, and most searched during its season? All 12 ranked.",
     meta: "6.8M Wikipedia views · 7 sources",
   },
+  {
+    href: "/astrology-data/saturn-return-statistics",
+    icon: "loop" as const,
+    title: "Saturn Return Statistics",
+    desc: "When the Saturn return hits, life milestones that cluster at ages 27–30, search interest trends and quarter-life crisis research.",
+    meta: "9 sources",
+  },
 ];
 
 const UPCOMING = [
-  { icon: "loop" as const, title: "Saturn Return Statistics", desc: "Age, search trends and life-event data.", meta: "Coming soon" },
   { icon: "phone" as const, title: "Astrology App Statistics", desc: "Downloads, revenue and ratings compared.", meta: "Coming soon" },
 ];
 
@@ -139,6 +145,7 @@ export default function AstrologyDataHub() {
           { "@type": "Article", name: "Astrology Statistics 2026: 50+ Facts, Trends & Market Data", url: ASTROLOGY_STATS_URL },
           { "@type": "Article", name: "Birth Chart Statistics: Data on Readings, Popularity & Trends", url: BIRTH_CHART_STATS_URL },
           { "@type": "Article", name: "Zodiac Sign Statistics: Popularity, Birth Rates & Search Data", url: ZODIAC_STATS_URL },
+          { "@type": "Article", name: "Saturn Return Statistics: Age, Search Trends & Life Impact Data", url: SATURN_RETURN_STATS_URL },
         ],
       }} />
       <JsonLd data={{

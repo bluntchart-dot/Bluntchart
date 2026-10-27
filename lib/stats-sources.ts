@@ -9,6 +9,7 @@ export const DATA_HUB_URL = "https://bluntchart.com/astrology-data";
 export const ASTROLOGY_STATS_URL = `${DATA_HUB_URL}/astrology-statistics`;
 export const BIRTH_CHART_STATS_URL = `${DATA_HUB_URL}/birth-chart-statistics`;
 export const ZODIAC_STATS_URL = `${DATA_HUB_URL}/zodiac-sign-statistics`;
+export const SATURN_RETURN_STATS_URL = `${DATA_HUB_URL}/saturn-return-statistics`;
 
 export const S = {
   pew2025: {
@@ -145,6 +146,41 @@ export const S = {
     name: "Hypebae, \"Google Reveals the Most-Searched Zodiac Signs\" (May 2021). Ranking based on Google U.S. search interest data.",
     short: "Google via Hypebae, 2021",
     url: "https://hypebae.com/2021/5/google-trending-searches-astrology-horoscope-zodiac-sign-ranking-list",
+  },
+  linkedin2017: {
+    name: "LinkedIn, “New LinkedIn Research Shows 75 Percent of 25-33 Year Olds Have Experienced Quarter-Life Crises” (November 15, 2017). Survey of 6,000+ 25–33-year-olds in the US, UK, India and Australia.",
+    short: "LinkedIn, 2017",
+    url: "https://news.linkedin.com/2017/11/new-linkedin-research-shows-75-percent-of-25-33-year-olds-have-e",
+  },
+  ncfmrMarriage2024: {
+    name: "National Center for Family & Marriage Research (NCFMR), “Median Age at First Marriage: Geographic Variation, 2024.” Bowling Green State University, analysis of ACS 1-year data.",
+    short: "NCFMR / ACS, 2024",
+    url: "https://www.bgsu.edu/ncfmr/resources/data/family-profiles/fp-26-01.html",
+  },
+  ncfmrBirth2024: {
+    name: "National Center for Family & Marriage Research (NCFMR), “Mean Age of Mother at First Birth, 2024.” Analysis of NCHS natality data.",
+    short: "NCFMR / NCHS, 2024",
+    url: "https://www.bgsu.edu/ncfmr/resources/data/family-profiles/mean-age-mother-first-birth-fp-26-12.html",
+  },
+  blsTenure2024: {
+    name: "US Bureau of Labor Statistics, “Employee Tenure in 2024.” USDL-24-1891 (September 26, 2024). Current Population Survey data from January 2024.",
+    short: "BLS Employee Tenure, 2024",
+    url: "https://www.bls.gov/news.release/tenure.nr0.htm",
+  },
+  blsNlsy: {
+    name: "US Bureau of Labor Statistics, “Number of Jobs, Labor Market Experience, Marital Status, and Health: Results from a National Longitudinal Survey.” USDL-24-1667 (August 22, 2024). NLSY79 and NLSY97 cohorts.",
+    short: "BLS / NLSY, 2024",
+    url: "https://www.bls.gov/news.release/nlsoy.nr0.htm",
+  },
+  nasa: {
+    name: "NASA Solar System Exploration, “Saturn: Facts.” Orbital period 29.457 Earth years.",
+    short: "NASA",
+    url: "https://science.nasa.gov/saturn/facts/",
+  },
+  harris2024: {
+    name: "The Harris Poll, “Astrology Survey” (February 2024). Survey of 2,069 US adults fielded January 12–14, 2024.",
+    short: "Harris Poll, 2024",
+    url: "https://theharrispoll.com/wp-content/uploads/2024/02/Astrology-Survey-February-2024.pdf",
   },
   // BluntChart's own analyses, cited by their report pages.
   bcZodiac: {
