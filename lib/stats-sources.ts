@@ -10,6 +10,7 @@ export const ASTROLOGY_STATS_URL = `${DATA_HUB_URL}/astrology-statistics`;
 export const BIRTH_CHART_STATS_URL = `${DATA_HUB_URL}/birth-chart-statistics`;
 export const ZODIAC_STATS_URL = `${DATA_HUB_URL}/zodiac-sign-statistics`;
 export const SATURN_RETURN_STATS_URL = `${DATA_HUB_URL}/saturn-return-statistics`;
+export const ASTROLOGY_APP_STATS_URL = `${DATA_HUB_URL}/astrology-app-statistics`;
 
 export const S = {
   pew2025: {
@@ -98,7 +99,7 @@ export const S = {
     url: "https://github.com/cosinekitty/astronomy",
   },
   appstore: {
-    name: "Apple App Store (US) public listings for Co–Star, CHANI, Nebula and The Pattern, accessed September 2026.",
+    name: "Apple App Store (US) public listings for Co–Star, CHANI, Nebula, The Pattern and Sanctuary, accessed September 2026.",
     short: "Apple App Store, Sept 2026",
     url: "https://apps.apple.com/us/app/co-star-personalized-astrology/id1264782561",
   },
@@ -192,6 +193,16 @@ export const S = {
     name: "BluntChart analysis: 62,187,024 US births 2000–2014 (SSA) weighted by CDC hour-of-birth data, positions computed with astronomy-engine at the 2020 US center of population.",
     short: "BluntChart analysis of SSA + CDC data",
     url: `${BIRTH_CHART_STATS_URL}#sources`,
+  },
+  sensorTower2020: {
+    name: "Sensor Tower via TechCrunch, “Top 10 U.S. Astrology Apps Drew in $40M in 2019, Up 65% From 2018” (March 2, 2020).",
+    short: "Sensor Tower via TechCrunch, 2020",
+    url: "https://techcrunch.com/2020/03/02/top-10-u-s-astrology-apps-drew-in-40m-in-2019-up-65-from-2018/",
+  },
+  inc42astrotalk: {
+    name: "Inc42, “Exclusive: Astrotalk Joins Unicorn Club After ESOP Buyback At $1 Bn Valuation” (January 2026).",
+    short: "Inc42, 2026",
+    url: "https://inc42.com/buzz/astrotalk-joins-unicorn-club-after-esop-buyback-at-1-bn-valuation/",
   },
 } satisfies Record<string, Source>;
 

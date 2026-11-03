@@ -3,7 +3,7 @@ import {
   StatsPage, JsonLd, Hero, Body, Section, P, StatTiles, Figure, BarChart, ColumnChart, Cards, Faq, SourceList,
   PageFoot, faqJsonLd, breadcrumbJsonLd, type Stat,
 } from "@/components/stats/StatsUI";
-import { S, DATA_HUB_URL as PAGE_URL, ASTROLOGY_STATS_URL, BIRTH_CHART_STATS_URL, ZODIAC_STATS_URL, SATURN_RETURN_STATS_URL } from "@/lib/stats-sources";
+import { S, DATA_HUB_URL as PAGE_URL, ASTROLOGY_STATS_URL, BIRTH_CHART_STATS_URL, ZODIAC_STATS_URL, SATURN_RETURN_STATS_URL, ASTROLOGY_APP_STATS_URL } from "@/lib/stats-sources";
 
 const UPDATED_ISO = "2026-10-08";
 const UPDATED_LABEL = "October 8, 2026";
@@ -65,11 +65,16 @@ const REPORTS = [
     desc: "When the Saturn return hits, life milestones that cluster at ages 27–30, search interest trends and quarter-life crisis research.",
     meta: "9 sources",
   },
+  {
+    href: "/astrology-data/astrology-app-statistics",
+    icon: "phone" as const,
+    title: "Astrology App Statistics",
+    desc: "Downloads, revenue and ratings for Co–Star, CHANI, Nebula, The Pattern and Sanctuary, plus market size and growth trends.",
+    meta: "35+ stats · 11 sources",
+  },
 ];
 
-const UPCOMING = [
-  { icon: "phone" as const, title: "Astrology App Statistics", desc: "Downloads, revenue and ratings compared.", meta: "Coming soon" },
-];
+const UPCOMING: typeof REPORTS = [];
 
 const HEADLINES: Stat[] = [
   { value: "27%", label: "of US adults say they believe in astrology", source: S.pew2025, icon: "users" },
@@ -146,6 +151,7 @@ export default function AstrologyDataHub() {
           { "@type": "Article", name: "Birth Chart Statistics: Data on Readings, Popularity & Trends", url: BIRTH_CHART_STATS_URL },
           { "@type": "Article", name: "Zodiac Sign Statistics: Popularity, Birth Rates & Search Data", url: ZODIAC_STATS_URL },
           { "@type": "Article", name: "Saturn Return Statistics: Age, Search Trends & Life Impact Data", url: SATURN_RETURN_STATS_URL },
+          { "@type": "Article", name: "Astrology App Statistics: Downloads, Revenue & Market Comparison", url: ASTROLOGY_APP_STATS_URL },
         ],
       }} />
       <JsonLd data={{

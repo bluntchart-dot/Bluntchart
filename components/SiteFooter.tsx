@@ -222,6 +222,7 @@ export default function SiteFooter() {
                 <li><Link href="/astrology-data/birth-chart-statistics">Birth Chart Statistics</Link></li>
                 <li><Link href="/astrology-data/zodiac-sign-statistics">Zodiac Sign Statistics</Link></li>
                 <li><Link href="/astrology-data/saturn-return-statistics">Saturn Return Statistics</Link></li>
+                <li><Link href="/astrology-data/astrology-app-statistics">Astrology App Statistics</Link></li>
               </ul>
             </div>
           </div>
