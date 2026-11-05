@@ -21,6 +21,7 @@ export const metadata: Metadata = {
     url: "https://bluntchart.com/zodiac-signs/sagittarius",
     siteName: "BluntChart",
     type: "article",
+    images: [{ url: "/sagittarius-bluntchart.png", width: 1200, height: 630, alt: "Sagittarius zodiac sign — BluntChart" }],
   },
   twitter: {
     card: "summary_large_image",

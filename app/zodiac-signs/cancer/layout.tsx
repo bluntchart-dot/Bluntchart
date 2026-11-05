@@ -18,6 +18,7 @@ export const metadata: Metadata = {
     url: "https://bluntchart.com/zodiac-signs/cancer",
     siteName: "BluntChart",
     type: "article",
+    images: [{ url: "/cancer-bluntchart.png", width: 1200, height: 630, alt: "Cancer zodiac sign — BluntChart" }],
   },
   alternates: { canonical: "https://bluntchart.com/zodiac-signs/cancer" },
 };

@@ -18,6 +18,7 @@ export const metadata: Metadata = {
     url: "https://bluntchart.com/zodiac-signs/taurus",
     siteName: "BluntChart",
     type: "article",
+    images: [{ url: "/taurus-bluntchart.png", width: 1200, height: 630, alt: "Taurus zodiac sign — BluntChart" }],
   },
   alternates: { canonical: "https://bluntchart.com/zodiac-signs/taurus" },
 };

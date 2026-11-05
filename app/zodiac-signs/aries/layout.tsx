@@ -18,6 +18,7 @@ export const metadata: Metadata = {
     url: "https://bluntchart.com/zodiac-signs/aries",
     siteName: "BluntChart",
     type: "article",
+    images: [{ url: "/aries-bluntchart.png", width: 1200, height: 630, alt: "Aries zodiac sign — BluntChart" }],
   },
   twitter: {
     card: "summary_large_image",

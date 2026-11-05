@@ -59,6 +59,14 @@ export function buildMetadata(page: SunSignPageData) {
       url: page.canonical,
       siteName: "BluntChart",
       type: "article" as const,
+      images: [
+        {
+          url: `/${page.sign.toLowerCase()}-bluntchart.png`,
+          width: 1200,
+          height: 630,
+          alt: `${page.sign} zodiac sign — BluntChart`,
+        },
+      ],
     },
     twitter: {
       card: "summary_large_image" as const,

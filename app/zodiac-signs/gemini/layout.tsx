@@ -18,6 +18,7 @@ export const metadata: Metadata = {
     url: "https://bluntchart.com/zodiac-signs/gemini",
     siteName: "BluntChart",
     type: "article",
+    images: [{ url: "/gemini-bluntchart.png", width: 1200, height: 630, alt: "Gemini zodiac sign — BluntChart" }],
   },
   alternates: { canonical: "https://bluntchart.com/zodiac-signs/gemini" },
 };

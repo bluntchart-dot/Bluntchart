@@ -18,6 +18,7 @@ export const metadata: Metadata = {
     url: "https://bluntchart.com/zodiac-signs/libra",
     siteName: "BluntChart",
     type: "article",
+    images: [{ url: "/libra-bluntchart.png", width: 1200, height: 630, alt: "Libra zodiac sign — BluntChart" }],
   },
   alternates: { canonical: "https://bluntchart.com/zodiac-signs/libra" },
 };

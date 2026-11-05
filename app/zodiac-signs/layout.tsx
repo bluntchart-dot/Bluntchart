@@ -10,6 +10,7 @@ export const metadata: Metadata = {
     url: "https://bluntchart.com/zodiac-signs",
     siteName: "BluntChart",
     type: "website",
+    images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "The 12 Zodiac Signs — BluntChart" }],
   },
   twitter: {
     card: "summary_large_image",

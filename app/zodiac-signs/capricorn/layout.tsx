@@ -21,6 +21,7 @@ export const metadata: Metadata = {
     url: "https://bluntchart.com/zodiac-signs/capricorn",
     siteName: "BluntChart",
     type: "article",
+    images: [{ url: "/capricorn-bluntchart.png", width: 1200, height: 630, alt: "Capricorn zodiac sign — BluntChart" }],
   },
   twitter: {
     card: "summary_large_image",
