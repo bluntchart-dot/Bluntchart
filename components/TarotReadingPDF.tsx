@@ -6,6 +6,7 @@ import {
   View,
   StyleSheet,
 } from "@react-pdf/renderer";
+import { readFileSync, existsSync } from "fs";
 import path from "path";
 
 /* ═════════════════════════════════════════════════════════════════
@@ -18,8 +19,12 @@ interface DrawnCardData {
   position?: string;
 }
 
-function cardImageSrc(cardId: string): string {
-  return path.join(process.cwd(), "public", "tarot", `${cardId}.png`);
+function cardImageSrc(cardId: string): { data: Buffer; format: "png" } | string {
+  const filePath = path.join(process.cwd(), "public", "tarot", `${cardId}.png`);
+  if (existsSync(filePath)) {
+    return { data: readFileSync(filePath), format: "png" };
+  }
+  return filePath;
 }
 
 interface TarotCardSection {
