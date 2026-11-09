@@ -1,14 +1,26 @@
 import {
   Document,
+  Image,
   Page,
   Text,
   View,
   StyleSheet,
 } from "@react-pdf/renderer";
+import path from "path";
 
 /* ═════════════════════════════════════════════════════════════════
    TYPES
 ═════════════════════════════════════════════════════════════════ */
+
+interface DrawnCardData {
+  card: { id: string; name: string };
+  orientation: "upright" | "reversed";
+  position?: string;
+}
+
+function cardImageSrc(cardId: string): string {
+  return path.join(process.cwd(), "public", "tarot", `${cardId}.png`);
+}
 
 interface TarotCardSection {
   position?: string;
@@ -171,6 +183,44 @@ const s = StyleSheet.create({
     fontFamily: "Helvetica",
   },
 
+  cardImageRow: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginTop: 20,
+    marginBottom: 24,
+  },
+  cardImageWrap: {
+    alignItems: "center",
+    width: 140,
+    marginHorizontal: 8,
+  },
+  cardImage: {
+    width: 120,
+    borderRadius: 4,
+  },
+  cardImageReversed: {
+    width: 120,
+    borderRadius: 4,
+    transform: "rotate(180deg)",
+  },
+  cardImageLabel: {
+    fontSize: 8,
+    fontFamily: "Helvetica",
+    color: MUTED,
+    textAlign: "center",
+    marginTop: 6,
+  },
+  singleCardImage: {
+    width: 160,
+    borderRadius: 4,
+    marginBottom: 16,
+  },
+  singleCardImageReversed: {
+    width: 160,
+    borderRadius: 4,
+    marginBottom: 16,
+    transform: "rotate(180deg)",
+  },
   card: {
     backgroundColor: CARD_BG,
     borderRadius: 6,
@@ -301,10 +351,26 @@ function Footer({ name }: { name: string }) {
    VARIANT RENDERERS
 ═════════════════════════════════════════════════════════════════ */
 
-function ThreeCardPages({ reading, name }: { reading: ThreeCardReading; name: string }) {
+function ThreeCardPages({ reading, name, drawnCards }: { reading: ThreeCardReading; name: string; drawnCards?: DrawnCardData[] }) {
   return (
     <Page size="A4" style={s.page}>
       <PageHeader section="THREE CARD READING" />
+
+      {drawnCards && drawnCards.length > 0 && (
+        <View style={s.cardImageRow}>
+          {drawnCards.map((dc, i) => (
+            <View key={i} style={s.cardImageWrap}>
+              <Image
+                src={cardImageSrc(dc.card.id)}
+                style={dc.orientation === "reversed" ? s.cardImageReversed : s.cardImage}
+              />
+              <Text style={s.cardImageLabel}>
+                {dc.card.name}{"\n"}{dc.orientation}
+              </Text>
+            </View>
+          ))}
+        </View>
+      )}
 
       {reading.cards.map((card, i) => (
         <View key={i} style={s.card}>
@@ -339,7 +405,8 @@ function ThreeCardPages({ reading, name }: { reading: ThreeCardReading; name: st
   );
 }
 
-function YesNoPages({ reading, name, question }: { reading: YesNoReading; name: string; question?: string }) {
+function YesNoPages({ reading, name, question, drawnCards }: { reading: YesNoReading; name: string; question?: string; drawnCards?: DrawnCardData[] }) {
+  const dc = drawnCards?.[0];
   return (
     <Page size="A4" style={s.page}>
       <PageHeader section="YES / NO TAROT" />
@@ -357,6 +424,15 @@ function YesNoPages({ reading, name, question }: { reading: YesNoReading; name: 
       <Text style={s.confidence}>
         Confidence: {reading.confidence} — {reading.card_name} ({reading.orientation})
       </Text>
+
+      {dc && (
+        <View style={{ alignItems: "center", marginBottom: 16 }}>
+          <Image
+            src={cardImageSrc(dc.card.id)}
+            style={dc.orientation === "reversed" ? s.singleCardImageReversed : s.singleCardImage}
+          />
+        </View>
+      )}
 
       <View style={s.card}>
         <Text style={s.cardName}>{reading.card_name}</Text>
@@ -471,6 +547,7 @@ export default function TarotReadingPDF({
   const subtitle = tagline
     ? `${tagline[0]}\n${tagline[1]}`
     : "No fluff. No filter. Just the cards.";
+  const drawnCards = (reading._drawnCards ?? []) as DrawnCardData[];
 
   return (
     <Document
@@ -503,10 +580,10 @@ export default function TarotReadingPDF({
 
       {/* Content */}
       {variant === "three-card" && (
-        <ThreeCardPages reading={reading as unknown as ThreeCardReading} name={displayName} />
+        <ThreeCardPages reading={reading as unknown as ThreeCardReading} name={displayName} drawnCards={drawnCards} />
       )}
       {variant === "yes-no" && (
-        <YesNoPages reading={reading as unknown as YesNoReading} name={displayName} question={question} />
+        <YesNoPages reading={reading as unknown as YesNoReading} name={displayName} question={question} drawnCards={drawnCards} />
       )}
       {variant === "love" && (
         <LoveReadingPages reading={reading as unknown as LoveReading} name={displayName} />

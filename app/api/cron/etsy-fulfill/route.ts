@@ -203,6 +203,10 @@ export async function GET(req: NextRequest) {
 
     if (result.tier === "quick" || result.tier === "tarot" || result.tier === "compat") {
       if (result.ok && result.reading) {
+        const readingJson = result.tier === "tarot" && result.cards
+          ? { ...result.reading, _drawnCards: result.cards }
+          : result.reading;
+
         // Save the reading to the readings table
         const { data: readingRow, error: readingError } = await supabase
           .from(DB.readings)
@@ -210,7 +214,7 @@ export async function GET(req: NextRequest) {
             {
               birth_time: birthData?.birth_time ?? null,
               birth_place: birthData?.birth_place ?? null,
-              reading_json: result.reading,
+              reading_json: readingJson,
               reading_status: "complete",
               product_type: product,
               order_source: "etsy",
@@ -244,7 +248,7 @@ export async function GET(req: NextRequest) {
           .from(DB.etsyOrders)
           .update({
             status: "complete",
-            reading_json: result.reading,
+            reading_json: readingJson,
             reading_id: readingRow?.id ?? null,
             updated_at: new Date().toISOString(),
           })

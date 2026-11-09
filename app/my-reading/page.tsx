@@ -173,8 +173,26 @@ function MyReadingContent() {
 
   const rawCard = reading?.shareCard as Record<string, unknown> | undefined;
   const chart = reading?.chart as ChartData | undefined;
-console.log("[DEBUG] chart data:", chart ? "YES" : "NO", JSON.stringify(chart)?.slice(0, 200));
-const meta = reading?.meta as Record<string, unknown> | undefined;
+  const meta = reading?.meta as Record<string, unknown> | undefined;
+
+  const drawnCards = Array.isArray(reading?._drawnCards)
+    ? (reading!._drawnCards as Array<{
+        card: { id: string; name: string };
+        orientation: "upright" | "reversed";
+        position?: string;
+      }>)
+    : [];
+  const isTarotReading = drawnCards.length > 0;
+
+  const tarotCards = (reading?.cards ?? []) as Array<{
+    position?: string; card_name?: string; orientation?: string; interpretation?: string;
+  }>;
+  const tarotNarrative = (reading?.narrative as string) ?? "";
+  const tarotAdvice = (reading?.advice as string) ?? "";
+  const tarotAnswer = (reading?.answer as string) ?? "";
+  const tarotConfidence = (reading?.confidence as string) ?? "";
+  const tarotExplanation = (reading?.explanation as string) ?? "";
+  const tarotCaveat = (reading?.caveat as string) ?? "";
 
   /* Big 3 + key planet highlight boxes. Computed once here from the
      same chart object ChartWheel already uses. Null-safe. */
@@ -310,6 +328,121 @@ const meta = reading?.meta as Record<string, unknown> | undefined;
           <h1 className="text-3xl sm:text-4xl font-serif mb-10 tracking-tight">
             Saved for you
           </h1>
+        )}
+
+        {/* Tarot Card Images */}
+        {isTarotReading && (
+          <section className="mb-10">
+            <div className="flex justify-center gap-4 sm:gap-6 flex-wrap">
+              {drawnCards.map((dc, i) => (
+                <div key={i} className="flex flex-col items-center">
+                  <div className="relative w-[120px] sm:w-[150px]">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={`/tarot/${dc.card.id}.png`}
+                      alt={`${dc.card.name} - ${dc.orientation}`}
+                      className={`w-full rounded-lg shadow-lg shadow-black/40 border border-white/10 ${
+                        dc.orientation === "reversed" ? "rotate-180" : ""
+                      }`}
+                    />
+                  </div>
+                  <p className="mt-2 text-sm text-center text-[#c4a8ff] font-medium">
+                    {dc.card.name}
+                  </p>
+                  <p className="text-xs text-[#6b6585] uppercase tracking-wider">
+                    {dc.position ? `${dc.position} · ` : ""}{dc.orientation}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Tarot Three-Card Reading Content */}
+        {isTarotReading && tarotCards.length > 0 && (
+          <section className="mb-12">
+            <h2 className="text-xs uppercase tracking-[0.2em] text-[#f0b84a] mb-7">
+              Your cards · {tarotCards.length} drawn
+            </h2>
+            {tarotCards.map((card, i) => (
+              <article
+                key={i}
+                className="mb-8 p-7 sm:p-9 rounded-2xl border border-white/10 bg-white/[0.03]"
+              >
+                {card.position && (
+                  <span className="inline-block text-[10px] uppercase tracking-[0.18em] text-[#f0b84a] bg-[#f0b84a]/10 px-3 py-1 rounded-md mb-3 font-semibold">
+                    {card.position}
+                  </span>
+                )}
+                {card.card_name && (
+                  <p className="text-xl sm:text-2xl font-serif font-semibold leading-snug mb-2 text-[#f0ece8]">
+                    {card.card_name}
+                  </p>
+                )}
+                {card.orientation && (
+                  <p className="text-xs uppercase tracking-wider text-[#6b6585] mb-5">
+                    {card.orientation}
+                  </p>
+                )}
+                {card.interpretation && (
+                  <div className="text-[#b8b0d4] text-base leading-relaxed max-w-3xl">
+                    <ReadingText text={card.interpretation} className="space-y-4" />
+                  </div>
+                )}
+              </article>
+            ))}
+            {tarotNarrative && (
+              <article className="mb-8 p-7 sm:p-9 rounded-2xl border border-white/10 bg-white/[0.03]">
+                <span className="inline-block text-[10px] uppercase tracking-[0.18em] text-[#f0b84a] bg-[#f0b84a]/10 px-3 py-1 rounded-md mb-4 font-semibold">
+                  The Story
+                </span>
+                <div className="text-[#b8b0d4] text-base leading-relaxed max-w-3xl">
+                  <ReadingText text={tarotNarrative} className="space-y-4" />
+                </div>
+              </article>
+            )}
+            {tarotAdvice && (
+              <article className="p-7 sm:p-9 rounded-2xl border border-[#f0b84a]/20 bg-[#f0b84a]/[0.03]">
+                <span className="inline-block text-[10px] uppercase tracking-[0.18em] text-[#f0b84a] mb-3 font-semibold">
+                  This Week
+                </span>
+                <div className="text-[#f0b84a]/90 text-base leading-relaxed max-w-3xl">
+                  <ReadingText text={tarotAdvice} className="space-y-4" />
+                </div>
+              </article>
+            )}
+          </section>
+        )}
+
+        {/* Tarot Yes/No Reading Content */}
+        {isTarotReading && tarotAnswer && (
+          <section className="mb-12 text-center">
+            <p className="text-6xl sm:text-7xl font-serif font-bold text-[#c4a8ff] mb-3">
+              {tarotAnswer.toUpperCase()}
+            </p>
+            {tarotConfidence && (
+              <p className="text-sm text-[#6b6585] mb-8">
+                Confidence: {tarotConfidence}
+              </p>
+            )}
+            {tarotExplanation && (
+              <article className="text-left mb-8 p-7 sm:p-9 rounded-2xl border border-white/10 bg-white/[0.03] max-w-3xl mx-auto">
+                <div className="text-[#b8b0d4] text-base leading-relaxed">
+                  <ReadingText text={tarotExplanation} className="space-y-4" />
+                </div>
+              </article>
+            )}
+            {tarotCaveat && (
+              <article className="text-left p-7 sm:p-9 rounded-2xl border border-[#f0b84a]/20 bg-[#f0b84a]/[0.03] max-w-3xl mx-auto">
+                <span className="inline-block text-[10px] uppercase tracking-[0.18em] text-[#f0b84a] mb-3 font-semibold">
+                  What You Can Change
+                </span>
+                <div className="text-[#f0b84a]/90 text-base leading-relaxed">
+                  <ReadingText text={tarotCaveat} className="space-y-4" />
+                </div>
+              </article>
+            )}
+          </section>
         )}
 
         {/* Big 3 + key planet highlight boxes, shown above the wheel */}
