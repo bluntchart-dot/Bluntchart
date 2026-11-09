@@ -289,14 +289,14 @@ const s = StyleSheet.create({
     color: INDIGO,
     textAlign: "center",
     marginTop: 24,
-    marginBottom: 8,
+    marginBottom: 40,
   },
   confidence: {
     fontSize: 11,
     fontFamily: "Helvetica",
     color: MUTED,
     textAlign: "center",
-    marginBottom: 24,
+    marginBottom: 28,
   },
 
   pageFooter: {
