@@ -10,10 +10,21 @@ const nextConfig: NextConfig = {
         destination: "/founder",
         permanent: true,
       },
-      // Without-year URL that Google indexed before the page was named with the year.
+      // Without-year URLs that Google indexed before the pages were named with the year.
       {
         source: "/mercury-retrograde-in-scorpio",
         destination: "/mercury-retrograde-in-scorpio-2026",
+        permanent: true,
+      },
+      {
+        source: "/mercury-retrograde-in-cancer",
+        destination: "/mercury-retrograde-in-cancer-2026",
+        permanent: true,
+      },
+      // Typo URL Google crawled (plural → singular).
+      {
+        source: "/why-you-attract-the-wrong-people",
+        destination: "/why-you-attract-the-wrong-person",
         permanent: true,
       },
       // Statistics reports moved under the /astrology-data hub.
