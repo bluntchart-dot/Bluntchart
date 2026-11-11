@@ -44,6 +44,7 @@ const productJsonLd = {
   name: "Compatibility Reading",
   description:
     "Personalized astrology compatibility (synastry) reading built from two full birth charts: 7 written chapters covering attraction, love styles, recurring conflict, communication, emotional triggers, and long-term potential. Delivered online in minutes.",
+  image: "https://bluntchart.com/og-image.png",
   brand: { "@type": "Brand", name: "BluntChart" },
   category: "Astrology Reading",
   offers: {

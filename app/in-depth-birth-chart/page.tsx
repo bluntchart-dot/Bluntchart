@@ -54,6 +54,7 @@ const productJsonLd = {
   name: "In-Depth Birth Chart Reading",
   description:
     "Personalized birth chart reading and natal chart analysis: 8 chapters, 40+ pages covering personality, career, love, money, emotional growth, current astrology transits, and actionable takeaways. Delivered as an online book + downloadable PDF.",
+  image: "https://bluntchart.com/readings-bluntchart.png",
   brand: { "@type": "Brand", name: "BluntChart" },
   offers: {
     "@type": "Offer",

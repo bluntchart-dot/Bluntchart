@@ -30,6 +30,7 @@ const jsonLd = {
       name: "The Fight Card",
       description:
         "A two-sided wallet card generated from your Compatibility Reading, built on Gottman repair-attempt research. Ships as a printable PDF, fridge version, and matching lock-screen wallpapers.",
+      image: "https://bluntchart.com/shareable-card.png",
       brand: { "@type": "Brand", name: "BluntChart" },
       offers: {
         "@type": "Offer",
