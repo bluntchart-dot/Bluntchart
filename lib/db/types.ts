@@ -1,5 +1,7 @@
 /** Row shapes aligned with your Supabase schema (see dashboard ERD). */
 
+import type { Attribution } from "@/lib/attribution";
+
 export type ProductType =
   | "reading"
   | "birth-chart-book"
@@ -68,6 +70,9 @@ export interface PaymentRow {
   user_id: string | null;
   product_type: ProductType;
   order_source: string | null;
+  utm_source: string | null;
+  lead_source: string | null;
+  attribution: Attribution | null;
   reading_status: ReadingStatus | null;
   birth_inputs: BirthInputs | null;
   generation_started_at: string | null;
@@ -106,6 +111,8 @@ export interface AbandonedCheckoutRow {
   preview_json: StoredPreview | null;
   step_reached: string | null;
   utm_source: string | null;
+  lead_source: string | null;
+  attribution: Attribution | null;
   user_id: string | null;
   abandoned_at?: string;
   created_at?: string;
@@ -136,5 +143,7 @@ export interface CheckoutStartPayload {
   focus_area?: string;
   product_type?: ProductType;
   step_reached?: CheckoutStep;
-  utm_source?: string;
+  /** Where the lead was captured: a free tool slug or the product type. */
+  lead_source?: string;
+  attribution?: Attribution | null;
 }

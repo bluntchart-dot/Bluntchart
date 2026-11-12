@@ -3,7 +3,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { track } from "@vercel/analytics";
+import { track as vercelTrack } from "@vercel/analytics";
+import { track, identifyUser } from "@/lib/posthog";
 import LocationPicker from "@/components/LocationPicker";
 import type { SelectedLocation } from "@/components/LocationPicker";
 import {
@@ -211,7 +212,10 @@ function ReadingForm({ formRef }: { formRef: React.RefObject<HTMLDivElement | nu
       return setError("Add the email where we should send your reading.");
     }
 
-    track("compat_pay_click");
+    vercelTrack("compat_pay_click");
+    identifyUser(email.trim().toLowerCase());
+    track("compatibility_form_submitted", { product_type: "compatibility" });
+    track("checkout_started", { product_type: "compatibility" });
     setSubmitting(true);
 
     // Checkout isn't connected yet. Once the Gumroad link is set

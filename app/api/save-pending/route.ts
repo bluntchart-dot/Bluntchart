@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createSupabaseAdmin } from "@/lib/supabase-admin";
+import { ATTRIBUTION_COOKIE, parseAttribution } from "@/lib/attribution";
 import {
   startCheckout,
+  saveFreeToolLead,
   loadAbandonedEmailIdsByEmail,
   saveAbandonedEmailIds,
   SITE_URL,
@@ -65,6 +67,12 @@ const birth_lng =
   typeof body.focus_area === "string" ? body.focus_area.trim() : undefined;
     const product_type =
       typeof body.product_type === "string" ? body.product_type.trim() : undefined;
+    /** Free tools (calculators, free chart) send `source` and no product_type. */
+    const source =
+      typeof body.source === "string" && /^[a-z0-9-]{1,64}$/.test(body.source.trim())
+        ? body.source.trim()
+        : undefined;
+    const attribution = parseAttribution(req.cookies.get(ATTRIBUTION_COOKIE)?.value);
 
     if (!name || !email || !dob || !birth_time || !birth_place) {
       dbError(scope, "validation failed", "missing fields", { email });
@@ -75,6 +83,29 @@ const birth_lng =
     }
 
     const supabase = createSupabaseAdmin();
+
+    if (source && !product_type) {
+      const lead = await saveFreeToolLead(supabase, {
+        name,
+        email,
+        dob,
+        birth_time,
+        birth_place,
+        timezone,
+        birth_lat,
+        birth_lng,
+        focus_area,
+        lead_source: source,
+        attribution,
+      });
+      if (!lead.ok) {
+        return NextResponse.json(
+          { success: false, error: lead.error ?? "Database save failed" },
+          { status: 500 }
+        );
+      }
+      return NextResponse.json({ success: true, lead: lead.created ? "created" : "existing" });
+    }
 
     // Resubmission: cancel the prior lead's still-pending scheduled nudges
     // before startCheckout wipes the row that was tracking their ids.
@@ -100,6 +131,8 @@ const birth_lng =
       focus_area,
       product_type: product_type as import("@/lib/db/types").ProductType | undefined,
       step_reached: "form_submitted",
+      lead_source: source,
+      attribution,
     });
 
     if (!result.ok) {
@@ -125,7 +158,8 @@ const birth_lng =
     let emailScheduled = false;
     try {
       const firstName = name.split(" ")[0] || name;
-      const isBook = product_type === "birth-chart-book";
+      // The book page sends "in-depth-reading"; older clients sent "birth-chart-book".
+      const isBook = product_type === "birth-chart-book" || product_type === "in-depth-reading";
       const readingUrl = isBook
         ? `${SITE_URL}/in-depth-birth-chart`
         : `${SITE_URL}#try-it`;

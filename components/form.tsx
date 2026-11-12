@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { buildGumroadCheckoutUrl } from "@/lib/gumroad-checkout"
+import { track, identifyUser } from "@/lib/posthog"
 
 export default function Form() {
   const [name, setName] = useState("")
@@ -33,10 +34,14 @@ export default function Form() {
       console.log(data)
 
       if (data.success) {
+        identifyUser(email.trim().toLowerCase())
+        track("reading_form_submitted", { product_type: "reading" })
+
         const checkoutUrl = buildGumroadCheckoutUrl({
           email: email.trim().toLowerCase(),
           sessionId: data.sessionId ?? null,
         })
+        track("checkout_started", { product_type: "reading" })
         window.location.href = checkoutUrl
       } else {
         alert("Something went wrong")

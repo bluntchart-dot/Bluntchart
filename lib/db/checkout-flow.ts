@@ -6,12 +6,118 @@ import { DB, pendingGumroadId } from "./tables";
 import { ensureUser } from "./users";
 import type { CheckoutStartPayload, CheckoutStep, ProductType, StoredPreview } from "./types";
 import { accessUrl as productAccessUrl, getProduct } from "@/lib/products";
+import { primarySource } from "@/lib/attribution";
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "https://bluntchart.com";
 
+type DbResult<T> = { data: T | null; error: { code?: string; message: string } | null };
+
+function isMissingColumnError(error: { code?: string; message?: string } | null): boolean {
+  if (!error) return false;
+  return (
+    error.code === "PGRST204" ||
+    /could not find the '.+' column/i.test(error.message ?? "") ||
+    /column .+ does not exist/i.test(error.message ?? "")
+  );
+}
+
+/**
+ * Insert with the attribution columns from
+ * 20261022000000_lead_attribution.sql. If that migration has not been
+ * applied yet, retry without them so checkout never breaks over tracking.
+ */
+async function insertWithTracking<T>(
+  run: (row: Record<string, unknown>) => PromiseLike<DbResult<T>>,
+  row: Record<string, unknown>,
+  tracking: Record<string, unknown>,
+  context: string
+): Promise<DbResult<T>> {
+  const result = await run({ ...row, ...tracking });
+  if (!isMissingColumnError(result.error)) return result;
+  dbError("checkout", `${context}: attribution columns missing, saved without them`, result.error, {});
+  return run(row);
+}
+
 export function readingAccessUrl(accessToken: string, productType?: ProductType): string {
   return productAccessUrl(accessToken, productType ?? "reading");
+}
+
+function insertLeadRow(
+  supabase: SupabaseClient,
+  payload: CheckoutStartPayload,
+  email: string,
+  userId: string,
+  step: CheckoutStep
+): Promise<DbResult<null>> {
+  const productType = payload.product_type ?? "reading";
+  return insertWithTracking<null>(
+    (row) => supabase.from(DB.abandonedCheckouts).insert([row]),
+    {
+      email,
+      name: payload.name.trim(),
+      dob: payload.dob,
+      birth_time: payload.birth_time,
+      birth_place: payload.birth_place,
+      timezone: payload.timezone?.trim() || null,
+      /* NEW: store coordinates from LocationPicker */
+      birth_lat: payload.birth_lat ?? null,
+      birth_lng: payload.birth_lng ?? null,
+      focus_area: payload.focus_area?.trim() || null,
+      product_type: productType,
+      step_reached: step,
+      utm_source: primarySource(payload.attribution ?? null),
+      user_id: userId,
+      abandoned_at: new Date().toISOString(),
+    },
+    {
+      lead_source: payload.lead_source?.trim() || productType,
+      attribution: payload.attribution ?? null,
+    },
+    "abandoned_checkouts insert"
+  );
+}
+
+/**
+ * Lead from a free tool (calculators, free chart). Saves the user and an
+ * abandoned_checkouts row tagged with lead_source, but no pending payment and
+ * no reading cart emails — they never started a checkout.
+ *
+ * If the email already has a lead row (e.g. a live reading checkout with
+ * scheduled emails), it is left untouched.
+ */
+export async function saveFreeToolLead(
+  supabase: SupabaseClient,
+  payload: CheckoutStartPayload & { lead_source: string }
+): Promise<{ ok: boolean; created: boolean; userId?: string; error?: string }> {
+  const email = payload.email.trim().toLowerCase();
+
+  const { user, error: userError } = await ensureUser(supabase, email, payload.name);
+  if (userError || !user) {
+    return { ok: false, created: false, error: userError ?? "Could not create user" };
+  }
+
+  const { data: existing, error: existingError } = await supabase
+    .from(DB.abandonedCheckouts)
+    .select("id")
+    .eq("email", email)
+    .limit(1);
+  if (existingError) {
+    dbError("checkout", "free tool lead lookup failed", existingError, { email });
+  }
+  if (existing && existing.length > 0) {
+    dbLog("checkout", "free tool lead: existing lead kept", { email, source: payload.lead_source });
+    return { ok: true, created: false, userId: user.id };
+  }
+
+  const { error } = await insertLeadRow(supabase, payload, email, user.id, "form_submitted");
+  if (error) {
+    dbError("checkout", "free tool lead insert failed", error, { email });
+    return { ok: false, created: false, userId: user.id, error: formatDbError(error.message) };
+  }
+
+  dbLog("checkout", "free tool lead saved", { email, source: payload.lead_source });
+  return { ok: true, created: true, userId: user.id };
 }
 
 /**
@@ -42,24 +148,33 @@ export async function startCheckout(
     return { ok: false, error: userError ?? "Could not create user" };
   }
 
+  const productType = payload.product_type ?? "reading";
+  const tracking = {
+    utm_source: primarySource(payload.attribution ?? null),
+    lead_source: payload.lead_source?.trim() || productType,
+    attribution: payload.attribution ?? null,
+  };
+
   // Pending payment row — linked to Gumroad webhook via session_id + email
-  const { data: payment, error: paymentError } = await supabase
-    .from(DB.payments)
-    .insert([
-      {
-        session_id: sessionId,
-        email,
-        user_id: user.id,
-        amount: getProduct(payload.product_type ?? "reading").priceDollars,
-        payment_status: "pending",
-        payment_provider: "gumroad",
-        gumroad_payment_id: pendingGumroadId(sessionId),
-        access_token: randomUUID(),
-        product_type: payload.product_type ?? "reading",
-      },
-    ])
-    .select("id, session_id")
-    .single();
+  const { data: payment, error: paymentError } = await insertWithTracking<{
+    id: string;
+    session_id: string;
+  }>(
+    (row) => supabase.from(DB.payments).insert([row]).select("id, session_id").single(),
+    {
+      session_id: sessionId,
+      email,
+      user_id: user.id,
+      amount: getProduct(productType).priceDollars,
+      payment_status: "pending",
+      payment_provider: "gumroad",
+      gumroad_payment_id: pendingGumroadId(sessionId),
+      access_token: randomUUID(),
+      product_type: productType,
+    },
+    tracking,
+    "payments insert"
+  );
 
   if (paymentError || !payment) {
     dbError("checkout", "payments insert failed", paymentError, {
@@ -93,27 +208,7 @@ export async function startCheckout(
 
   const step: CheckoutStep = payload.step_reached ?? "form_submitted";
 
-  const { error: abandonedError } = await supabase
-    .from(DB.abandonedCheckouts)
-    .insert([
-      {
-        email,
-        name: payload.name.trim(),
-        dob: payload.dob,
-        birth_time: payload.birth_time,
-        birth_place: payload.birth_place,
-        timezone: payload.timezone?.trim() || null,
-        /* NEW: store coordinates from LocationPicker */
-        birth_lat: payload.birth_lat ?? null,
-        birth_lng: payload.birth_lng ?? null,
-        focus_area: payload.focus_area?.trim() || null,
-        product_type: payload.product_type ?? "reading",
-        step_reached: step,
-        utm_source: payload.utm_source?.trim() || null,
-        user_id: user.id,
-        abandoned_at: new Date().toISOString(),
-      },
-    ]);
+  const { error: abandonedError } = await insertLeadRow(supabase, payload, email, user.id, step);
 
   if (abandonedError) {
     dbError("checkout", "abandoned_checkouts insert failed", abandonedError, {

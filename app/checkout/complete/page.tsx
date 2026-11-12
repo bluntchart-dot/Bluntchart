@@ -3,6 +3,7 @@
 import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useMemo, useState } from "react";
 import { readCheckoutSession } from "@/lib/checkout-session";
+import { track, identifyUser } from "@/lib/posthog";
 
 const POLL_MS = 2500;
 const MAX_ATTEMPTS = 60; // ~2.5 minutes
@@ -50,6 +51,10 @@ function CheckoutCompleteContent() {
         if (cancelled) return;
 
         if (data.status === "ready" && data.accessUrl) {
+          if (email) identifyUser(email);
+          track("purchase_completed", {
+            product_type: data.productType ?? "reading",
+          });
           window.location.replace(data.accessUrl);
           return;
         }

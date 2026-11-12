@@ -1,3 +1,5 @@
+import posthog from "posthog-js";
+
 type EventName =
   | "future_love_page_view"
   | "future_love_hero_cta"
@@ -33,6 +35,12 @@ export function trackEvent(name: EventName, properties?: EventProperties) {
     }
   } catch {
     // analytics should never break the experience
+  }
+
+  try {
+    posthog.capture(name, properties);
+  } catch {
+    // best-effort
   }
 
   if (process.env.NODE_ENV === "development") {

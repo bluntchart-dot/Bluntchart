@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import { DM_Sans, Playfair_Display } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
+import { Suspense } from "react";
 import SiteFooter from "@/components/SiteFooter";
+import AttributionCapture from "@/components/AttributionCapture";
+import PostHogProvider from "@/components/PostHogProvider";
 import "./globals.css";
 
 const display = Playfair_Display({
@@ -63,9 +66,14 @@ export default function RootLayout({
         className="min-h-full bg-[#09090f] text-[#e8e4f0]"
         style={{ fontFamily: "var(--font-body)" }}
       >
-        {children}
-        <SiteFooter />
-        <Analytics />
+        <Suspense fallback={null}>
+          <PostHogProvider>
+            {children}
+            <SiteFooter />
+            <Analytics />
+            <AttributionCapture />
+          </PostHogProvider>
+        </Suspense>
       </body>
     </html>
   );

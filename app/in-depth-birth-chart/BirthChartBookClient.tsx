@@ -4,6 +4,7 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import LocationPicker from "@/components/LocationPicker";
+import { track, identifyUser } from "@/lib/posthog";
 import type { SelectedLocation } from "@/components/LocationPicker";
 
 /* ─── TYPES ─────────────────────────────────────────────────────────── */
@@ -421,6 +422,10 @@ export default function BirthChartBookClient() {
         setStage("form");
         return;
       }
+
+      identifyUser(form.email.trim().toLowerCase());
+      track("reading_form_submitted", { product_type: "in-depth-reading" });
+      track("checkout_started", { product_type: "in-depth-reading" });
 
       const checkoutUrl = buildCheckoutUrl("in-depth-reading", {
         email: form.email.trim().toLowerCase(),

@@ -1,3 +1,5 @@
+import { withUtm } from "@/lib/attribution";
+
 export type EmailTemplate = {
   subject: string;
   text: string;
@@ -18,6 +20,28 @@ const esc = (value: string = "") =>
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#039;");
+
+const SITE_LINK = /https:\/\/(?:www\.)?bluntchart\.com[^\s"'<>)]*/g;
+
+/**
+ * Add utm_source=email / utm_medium=email / utm_campaign=<template> to every
+ * bluntchart.com link, so visits from emails show up in lead attribution.
+ */
+function tagEmailLinks(template: EmailTemplate, campaign: string): EmailTemplate {
+  const tags = { source: "email", medium: "email", campaign };
+  const tag = (match: string, html: boolean) => {
+    const trailing = match.match(/[.,!?]+$/)?.[0] ?? "";
+    const raw = match.slice(0, match.length - trailing.length);
+    const url = html ? raw.replaceAll("&amp;", "&") : raw;
+    const tagged = withUtm(url, tags);
+    return (html ? tagged.replaceAll("&", "&amp;") : tagged) + trailing;
+  };
+  return {
+    subject: template.subject,
+    text: template.text.replace(SITE_LINK, (m) => tag(m, false)),
+    html: template.html.replace(SITE_LINK, (m) => tag(m, true)),
+  };
+}
 
 const wrap = (body: string) => `
   <div style="background:#09090f;padding:32px 16px;font-family:Arial,sans-serif;color:#e8e4f0;">
@@ -78,7 +102,7 @@ xx bluntchart`;
     <p style="font-size:14px;line-height:1.8;margin:0;">xx bluntchart</p>
   `);
 
-  return { subject, text, html };
+  return tagEmailLinks({ subject, text, html }, "preview");
 }
 
 export function abandonedOneMail({ firstName, birthDate, readingUrl }: BaseVars): EmailTemplate {
@@ -121,7 +145,7 @@ BluntChart`;
     <p style="font-size:14px;line-height:1.8;margin:0;">Yours Truly,<br/>BluntChart</p>
   `);
 
-  return { subject, text, html };
+  return tagEmailLinks({ subject, text, html }, "abandoned_one");
 }
 
 export function abandonedTwoMail({ firstName, readingUrl }: BaseVars): EmailTemplate {
@@ -151,7 +175,7 @@ xx`;
     <p style="font-size:14px;line-height:1.8;margin:0;">xx</p>
   `);
 
-  return { subject, text, html };
+  return tagEmailLinks({ subject, text, html }, "abandoned_two");
 }
 
 export function paidConfirmationMail({ firstName, birthDate }: BaseVars): EmailTemplate {
@@ -181,7 +205,7 @@ xx bluntchart`;
     <p style="font-size:14px;line-height:1.8;margin:0;">xx bluntchart</p>
   `);
 
-  return { subject, text, html };
+  return tagEmailLinks({ subject, text, html }, "paid_confirmation");
 }
 
 export function fullReadingDeliveryMail({ firstName, birthDate, readingUrl, cardUrl }: BaseVars): EmailTemplate {
@@ -214,7 +238,7 @@ xx`;
     <p style="font-size:14px;line-height:1.8;margin:0;">xx</p>
   `);
 
-  return { subject, text, html };
+  return tagEmailLinks({ subject, text, html }, "full_reading_delivery");
 }
 
 export function shareReminderOneMail({ firstName, cardUrl }: BaseVars): EmailTemplate {
@@ -243,7 +267,7 @@ xx`;
     <p style="font-size:14px;line-height:1.8;margin:0;">xx</p>
   `);
 
-  return { subject, text, html };
+  return tagEmailLinks({ subject, text, html }, "share_reminder_one");
 }
 
 export function shareReminderTwoMail({ firstName, cardUrl }: BaseVars): EmailTemplate {
@@ -272,7 +296,7 @@ xx bluntchart`;
     <p style="font-size:14px;line-height:1.8;margin:0;">xx bluntchart</p>
   `);
 
-  return { subject, text, html };
+  return tagEmailLinks({ subject, text, html }, "share_reminder_two");
 }
 
 /* ─── BIRTH CHART BOOK — shared styling ─── */
@@ -343,7 +367,7 @@ ${textSignOff}`;
     ${bookSignOff()}
   `);
 
-  return { subject, text, html };
+  return tagEmailLinks({ subject, text, html }, "book_abandoned_preview");
 }
 
 export function bookAbandonedOneMail({ firstName, readingUrl }: BaseVars): EmailTemplate {
@@ -370,7 +394,7 @@ ${textSignOff}`;
     ${bookSignOff()}
   `);
 
-  return { subject, text, html };
+  return tagEmailLinks({ subject, text, html }, "book_abandoned_one");
 }
 
 export function bookAbandonedTwoMail({ firstName, readingUrl }: BaseVars): EmailTemplate {
@@ -397,7 +421,7 @@ ${textSignOff}`;
     ${bookSignOff()}
   `);
 
-  return { subject, text, html };
+  return tagEmailLinks({ subject, text, html }, "book_abandoned_two");
 }
 
 export function bookAbandonedThreeMail({ firstName, readingUrl }: BaseVars): EmailTemplate {
@@ -430,7 +454,7 @@ ${textSignOff}`;
     ${bookSignOff()}
   `);
 
-  return { subject, text, html };
+  return tagEmailLinks({ subject, text, html }, "book_abandoned_three");
 }
 
 /* ─── BIRTH CHART BOOK — post-purchase sequence ─── */
@@ -472,7 +496,7 @@ ${textSignOff}`;
     ${bookSignOff()}
   `);
 
-  return { subject, text, html };
+  return tagEmailLinks({ subject, text, html }, "book_confirmation");
 }
 
 /**
@@ -513,7 +537,7 @@ ${textSignOff}`;
     ${bookSignOff()}
   `);
 
-  return { subject, text, html };
+  return tagEmailLinks({ subject, text, html }, "manual_book_confirmation");
 }
 
 export function bookDeliveryMail({ firstName, readingUrl }: BaseVars): EmailTemplate {
@@ -562,7 +586,7 @@ ${textSignOff}`;
     ${bookSignOff()}
   `);
 
-  return { subject, text, html };
+  return tagEmailLinks({ subject, text, html }, "book_delivery");
 }
 
 export function bookReviewMail({ firstName }: BaseVars): EmailTemplate {
@@ -607,7 +631,7 @@ ${textSignOff}`;
     ${bookSignOff()}
   `);
 
-  return { subject, text, html };
+  return tagEmailLinks({ subject, text, html }, "book_review");
 }
 
 export function bookSocialProofMail({ firstName, cardUrl }: BaseVars): EmailTemplate {
@@ -650,7 +674,7 @@ ${textSignOff}`;
     ${bookSignOff()}
   `);
 
-  return { subject, text, html };
+  return tagEmailLinks({ subject, text, html }, "book_social_proof");
 }
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -680,7 +704,7 @@ BluntChart`;
     <p style="font-size:16px;line-height:1.9;margin:0 0 0;">Talk soon,<br/>BluntChart</p>
   `);
 
-  return { subject, text, html };
+  return tagEmailLinks({ subject, text, html }, "love_letter_confirmation");
 }
 
 export function loveLetterDeliveryMail({ firstName, readingUrl }: BaseVars): EmailTemplate {
@@ -709,7 +733,7 @@ BluntChart`;
     <p style="font-size:16px;line-height:1.9;margin:18px 0 0;">With love,<br/>BluntChart</p>
   `);
 
-  return { subject, text, html };
+  return tagEmailLinks({ subject, text, html }, "love_letter_delivery");
 }
 
 export function manualReadingConfirmationMail({ firstName, birthDate }: BaseVars): EmailTemplate {
@@ -739,7 +763,7 @@ xx bluntchart`;
     <p style="font-size:14px;line-height:1.8;margin:0;">xx bluntchart</p>
   `);
 
-  return { subject, text, html };
+  return tagEmailLinks({ subject, text, html }, "manual_reading_confirmation");
 }
 
 export function loveLetterReviewMail({ firstName, cardUrl }: BaseVars): EmailTemplate {
@@ -767,7 +791,7 @@ BluntChart`;
     <p style="font-size:16px;line-height:1.9;margin:0;">With love,<br/>BluntChart</p>
   `);
 
-  return { subject, text, html };
+  return tagEmailLinks({ subject, text, html }, "love_letter_review");
 }
 
 /* ─── MOON PHASE CARD — delivery ─── */
@@ -802,5 +826,5 @@ xx bluntchart`;
     <p style="font-size:14px;line-height:1.8;margin:0;">xx bluntchart</p>
   `);
 
-  return { subject, text, html };
+  return tagEmailLinks({ subject, text, html }, "moon_phase_delivery");
 }
