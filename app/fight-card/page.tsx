@@ -38,6 +38,21 @@ const jsonLd = {
         priceCurrency: "USD",
         url: "https://bluntchart.com/fight-card",
         availability: "https://schema.org/PreOrder",
+        shippingDetails: {
+          "@type": "OfferShippingDetails",
+          shippingRate: { "@type": "MonetaryAmount", value: "0", currency: "USD" },
+          deliveryTime: { "@type": "ShippingDeliveryTime", handlingTime: { "@type": "QuantitativeValue", minValue: 0, maxValue: 0, unitCode: "d" }, transitTime: { "@type": "QuantitativeValue", minValue: 0, maxValue: 0, unitCode: "d" } },
+          shippingDestination: { "@type": "DefinedRegion", addressCountry: "US" },
+        },
+        hasMerchantReturnPolicy: {
+          "@type": "MerchantReturnPolicy",
+          applicableCountry: "US",
+          returnPolicyCategory: "https://schema.org/MerchantReturnFiniteReturnWindow",
+          merchantReturnDays: 30,
+          returnMethod: "https://schema.org/ReturnByMail",
+          returnFees: "https://schema.org/FreeReturn",
+          returnPolicyUrl: "https://bluntchart.com/refunds",
+        },
       },
     },
     {
