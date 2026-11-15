@@ -79,17 +79,7 @@ export default function FreeBirthChartClient() {
   const [err, setErr]     = useState("");
   const [loading, setLoading] = useState(false);
   const [chart, setChart] = useState<ChartData | null>(null);
-  const [scrolled, setScrolled] = useState(false);
   const resultRef = useRef<HTMLDivElement>(null);
-
-  /* Scroll listener for nav */
-  if (typeof window !== "undefined") {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    useState(() => {
-      const fn = () => setScrolled(window.scrollY > 40);
-      window.addEventListener("scroll", fn, { passive: true });
-    });
-  }
 
   const handleCalculate = async () => {
     if (!email.trim() || !dob || !btime || !city.trim()) {
@@ -181,12 +171,9 @@ export default function FreeBirthChartClient() {
         }
         html{scroll-behavior:smooth}
         body{background:var(--bg);color:var(--white);font-family:var(--font-body);-webkit-font-smoothing:antialiased;overflow-x:hidden}
-        .fbc-nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:18px 0;transition:all .3s}
-        .fbc-nav.on{background:rgba(9,9,15,.92);border-bottom:1px solid var(--border);backdrop-filter:blur(16px)}
+        /* navbar removed — using global SiteNavbar */
         .fbc-c{max-width:1280px;margin:0 auto;padding:0 40px}
         @media(max-width:768px){.fbc-c{padding:0 20px}}
-        .fbc-logo{font-family:var(--font-display);font-size:1.3rem;font-weight:700;text-decoration:none;display:flex;align-items:center;gap:10px}
-        .fbc-logo .g{background:linear-gradient(135deg,#f0b84a,#d4537e,#6b2fd4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
         .fbc-inp{width:100%;background:rgba(255,255,255,0.04);border:0.5px solid rgba(255,255,255,0.1);border-radius:10px;padding:13px 14px;font-size:14px;color:#e8e4f0;font-family:inherit;outline:none}
         .fbc-inp:focus{border-color:rgba(107,47,212,0.5)}
         .fbc-lbl{display:block;font-size:11px;font-weight:600;color:#6b6585;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:6px}
@@ -195,30 +182,11 @@ export default function FreeBirthChartClient() {
         .fbc-btn:disabled{opacity:0.5;cursor:not-allowed}
         .fbc-cta-btn{display:block;width:100%;max-width:480px;margin:0 auto;background:linear-gradient(135deg,#f0b84a,#e8854a);color:#0d0800;border:none;border-radius:12px;padding:18px 24px;font-size:16px;font-weight:700;font-family:inherit;cursor:pointer;text-align:center;text-decoration:none;letter-spacing:0.3px;transition:opacity .2s,transform .15s}
         .fbc-cta-btn:hover{opacity:0.88;transform:translateY(-1px)}
-        @media(max-width:768px){.fbc-nav-links{display:none!important}.fbc-cmp-row,.fbc-cmp-head{grid-template-columns:1fr 90px 90px!important}}
+        @media(max-width:768px){.fbc-cmp-row,.fbc-cmp-head{grid-template-columns:1fr 90px 90px!important}}
       `}</style>
 
-      {/* ── NAV ── */}
-      <nav className={`fbc-nav${scrolled ? " on" : ""}`}>
-        <div className="fbc-c" style={{ display:"flex", alignItems:"center", justifyContent:"space-between" }}>
-          <Link href="/" className="fbc-logo">
-            <Image src="/mascot.png" alt="BluntChart" width={34} height={34} style={{ borderRadius:"50%" }} />
-            <span className="g">BluntChart</span>
-          </Link>
-          <div className="fbc-nav-links" style={{ display:"flex", alignItems:"center", gap:24 }}>
-            <Link href="/in-depth-birth-chart" style={{ fontSize:13, color:"rgba(232,228,240,0.55)", textDecoration:"none", fontWeight:500 }}>
-              Get Full Reading
-            </Link>
-            <Link href="/" style={{ fontSize:13, color:"#F0B84A", textDecoration:"none", fontWeight:600,
-              border:"1px solid rgba(240,184,74,0.18)", padding:"6px 15px", borderRadius:4 }}>
-              In-Depth Reading $24
-            </Link>
-          </div>
-        </div>
-      </nav>
-
       {/* ── HERO + FORM ── */}
-      <section style={{ paddingTop:120, paddingBottom:64, position:"relative" }}>
+      <section style={{ paddingTop:80, paddingBottom:64, position:"relative" }}>
         {/* Background glow */}
         <div style={{ position:"absolute", inset:0, background:"radial-gradient(ellipse 80% 60% at 50% -10%,rgba(107,47,212,.08) 0%,transparent 50%)", pointerEvents:"none" }} />
 

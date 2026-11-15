@@ -18,6 +18,7 @@ type TrackingEvent =
   | "future_love_generated"
   | "future_love_completed"
   | "future_love_upsell_clicked"
+  | "compat_step"
   | "cta_clicked";
 
 type EventProperties = Record<string, string | number | boolean | null>;

@@ -340,19 +340,10 @@ export default function MercuryRetrograde2026Page() {
         .article-c{max-width:100%;margin:0 auto}
         .prose-c{max-width:860px}
 
-        /* ── NAV ── */
-        .nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:18px 0;background:rgba(9,9,15,.92);border-bottom:1px solid var(--border);backdrop-filter:blur(16px)}
-        .nav-i{display:flex;align-items:center;justify-content:space-between}
-        .logo{font-family:var(--font-display);font-size:1.3rem;font-weight:700;text-decoration:none;letter-spacing:.02em;display:flex;align-items:center;gap:10px}
-        .logo .g{background:linear-gradient(135deg,#f0b84a,#d4537e,#6b2fd4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-        .nav-links{display:flex;align-items:center;gap:20px}
-        .nav-links a{font-size:.82rem;font-weight:500;color:var(--dim);text-decoration:none;letter-spacing:.04em;text-transform:uppercase;transition:color .2s}
-        .nav-links a:hover{color:var(--white)}
-        .ncta{color:var(--gold)!important;border:1px solid var(--gold-dim);padding:6px 15px;border-radius:4px}
-        .ncta:hover{background:var(--gold-dim)}
+        /* navbar removed — using global SiteNavbar */
 
         /* ── BREADCRUMB ── */
-        .breadcrumb{padding:88px 0 0;font-size:.82rem;color:var(--dim)}
+        .breadcrumb{padding:64px 0 0;font-size:.82rem;color:var(--dim)}
         .breadcrumb a{color:var(--dim);text-decoration:none;transition:color .2s}
         .breadcrumb a:hover{color:var(--gold)}
 
@@ -473,7 +464,6 @@ export default function MercuryRetrograde2026Page() {
           .mr-hero-img-col{width:180px;order:-1}
           .fi{flex-direction:column;gap:28px}
           .fb2{flex-direction:column;align-items:flex-start}
-          .nav-links{display:none}
           .related-grid{grid-template-columns:1fr}
           .c{padding:0 16px}
         }
@@ -484,21 +474,6 @@ export default function MercuryRetrograde2026Page() {
           .mr-hero-img-col{width:140px}
         }
       `}</style>
-
-      {/* ── NAV ── */}
-      <nav className="nav">
-        <div className="c nav-i">
-          <a className="logo" href="/">
-            <img src="/mascot.png" alt="BluntChart" width={34} height={34} style={{ borderRadius:"50%" }}/>
-            <span className="g">BluntChart</span>
-          </a>
-          <div className="nav-links">
-            <a href="/in-depth-birth-chart">Get Reading</a>
-            <a href="/free-birth-chart">Free Chart</a>
-            <a className="ncta" href="/in-depth-birth-chart">In-Depth Reading $24</a>
-          </div>
-        </div>
-      </nav>
 
       {/* ── BREADCRUMB ── */}
       <div className="c">

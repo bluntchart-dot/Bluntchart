@@ -425,14 +425,6 @@ export default function CompatibilityClient() {
     <div className="cr">
       <style>{styles}</style>
 
-      {/* NAV */}
-      <nav className="cr-topnav">
-        <Link href="/" className="cr-logo">BluntChart</Link>
-        <button className="cr-nav-cta" onClick={toForm}>
-          Start · ${COMPAT_PRICE}
-        </button>
-      </nav>
-
       {/* HERO */}
       <header className="cr-hero" ref={heroRef}>
         <div className="cr-hero-glow" aria-hidden />
@@ -731,19 +723,6 @@ const styles = `
 .cr a { color: var(--gold); }
 .cr em { font-style: italic; }
 
-/* nav */
-.cr-topnav {
-  position: relative; z-index: 2;
-  display: flex; align-items: center; justify-content: space-between;
-  max-width: 1120px; margin: 0 auto; padding: 16px 16px;
-}
-.cr-logo { font-family: var(--font-display); font-weight: 700; font-size: 20px; color: var(--text) !important; text-decoration: none; }
-.cr-nav-cta {
-  background: transparent; color: var(--gold); border: 1px solid rgba(240,184,74,0.45);
-  border-radius: 999px; padding: 8px 14px; font-size: 13px; font-weight: 600; cursor: pointer;
-}
-.cr-nav-cta:hover { background: rgba(240,184,74,0.08); }
-
 /* hero */
 .cr-hero { position: relative; padding: 8px 16px 48px; }
 .cr-hero-glow {
@@ -966,7 +945,6 @@ const styles = `
   .cr-paper { padding: 36px 34px; }
 }
 @media (min-width: 960px) {
-  .cr-topnav { padding: 20px 24px; }
   .cr-hero { padding: 24px 24px 72px; }
   .cr-hero-grid {
     grid-template-columns: 1.05fr 0.95fr; column-gap: 56px; row-gap: 22px;

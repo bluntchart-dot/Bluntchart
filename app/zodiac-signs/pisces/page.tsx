@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+
 
 const OTHER_SIGNS = [
   { name:"Aries", symbol:"♈", slug:"aries" },
@@ -38,12 +38,6 @@ const FAQS = [
 ];
 
 export default function PiscesPage() {
-  const [scrolled, setScrolled] = useState(false);
-  if (typeof window !== "undefined") {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    useState(() => { const fn = () => setScrolled(window.scrollY > 40); window.addEventListener("scroll", fn, { passive: true }); });
-  }
-
   return (
     <>
       <style>{`
@@ -61,9 +55,7 @@ export default function PiscesPage() {
         html{scroll-behavior:smooth}
         body{background:var(--bg);color:var(--white);font-family:var(--font-body);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
         .c{max-width:1100px;margin:0 auto;padding:0 24px}
-        .nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:18px 0;transition:all .3s}.nav.on{background:rgba(9,9,15,.92);border-bottom:1px solid var(--border);backdrop-filter:blur(16px)}
-        .logo{font-family:var(--font-display);font-size:1.3rem;font-weight:700;text-decoration:none;display:flex;align-items:center;gap:10px;letter-spacing:.02em}.logo .g{background:linear-gradient(135deg,#f0b84a,#d4537e,#6b2fd4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-        .nl{display:flex;align-items:center;gap:28px;list-style:none}.nl a{font-size:.83rem;font-weight:500;color:var(--dim);text-decoration:none;letter-spacing:.04em;text-transform:uppercase;transition:color .2s}.nl a:hover{color:var(--white)}.ncta{color:var(--gold)!important;border:1px solid var(--gold-dim);padding:6px 15px;border-radius:4px}.ncta:hover{background:var(--gold-dim)}
+        /* navbar removed — using global SiteNavbar */
         .h2s{font-family:var(--font-display);font-size:clamp(1.5rem,3.2vw,2rem);font-weight:800;line-height:1.15;margin:56px 0 18px;color:var(--white)}
         .pp{font-size:16px;color:rgba(232,228,240,0.62);line-height:1.82;margin-bottom:18px}
         .cta{display:block;width:100%;max-width:480px;margin:0 auto;background:linear-gradient(135deg,#f0b84a,#e8854a);color:#0d0800;border:none;border-radius:12px;padding:18px 24px;font-size:16px;font-weight:700;font-family:inherit;cursor:pointer;text-align:center;text-decoration:none;transition:opacity .2s,transform .15s}.cta:hover{opacity:.88;transform:translateY(-1px)}
@@ -78,28 +70,11 @@ export default function PiscesPage() {
         .fb2{border-top:1px solid var(--border);padding-top:22px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
         .disc{font-size:.73rem;color:rgba(232,228,240,.25);max-width:520px;line-height:1.55}
         .copy{font-size:.73rem;color:rgba(232,228,240,.2)}
-        @media(max-width:768px){.nl{display:none!important}.compat{grid-template-columns:1fr!important}.snav{grid-template-columns:repeat(4,1fr)!important}.fi{flex-direction:column;gap:28px}.fb2{flex-direction:column;align-items:flex-start}}
+        @media(max-width:768px){.compat{grid-template-columns:1fr!important}.snav{grid-template-columns:repeat(4,1fr)!important}.fi{flex-direction:column;gap:28px}.fb2{flex-direction:column;align-items:flex-start}}
       `}</style>
 
-      {/* NAV */}
-      <nav className={`nav${scrolled?" on":""}`}>
-        <div className="c" style={{ display:"flex", alignItems:"center", justifyContent:"space-between" }}>
-          <Link href="/" className="logo">
-            <Image src="/mascot.png" alt="BluntChart" width={34} height={34} style={{ borderRadius:"50%" }}/>
-            <span className="g">BluntChart</span>
-          </Link>
-          <ul className="nl">
-            <li><Link href="/zodiac-signs">Zodiac Signs</Link></li>
-            <li><Link href="/free-birth-chart">Free Birth Chart</Link></li>
-            <li><Link href="/#reveals">What We Reveal</Link></li>
-            <li><Link href="/#reviews">Reviews</Link></li>
-            <li><Link href="/in-depth-birth-chart" className="ncta">In-Depth Reading $24</Link></li>
-          </ul>
-        </div>
-      </nav>
-
       {/* HERO */}
-      <section style={{ paddingTop:120, paddingBottom:48, position:"relative" }}>
+      <section style={{ paddingTop:80, paddingBottom:48, position:"relative" }}>
         <div style={{ position:"absolute", inset:0, background:"radial-gradient(ellipse 60% 50% at 50% 0%,rgba(123,158,196,0.06) 0%,transparent 60%)", pointerEvents:"none" }}/>
         <div className="c" style={{ position:"relative", zIndex:1 }}>
           <div style={{ fontSize:13, color:"rgba(232,228,240,0.3)", marginBottom:28 }}>

@@ -3,6 +3,7 @@ import { DM_Sans, Playfair_Display } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 import { Suspense } from "react";
 import SiteFooter from "@/components/SiteFooter";
+import SiteNavbar from "@/components/SiteNavbar";
 import AttributionCapture from "@/components/AttributionCapture";
 import PostHogProvider from "@/components/PostHogProvider";
 import "./globals.css";
@@ -68,6 +69,7 @@ export default function RootLayout({
       >
         <Suspense fallback={null}>
           <PostHogProvider>
+            <SiteNavbar />
             {children}
             <SiteFooter />
             <Analytics />

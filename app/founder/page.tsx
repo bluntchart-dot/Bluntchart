@@ -129,20 +129,11 @@ export default function FounderPage() {
       />
 
       <style>{`
-        .fd-nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:18px 0;background:rgba(9,9,15,.72);backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,0.06)}
+        /* navbar removed — using global SiteNavbar */
         .fd-c{max-width:1100px;margin:0 auto;padding:0 24px}
-        .fd-nav-i{display:flex;align-items:center;justify-content:space-between}
-        .fd-logo{display:flex;align-items:center;gap:10px;font-family:var(--font-display),Georgia,serif;font-size:1.3rem;font-weight:700;text-decoration:none;letter-spacing:.02em;color:#e8e4f0}
-        .fd-logo-g{background:linear-gradient(135deg,#f0b84a,#d4537e,#6b2fd4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-        .fd-nl{display:flex;align-items:center;gap:28px;list-style:none;padding:0;margin:0}
-        .fd-nl a{font-size:.83rem;font-weight:500;color:rgba(232,228,240,0.55);text-decoration:none;letter-spacing:.04em;text-transform:uppercase;transition:color .2s}
-        .fd-nl a:hover{color:#e8e4f0}
-        .fd-nl a.on{color:#e8e4f0}
-        .fd-ncta{color:#F0B84A!important;border:1px solid rgba(240,184,74,0.18);padding:6px 15px;border-radius:4px}
-        .fd-ncta:hover{background:rgba(240,184,74,0.18)}
 
         /* HERO */
-        .fd-hero{position:relative;padding:140px 24px 72px;overflow:hidden}
+        .fd-hero{position:relative;padding:80px 24px 72px;overflow:hidden}
         .fd-hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% -10%,rgba(107,47,212,.12) 0%,transparent 55%),radial-gradient(ellipse 40% 40% at 85% 60%,rgba(212,83,126,.06) 0%,transparent 60%);pointer-events:none}
         .fd-hero-inner{position:relative;z-index:1;max-width:920px;margin:0 auto;display:flex;flex-direction:column;align-items:center;text-align:center;gap:26px}
         .fd-crumb{font-size:.78rem;color:rgba(232,228,240,0.55)}
@@ -200,29 +191,12 @@ export default function FounderPage() {
         .fd-bp:focus-visible{outline:2px solid #F0B84A;outline-offset:3px}
 
         @media (max-width:768px){
-          .fd-nl{display:none}
-          .fd-hero{padding-top:110px;padding-bottom:56px}
+          .fd-hero{padding-top:60px;padding-bottom:56px}
           .fd-avatar-wrap{width:148px;height:148px}
           .fd-sec{padding:60px 0}
           .fd-links{grid-template-columns:1fr}
         }
       `}</style>
-
-      <nav className="fd-nav" aria-label="Primary">
-        <div className="fd-c fd-nav-i">
-          <Link href="/" className="fd-logo">
-            <Image src="/mascot.png" alt="BluntChart mascot" width={34} height={34} style={{ borderRadius: "50%" }} priority />
-            <span className="fd-logo-g">BluntChart</span>
-          </Link>
-          <ul className="fd-nl">
-            <li><Link href="/in-depth-birth-chart">Try Free</Link></li>
-            <li><Link href="/free-birth-chart-readings">How It Works</Link></li>
-            <li><Link href="/zodiac-signs">Zodiac Signs</Link></li>
-            <li><Link href="/about" className="on">About</Link></li>
-            <li><Link className="fd-ncta" href="/in-depth-birth-chart">In-Depth Reading $24</Link></li>
-          </ul>
-        </div>
-      </nav>
 
       <main>
         {/* ── HERO ── */}

@@ -459,7 +459,7 @@ setErr("");
         </div>
 
         {/* Name + Email row */}
-        <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12, marginBottom:16 }}>
+        <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(200px, 1fr))", gap:12, marginBottom:16 }}>
           <div>
             <label style={lbl}>First name</label>
             <input value={fname} onChange={e=>setFname(e.target.value)} placeholder="e.g. Sarah" style={inp}/>
@@ -475,7 +475,7 @@ setErr("");
         </div>
 
         {/* DOB + Time row */}
-        <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12, marginBottom:16 }}>
+        <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(200px, 1fr))", gap:12, marginBottom:16 }}>
           <div>
             <label style={lbl}>Date of birth</label>
             <input type="date" value={dob} onChange={e=>setDob(e.target.value)} style={inp}/>
@@ -674,15 +674,7 @@ export default function HomePage() {
   const [reason,    setReason]    = useState("Compatibility Reading");
   const [submitted, setSubmitted] = useState(false);
   const [wlLoading, setWlLoading] = useState(false);
-  const [scrolled,  setScrolled]  = useState(false);
-  const [menuOpen,  setMenuOpen]  = useState(false);
   const [resultShowing, setResultShowing] = useState(false);
-
-  useEffect(() => {
-    const fn = () => setScrolled(window.scrollY > 40);
-    window.addEventListener("scroll", fn, { passive:true });
-    return () => window.removeEventListener("scroll", fn);
-  }, []);
 
   const handleWaitlist = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -722,17 +714,8 @@ export default function HomePage() {
         @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
         .c{max-width:1100px;margin:0 auto;padding:0 24px}
         section{position:relative;z-index:1}
-        .nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:18px 0;transition:all .3s}
-        .nav.on{background:rgba(9,9,15,.92);border-bottom:1px solid var(--border);backdrop-filter:blur(16px)}
-        .nav-i{display:flex;align-items:center;justify-content:space-between}
-        .logo{font-family:var(--font-display);font-size:1.3rem;font-weight:700;text-decoration:none;letter-spacing:.02em}
-        .logo .g{background:linear-gradient(135deg,#f0b84a,#d4537e,#6b2fd4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-        .nl{display:flex;align-items:center;gap:28px;list-style:none}
-        .nl a{font-size:.83rem;font-weight:500;color:var(--dim);text-decoration:none;letter-spacing:.04em;text-transform:uppercase;transition:color .2s}
-        .nl a:hover{color:var(--white)}
-        .ncta{color:var(--gold)!important;border:1px solid var(--gold-dim);padding:6px 15px;border-radius:4px}
-        .ncta:hover{background:var(--gold-dim)}
-        .hero{min-height:100vh;display:flex;align-items:center;padding-top:96px;padding-bottom:80px;overflow:hidden}
+        /* navbar removed — using global SiteNavbar */
+        .hero{min-height:100vh;display:flex;align-items:center;padding-top:40px;padding-bottom:80px;overflow:hidden}
         .hbg{position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% -10%,rgba(107,47,212,.1) 0%,transparent 50%),radial-gradient(ellipse 40% 40% at 85% 60%,rgba(212,83,126,.06) 0%,transparent 60%);pointer-events:none}
         .horb{position:absolute;top:50%;left:50%;transform:translate(-50%,-55%);width:560px;height:560px;border-radius:50%;border:1px solid rgba(107,47,212,.08);background:radial-gradient(circle,rgba(107,47,212,.04) 0%,transparent 50%);animation:pulse 8s ease-in-out infinite;pointer-events:none}
         .hi{position:relative;z-index:1;text-align:center;max-width:860px;margin:0 auto}
@@ -856,37 +839,10 @@ export default function HomePage() {
         .fb2{border-top:1px solid var(--border);padding-top:22px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
         .disc{font-size:.73rem;color:rgba(232,228,240,.25);max-width:520px;line-height:1.55}
         .copy{font-size:.73rem;color:rgba(232,228,240,.2)}
-        .nav-ham{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:4px}
-        .nav-ham-l{display:block;width:22px;height:2px;background:rgba(232,228,240,.6);border-radius:2px;transition:all .25s}
-        .nav-ham-l.open:nth-child(1){transform:rotate(45deg) translate(5px,5px)}
-        .nav-ham-l.open:nth-child(2){opacity:0}
-        .nav-ham-l.open:nth-child(3){transform:rotate(-45deg) translate(5px,-5px)}
         @media(max-width:900px){.cred-grid{grid-template-columns:1fr 1fr}.upcoming-grid,.wl-cards{grid-template-columns:1fr}.cmp-head,.cmp-row{grid-template-columns:1fr 110px 110px}}
-        @media(max-width:768px){.nav-ham{display:flex}.nl{display:none;position:absolute;top:100%;left:0;right:0;flex-direction:column;background:rgba(9,9,15,.96);border-bottom:1px solid var(--border);padding:20px 24px;gap:16px;backdrop-filter:blur(16px)}.nl.nl-open{display:flex}.nl a{font-size:.9rem}.hero{padding-top:90px;padding-bottom:64px}.horb{width:300px;height:300px}.hctas{flex-direction:column;align-items:center}.bp,.bs{width:100%;max-width:300px;justify-content:center}.htr{flex-direction:column;gap:10px}.rg{grid-template-columns:1fr}.fi{flex-direction:column;gap:28px}.fb2{flex-direction:column;align-items:flex-start}.revg{grid-template-columns:1fr}.cmp-head,.cmp-row{grid-template-columns:1fr 90px 90px}.cred-grid{grid-template-columns:1fr}}
+        @media(max-width:768px){.hero{padding-top:24px;padding-bottom:64px}.horb{width:300px;height:300px}.hctas{flex-direction:column;align-items:center}.bp,.bs{width:100%;max-width:300px;justify-content:center}.htr{flex-direction:column;gap:10px}.rg{grid-template-columns:1fr}.fi{flex-direction:column;gap:28px}.fb2{flex-direction:column;align-items:flex-start}.revg{grid-template-columns:1fr}.cmp-wrap{border:none;border-radius:0;overflow:visible}.cmp-head{display:none}.cmp-row{grid-template-columns:1fr;gap:0;border:0.5px solid rgba(255,255,255,0.06);border-radius:12px;margin-bottom:10px;padding:4px 0}.cmp-cell{padding:12px 16px}.cmp-cell.feat{font-size:.95rem;border-bottom:0.5px solid rgba(255,255,255,0.04);padding-bottom:10px}.cmp-cell:not(.feat){display:flex;justify-content:space-between;padding:8px 16px}.cmp-cell:not(.feat)::before{font-size:.75rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:rgba(232,228,240,0.35)}.cmp-row .cmp-cell:nth-child(2)::before{content:'BluntChart';color:#F0B84A}.cmp-row .cmp-cell:nth-child(3)::before{content:'Others'}.cred-grid{grid-template-columns:1fr}}
         @media(max-width:480px){.sec,.try-sec,.waitlist-sec{padding:72px 0}.c{padding:0 16px}.price-main{padding:24px 20px}.upcoming-grid,.wl-cards{grid-template-columns:1fr}}
       `}</style>
-
-      {/* NAV */}
-      <nav className={`nav${scrolled?" on":""}`}>
-        <div className="c nav-i">
-          <a className="logo" href="#" style={{ display:"flex", alignItems:"center", gap:10 }}>
-            <Image src="/mascot.png" alt="BluntChart mascot" width={34} height={34} style={{ borderRadius:"50%" }} priority/>
-            <span className="g">BluntChart</span>
-          </a>
-          <button className="nav-ham" onClick={() => setMenuOpen(!menuOpen)} aria-label="Menu" type="button">
-            <span className={`nav-ham-l${menuOpen?" open":""}`}/><span className={`nav-ham-l${menuOpen?" open":""}`}/><span className={`nav-ham-l${menuOpen?" open":""}`}/>
-          </button>
-          <ul className={`nl${menuOpen?" nl-open":""}`}>
-            <li><a href="#try-it" onClick={() => setMenuOpen(false)}>Try Free</a></li>
-<li><a href="/free-birth-chart-readings" onClick={() => setMenuOpen(false)}>How It Works</a></li>
-<li><a href="#reveals" onClick={() => setMenuOpen(false)}>What We Reveal</a></li>
-<li><a href="/zodiac-signs" onClick={() => setMenuOpen(false)}>Zodiac Signs</a></li>
-<li><a href="/future-love-letter" onClick={() => setMenuOpen(false)}>Love-letter</a></li>
-<li><a href="/astrology-app-alternatives" onClick={() => setMenuOpen(false)}>Alternatives</a></li>
-<li><a className="ncta" href="#try-it" onClick={() => setMenuOpen(false)}>Get Reading $15</a></li>
-          </ul>
-        </div>
-      </nav>
 
       {/* ── HERO ── */}
       <section className="hero">

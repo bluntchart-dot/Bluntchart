@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+
 
 /**
  * Shared shell for /why-* "pattern" cluster pages.
@@ -30,13 +30,6 @@ export function PatternPageShell({
   publishedIso?: string;
   children: React.ReactNode;
 }) {
-  const [scrolled, setScrolled] = useState(false);
-  useEffect(() => {
-    const fn = () => setScrolled(window.scrollY > 40);
-    window.addEventListener("scroll", fn, { passive: true });
-    return () => window.removeEventListener("scroll", fn);
-  }, []);
-
   const publishedDisplay = new Date(publishedIso).toLocaleDateString("en-GB", {
     year: "numeric", month: "long", day: "numeric",
   });
@@ -50,20 +43,13 @@ export function PatternPageShell({
         html{scroll-behavior:smooth}body{background:var(--bg);color:var(--white);font-family:var(--font-body);-webkit-font-smoothing:antialiased;overflow-x:hidden}
         .pp-c{max-width:1280px;margin:0 auto;padding:0 40px}
         @media(max-width:768px){.pp-c{padding:0 20px}}
-        .pp-nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:18px 0;transition:all .3s}
-        .pp-nav.on{background:rgba(9,9,15,.92);border-bottom:1px solid var(--border);backdrop-filter:blur(16px)}
-        .pp-logo{font-family:var(--font-display);font-size:1.3rem;font-weight:700;text-decoration:none;display:flex;align-items:center;gap:10px;color:var(--white)}
-        .pp-logo .g{background:linear-gradient(135deg,#f0b84a,#d4537e,#6b2fd4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-        .pp-nav-links{display:flex;align-items:center;gap:24px}
-        .pp-nav-links a{font-size:13px;color:var(--dim);text-decoration:none}
-        .pp-nav-links .pp-cta{color:#F0B84A;font-weight:600;border:1px solid var(--gold-dim);padding:6px 15px;border-radius:4px}
-        @media(max-width:768px){.pp-nav-links a:not(.pp-cta){display:none}}
+        /* navbar removed — using global SiteNavbar */
         .pp-crumb{font-size:12px;color:rgba(232,228,240,0.3);margin-bottom:20px}
         .pp-crumb a{color:rgba(232,228,240,0.3);text-decoration:none}
         .pp-crumb a:hover{color:var(--dim)}
         .pp-crumb .sep{margin:0 8px}
         .pp-crumb .here{color:rgba(232,228,240,0.5)}
-        .pp-hero{padding-top:120px;padding-bottom:36px;position:relative}
+        .pp-hero{padding-top:80px;padding-bottom:36px;position:relative}
         .pp-hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% -10%,rgba(107,47,212,.08) 0%,transparent 50%);pointer-events:none}
         .pp-article{max-width:820px;margin:0 auto}
         .pp-eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#F0B84A;padding:5px 14px;border:1px solid var(--gold-dim);border-radius:100px;background:rgba(240,184,74,0.06);margin-bottom:20px}
@@ -119,20 +105,6 @@ export function PatternPageShell({
         .pp-related-card .t{font-size:14.5px;font-weight:600;color:var(--white);margin-bottom:4px}
         .pp-related-card .n{font-size:13px;color:rgba(232,228,240,0.5);line-height:1.5}
       `}</style>
-
-      <nav className={`pp-nav${scrolled ? " on" : ""}`}>
-        <div className="pp-c" style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <Link href="/" className="pp-logo">
-            <Image src="/mascot.png" alt="BluntChart" width={34} height={34} style={{ borderRadius: "50%" }} />
-            <span className="g">BluntChart</span>
-          </Link>
-          <div className="pp-nav-links">
-            <Link href="/free-birth-chart">Birth Chart</Link>
-            <Link href="/moon-sign-calculator">Moon Sign</Link>
-            <Link href="/in-depth-birth-chart" className="pp-cta">In-Depth Reading $24</Link>
-          </div>
-        </div>
-      </nav>
 
       <section className="pp-hero">
         <div className="pp-hero-bg" />

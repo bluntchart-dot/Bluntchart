@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
 
 /**
  * Shared shell for the /*-alternative competitor pages.
@@ -62,12 +61,6 @@ const FEATURES = [
 ];
 
 export function AlternativePageShell({ data }: { data: AlternativePageData }) {
-  const [scrolled, setScrolled] = useState(false);
-  useEffect(() => {
-    const fn = () => setScrolled(window.scrollY > 40);
-    window.addEventListener("scroll", fn, { passive: true });
-    return () => window.removeEventListener("scroll", fn);
-  }, []);
 
   const kindMark = (kind?: "yes" | "no" | "lim") =>
     kind === "yes" ? <span className="alt-yes">✓</span> :
@@ -83,21 +76,13 @@ export function AlternativePageShell({ data }: { data: AlternativePageData }) {
         html{scroll-behavior:smooth}body{background:var(--bg);color:var(--white);font-family:var(--font-body);-webkit-font-smoothing:antialiased;overflow-x:hidden;background-image:radial-gradient(900px 500px at 80% -8%,rgba(139,92,246,.16),transparent 60%),radial-gradient(700px 500px at 5% 8%,rgba(243,210,122,.05),transparent 55%);background-attachment:fixed}
         .alt-c{max-width:1280px;margin:0 auto;padding:0 40px}
         @media(max-width:768px){.alt-c{padding:0 20px}}
-        .alt-nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:16px 0;transition:all .3s}
-        .alt-nav.on{background:rgba(9,9,15,.92);border-bottom:1px solid var(--border);backdrop-filter:blur(16px)}
-        .alt-logo{font-family:var(--font-display);font-size:1.3rem;font-weight:700;text-decoration:none;display:flex;align-items:center;gap:10px;color:var(--white)}
-        .alt-logo .g{background:linear-gradient(135deg,#f0b84a,#d4537e,#6b2fd4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-        .alt-nav-links{display:flex;align-items:center;gap:22px;font-size:14px;color:var(--dim)}
-        .alt-nav-links a{color:var(--dim);text-decoration:none}
-        .alt-nav-links a:hover{color:var(--white)}
-        .alt-nav-cta{color:#fff !important;font-weight:600;padding:9px 16px;border-radius:999px;background:linear-gradient(135deg,var(--purple),var(--violet))}
-        @media(max-width:768px){.alt-nav-links a:not(.alt-nav-cta){display:none}}
+        /* navbar removed — using global SiteNavbar */
         .alt-crumb{font-size:12px;color:rgba(232,228,240,0.3);margin-bottom:20px}
         .alt-crumb a{color:rgba(232,228,240,0.3);text-decoration:none}
         .alt-crumb a:hover{color:var(--dim)}
         .alt-crumb .sep{margin:0 8px}
         .alt-crumb .here{color:rgba(232,228,240,0.5)}
-        .alt-hero{padding-top:110px;padding-bottom:40px;text-align:center;position:relative}
+        .alt-hero{padding-top:80px;padding-bottom:40px;text-align:center;position:relative}
         .alt-eyebrow{display:inline-flex;gap:8px;align-items:center;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--violet);font-weight:700;margin-bottom:22px}
         .alt-h1{font-family:var(--font-display);font-size:clamp(2.2rem,5.5vw,3.8rem);font-weight:800;line-height:1.06;letter-spacing:-0.02em;max-width:20ch;margin:0 auto 22px}
         .alt-h1 em{font-style:italic;background:linear-gradient(135deg,#c9b8ff,#f0b84a);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
@@ -202,20 +187,6 @@ export function AlternativePageShell({ data }: { data: AlternativePageData }) {
         .alt-mockup-frame{max-width:900px;margin:36px auto 0;padding:12px;background:linear-gradient(165deg,var(--raised),var(--card));border:1px solid var(--line);border-radius:20px;box-shadow:0 34px 90px -46px rgba(139,92,246,.4)}
         .alt-mockup-frame img{width:100%;height:auto;display:block;border-radius:12px}
       `}</style>
-
-      <nav className={`alt-nav${scrolled ? " on" : ""}`}>
-        <div className="alt-c" style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <Link href="/" className="alt-logo">
-            <Image src="/mascot.png" alt="BluntChart logo" width={34} height={34} style={{ borderRadius: "50%" }} />
-            <span className="g">BluntChart</span>
-          </Link>
-          <div className="alt-nav-links">
-            <Link href="/astrology-app-alternatives">All alternatives</Link>
-            <Link href="/free-birth-chart">Free birth chart</Link>
-            <Link href="/in-depth-birth-chart" className="alt-nav-cta">In-Depth Reading · $24</Link>
-          </div>
-        </div>
-      </nav>
 
       {/* HERO */}
       <header className="alt-hero">

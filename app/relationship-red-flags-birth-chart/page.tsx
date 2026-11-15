@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Image from "next/image";
+
 import RedFlagsQuiz from "./RedFlagsQuiz";
 
 export const metadata: Metadata = {
@@ -126,16 +126,7 @@ export default function RelationshipRedFlagsPage() {
         .rf .container{max-width:1080px;margin:0 auto;padding:0 32px}
         .rf .container-wide{max-width:1200px;margin:0 auto;padding:0 32px}
 
-        /* SITE NAV — matches main site pattern */
-        .rf .site-nav{position:sticky;top:0;padding:18px 0;background:rgba(9,9,15,0.92);border-bottom:1px solid var(--line);backdrop-filter:blur(16px);z-index:10}
-        .rf .nav-i{display:flex;align-items:center;justify-content:space-between}
-        .rf .logo{font-family:var(--serif);font-weight:700;font-size:1.3rem;letter-spacing:.02em;display:flex;align-items:center;gap:10px}
-        .rf .logo .g{background:linear-gradient(135deg,#f0b84a,#d4537e,#6b2fd4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-        .rf .nav-links{display:flex;align-items:center;gap:20px;list-style:none;margin:0;padding:0}
-        .rf .nav-links a{font-size:.82rem;font-weight:500;color:var(--ink-dim);letter-spacing:.04em;text-transform:uppercase;transition:color .2s}
-        .rf .nav-links a:hover{color:var(--ink)}
-        .rf .ncta{color:var(--amber)!important;border:1px solid rgba(240,184,74,0.35);padding:6px 15px;border-radius:4px}
-        .rf .ncta:hover{background:rgba(240,184,74,0.15)}
+        /* navbar removed — using global SiteNavbar */
 
         .rf .breadcrumbs{padding:20px 0 0;font-size:13px;color:var(--ink-mute)}
         .rf .breadcrumbs a:hover{color:var(--red)}
@@ -253,7 +244,7 @@ export default function RelationshipRedFlagsPage() {
         .rf .sl2{display:flex;align-items:center;justify-content:center;width:36px;height:36px;border:1px solid var(--line);border-radius:8px;color:var(--ink-dim);font-size:.82rem;font-weight:700;transition:all .2s}
         .rf .sl2:hover{border-color:rgba(230,57,70,0.4);color:var(--red);background:rgba(230,57,70,0.08)}
 
-        @media(max-width:768px){.rf .nav-links{display:none}.rf .container{padding:0 16px}.rf .container-wide{padding:0 16px}.rf .fi{flex-direction:column;gap:28px}.rf .fb2{flex-direction:column;align-items:flex-start}}
+        @media(max-width:768px){.rf .container{padding:0 16px}.rf .container-wide{padding:0 16px}.rf .fi{flex-direction:column;gap:28px}.rf .fb2{flex-direction:column;align-items:flex-start}}
 
         .rf .fade-in{animation:rfFadeIn 0.5s cubic-bezier(0.16,1,0.3,1)}
         @keyframes rfFadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
@@ -263,23 +254,6 @@ export default function RelationshipRedFlagsPage() {
 
       <div className="rf">
         <div className="rf-bg" />
-
-        {/* NAV — mascot logo, matches main site */}
-        <nav className="site-nav">
-          <div className="container-wide nav-i">
-            <a href="/" className="logo">
-              <Image src="/mascot.png" alt="BluntChart mascot" width={34} height={34} style={{ borderRadius: "50%" }} priority />
-              <span className="g">BluntChart</span>
-            </a>
-            <ul className="nav-links">
-              <li><a href="/free-birth-chart">Free Chart</a></li>
-              <li><a href="/zodiac-signs">Zodiac Signs</a></li>
-              <li><a href="/saturn-return-calculator">Saturn Return</a></li>
-              <li><a href="/mercury-retrograde-2026">Mercury Rx 2026</a></li>
-              <li><a className="ncta" href="/in-depth-birth-chart">In-Depth Reading $24</a></li>
-            </ul>
-          </div>
-        </nav>
 
         <div className="container">
           <nav className="breadcrumbs" aria-label="Breadcrumb">

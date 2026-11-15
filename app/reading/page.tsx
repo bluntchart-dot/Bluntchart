@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useState } from "react";
 
 const WAITLIST_URL =
   process.env.NEXT_PUBLIC_WAITLIST_WEBHOOK_URL ||
@@ -212,71 +212,9 @@ function WaitlistForm() {
 }
 
 export default function HomePage() {
-  const [scrolled, setScrolled] = useState(false);
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24);
-
-    window.addEventListener("scroll", onScroll, { passive: true });
-    onScroll();
-
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
   return (
     <div className="relative min-h-screen overflow-x-hidden bg-[#09090f] text-[#e8e4f0]">
-      <nav
-        className={`fixed inset-x-0 top-0 z-50 border-b transition-all duration-300 ${
-          scrolled
-            ? "border-white/10 bg-[#09090f]/95 backdrop-blur-xl"
-            : "border-transparent bg-transparent"
-        }`}
-      >
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-          <a href="#" className="flex items-center gap-3">
-            <Image
-              src="/mascot.png"
-              alt="BluntChart mascot"
-              width={34}
-              height={34}
-              className="h-9 w-9 rounded-full"
-              priority
-            />
-
-            <span
-              className="text-lg font-semibold tracking-tight"
-              style={{ fontFamily: "var(--font-display)" }}
-            >
-              <span className="bg-gradient-to-r from-amber-300 via-pink-400 to-violet-400 bg-clip-text text-transparent">
-                BluntChart
-              </span>
-            </span>
-          </a>
-
-          <div className="hidden items-center gap-6 text-xs font-semibold uppercase tracking-[0.18em] text-white/45 md:flex">
-            <a href="#product" className="transition hover:text-white">
-              What you get
-            </a>
-
-            <a href="#offers" className="transition hover:text-white">
-              Readings
-            </a>
-
-            <a href="#reviews" className="transition hover:text-white">
-              Reviews
-            </a>
-
-            <a
-              href="#waitlist"
-              className="rounded-full border border-amber-300/20 bg-amber-300/10 px-4 py-2 text-amber-200 transition hover:bg-amber-300/15"
-            >
-              Join waitlist
-            </a>
-          </div>
-        </div>
-      </nav>
-
-      <main className="pt-24">
+      <main className="pt-8">
         <section className="relative overflow-hidden px-6 pb-18 pt-18 sm:pb-24 sm:pt-24">
           <div
             className="pointer-events-none absolute inset-0"

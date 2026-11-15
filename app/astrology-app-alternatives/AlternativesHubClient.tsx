@@ -49,12 +49,6 @@ const CARDS: CompetitorCardData[] = [
 ];
 
 export default function AlternativesHubClient() {
-  const [scrolled, setScrolled] = useState(false);
-  useEffect(() => {
-    const fn = () => setScrolled(window.scrollY > 40);
-    window.addEventListener("scroll", fn, { passive: true });
-    return () => window.removeEventListener("scroll", fn);
-  }, []);
 
   return (
     <>
@@ -65,20 +59,12 @@ export default function AlternativesHubClient() {
         html{scroll-behavior:smooth}body{background:var(--bg);color:var(--white);font-family:var(--font-body);-webkit-font-smoothing:antialiased;overflow-x:hidden;background-image:radial-gradient(900px 500px at 80% -8%,rgba(139,92,246,.16),transparent 60%),radial-gradient(700px 500px at 5% 8%,rgba(243,210,122,.05),transparent 55%);background-attachment:fixed}
         .ah-c{max-width:1280px;margin:0 auto;padding:0 40px}
         @media(max-width:768px){.ah-c{padding:0 20px}}
-        .ah-nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:16px 0;transition:all .3s}
-        .ah-nav.on{background:rgba(9,9,15,.92);border-bottom:1px solid var(--border);backdrop-filter:blur(16px)}
-        .ah-logo{font-family:var(--font-display);font-size:1.3rem;font-weight:700;text-decoration:none;display:flex;align-items:center;gap:10px;color:var(--white)}
-        .ah-logo .g{background:linear-gradient(135deg,#f0b84a,#d4537e,#6b2fd4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-        .ah-nav-links{display:flex;align-items:center;gap:22px;font-size:14px}
-        .ah-nav-links a{color:var(--dim);text-decoration:none}
-        .ah-nav-links a:hover{color:var(--white)}
-        .ah-cta{color:#fff !important;font-weight:600;padding:9px 16px;border-radius:999px;background:linear-gradient(135deg,var(--purple),var(--violet))}
-        @media(max-width:768px){.ah-nav-links a:not(.ah-cta){display:none}}
+        /* navbar removed — using global SiteNavbar */
         .ah-crumb{font-size:12px;color:rgba(232,228,240,0.3);margin-bottom:20px}
         .ah-crumb a{color:rgba(232,228,240,0.3);text-decoration:none}
         .ah-crumb .sep{margin:0 8px}
         .ah-crumb .here{color:rgba(232,228,240,0.5)}
-        .ah-hero{padding-top:110px;padding-bottom:40px;text-align:center}
+        .ah-hero{padding-top:40px;padding-bottom:40px;text-align:center}
         .ah-eyebrow{display:inline-flex;gap:8px;align-items:center;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--violet);font-weight:700;margin-bottom:22px}
         .ah-h1{font-family:var(--font-display);font-size:clamp(2.4rem,6vw,4.2rem);font-weight:800;line-height:1.05;letter-spacing:-0.02em;max-width:20ch;margin:0 auto 22px}
         .ah-h1 em{font-style:italic;background:linear-gradient(135deg,#c9b8ff,#f0b84a);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
@@ -127,21 +113,6 @@ export default function AlternativesHubClient() {
         .ah-band h2 em{font-style:italic;background:linear-gradient(135deg,#c9b8ff,#f0b84a);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
         .ah-band p{color:rgba(232,228,240,0.72);max-width:48ch;margin:0 auto 24px}
       `}</style>
-
-      <nav className={`ah-nav${scrolled ? " on" : ""}`}>
-        <div className="ah-c" style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <Link href="/" className="ah-logo">
-            <Image src="/mascot.png" alt="BluntChart logo" width={34} height={34} style={{ borderRadius: "50%" }} />
-            <span className="g">BluntChart</span>
-          </Link>
-          <div className="ah-nav-links">
-            <Link href="/free-birth-chart">Free birth chart</Link>
-            <a href="#glance">Compare</a>
-            <a href="#faq">FAQ</a>
-            <Link href="/in-depth-birth-chart" className="ah-cta">In-depth reading · $24</Link>
-          </div>
-        </div>
-      </nav>
 
       <header className="ah-hero">
         <div className="ah-c">

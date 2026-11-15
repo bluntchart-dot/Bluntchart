@@ -183,19 +183,10 @@ export default function IsMercuryRetrogradePage() {
         body{background:var(--bg);color:var(--white);font-family:var(--font-body);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
         .c{max-width:1200px;margin:0 auto;padding:0 32px}
 
-        /* NAV */
-        .nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:18px 0;background:rgba(9,9,15,.92);border-bottom:1px solid var(--border);backdrop-filter:blur(16px)}
-        .nav-i{display:flex;align-items:center;justify-content:space-between}
-        .logo{font-family:var(--font-display);font-size:1.3rem;font-weight:700;text-decoration:none;letter-spacing:.02em;display:flex;align-items:center;gap:10px}
-        .logo .g{background:linear-gradient(135deg,#f0b84a,#d4537e,#6b2fd4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-        .nav-links{display:flex;align-items:center;gap:20px}
-        .nav-links a{font-size:.82rem;font-weight:500;color:var(--dim);text-decoration:none;letter-spacing:.04em;text-transform:uppercase;transition:color .2s}
-        .nav-links a:hover{color:var(--white)}
-        .ncta{color:var(--gold)!important;border:1px solid var(--gold-dim);padding:6px 15px;border-radius:4px}
-        .ncta:hover{background:var(--gold-dim)}
+        /* navbar removed — using global SiteNavbar */
 
         /* BREADCRUMB */
-        .breadcrumb{padding:88px 0 0;font-size:.82rem;color:var(--dim)}
+        .breadcrumb{padding:64px 0 0;font-size:.82rem;color:var(--dim)}
         .breadcrumb a{color:var(--dim);text-decoration:none;transition:color .2s}
         .breadcrumb a:hover{color:var(--gold)}
 
@@ -250,25 +241,9 @@ export default function IsMercuryRetrogradePage() {
         .copy{font-size:.73rem;color:rgba(232,228,240,.2)}
         .last-updated{font-size:.78rem;color:rgba(232,228,240,.3);margin-top:48px;text-align:center}
 
-        @media(max-width:768px){.nav-links{display:none}.fi{flex-direction:column;gap:28px}.fb2{flex-direction:column;align-items:flex-start}.related-grid{grid-template-columns:1fr}.c{padding:0 16px}}
+        @media(max-width:768px){.fi{flex-direction:column;gap:28px}.fb2{flex-direction:column;align-items:flex-start}.related-grid{grid-template-columns:1fr}.c{padding:0 16px}}
         @media(max-width:480px){.cta-section{padding:36px 20px}}
       `}</style>
-
-      {/* NAV */}
-      <nav className="nav">
-        <div className="c nav-i">
-          <a className="logo" href="/">
-            <img src="/mascot.png" alt="BluntChart" width={34} height={34} style={{ borderRadius: "50%" }} />
-            <span className="g">BluntChart</span>
-          </a>
-          <div className="nav-links">
-            <a href="/in-depth-birth-chart">Get Reading</a>
-            <a href="/free-birth-chart">Free Chart</a>
-            <a href="/mercury-retrograde-2026">2026 Dates</a>
-            <a className="ncta" href="/in-depth-birth-chart">In-Depth Reading $24</a>
-          </div>
-        </div>
-      </nav>
 
       {/* BREADCRUMB */}
       <div className="c">

@@ -133,20 +133,11 @@ export default function AboutPage() {
       />
 
       <style>{`
-        .ab-nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:18px 0;background:rgba(9,9,15,.72);backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,0.06)}
+        /* navbar removed — using global SiteNavbar */
         .ab-c{max-width:1100px;margin:0 auto;padding:0 24px}
-        .ab-nav-i{display:flex;align-items:center;justify-content:space-between}
-        .ab-logo{display:flex;align-items:center;gap:10px;font-family:var(--font-display),Georgia,serif;font-size:1.3rem;font-weight:700;text-decoration:none;letter-spacing:.02em;color:#e8e4f0}
-        .ab-logo-g{background:linear-gradient(135deg,#f0b84a,#d4537e,#6b2fd4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-        .ab-nl{display:flex;align-items:center;gap:28px;list-style:none;padding:0;margin:0}
-        .ab-nl a{font-size:.83rem;font-weight:500;color:rgba(232,228,240,0.55);text-decoration:none;letter-spacing:.04em;text-transform:uppercase;transition:color .2s}
-        .ab-nl a:hover{color:#e8e4f0}
-        .ab-nl a.on{color:#e8e4f0}
-        .ab-ncta{color:#F0B84A!important;border:1px solid rgba(240,184,74,0.18);padding:6px 15px;border-radius:4px}
-        .ab-ncta:hover{background:rgba(240,184,74,0.18)}
 
         /* HERO with video bg */
-        .ab-hero{position:relative;min-height:92vh;display:flex;align-items:center;justify-content:center;padding:140px 24px 80px;overflow:hidden;text-align:center}
+        .ab-hero{position:relative;min-height:92vh;display:flex;align-items:center;justify-content:center;padding:80px 24px 80px;overflow:hidden;text-align:center}
         .ab-hero-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}
         .ab-hero-veil{position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(9,9,15,0.55) 0%,rgba(9,9,15,0.70) 40%,rgba(9,9,15,0.92) 100%),radial-gradient(ellipse 70% 50% at 50% 20%,rgba(107,47,212,0.18) 0%,transparent 60%)}
         .ab-hero-inner{position:relative;z-index:2;max-width:820px;margin:0 auto}
@@ -209,29 +200,12 @@ export default function AboutPage() {
         .ab-bp:focus-visible{outline:2px solid #F0B84A;outline-offset:3px}
 
         @media (max-width:768px){
-          .ab-nl{display:none}
-          .ab-hero{min-height:82vh;padding-top:110px;padding-bottom:64px}
+          .ab-hero{min-height:82vh;padding-top:60px;padding-bottom:64px}
           .ab-sec{padding:64px 0}
           .ab-links{grid-template-columns:1fr}
           .ab-lede{font-size:1.05rem}
         }
       `}</style>
-
-      <nav className="ab-nav" aria-label="Primary">
-        <div className="ab-c ab-nav-i">
-          <Link href="/" className="ab-logo">
-            <Image src="/mascot.png" alt="BluntChart mascot" width={34} height={34} style={{ borderRadius: "50%" }} priority />
-            <span className="ab-logo-g">BluntChart</span>
-          </Link>
-          <ul className="ab-nl">
-            <li><Link href="/in-depth-birth-chart">Try Free</Link></li>
-            <li><Link href="/free-birth-chart-readings">How It Works</Link></li>
-            <li><Link href="/zodiac-signs">Zodiac Signs</Link></li>
-            <li><Link href="/about" className="on">About</Link></li>
-            <li><Link className="ab-ncta" href="/in-depth-birth-chart">In-Depth Reading $24</Link></li>
-          </ul>
-        </div>
-      </nav>
 
       <main>
         {/* ── HERO with autoplaying Planets video ── */}

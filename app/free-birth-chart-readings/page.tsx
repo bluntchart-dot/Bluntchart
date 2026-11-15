@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import type { Metadata } from "next";
 
@@ -161,14 +161,6 @@ function SectionLabel({ label }: { label: string }) {
 // ─── PAGE ──────────────────────────────────────────────────────────────────────
 
 export default function FreeBirthChartPage() {
-  const [scrolled, setScrolled] = useState(false);
-
-  useEffect(() => {
-    const fn = () => setScrolled(window.scrollY > 40);
-    window.addEventListener("scroll", fn, { passive: true });
-    return () => window.removeEventListener("scroll", fn);
-  }, []);
-
   return (
     <>
       <style>{`
@@ -191,17 +183,7 @@ export default function FreeBirthChartPage() {
         .c{max-width:1100px;margin:0 auto;padding:0 24px}
         section{position:relative;z-index:1}
 
-        /* NAV */
-        .nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:18px 0;transition:all .3s}
-        .nav.on{background:rgba(9,9,15,.92);border-bottom:1px solid var(--border);backdrop-filter:blur(16px)}
-        .nav-i{display:flex;align-items:center;justify-content:space-between}
-        .logo{font-family:var(--font-display);font-size:1.3rem;font-weight:700;text-decoration:none;letter-spacing:.02em}
-        .logo .g{background:linear-gradient(135deg,#f0b84a,#d4537e,#6b2fd4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-        .nl{display:flex;align-items:center;gap:28px;list-style:none}
-        .nl a{font-size:.83rem;font-weight:500;color:var(--dim);text-decoration:none;letter-spacing:.04em;text-transform:uppercase;transition:color .2s}
-        .nl a:hover{color:var(--white)}
-        .ncta{color:var(--gold)!important;border:1px solid var(--gold-dim);padding:6px 15px;border-radius:4px}
-        .ncta:hover{background:var(--gold-dim)}
+        /* navbar removed — using global SiteNavbar */
 
         /* BUTTONS */
         .bp{display:inline-flex;align-items:center;gap:8px;padding:14px 30px;background:linear-gradient(135deg,#6b2fd4,#d4537e);color:#fff;font-family:inherit;font-size:.88rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;text-decoration:none;border:none;border-radius:10px;cursor:pointer;transition:opacity .2s,transform .15s}
@@ -210,7 +192,7 @@ export default function FreeBirthChartPage() {
         .bs:hover{border-color:rgba(255,255,255,.22);background:var(--faint);transform:translateY(-1px)}
 
         /* HERO */
-        .fbc-hero{min-height:80vh;display:flex;align-items:center;padding-top:110px;padding-bottom:80px;overflow:hidden;position:relative}
+        .fbc-hero{min-height:80vh;display:flex;align-items:center;padding-top:80px;padding-bottom:80px;overflow:hidden;position:relative}
         .fbc-hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% -10%,rgba(107,47,212,.12) 0%,transparent 50%),radial-gradient(ellipse 40% 40% at 80% 70%,rgba(212,83,126,.06) 0%,transparent 60%);pointer-events:none}
         .fbc-hero-orb{position:absolute;top:50%;left:50%;transform:translate(-50%,-55%);width:480px;height:480px;border-radius:50%;border:1px solid rgba(107,47,212,.08);background:radial-gradient(circle,rgba(107,47,212,.04) 0%,transparent 50%);animation:pulse 8s ease-in-out infinite;pointer-events:none}
         .fbc-hero-inner{position:relative;z-index:1;max-width:820px;margin:0 auto;text-align:center}
@@ -316,8 +298,7 @@ export default function FreeBirthChartPage() {
           .hiw-steps{grid-template-columns:1fr}
         }
         @media(max-width:768px){
-          .nl{display:none}
-          .fbc-hero{padding-top:90px;padding-bottom:64px}
+          .fbc-hero{padding-top:60px;padding-bottom:64px}
           .fbc-hero-orb{width:280px;height:280px}
           .trust-bar{flex-direction:column;gap:10px}
           .fi{flex-direction:column;gap:28px}
@@ -365,23 +346,6 @@ export default function FreeBirthChartPage() {
           }),
         }}
       />
-
-      {/* ── NAV ── */}
-      <nav className={`nav${scrolled ? " on" : ""}`}>
-        <div className="c nav-i">
-          <Link className="logo" href="/" style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <Image src="/mascot.png" alt="BluntChart mascot" width={34} height={34} style={{ borderRadius: "50%" }} />
-            <span className="g">BluntChart</span>
-          </Link>
-          <ul className="nl">
-            <li><Link href="/in-depth-birth-chart">Try Free</Link></li>
-            <li><Link href="/#reveals">What We Reveal</Link></li>
-            <li><Link href="/#reviews">Reviews</Link></li>
-            <li><Link href="/#compare">vs Co-Star</Link></li>
-            <li><Link className="ncta" href="/in-depth-birth-chart">In-Depth Reading $24</Link></li>
-          </ul>
-        </div>
-      </nav>
 
       {/* ══════════════════════════════════════════════════════════════════════
           HERO — Primary H1 keyword: "Free Birth Chart"

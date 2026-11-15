@@ -117,16 +117,7 @@ export default function RisingSignClient() {
   const [err, setErr] = useState("");
   const [loading, setLoading] = useState(false);
   const [chart, setChart] = useState<ChartData | null>(null);
-  const [scrolled, setScrolled] = useState(false);
   const resultRef = useRef<HTMLDivElement>(null);
-
-  if (typeof window !== "undefined") {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    useState(() => {
-      const fn = () => setScrolled(window.scrollY > 40);
-      window.addEventListener("scroll", fn, { passive: true });
-    });
-  }
 
   const handleCalculate = async () => {
     if (!email.trim() || !dob || !btime || !city.trim()) {
@@ -201,10 +192,7 @@ export default function RisingSignClient() {
         body{background:var(--bg);color:var(--white);font-family:var(--font-body);-webkit-font-smoothing:antialiased;overflow-x:hidden}
         .rs-c{max-width:1280px;margin:0 auto;padding:0 40px}
         @media(max-width:768px){.rs-c{padding:0 20px}}
-        .rs-nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:18px 0;transition:all .3s}
-        .rs-nav.on{background:rgba(9,9,15,.92);border-bottom:1px solid var(--border);backdrop-filter:blur(16px)}
-        .rs-logo{font-family:var(--font-display);font-size:1.3rem;font-weight:700;text-decoration:none;display:flex;align-items:center;gap:10px}
-        .rs-logo .g{background:linear-gradient(135deg,#f0b84a,#d4537e,#6b2fd4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+        /* navbar removed — using global SiteNavbar */
         .rs-inp{width:100%;background:rgba(255,255,255,0.04);border:0.5px solid rgba(255,255,255,0.1);border-radius:10px;padding:13px 14px;font-size:14px;color:#e8e4f0;font-family:inherit;outline:none}
         .rs-inp:focus{border-color:rgba(107,47,212,0.5)}
         .rs-lbl{display:block;font-size:11px;font-weight:600;color:#6b6585;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:6px}
@@ -213,25 +201,10 @@ export default function RisingSignClient() {
         .rs-btn:disabled{opacity:.5;cursor:not-allowed}
         .rs-cta{display:block;width:100%;max-width:480px;margin:0 auto;background:linear-gradient(135deg,#f0b84a,#e8854a);color:#0d0800;border:none;border-radius:12px;padding:18px 24px;font-size:16px;font-weight:700;font-family:inherit;cursor:pointer;text-align:center;text-decoration:none;transition:opacity .2s,transform .15s}
         .rs-cta:hover{opacity:.88;transform:translateY(-1px)}
-        @media(max-width:768px){.rs-nav-links{display:none!important}}
       `}</style>
 
-      {/* NAV */}
-      <nav className={`rs-nav${scrolled?" on":""}`}>
-        <div className="rs-c" style={{ display:"flex", alignItems:"center", justifyContent:"space-between" }}>
-          <Link href="/" className="rs-logo">
-            <Image src="/mascot.png" alt="BluntChart" width={34} height={34} style={{ borderRadius:"50%" }}/>
-            <span className="g">BluntChart</span>
-          </Link>
-          <div className="rs-nav-links" style={{ display:"flex", alignItems:"center", gap:24 }}>
-            <Link href="/free-birth-chart" style={{ fontSize:13, color:"rgba(232,228,240,0.55)", textDecoration:"none", fontWeight:500 }}>Free Birth Chart</Link>
-            <Link href="/in-depth-birth-chart" style={{ fontSize:13, color:"#F0B84A", textDecoration:"none", fontWeight:600, border:"1px solid rgba(240,184,74,0.18)", padding:"6px 15px", borderRadius:4 }}>In-Depth Reading $24</Link>
-          </div>
-        </div>
-      </nav>
-
       {/* HERO + FORM */}
-      <section style={{ paddingTop:120, paddingBottom:64, position:"relative" }}>
+      <section style={{ paddingTop:40, paddingBottom:64, position:"relative" }}>
         <div style={{ position:"absolute", inset:0, background:"radial-gradient(ellipse 80% 60% at 50% -10%,rgba(107,47,212,.08) 0%,transparent 50%)", pointerEvents:"none" }}/>
         <div className="rs-c" style={{ position:"relative", zIndex:1 }}>
           <div style={{ fontSize:12, color:"rgba(232,228,240,0.3)", marginBottom:24 }}>

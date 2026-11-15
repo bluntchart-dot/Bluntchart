@@ -69,18 +69,11 @@ const CSS = `
 .sx a:hover{text-decoration-color:var(--ac)}
 .sx p{margin:0 0 14px}
 
-/* nav */
-.sx-nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(8,8,14,.88);border-bottom:1px solid var(--ln);backdrop-filter:blur(16px) saturate(1.4)}
-.sx-nav-i{max-width:1240px;margin:0 auto;padding:14px 24px;display:flex;align-items:center;justify-content:space-between}
-.sx .sx-logo{display:flex;align-items:center;gap:10px;text-decoration:none;font-family:var(--font-display),Georgia,serif;font-weight:700;font-size:1.15rem;color:var(--tx)}
-.sx-nav-l{display:flex;gap:24px;font-size:.88rem}
-.sx .sx-nav-l a{color:var(--mt);text-decoration:none;transition:color .15s}
-.sx .sx-nav-l a:hover{color:var(--tx)}
-.sx .sx-nav-l a.on{color:var(--tx)}
+/* navbar removed — using global SiteNavbar */
 
 /* page frame */
 .sx-frame{max-width:1240px;margin:0 auto;padding:0 24px}
-.sx-hero{padding:110px 0 44px;border-bottom:1px solid var(--ln);margin-bottom:8px;position:relative;
+.sx-hero{padding:64px 0 44px;border-bottom:1px solid var(--ln);margin-bottom:8px;position:relative;
   background:radial-gradient(700px 280px at 80% 10%,rgba(232,179,65,.08),transparent 70%),
              radial-gradient(400px 200px at 20% 80%,rgba(107,47,212,.05),transparent 60%)}
 .sx-crumb{font-size:.82rem;color:var(--fa);margin-bottom:24px}
@@ -237,8 +230,7 @@ const CSS = `
 }
 @media(max-width:640px){
   .sx-frame{padding:0 16px}
-  .sx-nav-l{display:none}
-  .sx-hero{padding-top:96px}
+  .sx-hero{padding-top:40px}
   .sx-fig{padding:20px 16px 16px;border-radius:14px}
   .sx-br,.sx-axis{grid-template-columns:88px 1fr 52px;gap:8px;font-size:.84rem}
   .sx-br .tr{height:24px}
@@ -263,19 +255,6 @@ export function StatsPage({ children }: { children: ReactNode }) {
   return (
     <div className="sx">
       <style>{CSS}</style>
-      <nav className="sx-nav">
-        <div className="sx-nav-i">
-          <Link className="sx-logo" href="/">
-            <img src="/mascot.png" alt="BluntChart" width={30} height={30} style={{ borderRadius: "50%" }} />
-            BluntChart
-          </Link>
-          <div className="sx-nav-l">
-            <Link href={HUB_PATH}>Data hub</Link>
-            <Link href="/free-birth-chart">Free chart</Link>
-            <Link href="/in-depth-birth-chart">Full reading</Link>
-          </div>
-        </div>
-      </nav>
       <div className="sx-frame">{children}</div>
     </div>
   );

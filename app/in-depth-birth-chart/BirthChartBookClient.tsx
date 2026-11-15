@@ -443,15 +443,6 @@ export default function BirthChartBookClient() {
       <style>{bcbStyles}</style>
       <StarBackground />
 
-      {/* NAV */}
-      <nav className="bcb-nav">
-        <Link href="/" className="bcb-nav-logo">BluntChart</Link>
-        <div className="bcb-nav-right">
-          <span className="bcb-nav-price">$24 · one-time · 40-page reading</span>
-          <button className="bcb-nav-btn" onClick={scrollToForm}>Get my reading →</button>
-        </div>
-      </nav>
-
       {/* HERO */}
       <section className="bcb-hero">
         <div className="bcb-hero-glow" />
@@ -823,30 +814,6 @@ const bcbStyles = `
     color: var(--bcb-cream);
     line-height: 1.7;
   }
-
-  /* NAV */
-  .bcb-nav {
-    position: sticky; top: 0; z-index: 200;
-    background: rgba(11,11,11,0.92);
-    backdrop-filter: blur(16px);
-    border-bottom: 1px solid var(--bcb-border);
-    padding: 0 32px; height: 56px;
-    display: flex; align-items: center; justify-content: space-between;
-  }
-  .bcb-nav-logo {
-    font-family: var(--font-body); font-size: 12px; font-weight: 600;
-    letter-spacing: 0.18em; text-transform: uppercase;
-    color: var(--bcb-gold); text-decoration: none;
-  }
-  .bcb-nav-right { display: flex; align-items: center; gap: 16px; }
-  .bcb-nav-price { font-size: 13px; color: var(--bcb-cream-mute); }
-  .bcb-nav-btn {
-    background: var(--bcb-gold); color: #0B0B0B;
-    font-size: 13px; font-weight: 600;
-    padding: 9px 20px; border-radius: 100px;
-    border: none; cursor: pointer; white-space: nowrap;
-  }
-  .bcb-nav-btn:hover { background: var(--bcb-gold-lt); }
 
   /* HERO */
   .bcb-hero {
@@ -1240,8 +1207,6 @@ const bcbStyles = `
   }
   @media (max-width: 600px) {
     .bcb-section { padding: 72px 16px; }
-    .bcb-nav { padding: 0 16px; }
-    .bcb-nav-price { display: none; }
     .bcb-hero-ctas { flex-direction: column; align-items: stretch; }
     .bcb-pricing-card { padding: 32px 20px; }
     .bcb-qp-body { padding: 24px 20px 0; }

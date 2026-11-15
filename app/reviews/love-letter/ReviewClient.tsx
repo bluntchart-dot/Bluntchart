@@ -64,13 +64,6 @@ export default function ReviewClient() {
     <>
       <style>{styles}</style>
       <div className="rv-page">
-        <nav className="rv-nav">
-          <Link href="/" className="rv-nav-logo">
-            <Image src="/mascot.png" alt="BluntChart" width={28} height={28} style={{ borderRadius: "50%" }} />
-            <span className="rv-nav-logo-text">BluntChart</span>
-          </Link>
-        </nav>
-
         <div className="rv-container">
           {/* Progress */}
           {step !== "done" && (
@@ -280,25 +273,7 @@ const styles = `
   color: #e8e4f0;
   font-family: var(--font-body, 'DM Sans', system-ui, sans-serif);
 }
-.rv-nav {
-  padding: 18px 24px;
-  border-bottom: 1px solid rgba(255,255,255,0.06);
-}
-.rv-nav-logo {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  text-decoration: none;
-}
-.rv-nav-logo-text {
-  font-family: var(--font-display, 'Playfair Display', Georgia, serif);
-  font-size: 1.1rem;
-  font-weight: 700;
-  background: linear-gradient(135deg, #f0b84a, #d4537e, #6b2fd4);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
+/* navbar removed — using global SiteNavbar */
 .rv-container {
   max-width: 720px;
   margin: 0 auto;

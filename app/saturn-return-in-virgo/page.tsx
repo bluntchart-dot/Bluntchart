@@ -105,8 +105,8 @@ export default function SaturnReturnInVirgoPage() {
         :root{--font-display:'Playfair Display',Georgia,serif;--font-body:'DM Sans',system-ui,sans-serif;--bg:#09090f;--card:#12121e;--border:rgba(255,255,255,0.08);--white:#e8e4f0;--dim:rgba(232,228,240,0.55);--faint:rgba(232,228,240,0.08);--gold:#F0B84A;--gold-dim:rgba(240,184,74,0.18);--purple:#6b2fd4;--rose:#d4537e;--teal:#5dcaa5}
         html{scroll-behavior:smooth}body{background:var(--bg);color:var(--white);font-family:var(--font-body);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
         .c{max-width:1200px;margin:0 auto;padding:0 32px}
-        .nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:18px 0;background:rgba(9,9,15,.92);border-bottom:1px solid var(--border);backdrop-filter:blur(16px)}.nav-i{display:flex;align-items:center;justify-content:space-between}.logo{font-family:var(--font-display);font-size:1.3rem;font-weight:700;text-decoration:none;letter-spacing:.02em;display:flex;align-items:center;gap:10px}.logo .g{background:linear-gradient(135deg,#f0b84a,#d4537e,#6b2fd4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}.nav-links{display:flex;align-items:center;gap:20px}.nav-links a{font-size:.82rem;font-weight:500;color:var(--dim);text-decoration:none;letter-spacing:.04em;text-transform:uppercase;transition:color .2s}.nav-links a:hover{color:var(--white)}.ncta{color:var(--gold)!important;border:1px solid var(--gold-dim);padding:6px 15px;border-radius:4px}.ncta:hover{background:var(--gold-dim)}
-        .breadcrumb{padding:88px 0 0;font-size:.82rem;color:var(--dim)}.breadcrumb a{color:var(--dim);text-decoration:none}.breadcrumb a:hover{color:var(--gold)}
+        /* nav removed - using global SiteNavbar */
+        .breadcrumb{padding:64px 0 0;font-size:.82rem;color:var(--dim)}.breadcrumb a{color:var(--dim);text-decoration:none}.breadcrumb a:hover{color:var(--gold)}
         .hero{padding:28px 0 48px;position:relative;overflow:hidden;text-align:center}.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(107,47,212,.08) 0%,transparent 50%);pointer-events:none}
         .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:.72rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:20px;padding:5px 14px;border:1px solid var(--gold-dim);border-radius:100px;background:rgba(240,184,74,.06)}
         h1{font-family:var(--font-display);font-size:clamp(2.2rem,5.5vw,3.8rem);font-weight:900;line-height:1.08;letter-spacing:-.02em;margin-bottom:18px}h1 em{font-style:italic;background:linear-gradient(135deg,#f0b84a,#d4537e);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
@@ -117,25 +117,10 @@ export default function SaturnReturnInVirgoPage() {
         .toc{background:var(--card);border:0.5px solid var(--border);border-radius:14px;padding:24px 28px;margin:0 auto 48px;max-width:820px}.toc h4{font-family:var(--font-display);font-weight:700;font-size:.9rem;margin:0 0 14px;color:var(--white)}.toc ol{margin:0;padding-left:20px;list-style:decimal}.toc li{margin-bottom:6px}.toc a{font-size:.88rem;color:var(--dim);text-decoration:none;transition:color .2s}.toc a:hover{color:var(--gold)}
         .related-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;margin:32px auto 48px;max-width:820px}.related-card{background:var(--card);border:0.5px solid var(--border);border-radius:12px;padding:18px 16px;text-decoration:none;transition:border-color .2s,transform .15s}.related-card:hover{border-color:rgba(107,47,212,.3);transform:translateY(-2px)}.related-card-title{font-family:var(--font-display);font-size:.95rem;font-weight:700;color:var(--white);margin-bottom:4px}.related-card-desc{font-size:.8rem;color:var(--dim);line-height:1.5}
         .info-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;margin:24px auto 32px;max-width:820px}.info-card{background:var(--card);border:0.5px solid var(--border);border-radius:12px;padding:20px 18px}.info-label{font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-bottom:6px}.info-val{font-size:.92rem;color:rgba(232,228,240,.75);line-height:1.6}
-        @media(max-width:768px){.nav-links{display:none}.sign-grid{grid-template-columns:1fr}.related-grid{grid-template-columns:1fr}.info-grid{grid-template-columns:1fr}.c{padding:0 16px}.cta-box{padding:28px 20px}}
+        @media(max-width:768px){.sign-grid{grid-template-columns:1fr}.related-grid{grid-template-columns:1fr}.info-grid{grid-template-columns:1fr}.c{padding:0 16px}.cta-box{padding:28px 20px}}
       `}</style>
 
       {/* NAV */}
-      <nav className="nav">
-        <div className="c nav-i">
-          <Link className="logo" href="/">
-            <img src="/mascot.png" alt="BluntChart" width={34} height={34} style={{ borderRadius: "50%" }} />
-            <span className="g">BluntChart</span>
-          </Link>
-          <div className="nav-links">
-            <Link href="/saturn-return">Saturn Return Guide</Link>
-            <Link href="/saturn-return-calculator">Saturn Calculator</Link>
-            <Link href="/free-birth-chart">Free Chart</Link>
-            <Link className="ncta" href="/in-depth-birth-chart">In-Depth Reading $24</Link>
-          </div>
-        </div>
-      </nav>
-
       {/* BREADCRUMB */}
       <div className="c">
         <nav className="breadcrumb" aria-label="Breadcrumb">

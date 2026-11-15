@@ -45,13 +45,6 @@ export default function ReviewsHub() {
     <>
       <style>{styles}</style>
       <div className="rvh-page">
-        <nav className="rvh-nav">
-          <Link href="/" className="rvh-nav-logo">
-            <Image src="/mascot.png" alt="BluntChart" width={28} height={28} style={{ borderRadius: "50%" }} />
-            <span className="rvh-nav-logo-text">BluntChart</span>
-          </Link>
-        </nav>
-
         <div className="rvh-container">
           <p className="rvh-eyebrow">REVIEWS</p>
           <h1 className="rvh-heading">WHAT PEOPLE FELT.</h1>
@@ -146,25 +139,7 @@ const styles = `
   color: #e8e4f0;
   font-family: var(--font-body, 'DM Sans', system-ui, sans-serif);
 }
-.rvh-nav {
-  padding: 18px 24px;
-  border-bottom: 1px solid rgba(255,255,255,0.06);
-}
-.rvh-nav-logo {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  text-decoration: none;
-}
-.rvh-nav-logo-text {
-  font-family: var(--font-display, 'Playfair Display', Georgia, serif);
-  font-size: 1.1rem;
-  font-weight: 700;
-  background: linear-gradient(135deg, #f0b84a, #d4537e, #6b2fd4);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
+/* navbar removed — using global SiteNavbar */
 .rvh-container {
   max-width: 900px;
   margin: 0 auto;

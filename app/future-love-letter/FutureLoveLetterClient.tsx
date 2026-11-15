@@ -19,47 +19,6 @@ import FAQ from "./components/FAQ";
 const FUTURE_PERSON_LABEL = "Future Husband";
 const SIGNATURE = "Someone worth waiting for";
 
-/* ─── NAVBAR ─────────────────────────────────────────────────────────── */
-
-function Navbar() {
-  const [scrolled, setScrolled] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 30);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
-  return (
-    <nav className={`fll-nav${scrolled ? " fll-nav-scrolled" : ""}`}>
-      <div className="fll-nav-inner">
-        <Link href="/" className="fll-nav-logo">
-          <Image src="/mascot.png" alt="BluntChart" width={30} height={30} style={{ borderRadius: "50%" }} />
-          <span className="fll-nav-logo-text">BluntChart</span>
-        </Link>
-        <button
-          className="fll-nav-hamburger"
-          onClick={() => setMenuOpen(!menuOpen)}
-          aria-label="Menu"
-          type="button"
-        >
-          <span className={`fll-nav-ham-line${menuOpen ? " open" : ""}`} />
-          <span className={`fll-nav-ham-line${menuOpen ? " open" : ""}`} />
-          <span className={`fll-nav-ham-line${menuOpen ? " open" : ""}`} />
-        </button>
-        <ul className={`fll-nav-links${menuOpen ? " fll-nav-links-open" : ""}`}>
-          <li><Link href="/in-depth-birth-chart" onClick={() => setMenuOpen(false)}>Try Free</Link></li>
-          <li><Link href="/free-birth-chart-readings" onClick={() => setMenuOpen(false)}>How It Works</Link></li>
-          <li><Link href="/zodiac-signs" onClick={() => setMenuOpen(false)}>Zodiac Signs</Link></li>
-          <li><Link href="/future-love-letter" onClick={() => setMenuOpen(false)}>Love-letter</Link></li>
-          <li><Link href="/in-depth-birth-chart" className="fll-nav-cta" onClick={() => setMenuOpen(false)}>In-Depth Reading $24</Link></li>
-        </ul>
-      </div>
-    </nav>
-  );
-}
-
 /* ─── GENERATION MESSAGES ────────────────────────────────────────────── */
 
 const GEN_MESSAGES = [
@@ -234,7 +193,6 @@ export default function FutureLoveLetterClient() {
   if (stage === "waitlisted") {
     return (
       <div className="fll-page">
-        <Navbar />
         <StarBackground />
         <style>{styles}</style>
         <div className="fll-waitlist-container">
@@ -290,7 +248,6 @@ export default function FutureLoveLetterClient() {
   if (stage === "generating") {
     return (
       <div className="fll-page">
-        <Navbar />
         <StarBackground />
         <style>{styles}</style>
         <div className="fll-gen-container">
@@ -322,7 +279,6 @@ export default function FutureLoveLetterClient() {
 
     return (
       <div className="fll-page" ref={readingRef}>
-        <Navbar />
         <StarBackground />
         <style>{styles}</style>
 
@@ -607,7 +563,6 @@ export default function FutureLoveLetterClient() {
 
   return (
     <div className="fll-page">
-      <Navbar />
       <StarBackground />
       <style>{styles}</style>
 
@@ -650,117 +605,14 @@ export default function FutureLoveLetterClient() {
 /* ─── ALL STYLES ───────────────────────────────────────────────────── */
 
 const styles = `
-/* ══════════════════════════════════════════════════════════════════════
-   NAVBAR
-   ══════════════════════════════════════════════════════════════════════ */
-.fll-nav {
-  position: fixed;
-  top: 40px;
-  left: 0;
-  right: 0;
-  z-index: 100;
-  padding: 16px 0;
-  transition: all 0.3s;
-}
-.fll-nav-scrolled {
-  background: rgba(7,7,13,0.92);
-  border-bottom: 1px solid rgba(255,255,255,0.08);
-  backdrop-filter: blur(16px);
-}
-.fll-nav-inner {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 0 24px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-.fll-nav-logo {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  text-decoration: none;
-}
-.fll-nav-logo-text {
-  font-family: var(--font-display);
-  font-size: 1.2rem;
-  font-weight: 700;
-  background: linear-gradient(135deg, #f0b84a, #d4537e, #6b2fd4);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-.fll-nav-links {
-  display: flex;
-  align-items: center;
-  gap: 28px;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-.fll-nav-links a {
-  font-size: 0.83rem;
-  font-weight: 500;
-  color: rgba(232,228,240,0.55);
-  text-decoration: none;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  transition: color 0.2s;
-}
-.fll-nav-links a:hover { color: #e8e4f0; }
-.fll-nav-cta {
-  color: #F0B84A !important;
-  border: 1px solid rgba(240,184,74,0.18);
-  padding: 6px 15px;
-  border-radius: 4px;
-}
-.fll-nav-cta:hover { background: rgba(240,184,74,0.18); }
-.fll-nav-hamburger {
-  display: none;
-  flex-direction: column;
-  gap: 5px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 4px;
-}
-.fll-nav-ham-line {
-  display: block;
-  width: 22px;
-  height: 2px;
-  background: rgba(232,228,240,0.6);
-  border-radius: 2px;
-  transition: all 0.25s;
-}
-.fll-nav-ham-line.open:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
-.fll-nav-ham-line.open:nth-child(2) { opacity: 0; }
-.fll-nav-ham-line.open:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
-
-@media (max-width: 768px) {
-  .fll-nav-hamburger { display: flex; }
-  .fll-nav-links {
-    display: none;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    flex-direction: column;
-    background: rgba(7,7,13,0.96);
-    border-bottom: 1px solid rgba(255,255,255,0.08);
-    padding: 20px 24px;
-    gap: 16px;
-    backdrop-filter: blur(16px);
-  }
-  .fll-nav-links-open { display: flex; }
-  .fll-nav-links a { font-size: 0.9rem; }
-}
+/* (navbar removed — using global SiteNavbar) */
 
 /* ══════════════════════════════════════════════════════════════════════
    READING LOGO (top-right on letter page)
    ══════════════════════════════════════════════════════════════════════ */
 .fll-reading-logo {
   position: absolute;
-  top: 96px;
+  top: 72px;
   right: 24px;
   z-index: 10;
 }
@@ -890,11 +742,8 @@ const styles = `
    PROMO BANNER
    ══════════════════════════════════════════════════════════════════════ */
 .fll-promo-banner {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 200;
+  position: relative;
+  z-index: 1;
   background: linear-gradient(135deg, #6b2fd4 0%, #d4537e 50%, #f0b84a 100%);
   padding: 10px 24px;
 }
@@ -2196,7 +2045,12 @@ const styles = `
    RESPONSIVE
    ══════════════════════════════════════════════════════════════════════ */
 @media (max-width: 768px) {
-  .fll-hero { padding: 80px 20px 32px; }
+  .fll-promo-banner { padding: 10px 16px; }
+  .fll-promo-inner { flex-direction: column; gap: 8px; text-align: center; }
+  .fll-promo-text { font-size: 13px; }
+  .fll-promo-btn { font-size: 10px; padding: 6px 18px; }
+
+  .fll-hero { padding: 40px 20px 32px; }
   .fll-hero-inner {
     grid-template-columns: 1fr;
     gap: 32px;

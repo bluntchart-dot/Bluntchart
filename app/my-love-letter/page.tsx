@@ -360,22 +360,10 @@ function LoveLetterContent() {
   );
 }
 
-function Nav() {
-  return (
-    <nav className="fll-nav-static">
-      <Link href="/" className="fll-nav-logo-link">
-        <Image src="/mascot.png" alt="BluntChart" width={28} height={28} style={{ borderRadius: "50%" }} />
-        <span className="fll-nav-logo-label">BluntChart</span>
-      </Link>
-    </nav>
-  );
-}
-
 export default function MyLoveLetterPage() {
   return (
     <div className="fll-page">
       <style>{styles}</style>
-      <Nav />
       <VibrantStarBackground />
       <Suspense fallback={<div className="mll-loading"><p>Loading...</p></div>}>
         <LoveLetterContent />
@@ -394,28 +382,7 @@ const styles = `
   font-family: var(--font-body, 'DM Sans', system-ui, sans-serif);
 }
 
-/* Nav */
-.fll-nav-static {
-  position: relative;
-  z-index: 10;
-  padding: 18px 24px;
-  border-bottom: 1px solid rgba(255,255,255,0.06);
-}
-.fll-nav-logo-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  text-decoration: none;
-}
-.fll-nav-logo-label {
-  font-family: var(--font-display, 'Playfair Display', Georgia, serif);
-  font-size: 1.1rem;
-  font-weight: 700;
-  background: linear-gradient(135deg, #f0b84a, #d4537e, #6b2fd4);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
+/* navbar removed — using global SiteNavbar */
 
 /* Loading / Error */
 .mll-loading, .mll-error {

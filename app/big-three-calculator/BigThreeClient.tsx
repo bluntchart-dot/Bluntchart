@@ -75,16 +75,7 @@ export default function BigThreeClient() {
   const [err, setErr] = useState("");
   const [loading, setLoading] = useState(false);
   const [chart, setChart] = useState<ChartData | null>(null);
-  const [scrolled, setScrolled] = useState(false);
   const resultRef = useRef<HTMLDivElement>(null);
-
-  if (typeof window !== "undefined") {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    useState(() => {
-      const fn = () => setScrolled(window.scrollY > 40);
-      window.addEventListener("scroll", fn, { passive: true });
-    });
-  }
 
   const handleCalculate = async () => {
     if (!email.trim() || !dob || !btime || !city.trim()) {
@@ -128,10 +119,7 @@ export default function BigThreeClient() {
         html{scroll-behavior:smooth}body{background:var(--bg);color:var(--white);font-family:var(--font-body);-webkit-font-smoothing:antialiased;overflow-x:hidden}
         .b3-c{max-width:1280px;margin:0 auto;padding:0 40px}
         @media(max-width:768px){.b3-c{padding:0 20px}}
-        .b3-nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:18px 0;transition:all .3s}
-        .b3-nav.on{background:rgba(9,9,15,.92);border-bottom:1px solid var(--border);backdrop-filter:blur(16px)}
-        .b3-logo{font-family:var(--font-display);font-size:1.3rem;font-weight:700;text-decoration:none;display:flex;align-items:center;gap:10px}
-        .b3-logo .g{background:linear-gradient(135deg,#f0b84a,#d4537e,#6b2fd4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+        /* navbar removed — using global SiteNavbar */
         .b3-inp{width:100%;background:rgba(255,255,255,0.04);border:0.5px solid rgba(255,255,255,0.1);border-radius:10px;padding:13px 14px;font-size:14px;color:#e8e4f0;font-family:inherit;outline:none}
         .b3-inp:focus{border-color:rgba(107,47,212,0.5)}
         .b3-lbl{display:block;font-size:11px;font-weight:600;color:#6b6585;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:6px}
@@ -139,26 +127,11 @@ export default function BigThreeClient() {
         .b3-btn:hover{opacity:.88}.b3-btn:disabled{opacity:.5;cursor:not-allowed}
         .b3-cta{display:block;width:100%;max-width:480px;margin:0 auto;background:linear-gradient(135deg,#f0b84a,#e8854a);color:#0d0800;border:none;border-radius:12px;padding:18px 24px;font-size:16px;font-weight:700;font-family:inherit;cursor:pointer;text-align:center;text-decoration:none;transition:opacity .2s,transform .15s}
         .b3-cta:hover{opacity:.88;transform:translateY(-1px)}
-        @media(max-width:768px){.b3-nav-links{display:none!important}.b3-cards{grid-template-columns:1fr!important}.b3-cmp-head,.b3-cmp-row{grid-template-columns:1fr 90px 90px!important}.b3-revg{grid-template-columns:1fr!important}}
+        @media(max-width:768px){.b3-cards{grid-template-columns:1fr!important}.b3-cmp-head,.b3-cmp-row{grid-template-columns:1fr 90px 90px!important}.b3-revg{grid-template-columns:1fr!important}}
       `}</style>
 
-      {/* NAV */}
-      <nav className={`b3-nav${scrolled?" on":""}`}>
-        <div className="b3-c" style={{ display:"flex", alignItems:"center", justifyContent:"space-between" }}>
-          <Link href="/" className="b3-logo">
-            <Image src="/mascot.png" alt="BluntChart" width={34} height={34} style={{ borderRadius:"50%" }}/>
-            <span className="g">BluntChart</span>
-          </Link>
-          <div className="b3-nav-links" style={{ display:"flex", alignItems:"center", gap:24 }}>
-            <Link href="/free-birth-chart" style={{ fontSize:13, color:"var(--dim)", textDecoration:"none" }}>Free Birth Chart</Link>
-            <Link href="/rising-sign-calculator" style={{ fontSize:13, color:"var(--dim)", textDecoration:"none" }}>Rising Sign</Link>
-            <Link href="/in-depth-birth-chart" style={{ fontSize:13, color:"#F0B84A", textDecoration:"none", fontWeight:600, border:"1px solid var(--gold-dim)", padding:"6px 15px", borderRadius:4 }}>In-Depth Reading $24</Link>
-          </div>
-        </div>
-      </nav>
-
       {/* HERO + FORM */}
-      <section style={{ paddingTop:120, paddingBottom:64, position:"relative" }}>
+      <section style={{ paddingTop:40, paddingBottom:64, position:"relative" }}>
         <div style={{ position:"absolute", inset:0, background:"radial-gradient(ellipse 80% 60% at 50% -10%,rgba(107,47,212,.08) 0%,transparent 50%)", pointerEvents:"none" }}/>
         <div className="b3-c" style={{ position:"relative", zIndex:1 }}>
           <div style={{ fontSize:12, color:"rgba(232,228,240,0.3)", marginBottom:24 }}>
