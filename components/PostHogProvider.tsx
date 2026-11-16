@@ -68,7 +68,7 @@ export default function PostHogProviderWrapper({
 
     posthog.init(key, {
       api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST || "https://us.i.posthog.com",
-      person_profiles: "identified_and_anonymous",
+      person_profiles: "always",
       capture_pageview: false,
       capture_pageleave: true,
       autocapture: true,
