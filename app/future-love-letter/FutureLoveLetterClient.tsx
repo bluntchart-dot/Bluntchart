@@ -568,13 +568,15 @@ export default function FutureLoveLetterClient() {
 
       <div className="fll-promo-banner">
         <div className="fll-promo-inner">
-          <span className="fll-promo-badge">LAUNCH OFFER</span>
-          <span className="fll-promo-text">
-            <span className="fll-promo-highlight">50% off</span> for a limited time &mdash; your future husband won&rsquo;t wait forever
-          </span>
-          <button className="fll-promo-btn" onClick={scrollToForm} type="button">
-            CLAIM YOURS &rarr;
-          </button>
+          <div className="fll-promo-scroll">
+            <span className="fll-promo-badge">LAUNCH OFFER</span>
+            <span className="fll-promo-text">
+              <span className="fll-promo-highlight">50% off</span> for a limited time &mdash; your future husband won&rsquo;t wait forever
+            </span>
+            <button className="fll-promo-btn" onClick={scrollToForm} type="button">
+              CLAIM YOURS &rarr;
+            </button>
+          </div>
         </div>
       </div>
 
@@ -746,6 +748,7 @@ const styles = `
   z-index: 1;
   background: linear-gradient(135deg, #6b2fd4 0%, #d4537e 50%, #f0b84a 100%);
   padding: 10px 24px;
+  overflow: hidden;
 }
 .fll-promo-inner {
   max-width: 1100px;
@@ -756,6 +759,7 @@ const styles = `
   gap: 14px;
   flex-wrap: wrap;
 }
+.fll-promo-scroll { display: contents; }
 .fll-promo-badge {
   display: inline-block;
   background: rgba(255,255,255,0.18);
@@ -805,6 +809,10 @@ const styles = `
 @keyframes fll-promo-pop {
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.1); box-shadow: 0 2px 12px rgba(255,255,255,0.25); }
+}
+@keyframes fll-promo-marquee {
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
 }
 
 /* ══════════════════════════════════════════════════════════════════════
@@ -2045,10 +2053,19 @@ const styles = `
    RESPONSIVE
    ══════════════════════════════════════════════════════════════════════ */
 @media (max-width: 768px) {
-  .fll-promo-banner { padding: 10px 16px; }
-  .fll-promo-inner { flex-direction: column; gap: 8px; text-align: center; }
-  .fll-promo-text { font-size: 13px; }
-  .fll-promo-btn { font-size: 10px; padding: 6px 18px; }
+  .fll-promo-banner { padding: 0; height: 36px; display: flex; align-items: center; }
+  .fll-promo-inner { flex-wrap: nowrap; gap: 0; max-width: none; width: 100%; height: 100%; }
+  .fll-promo-scroll {
+    display: flex; align-items: center; gap: 12px;
+    white-space: nowrap;
+    animation: fll-promo-marquee 12s linear infinite;
+  }
+  .fll-promo-badge { font-size: 9px; padding: 3px 8px; flex-shrink: 0; }
+  .fll-promo-text { font-size: 13px; white-space: nowrap; flex-shrink: 0; }
+  .fll-promo-btn {
+    flex-shrink: 0; font-size: 9px; padding: 5px 14px;
+    animation: none; margin-left: 12px;
+  }
 
   .fll-hero { padding: 40px 20px 32px; }
   .fll-hero-inner {
