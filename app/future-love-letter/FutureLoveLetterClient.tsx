@@ -571,11 +571,24 @@ export default function FutureLoveLetterClient() {
           <div className="fll-promo-scroll">
             <span className="fll-promo-badge">LAUNCH OFFER</span>
             <span className="fll-promo-text">
-              <span className="fll-promo-highlight">50% off</span> for a limited time &mdash; your future husband won&rsquo;t wait forever
+              <span className="fll-promo-highlight">50% off</span> &mdash; your future husband won&rsquo;t wait forever
             </span>
+            <span className="fll-promo-sep">&bull;</span>
+            <span className="fll-promo-tease">he already wrote your letter</span>
             <button className="fll-promo-btn" onClick={scrollToForm} type="button">
-              CLAIM YOURS &rarr;
+              READ IT NOW &rarr;
             </button>
+            <span className="fll-promo-dup" aria-hidden="true">
+              <span className="fll-promo-badge">LAUNCH OFFER</span>
+              <span className="fll-promo-text">
+                <span className="fll-promo-highlight">50% off</span> &mdash; your future husband won&rsquo;t wait forever
+              </span>
+              <span className="fll-promo-sep">&bull;</span>
+              <span className="fll-promo-tease">he already wrote your letter</span>
+              <button className="fll-promo-btn" onClick={scrollToForm} type="button">
+                READ IT NOW &rarr;
+              </button>
+            </span>
           </div>
         </div>
       </div>
@@ -760,9 +773,10 @@ const styles = `
   flex-wrap: wrap;
 }
 .fll-promo-scroll { display: contents; }
+.fll-promo-dup { display: none; }
 .fll-promo-badge {
   display: inline-block;
-  background: rgba(255,255,255,0.18);
+  background: rgba(255,255,255,0.22);
   backdrop-filter: blur(4px);
   color: #fff;
   font-family: var(--font-body);
@@ -774,45 +788,55 @@ const styles = `
   text-transform: uppercase;
 }
 .fll-promo-text {
-  color: rgba(255,255,255,0.92);
-  font-family: var(--font-display, 'Playfair Display', Georgia, serif);
-  font-size: 15px;
-  font-weight: 400;
-  letter-spacing: 0.01em;
+  color: #fff;
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
   line-height: 1.3;
 }
 .fll-promo-highlight {
-  font-weight: 700;
+  font-weight: 900;
   color: #fff;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 2px;
+}
+.fll-promo-sep {
+  color: rgba(255,255,255,0.5);
+  font-size: 14px;
+  margin: 0 4px;
+}
+.fll-promo-tease {
+  color: rgba(255,255,255,0.85);
+  font-family: var(--font-display, 'Playfair Display', Georgia, serif);
+  font-size: 13px;
   font-style: italic;
+  white-space: nowrap;
 }
 .fll-promo-btn {
-  background: #fff;
-  color: #6b2fd4;
+  background: #0d0800;
+  color: #f0b84a;
   font-family: var(--font-body);
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 1.2px;
-  padding: 7px 22px;
-  border: none;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 1.5px;
+  padding: 8px 24px;
+  border: 2px solid rgba(240,184,74,0.5);
   border-radius: 50px;
   cursor: pointer;
   transition: transform 0.2s, box-shadow 0.2s;
   white-space: nowrap;
-  animation: fll-promo-pop 2s ease-in-out infinite;
+  text-transform: uppercase;
 }
 .fll-promo-btn:hover {
   transform: scale(1.08);
-  box-shadow: 0 4px 18px rgba(255,255,255,0.3);
-  animation: none;
-}
-@keyframes fll-promo-pop {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.1); box-shadow: 0 2px 12px rgba(255,255,255,0.25); }
+  box-shadow: 0 4px 18px rgba(240,184,74,0.3);
+  background: #1a1000;
 }
 @keyframes fll-promo-marquee {
-  0% { transform: translateX(100%); }
-  100% { transform: translateX(-100%); }
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
 }
 
 /* ══════════════════════════════════════════════════════════════════════
@@ -2053,18 +2077,22 @@ const styles = `
    RESPONSIVE
    ══════════════════════════════════════════════════════════════════════ */
 @media (max-width: 768px) {
-  .fll-promo-banner { padding: 0; height: 36px; display: flex; align-items: center; }
+  .fll-promo-banner { padding: 0; height: 40px; display: flex; align-items: center; }
   .fll-promo-inner { flex-wrap: nowrap; gap: 0; max-width: none; width: 100%; height: 100%; }
   .fll-promo-scroll {
-    display: flex; align-items: center; gap: 12px;
+    display: flex; align-items: center; gap: 20px;
     white-space: nowrap;
-    animation: fll-promo-marquee 12s linear infinite;
+    animation: fll-promo-marquee 25s linear infinite;
+    width: max-content;
   }
-  .fll-promo-badge { font-size: 9px; padding: 3px 8px; flex-shrink: 0; }
-  .fll-promo-text { font-size: 13px; white-space: nowrap; flex-shrink: 0; }
+  .fll-promo-dup { display: contents; }
+  .fll-promo-badge { font-size: 9px; padding: 3px 8px; flex-shrink: 0; font-weight: 900; }
+  .fll-promo-text { font-size: 13px; font-weight: 800; white-space: nowrap; flex-shrink: 0; }
+  .fll-promo-tease { font-size: 12px; }
+  .fll-promo-sep { font-size: 12px; }
   .fll-promo-btn {
-    flex-shrink: 0; font-size: 9px; padding: 5px 14px;
-    animation: none; margin-left: 12px;
+    flex-shrink: 0; font-size: 11px; font-weight: 900; padding: 7px 20px;
+    margin: 0;
   }
 
   .fll-hero { padding: 40px 20px 32px; }
