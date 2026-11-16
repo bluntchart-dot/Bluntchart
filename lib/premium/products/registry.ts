@@ -890,6 +890,28 @@ const REGISTRY: Partial<Record<ReadingProduct, ProductDefinition | null>> & {
     guidelines: {}, mockBodies: {}, chapterProfiles: [],
     systemPrompt: BLIND_SYSTEM_PROMPT, contractReminder: "",
     readingToolName: BLIND_TOOL_NAME, pipelineTier: "quick",
+    tarotConfig: {
+      model: "claude-haiku-4-5",
+      maxTokens: 4096,
+      temperature: 0.85,
+      toolName: TCT_TOOL_NAME,
+      toolSchema: TCT_TOOL_SCHEMA,
+      systemPrompt: TCT_SYSTEM_PROMPT,
+      spreadId: "three-card",
+      allowReversed: true,
+      expectedSections: 3,
+      minWordsPerSection: 100,
+      maxWordsPerSection: 250,
+      forbiddenWords: [
+        "journey", "manifest", "universe", "soul", "empath", "abundance",
+        "alignment", "authentic", "portal", "energy", "vibration", "divine",
+        "sacred", "awakening",
+      ],
+      buildPrompt: {
+        type: "spread",
+        fn: tctBuildUserPrompt,
+      },
+    },
     quickConfig: {
       model: "claude-sonnet-4-6", maxTokens: 6144, temperature: 0.9,
       toolName: BLIND_TOOL_NAME, toolSchema: BLIND_TOOL_SCHEMA,

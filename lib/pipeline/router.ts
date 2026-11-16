@@ -56,7 +56,40 @@ export async function routeToGeneration(
 
   switch (tier) {
     case "quick": {
-      // Tarot products use tarotConfig, not quickConfig
+      // Two-layer products: birth chart when DOB provided, tarot fallback otherwise
+      if (definition.tarotConfig && definition.quickConfig) {
+        if (input.birth) {
+          const result = await runQuickPipeline(input.birth, definition.quickConfig);
+          return {
+            tier: "quick",
+            ok: result.ok,
+            reading: result.reading,
+            attempts: result.attempts,
+            validation: result.validation,
+            error: result.error,
+          };
+        }
+        if (input.tarot) {
+          const result = await runTarotPipeline(input.tarot, definition.tarotConfig);
+          return {
+            tier: "tarot",
+            ok: result.ok,
+            reading: result.reading,
+            cards: result.cards,
+            attempts: result.attempts,
+            validation: result.validation,
+            error: result.error,
+          };
+        }
+        return {
+          tier: "tarot",
+          ok: false, reading: null, cards: null,
+          attempts: 0, validation: null,
+          error: `Product "${input.product}" requires either birth data or tarot input.`,
+        };
+      }
+
+      // Tarot-only products use tarotConfig
       if (definition.tarotConfig) {
         if (!input.tarot) {
           return {

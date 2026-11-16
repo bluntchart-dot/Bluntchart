@@ -131,7 +131,7 @@ const PDF_CONFIGS: Partial<Record<ReadingProduct, PdfConfig>> = {
   },
   "blind-reading": {
     title: "Your Blind Reading",
-    variant: "generic",
+    variant: "three-card",
   },
   "situationship-reality-check": {
     title: "Situationship Reality Check",
@@ -164,7 +164,7 @@ const PRODUCT_TAGLINES: Partial<Record<ReadingProduct, [string, string]>> = {
   "personality-decoded": ["Every layer of who you are.", "Decoded from the stars."],
   "year-ahead": ["What's coming for you.", "Your roadmap for the year."],
   "big-three-mini": ["Sun. Moon. Rising.", "The three that define you."],
-  "blind-reading": ["No expectations. No filters.", "Just your chart, raw."],
+  "blind-reading": ["No expectations. No filters.", "Just the cards, raw."],
   "gift-reading": ["A reading, personally gifted.", "Written in their stars."],
   compatibility: ["Two charts. One truth.", "What's really between you."],
   "daily-tarot": ["One card. One message.", "What today needs you to hear."],

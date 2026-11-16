@@ -50,24 +50,33 @@ const MOCK_BIRTHS: Record<string, BirthData> = {
 };
 
 const BLIND_READING = {
-  opener:
-    "I wasn't going to start with this but your chart is screaming it. You've been carrying something for the last few weeks that you haven't told anyone about. Not because it's a secret — because you don't have the words for it yet. It sits somewhere between restlessness and grief, and honestly babe, your Moon knew this was coming before you did.",
-  sections: [
+  cards: [
     {
-      title: "The Thing You're Not Saying Out Loud",
-      body: "Your Mercury in the 12th house has been working overtime. You've been replaying conversations in your head — not recent ones, old ones. The kind where you said \"it's fine\" when it absolutely was not fine. And now with Saturn transiting your 3rd house, those unspoken words are literally pressing against your chest.\n\nHere's what your chart says you won't admit: you've outgrown a version of yourself that other people still expect you to be. The person they call when they need something. The one who adjusts. The one who makes it easy for everyone else while quietly suffocating.\n\nYour Venus square Neptune is the reason you've been able to maintain this illusion for so long. You're genuinely good at making sacrifice look like choice. But Neptune is about to station retrograde in your 7th house, and that particular magic trick is losing its power. People are going to start seeing the gap between what you say you want and what you actually need.\n\nI need you to hear this: the discomfort you're feeling isn't a crisis. It's accuracy. Your nervous system is finally catching up to what your chart has been saying for months — something needs to change, and you're the only one who can change it.",
+      position: "Past",
+      card_name: "The Tower",
+      orientation: "upright",
+      interpretation: "Something already fell apart. You know exactly what I'm talking about — that thing from the last year or so that felt like the floor disappeared beneath you. The Tower doesn't show up in the past position to remind you of pain. It shows up to say: that destruction was necessary. The structure that collapsed wasn't protecting you anymore. It was a cage you'd decorated so nicely you forgot you couldn't leave.\n\nHere's what the cards won't sugarcoat: you're still flinching. The collapse is behind you but your body hasn't gotten the memo. You're still bracing for impact in situations that aren't dangerous anymore. That hypervigilance served you during the fall. Now it's just keeping you exhausted.\n\nThe Tower in your past means you've already survived the worst part. The rubble is cleared. The ground is solid again. But you keep checking for cracks that aren't there.",
     },
     {
-      title: "What Your Chart Sees Coming",
-      body: "Jupiter is moving through your 10th house right now, and listen — this is not small energy. This is \"the thing you've been building quietly is about to become visible\" energy. Whether that's a career shift, a creative project, or simply the version of yourself you've been protecting from other people's opinions, it's ready.\n\nBut here's the catch your chart won't let me skip: Pluto is squaring your natal Moon from the 5th house. That means whatever is expanding externally is also excavating something internally. You might find yourself crying at random moments. Getting angry at things that shouldn't bother you. Feeling simultaneously powerful and completely raw.\n\nThat's not instability. That's transformation doing what transformation does — it tears down the scaffolding you built to survive a version of life you're no longer living. Your chart says the next 6 weeks are the dismantling phase. Not dramatic, not destructive. Just honest.\n\nThe question isn't whether you're ready. Your chart says you've been ready since the last eclipse season. The question is whether you'll let yourself be seen while it's happening, or whether you'll do that thing where you disappear until it's \"done\" and then emerge like nothing happened. Your Scorpio rising has been getting away with that for years. Not this time.",
+      position: "Present",
+      card_name: "Queen of Cups",
+      orientation: "reversed",
+      interpretation: "Reversed Queen of Cups in your present position and I need you to hear this clearly: you are emotionally pouring from an empty cup. You've been taking care of everyone else's feelings while pretending yours don't need attention. Someone in your life is getting your best emotional energy while you survive on whatever's left over.\n\nThis card reversed is basically the tarot equivalent of \"you're fine\" said through gritted teeth. You're not fine. You're depleted. The intuition you normally trust has been getting quieter because you keep overriding it to make other people comfortable.\n\nThe Queen of Cups reversed is not asking you to stop caring about people. She's asking you to stop abandoning yourself in the process. When was the last time someone asked how YOU were doing and you gave an honest answer? Not the curated version. The real one.\n\nYour emotional intelligence is a gift. Right now you're using it like a weapon — against yourself. Every time you sense what someone else needs and reshape yourself to provide it, you lose another piece of who you actually are.",
     },
     {
-      title: "The Part Nobody Else Will Say",
-      body: "Your chart has a pattern I need to name. Every time you get close to something real — a relationship that could actually hold you, a career move that would change everything, a version of yourself that doesn't apologize for existing — you find a reason to pull back. You call it being \"realistic\" or \"not wanting to get hurt.\" Your chart calls it your Saturn-Moon opposition, and it's the oldest wound in your chart.\n\nYou learned very early that wanting things was dangerous. That if you hoped too loudly, the disappointment would be worse. So you developed this incredible ability to want things quietly. To hold your dreams at arm's length so they couldn't hurt you if they didn't work out.\n\nBabe, that strategy got you through childhood. It probably saved you in ways neither of us fully understand. But you are not that child anymore, and the armor that protected you then is now the exact thing keeping you from the life your chart says is yours.\n\nThe transit window opening right now — Jupiter trine your natal Venus, Neptune sextile your Midheaven — this is the universe literally holding the door open. Not forever. For now. The question is whether you'll walk through it or stand in the doorway making a list of reasons it might slam shut.\n\nI already know which one you want to do. Your chart does too.",
+      position: "Future",
+      card_name: "Ace of Wands",
+      orientation: "upright",
+      interpretation: "And here it is. The Ace of Wands in your future position is pure creative fire. Something new is coming — not in a vague \"the universe has plans\" way, but in a concrete, tangible, you're-going-to-feel-it-in-your-bones way. This is the spark of a new beginning that actually sticks.\n\nThe Ace of Wands is the most action-oriented new beginning in the entire deck. This isn't a gentle unfolding. This is an ignition. A moment where something clicks and suddenly you have the energy and the clarity to move on the thing you've been circling for months.\n\nBut here's what I need to flag: the Ace only works if you grab it. It's an offering, not a guarantee. The spark is coming whether you're ready or not. Your only job between now and then is to stop telling yourself you're not the kind of person this happens to.\n\nYou are. The cards are literally spelling it out. Past destruction, present exhaustion, future fire. The pattern is clear — you've been through the hard part and what's ahead is the beginning you actually deserve.",
     },
   ],
-  final_word:
-    "Here's what I need you to take away from this: the restlessness you're feeling is not anxiety. It's readiness. Your chart has been building toward this moment for longer than you think, and the only thing standing between you and what comes next is your willingness to stop performing the version of yourself that everyone else is comfortable with. You already know what needs to change. You've known for a while. Stop waiting for permission. Your chart is the permission.",
+  narrative: "The story your cards are telling is almost aggressively clear. You went through something that broke you open — not broke you, broke you OPEN. And instead of letting that openness become your new operating system, you defaulted back to caretaking mode. Reversed Queen of Cups in the center is the whole problem: you survived The Tower but then immediately went back to putting everyone else's needs above your own.\n\nThe Ace of Wands says that's about to change. Not because you'll be forced to — because you'll finally want to badly enough. Something is going to light up inside you and for once, you're going to follow it instead of filing it away under \"nice idea, maybe later.\"",
+  advice: "Stop waiting until you feel ready. The Tower already proved that your old definition of \"ready\" was just another word for \"comfortable.\" The Ace of Wands doesn't care if you're comfortable. It cares if you're honest. And honestly? You already know what you want to do next. You've known for a while. The cards are just confirming what your gut has been screaming.",
+  _drawnCards: [
+    { card: { id: "major-16", name: "The Tower" }, orientation: "upright" as const, position: "Past" },
+    { card: { id: "cups-queen", name: "Queen of Cups" }, orientation: "reversed" as const, position: "Present" },
+    { card: { id: "wands-1", name: "Ace of Wands" }, orientation: "upright" as const, position: "Future" },
+  ],
 };
 
 const BRUTALLY_HONEST = {
@@ -209,6 +218,18 @@ export function getMockReading(mockId: string): {
   birth_place: string;
   product_type: string;
 } | null {
+  // Blind reading is tarot-based — no birth data needed
+  if (mockId === "blind") {
+    const reading: Record<string, unknown> = { ...BLIND_READING };
+    reading.name = "Maya Rodriguez";
+    return {
+      reading,
+      birth_time: "",
+      birth_place: "",
+      product_type: "blind-reading",
+    };
+  }
+
   const birth = MOCK_BIRTHS[mockId];
   if (!birth) return null;
 
@@ -216,10 +237,6 @@ export function getMockReading(mockId: string): {
   let product_type: string;
 
   switch (mockId) {
-    case "blind":
-      reading = { ...BLIND_READING };
-      product_type = "blind-reading";
-      break;
     case "brutal":
       reading = { ...BRUTALLY_HONEST };
       product_type = "brutally-honest-reading";
