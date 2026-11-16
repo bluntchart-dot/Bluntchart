@@ -212,6 +212,12 @@ function MyReadingContent() {
     return null;
   })();
 
+  const opener = (reading?.opener as string) ?? "";
+  const sections = Array.isArray(reading?.sections)
+    ? (reading!.sections as Array<{ title?: string; body?: string }>)
+    : [];
+  const finalWord = (reading?.final_word as string) ?? "";
+
   const resolvedName =
     (reading?.name as string) ?? (meta?.name as string) ?? "";
 
@@ -534,8 +540,46 @@ function MyReadingContent() {
           </section>
         )}
 
+        {/* Generic sections (blind-reading, situationship, ex-love) */}
+        {sections.length > 0 && (
+          <section className="mb-12">
+            {opener && (
+              <div className="mb-10 text-base sm:text-lg leading-relaxed text-[#d8d2ec] max-w-3xl">
+                <ReadingText text={opener} className="space-y-4" />
+              </div>
+            )}
+            {sections.map((sec, i) => (
+              <article
+                key={i}
+                className="mb-10 p-7 sm:p-9 rounded-2xl border border-white/10 bg-white/[0.03]"
+              >
+                {sec.title && (
+                  <h3 className="text-xl sm:text-2xl font-serif font-semibold leading-snug mb-6 text-[#f0ece8]">
+                    {sec.title}
+                  </h3>
+                )}
+                {sec.body && (
+                  <div className="text-[#b8b0d4] text-base sm:text-[1.05rem] leading-relaxed max-w-3xl">
+                    <ReadingText text={sec.body} className="space-y-4" />
+                  </div>
+                )}
+              </article>
+            ))}
+            {finalWord && (
+              <article className="mt-10 p-7 sm:p-9 rounded-2xl border border-[#f0b84a]/20 bg-[#f0b84a]/[0.03] max-w-3xl mx-auto">
+                <span className="inline-block text-[10px] uppercase tracking-[0.18em] text-[#f0b84a] mb-3 font-semibold">
+                  Final Word
+                </span>
+                <div className="text-[#f0b84a]/90 text-base leading-relaxed">
+                  <ReadingText text={finalWord} className="space-y-4" />
+                </div>
+              </article>
+            )}
+          </section>
+        )}
+
         {/* Fallback if nothing rendered */}
-        {!paidInsights.length && (
+        {!paidInsights.length && !sections.length && !isTarotReading && (
           <pre className="text-xs overflow-auto p-4 rounded bg-black/40 border border-white/10">
             {JSON.stringify(reading, null, 2)}
           </pre>

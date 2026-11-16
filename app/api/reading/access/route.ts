@@ -4,6 +4,7 @@ import { loadReadingByAccessToken } from "@/lib/db/fulfillment";
 import { dbError, dbLog } from "@/lib/db/log";
 import { calculateChart } from "@/lib/chart-calculator";
 import { geocodeCity } from "@/lib/geocode-city";
+import { getMockReading } from "../mock-data";
 
 
 /**
@@ -20,6 +21,15 @@ export async function GET(req: NextRequest) {
       { success: false, error: "Missing token" },
       { status: 400 }
     );
+  }
+
+  /* ── Mock tokens for dev preview (mock-blind, mock-brutal, etc.) ── */
+  if (token.startsWith("mock-")) {
+    const mockId = token.replace("mock-", "");
+    const mock = getMockReading(mockId);
+    if (mock) {
+      return NextResponse.json({ success: true, ...mock });
+    }
   }
 
   try {
