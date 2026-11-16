@@ -813,7 +813,7 @@ const styles = `
 .fll-hero {
   position: relative;
   z-index: 1;
-  padding: 96px 24px 40px;
+  padding: 48px 24px 40px;
   max-width: 1200px;
   margin: 0 auto;
 }
