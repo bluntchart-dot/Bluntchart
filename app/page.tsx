@@ -669,27 +669,7 @@ function FAQ() {
 // ─── PAGE ──────────────────────────────────────────────────────────────────────
 
 export default function HomePage() {
-  const [wlName,    setWlName]    = useState("");
-  const [wlEmail,   setWlEmail]   = useState("");
-  const [reason,    setReason]    = useState("Compatibility Reading");
-  const [submitted, setSubmitted] = useState(false);
-  const [wlLoading, setWlLoading] = useState(false);
   const [resultShowing, setResultShowing] = useState(false);
-
-  const handleWaitlist = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!wlName || !wlEmail) return;
-    setWlLoading(true);
-    try {
-      await fetch(
-        "https://script.google.com/macros/s/AKfycbwgxIPG-QmNI89GEMqeV6GA83STXCncvc77fsqH6bAK3AatSO3pfi96TzGNSB6ZvxGIMA/exec",
-        { method:"POST", mode:"no-cors", headers:{"Content-Type":"application/json"},
-          body:JSON.stringify({ name:wlName, email:wlEmail, reason, source:"Website Waitlist" }) }
-      );
-      setSubmitted(true); setWlName(""); setWlEmail(""); setReason("Compatibility Reading");
-    } catch { alert("Something went wrong."); }
-    setWlLoading(false);
-  };
 
   return (
     <>
@@ -813,19 +793,6 @@ export default function HomePage() {
         .revav{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#6b2fd4,#d4537e);display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:.9rem;font-weight:700;color:#fff;flex-shrink:0}
         .revn{font-size:.83rem;font-weight:600;color:var(--dim)}
         .revm{font-size:.73rem;color:rgba(232,228,240,.3)}
-        .waitlist-sec{padding:96px 0;position:relative;overflow:hidden;background:#0d0d18;border-top:1px solid var(--border)}
-        .wbg{position:absolute;inset:0;background:radial-gradient(ellipse 50% 50% at 50% 50%,rgba(107,47,212,.05) 0%,transparent 50%);pointer-events:none}
-        .wi{position:relative;z-index:1;max-width:600px;margin:0 auto;text-align:center}
-        .ei{width:100%;background:var(--faint);border:0.5px solid var(--border);border-radius:10px;padding:13px 16px;color:var(--white);font-family:inherit;font-size:.88rem;outline:none;transition:border-color .2s}
-        .ei:focus{border-color:rgba(107,47,212,.5)}
-        .ei::placeholder{color:rgba(232,228,240,.25)}
-        .fn{font-size:.76rem;color:rgba(232,228,240,.28)}
-        .fs{padding:14px 22px;background:rgba(93,202,165,.1);border:0.5px solid rgba(93,202,165,.3);border-radius:10px;color:var(--teal);font-size:.88rem;font-weight:500;max-width:420px;margin:0 auto}
-        .wl-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:40px}
-        .wl-card{background:var(--card);border:0.5px solid var(--border);border-radius:12px;padding:20px 18px;text-align:left}
-        .wl-card-badge{font-size:.6rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#4a4560;margin-bottom:8px}
-        .wl-card-title{font-family:var(--font-display);font-size:1rem;font-weight:700;color:rgba(232,228,240,.55);margin-bottom:6px}
-        .wl-card-price{font-family:var(--font-display);font-size:1.4rem;font-weight:900;color:#2e2c3e}
         .footer{border-top:1px solid var(--border);padding:48px 0 30px;position:relative;z-index:1}
         .fi{display:flex;align-items:flex-start;justify-content:space-between;gap:36px;flex-wrap:wrap;margin-bottom:36px}
         .fb p{font-size:.82rem;color:var(--dim);max-width:240px;line-height:1.6;margin-top:8px}
@@ -839,9 +806,9 @@ export default function HomePage() {
         .fb2{border-top:1px solid var(--border);padding-top:22px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
         .disc{font-size:.73rem;color:rgba(232,228,240,.25);max-width:520px;line-height:1.55}
         .copy{font-size:.73rem;color:rgba(232,228,240,.2)}
-        @media(max-width:900px){.cred-grid{grid-template-columns:1fr 1fr}.upcoming-grid,.wl-cards{grid-template-columns:1fr}.cmp-head,.cmp-row{grid-template-columns:1fr 110px 110px}}
+        @media(max-width:900px){.cred-grid{grid-template-columns:1fr 1fr}.upcoming-grid{grid-template-columns:1fr}.cmp-head,.cmp-row{grid-template-columns:1fr 110px 110px}}
         @media(max-width:768px){.hero{padding-top:24px;padding-bottom:64px}.horb{width:300px;height:300px}.hctas{flex-direction:column;align-items:center}.bp,.bs{width:100%;max-width:300px;justify-content:center}.htr{flex-direction:column;gap:10px}.rg{grid-template-columns:1fr}.fi{flex-direction:column;gap:28px}.fb2{flex-direction:column;align-items:flex-start}.revg{grid-template-columns:1fr}.cmp-wrap{border:none;border-radius:0;overflow:visible}.cmp-head{display:none}.cmp-row{grid-template-columns:1fr;gap:0;border:0.5px solid rgba(255,255,255,0.06);border-radius:12px;margin-bottom:10px;padding:4px 0}.cmp-cell{padding:12px 16px}.cmp-cell.feat{font-size:.95rem;border-bottom:0.5px solid rgba(255,255,255,0.04);padding-bottom:10px}.cmp-cell:not(.feat){display:flex;justify-content:space-between;padding:8px 16px}.cmp-cell:not(.feat)::before{font-size:.75rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:rgba(232,228,240,0.35)}.cmp-row .cmp-cell:nth-child(2)::before{content:'BluntChart';color:#F0B84A}.cmp-row .cmp-cell:nth-child(3)::before{content:'Others'}.cred-grid{grid-template-columns:1fr}}
-        @media(max-width:480px){.sec,.try-sec,.waitlist-sec{padding:72px 0}.c{padding:0 16px}.price-main{padding:24px 20px}.upcoming-grid,.wl-cards{grid-template-columns:1fr}}
+        @media(max-width:480px){.sec,.try-sec{padding:72px 0}.c{padding:0 16px}.price-main{padding:24px 20px}.upcoming-grid{grid-template-columns:1fr}}
       `}</style>
 
       {/* ── HERO ── */}
@@ -1130,58 +1097,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── WAITLIST ── */}
-      <section className="waitlist-sec" id="waitlist">
-        <div className="wbg"/>
-        <div className="c">
-          <div className="wi">
-            <div style={{ display:"inline-flex", alignItems:"center", gap:6, fontSize:".8rem",
-              color:"var(--dim)", padding:"6px 14px", background:"var(--faint)",
-              borderRadius:"100px", marginBottom:24 }}>
-              <span style={{ width:6, height:6, borderRadius:"50%", background:"var(--teal)",
-                animation:"blink 2s ease-in-out infinite", display:"block" }}/>
-              More readings are coming
-            </div>
-            <h2 style={{ marginBottom:14 }}>Join <em>1,000+ waitlist</em><br/>members for first access.</h2>
-            <p className="sub" style={{ margin:"0 auto 36px", textAlign:"center" }}>
-              Compatibility readings, Year Ahead reports, and Gift readings are in development.
-              Waitlist members get launch pricing before anyone else.
-            </p>
-            <div className="wl-cards">
-              {UPCOMING.map(u => (
-                <div className="wl-card" key={u.title}>
-                  <div className="wl-card-badge">Coming Soon</div>
-                  <div className="wl-card-title">{u.title}</div>
-                  <div className="wl-card-price">{u.price}</div>
-                </div>
-              ))}
-            </div>
-            {!submitted ? (
-              <form onSubmit={handleWaitlist}
-                style={{ maxWidth:"460px", margin:"0 auto", display:"grid", gap:"12px" }}>
-                <input className="ei" placeholder="First name" value={wlName}
-                  onChange={e=>setWlName(e.target.value)} required/>
-                <input className="ei" type="email" placeholder="Email address" value={wlEmail}
-                  onChange={e=>setWlEmail(e.target.value)} required/>
-                <select className="ei"
-                  style={{ background:"#12121e", color:"rgba(232,228,240,0.8)", appearance:"none" }}
-                  value={reason} onChange={e=>setReason(e.target.value)}>
-                  <option value="Compatibility Reading">Compatibility Reading</option>
-                  <option value="Year Ahead Reading">Year Ahead Reading</option>
-                  <option value="Gift a Reading">Gift a Reading</option>
-                  <option value="All of the above">All of the above</option>
-                </select>
-                <button className="bp" type="submit" style={{ width:"100%", justifyContent:"center" }}>
-                  {wlLoading ? "Joining…" : "Join 1,000+ Waitlist Members →"}
-                </button>
-                <p className="fn" style={{ textAlign:"center" }}>No spam. Launch pricing ends soon.</p>
-              </form>
-            ) : (
-              <div className="fs">✓ You&apos;re in. Watch your inbox. You&apos;ll be first when it launches.</div>
-            )}
-          </div>
-        </div>
-      </section>
 
       {/* Footer is rendered by the root layout via <SiteFooter /> */}
     </>
