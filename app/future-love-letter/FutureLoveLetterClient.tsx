@@ -1210,6 +1210,7 @@ const styles = `
   border-radius: 8px;
   padding: 72px 32px 40px;
   box-shadow: 0 16px 50px rgba(0,0,0,0.35);
+  border: 1.5px solid #c4b89a;
   z-index: 1;
   text-align: center;
 }
@@ -1236,8 +1237,9 @@ const styles = `
   left: 0;
   right: 0;
   height: 80px;
-  background: linear-gradient(180deg, #ede4d3 0%, #e2d8c4 100%);
+  background: linear-gradient(180deg, #d5c9b0 0%, #c8bca4 100%);
   clip-path: polygon(0 0, 50% 100%, 100% 0);
+  filter: drop-shadow(0 1px 0 #b0a48a);
   z-index: 3;
   transform-origin: top center;
   transition: transform 0.7s ease-in-out;
