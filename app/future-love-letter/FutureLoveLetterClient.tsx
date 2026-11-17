@@ -2126,7 +2126,13 @@ const styles = `
     padding: 60px 20px;
   }
 
-  .fll-sample-env-body { padding: 44px 28px; }
+  .fll-sample-env { max-width: 100%; }
+  .fll-sample-env-body { padding: 36px 24px; min-height: auto; }
+  .fll-sample-env-label { font-size: 16px; letter-spacing: 4px; color: #4a3e2a; font-weight: 900; }
+  .fll-sample-env-hint { font-size: 13px; margin-top: 8px; }
+  .fll-sample-env-flap { height: 55px; }
+  .fll-sample-paper-inner { padding: 24px 20px 70px; }
+  .fll-sample-paper-line { font-size: 14px; line-height: 1.65; }
 
   .fll-orbit {
     max-width: 340px;
