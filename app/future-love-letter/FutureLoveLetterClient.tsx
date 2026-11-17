@@ -1208,9 +1208,9 @@ const styles = `
   position: relative;
   background: linear-gradient(160deg, #f5ede0 0%, #e8dcc8 100%);
   border-radius: 8px;
-  padding: 40px 32px;
+  padding: 72px 32px 40px;
   box-shadow: 0 16px 50px rgba(0,0,0,0.35);
-  z-index: 2;
+  z-index: 1;
   text-align: center;
 }
 .fll-sample-env-label {
@@ -1229,17 +1229,17 @@ const styles = `
   margin-top: 12px;
 }
 
-/* Flap — sits behind the body, peeking out at the top */
+/* Flap — classic envelope V that overlaps the top of the body */
 .fll-sample-env-flap {
   position: absolute;
-  top: -30px;
-  left: 10%;
-  right: 10%;
-  height: 60px;
-  background: linear-gradient(180deg, #d8cdb8 0%, #e2d8c4 100%);
-  clip-path: polygon(0 100%, 50% 0, 100% 100%);
-  z-index: 1;
-  transform-origin: bottom center;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 80px;
+  background: linear-gradient(180deg, #ede4d3 0%, #e2d8c4 100%);
+  clip-path: polygon(0 0, 50% 100%, 100% 0);
+  z-index: 3;
+  transform-origin: top center;
   transition: transform 0.7s ease-in-out;
 }
 .fll-sample-env.open .fll-sample-env-flap {
@@ -2126,8 +2126,8 @@ const styles = `
   }
 
   .fll-sample-env { max-width: 100%; }
-  .fll-sample-env-body { padding: 32px 24px; }
-  .fll-sample-env-flap { top: -24px; height: 48px; }
+  .fll-sample-env-body { padding: 60px 24px 32px; }
+  .fll-sample-env-flap { height: 65px; }
   .fll-sample-paper-inner { padding: 24px 20px 70px; }
   .fll-sample-paper-line { font-size: 14px; line-height: 1.65; }
 
