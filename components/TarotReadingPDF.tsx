@@ -326,6 +326,79 @@ const s = StyleSheet.create({
     marginTop: 32,
     maxWidth: 360,
   },
+
+  /* ── Chart info ── */
+  chartSectionTitle: {
+    fontSize: 8,
+    letterSpacing: 3,
+    color: INDIGO,
+    fontFamily: "Helvetica-Bold",
+    marginBottom: 10,
+    marginTop: 4,
+  },
+  placementRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingVertical: 4,
+    borderBottomWidth: 0.5,
+    borderBottomColor: "#ede8f5",
+  },
+  placementLabel: {
+    fontSize: 10,
+    fontFamily: "Helvetica-Bold",
+    color: INK,
+  },
+  placementValue: {
+    fontSize: 10,
+    fontFamily: "Helvetica",
+    color: MUTED,
+  },
+  houseCell: {
+    width: "25%",
+    paddingVertical: 6,
+    paddingHorizontal: 4,
+    alignItems: "center",
+  },
+  houseNumber: {
+    fontSize: 8,
+    fontFamily: "Helvetica-Bold",
+    color: INDIGO,
+    marginBottom: 2,
+  },
+  houseSign: {
+    fontSize: 10,
+    fontFamily: "Helvetica-Bold",
+    color: INK,
+  },
+  houseDegree: {
+    fontSize: 8,
+    fontFamily: "Helvetica",
+    color: MUTED,
+  },
+  aspectRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingVertical: 3,
+    borderBottomWidth: 0.5,
+    borderBottomColor: "#ede8f5",
+  },
+  aspectPlanets: {
+    fontSize: 10,
+    fontFamily: "Helvetica",
+    color: INK,
+  },
+  aspectType: {
+    fontSize: 9,
+    fontFamily: "Helvetica-Bold",
+  },
+  aspectTension: {
+    color: "#c44040",
+  },
+  aspectHarmony: {
+    color: "#3a8a5a",
+  },
 });
 
 /* ═════════════════════════════════════════════════════════════════
@@ -586,20 +659,69 @@ export default function TarotReadingPDF({
         <Text style={s.coverFooter}>bluntchart.com</Text>
       </Page>
 
-      {/* Natal Chart (for birth-data products) */}
+      {/* Natal Chart Wheel + Placements */}
       {chart && (
         <Page size="A4" style={s.page}>
-          <View style={s.pageHeader} fixed>
-            <Text style={{ fontSize: 8, letterSpacing: 3, color: MUTED, fontFamily: "Helvetica" }}>BLUNTCHART</Text>
-            <Text style={{ fontSize: 8, letterSpacing: 2, color: MUTED, fontFamily: "Helvetica" }}>YOUR NATAL CHART</Text>
+          <PageHeader section="YOUR NATAL CHART" />
+          <View style={{ alignItems: "center", marginTop: 8, marginBottom: 12 }}>
+            <PdfChartWheel chart={chart} size={260} />
           </View>
-          <View style={{ alignItems: "center", marginTop: 20, marginBottom: 20 }}>
-            <PdfChartWheel chart={chart} size={280} />
+
+          <View style={{ marginTop: 8 }}>
+            <Text style={s.chartSectionTitle}>PLANETARY PLACEMENTS</Text>
+            {chart.ascendant?.sign && (
+              <View style={s.placementRow}>
+                <Text style={s.placementLabel}>Ascendant (Rising)</Text>
+                <Text style={s.placementValue}>{chart.ascendant.sign} · {Math.floor(chart.ascendant.degree)}°</Text>
+              </View>
+            )}
+            {chart.planets.map((p, i) => (
+              <View key={i} style={s.placementRow}>
+                <Text style={s.placementLabel}>{p.symbol} {p.name}{p.retrograde ? " ℞" : ""}</Text>
+                <Text style={s.placementValue}>{p.sign} · {Math.floor(p.degree)}° · House {p.house}</Text>
+              </View>
+            ))}
+            {chart.midheaven?.sign && (
+              <View style={s.placementRow}>
+                <Text style={s.placementLabel}>Midheaven (MC)</Text>
+                <Text style={s.placementValue}>{chart.midheaven.sign} · {Math.floor(chart.midheaven.degree)}°</Text>
+              </View>
+            )}
           </View>
-          <View style={s.pageFooter} fixed>
-            <Text style={s.pageFooterText}>bluntchart.com</Text>
-            <Text style={s.pageFooterText}>{displayName}</Text>
+          <Footer name={displayName} />
+        </Page>
+      )}
+
+      {/* Houses & Aspects */}
+      {chart && (
+        <Page size="A4" style={s.page}>
+          <PageHeader section="HOUSES & ASPECTS" />
+
+          <Text style={s.chartSectionTitle}>YOUR 12 HOUSES</Text>
+          <View style={{ flexDirection: "row", flexWrap: "wrap", marginBottom: 16 }}>
+            {chart.houses.map((h, i) => (
+              <View key={i} style={s.houseCell}>
+                <Text style={s.houseNumber}>{h.number}</Text>
+                <Text style={s.houseSign}>{h.sign}</Text>
+                <Text style={s.houseDegree}>{Math.floor(h.degree)}°</Text>
+              </View>
+            ))}
           </View>
+
+          {chart.aspects.length > 0 && (
+            <View style={{ marginTop: 8 }}>
+              <Text style={s.chartSectionTitle}>KEY ASPECTS</Text>
+              {chart.aspects.slice(0, 15).map((a, i) => (
+                <View key={i} style={s.aspectRow}>
+                  <Text style={s.aspectPlanets}>{a.planet1} — {a.planet2}</Text>
+                  <Text style={[s.aspectType, a.type === "square" || a.type === "opposition" ? s.aspectTension : s.aspectHarmony]}>
+                    {a.type} ({a.orb.toFixed(1)}°)
+                  </Text>
+                </View>
+              ))}
+            </View>
+          )}
+          <Footer name={displayName} />
         </Page>
       )}
 
