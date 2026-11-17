@@ -130,7 +130,7 @@ const BirthDataForm = forwardRef<HTMLDivElement, Props>(function BirthDataForm(
             type="submit"
             disabled={!canSubmit}
           >
-            💌 LET MY FUTURE HUSBAND TALK
+            💌 GET MY LOVE LETTER
           </button>
           <div className="fll-form-micro">
             <p>

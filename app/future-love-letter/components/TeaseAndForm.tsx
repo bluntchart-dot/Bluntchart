@@ -178,7 +178,7 @@ const TeaseAndForm = forwardRef<HTMLDivElement, Props>(function TeaseAndForm(
               type="submit"
               disabled={!canSubmit}
             >
-              LET MY FUTURE HUSBAND TALK
+              GET MY LOVE LETTER
             </button>
             <div className="fll-form-micro">
               <p>
