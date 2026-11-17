@@ -7,6 +7,8 @@ import {
   View,
   StyleSheet,
 } from "@react-pdf/renderer";
+import PdfChartWheel from "./premium/PdfChartWheel";
+import type { ChartData } from "@/lib/types";
 
 interface PreviewInsight {
   planet?: string;
@@ -27,6 +29,7 @@ interface Props {
   letterOpener: string | null;
   preview: PreviewInsight[];
   paidInsights: PaidInsight[];
+  chart?: ChartData | null;
 }
 
 /* ── Palette ── */
@@ -339,6 +342,7 @@ export default function ReadingPDF({
   letterOpener,
   preview,
   paidInsights,
+  chart,
 }: Props) {
   const displayName = name || "you";
 
@@ -361,6 +365,20 @@ export default function ReadingPDF({
         </View>
         <Text style={s.coverFooter}>bluntchart.com</Text>
       </Page>
+
+      {/* ═══ NATAL CHART (white) ═══ */}
+      {chart && (
+        <Page size="A4" style={s.page}>
+          <PageHeader section="YOUR NATAL CHART" />
+          <View style={{ alignItems: "center", marginTop: 20, marginBottom: 20 }}>
+            <PdfChartWheel chart={chart} size={280} />
+          </View>
+          <View style={s.pageFooter}>
+            <Text style={s.pageFooterText}>bluntchart.com</Text>
+            <Text style={s.pageFooterText}>{displayName}</Text>
+          </View>
+        </Page>
+      )}
 
       {/* ═══ LETTER OPENER + PREVIEW (white) ═══ */}
       <Page size="A4" style={s.page}>

@@ -204,6 +204,7 @@ export async function renderReadingPdf(
         letterOpener: reading.letter_opener ?? null,
         preview: reading.preview ?? [],
         paidInsights: reading.paidInsights ?? [],
+        chart: (input.reading.chart as any) ?? null,
       });
     } else {
       const TarotReadingPDF = (await import("@/components/TarotReadingPDF")).default;

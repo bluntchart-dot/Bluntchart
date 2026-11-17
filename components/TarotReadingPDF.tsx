@@ -8,6 +8,8 @@ import {
 } from "@react-pdf/renderer";
 import { readFileSync, existsSync } from "fs";
 import path from "path";
+import PdfChartWheel from "./premium/PdfChartWheel";
+import type { ChartData } from "@/lib/types";
 
 /* ═════════════════════════════════════════════════════════════════
    TYPES
@@ -553,6 +555,7 @@ export default function TarotReadingPDF({
     ? `${tagline[0]}\n${tagline[1]}`
     : "No fluff. No filter. Just the cards.";
   const drawnCards = (reading._drawnCards ?? []) as DrawnCardData[];
+  const chart = reading.chart as ChartData | undefined;
 
   return (
     <Document
@@ -582,6 +585,23 @@ export default function TarotReadingPDF({
         </View>
         <Text style={s.coverFooter}>bluntchart.com</Text>
       </Page>
+
+      {/* Natal Chart (for birth-data products) */}
+      {chart && (
+        <Page size="A4" style={s.page}>
+          <View style={s.pageHeader} fixed>
+            <Text style={{ fontSize: 8, letterSpacing: 3, color: MUTED, fontFamily: "Helvetica" }}>BLUNTCHART</Text>
+            <Text style={{ fontSize: 8, letterSpacing: 2, color: MUTED, fontFamily: "Helvetica" }}>YOUR NATAL CHART</Text>
+          </View>
+          <View style={{ alignItems: "center", marginTop: 20, marginBottom: 20 }}>
+            <PdfChartWheel chart={chart} size={280} />
+          </View>
+          <View style={s.pageFooter} fixed>
+            <Text style={s.pageFooterText}>bluntchart.com</Text>
+            <Text style={s.pageFooterText}>{displayName}</Text>
+          </View>
+        </Page>
+      )}
 
       {/* Content */}
       {variant === "three-card" && (
