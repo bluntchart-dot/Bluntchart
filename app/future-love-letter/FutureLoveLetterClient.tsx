@@ -1203,44 +1203,43 @@ const styles = `
   position: relative;
   max-width: 560px;
   margin: 0 auto;
-  perspective: 600px;
 }
 .fll-sample-env-body {
   position: relative;
   background: linear-gradient(160deg, #f5ede0 0%, #e8dcc8 100%);
-  border-radius: 6px;
-  padding: 60px 40px;
+  border-radius: 8px;
+  padding: 40px 32px;
   box-shadow: 0 16px 50px rgba(0,0,0,0.35);
-  z-index: 1;
+  z-index: 2;
+  text-align: center;
 }
 .fll-sample-env-label {
   font-family: var(--font-body);
-  font-size: 14px;
-  font-weight: 700;
-  letter-spacing: 3px;
-  color: #6a5e4a;
-  text-align: center;
+  font-size: 18px;
+  font-weight: 900;
+  letter-spacing: 6px;
+  color: #3a3020;
+  text-transform: uppercase;
 }
 .fll-sample-env-hint {
   font-family: var(--font-display);
   font-style: italic;
-  font-size: 12px;
-  color: #9a8a6a;
-  text-align: center;
-  margin-top: 10px;
+  font-size: 14px;
+  color: #8a7a5a;
+  margin-top: 12px;
 }
 
-/* Flap */
+/* Flap — sits behind the body, peeking out at the top */
 .fll-sample-env-flap {
   position: absolute;
-  top: -1px;
-  left: 0;
-  right: 0;
-  height: 70px;
-  background: linear-gradient(180deg, #ede4d3 0%, #e2d8c4 100%);
-  clip-path: polygon(0 0, 50% 100%, 100% 0);
-  z-index: 3;
-  transform-origin: top center;
+  top: -30px;
+  left: 10%;
+  right: 10%;
+  height: 60px;
+  background: linear-gradient(180deg, #d8cdb8 0%, #e2d8c4 100%);
+  clip-path: polygon(0 100%, 50% 0, 100% 100%);
+  z-index: 1;
+  transform-origin: bottom center;
   transition: transform 0.7s ease-in-out;
 }
 .fll-sample-env.open .fll-sample-env-flap {
@@ -2127,10 +2126,8 @@ const styles = `
   }
 
   .fll-sample-env { max-width: 100%; }
-  .fll-sample-env-body { padding: 36px 24px; min-height: auto; }
-  .fll-sample-env-label { font-size: 16px; letter-spacing: 4px; color: #4a3e2a; font-weight: 900; }
-  .fll-sample-env-hint { font-size: 13px; margin-top: 8px; }
-  .fll-sample-env-flap { height: 55px; }
+  .fll-sample-env-body { padding: 32px 24px; }
+  .fll-sample-env-flap { top: -24px; height: 48px; }
   .fll-sample-paper-inner { padding: 24px 20px 70px; }
   .fll-sample-paper-line { font-size: 14px; line-height: 1.65; }
 
