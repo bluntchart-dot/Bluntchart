@@ -291,14 +291,6 @@ const s = StyleSheet.create({
   },
 
   /* ── Chart info ── */
-  chartSectionTitle: {
-    fontSize: 8,
-    letterSpacing: 3,
-    color: PURPLE,
-    fontFamily: "Helvetica-Bold",
-    marginBottom: 10,
-    marginTop: 4,
-  },
   placementRow: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -316,51 +308,6 @@ const s = StyleSheet.create({
     fontSize: 10,
     fontFamily: "Helvetica",
     color: MUTED,
-  },
-  houseCell: {
-    width: "25%",
-    paddingVertical: 6,
-    paddingHorizontal: 4,
-    alignItems: "center",
-  },
-  houseNumber: {
-    fontSize: 8,
-    fontFamily: "Helvetica-Bold",
-    color: PURPLE,
-    marginBottom: 2,
-  },
-  houseSign: {
-    fontSize: 10,
-    fontFamily: "Helvetica-Bold",
-    color: INK,
-  },
-  houseDegree: {
-    fontSize: 8,
-    fontFamily: "Helvetica",
-    color: MUTED,
-  },
-  aspectRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingVertical: 3,
-    borderBottomWidth: 0.5,
-    borderBottomColor: "#ede8f5",
-  },
-  aspectPlanets: {
-    fontSize: 10,
-    fontFamily: "Helvetica",
-    color: INK,
-  },
-  aspectType: {
-    fontSize: 9,
-    fontFamily: "Helvetica-Bold",
-  },
-  aspectTension: {
-    color: "#c44040",
-  },
-  aspectHarmony: {
-    color: "#3a8a5a",
   },
 
   /* ── Closing page (dark) ── */
@@ -439,75 +386,34 @@ export default function ReadingPDF({
         <Text style={s.coverFooter}>bluntchart.com</Text>
       </Page>
 
-      {/* ═══ NATAL CHART WHEEL ═══ */}
+      {/* ═══ NATAL CHART — 1 page: wheel + placements ═══ */}
       {chart && (
         <Page size="A4" style={s.page}>
           <PageHeader section="YOUR NATAL CHART" />
-          <View style={{ alignItems: "center", marginTop: 8, marginBottom: 12 }}>
-            <PdfChartWheel chart={chart} size={260} />
+          <View style={{ alignItems: "center", marginTop: 4, marginBottom: 8 }}>
+            <PdfChartWheel chart={chart} size={240} />
           </View>
 
-          {/* Planetary Placements Table */}
-          <View style={{ marginTop: 8 }}>
-            <Text style={s.chartSectionTitle}>PLANETARY PLACEMENTS</Text>
+          <View style={{ marginTop: 4 }}>
             {chart.ascendant?.sign && (
               <View style={s.placementRow}>
-                <Text style={s.placementLabel}>Ascendant (Rising)</Text>
-                <Text style={s.placementValue}>{chart.ascendant.sign} · {Math.floor(chart.ascendant.degree)}°</Text>
+                <Text style={s.placementLabel}>Rising</Text>
+                <Text style={s.placementValue}>{chart.ascendant.sign} {Math.floor(chart.ascendant.degree)}°</Text>
               </View>
             )}
             {chart.planets.map((p, i) => (
               <View key={i} style={s.placementRow}>
-                <Text style={s.placementLabel}>{p.symbol} {p.name}{p.retrograde ? " ℞" : ""}</Text>
-                <Text style={s.placementValue}>{p.sign} · {Math.floor(p.degree)}° · House {p.house}</Text>
+                <Text style={s.placementLabel}>{p.name}</Text>
+                <Text style={s.placementValue}>{p.sign} {Math.floor(p.degree)}° · House {p.house}{p.retrograde ? " ℞" : ""}</Text>
               </View>
             ))}
             {chart.midheaven?.sign && (
               <View style={s.placementRow}>
-                <Text style={s.placementLabel}>Midheaven (MC)</Text>
-                <Text style={s.placementValue}>{chart.midheaven.sign} · {Math.floor(chart.midheaven.degree)}°</Text>
+                <Text style={s.placementLabel}>Midheaven</Text>
+                <Text style={s.placementValue}>{chart.midheaven.sign} {Math.floor(chart.midheaven.degree)}°</Text>
               </View>
             )}
           </View>
-
-          <View style={s.pageFooter}>
-            <Text style={s.pageFooterText}>bluntchart.com</Text>
-            <Text style={s.pageFooterText}>{displayName}</Text>
-          </View>
-        </Page>
-      )}
-
-      {/* ═══ HOUSES & ASPECTS ═══ */}
-      {chart && (
-        <Page size="A4" style={s.page}>
-          <PageHeader section="HOUSES & ASPECTS" />
-
-          {/* House Cusps */}
-          <Text style={s.chartSectionTitle}>YOUR 12 HOUSES</Text>
-          <View style={{ flexDirection: "row", flexWrap: "wrap", marginBottom: 16 }}>
-            {chart.houses.map((h, i) => (
-              <View key={i} style={s.houseCell}>
-                <Text style={s.houseNumber}>{h.number}</Text>
-                <Text style={s.houseSign}>{h.sign}</Text>
-                <Text style={s.houseDegree}>{Math.floor(h.degree)}°</Text>
-              </View>
-            ))}
-          </View>
-
-          {/* Major Aspects */}
-          {chart.aspects.length > 0 && (
-            <View style={{ marginTop: 8 }}>
-              <Text style={s.chartSectionTitle}>KEY ASPECTS</Text>
-              {chart.aspects.slice(0, 15).map((a, i) => (
-                <View key={i} style={s.aspectRow}>
-                  <Text style={s.aspectPlanets}>{a.planet1} — {a.planet2}</Text>
-                  <Text style={[s.aspectType, a.type === "square" || a.type === "opposition" ? s.aspectTension : s.aspectHarmony]}>
-                    {a.type} ({a.orb.toFixed(1)}°)
-                  </Text>
-                </View>
-              ))}
-            </View>
-          )}
 
           <View style={s.pageFooter}>
             <Text style={s.pageFooterText}>bluntchart.com</Text>
